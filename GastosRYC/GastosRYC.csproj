@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="20.2.0.50" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GastosRYCLib\GastosRYCLib.csproj" />
   </ItemGroup>
 
