@@ -3,15 +3,27 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@{
+    var template = "<div class='settings e-list-wrapper e-list-multi-line e-list-avatar'>"                                              
+                       + "<span class='e-list-item-header'>${text}</span>"
+                       + "<span class='e-list-content float-end'>${value}€</span>"
+                       + "</div>";
+}
+@{
+    var groupTemplate = "<div class='e-list-wrapper'><span class='e-list-item-content'>${items[0].type}</span></div>";
+}
 
-<div id="ControlRegion">
-    <ejs-listview id="listviewgrp" dataSource="ViewBag.groupData">
-        <e-listview-fieldsettings groupBy="category">
+
+<div id="control-section">
+    <ejs-listview id="listviewgrp" dataSource="ViewBag.groupData" groupTemplate=@groupTemplate template=@template
+                  showHeader="true" headerTitle="Gastos RYC">
+        <e-listview-fieldsettings groupBy="type">
+
         </e-listview-fieldsettings>
     </ejs-listview>
     <style>
         #listviewgrp {
-            width: 400px;            
+            width: 300px;            
         }
     </style>
 </div>
