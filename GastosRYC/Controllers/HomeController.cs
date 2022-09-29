@@ -16,20 +16,32 @@ namespace GastosRYC.Controllers
             List<object> listdata = new List<object>();
             RYCContext rycContext = new RYCContext();
 
-            foreach(Accounts a in rycContext.accounts.Include(p => p.accountsTypes))
+            rycContext.accounts?.Include(p => p.accountsTypes);
+            rycContext.categories?.Load();
+            //rycContext.persons?.Load();
+
+            if (rycContext.accounts != null)
             {
-                listdata.Add(new
+                foreach (Accounts a in rycContext.accounts)
                 {
-                    id = a.id,
-                    text = a.description,
-                    value = a.balance,
-                    type = a.accountsTypes?.description
-                });
+                    listdata.Add(new
+                    {
+                        id = a.id,
+                        text = a.description,
+                        value = a.balance,
+                        type = a.accountsTypes?.description
+                    });
+                }
             }
 
             ViewBag.groupData = listdata;
+            ViewBag.cbAccount = rycContext.accounts;
+            ViewBag.cbPerson = rycContext.persons;
+            ViewBag.cbCategory = rycContext.categories;
+            ViewBag.datasource = rycContext.transactions;
 
             return View();
         }
     }
 }
+
