@@ -1,0 +1,20 @@
+﻿<Window x:Name="frmInicio" x:Class="GastosRYC.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GastosRYC"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="frmInicio_Loaded">
+    <Grid>
+        <ListView x:Name="lvCuentas" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,0,520,0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Grid x:Name="gvMovimientos" Margin="285,0,0,0"/>
+
+    </Grid>
+</Window>
