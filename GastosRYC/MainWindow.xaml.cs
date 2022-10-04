@@ -1,8 +1,10 @@
 ﻿using GastosRYCLib.Manager;
 using GastosRYCLib.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,12 +46,47 @@ namespace GastosRYC
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            foreach(AccountsTypes at in rycContext.accountsTypes)
+            lvCuentas.ItemsSource = rycContext?.accounts?.ToList();
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvCuentas.ItemsSource);
+            PropertyGroupDescription groupDescription = new PropertyGroupDescription("accountsTypes");
+            view.GroupDescriptions.Add(groupDescription);
+
+            cbAccounts.ItemsSource = rycContext?.accounts?.ToList();
+            cbPersons.ItemsSource = rycContext?.persons?.ToList();
+            cbCategories.ItemsSource = rycContext?.categories?.ToList();
+
+             ICollectionView viewTransaction;
+             viewTransaction = CollectionViewSource.GetDefaultView(rycContext?.transactions?.ToList());
+             gvMovimientos.ItemsSource = viewTransaction;
+
+        }
+
+        public void ApplyFilters()
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(rycContext?.transactions?.ToList());
+            if (view != null)
             {
-                lvCuentas.Items.Add(at);
-             
-                lvCuentas.DisplayMemberPath = "description";
+                view.Filter = accountFilter;
+                gvMovimientos.ItemsSource = view;
             }
+        }
+
+
+        public bool accountFilter(object o)
+        {
+            Transactions p = (o as Transactions);
+            if (p == null)
+                return false;
+            else
+                if (p.account?.id == ((Accounts)lvCuentas.SelectedValue)?.id)
+                    return true;
+                else
+                    return false;
+        }
+
+        private void lvCuentas_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyFilters();
         }
     }
 }

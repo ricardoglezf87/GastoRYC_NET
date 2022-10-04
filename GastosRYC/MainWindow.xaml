@@ -5,16 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GastosRYC"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="frmInicio_Loaded">
+        Title="MainWindow" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized">
     <Grid>
-        <ListView x:Name="lvCuentas" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,0,520,0">
+        <ListView x:Name="lvCuentas" HorizontalAlignment="Left" Width="234" SelectionChanged="lvCuentas_SelectionChanged">
+            <ListView.Resources>
+                <Style TargetType="GridViewColumnHeader">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Style>
+            </ListView.Resources>
             <ListView.View>
-                <GridView>
-                    <GridViewColumn/>
+                <GridView AllowsColumnReorder="False">
+                    <GridViewColumn  Width="120" DisplayMemberBinding="{Binding description}" />
+                    <GridViewColumn  Width="100" DisplayMemberBinding="{Binding balance}" />
                 </GridView>
             </ListView.View>
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <Expander IsExpanded="True">
+                                            <Expander.Header>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name.description}"/>
+                                                </StackPanel>
+                                            </Expander.Header>
+                                            <ItemsPresenter />
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListView.GroupStyle>
         </ListView>
-        <Grid x:Name="gvMovimientos" Margin="285,0,0,0"/>
+        <DataGrid x:Name="gvMovimientos" Margin="239,0,0,0" AutoGenerateColumns="False" ColumnWidth="*" >
+            <DataGrid.Columns >
+                <DataGridTextColumn Header="Id" Binding="{Binding id}" />
+
+                <DataGridTemplateColumn Header="Fecha">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding date}" BorderThickness="0" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridComboBoxColumn Header="Cuenta" x:Name="cbAccounts"  SelectedItemBinding="{Binding account}" 
+                                        DisplayMemberPath="description" SelectedValuePath="id" />
+                <DataGridComboBoxColumn Header="Persona" x:Name="cbPersons"  SelectedItemBinding="{Binding person}" 
+                                        DisplayMemberPath="name" SelectedValuePath="id"  />
+                <DataGridComboBoxColumn Header="Categoria" x:Name="cbCategories"  SelectedItemBinding="{Binding category}" 
+                                        DisplayMemberPath="description" SelectedValuePath="id"  />
+                <DataGridTextColumn Header="Importe" Binding="{Binding amount}" />
+                <DataGridTextColumn Header="Saldo" Binding="{Binding balance}" />
+            </DataGrid.Columns>
+        </DataGrid>
 
     </Grid>
 </Window>

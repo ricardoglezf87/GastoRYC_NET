@@ -19,7 +19,9 @@ namespace GastosRYCLib.Models
 
         public virtual Categories? category { set; get; }
 
-        public virtual Decimal amount { set; get; }                
+        public virtual Decimal? amount { set; get; }
+
+        public virtual Decimal? balance { set; get; }
 
     }
 }
