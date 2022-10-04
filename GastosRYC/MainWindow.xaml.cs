@@ -63,7 +63,7 @@ namespace GastosRYC
 
         public void ApplyFilters()
         {
-            ICollectionView view = CollectionViewSource.GetDefaultView(rycContext?.transactions?.ToList());
+            ICollectionView view = (ICollectionView) gvMovimientos.ItemsSource;
             if (view != null)
             {
                 view.Filter = accountFilter;
