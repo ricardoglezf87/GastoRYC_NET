@@ -6,17 +6,25 @@
         xmlns:local="clr-namespace:GastosRYC"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized">
+
     <Grid>
-        <ListView x:Name="lvCuentas" HorizontalAlignment="Left" Width="234" SelectionChanged="lvCuentas_SelectionChanged">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.ColumnSpan="2">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
+              
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
-                    <GridViewColumn  Width="120" DisplayMemberBinding="{Binding description}" />
-                    <GridViewColumn  Width="100" DisplayMemberBinding="{Binding balance}" />
+                    <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
+                    <GridViewColumn   DisplayMemberBinding="{Binding balance}"  />
                 </GridView>
             </ListView.View>
             <ListView.GroupStyle>
@@ -42,7 +50,8 @@
                 </GroupStyle>
             </ListView.GroupStyle>
         </ListView>
-        <DataGrid x:Name="gvMovimientos" Margin="239,0,0,0" AutoGenerateColumns="False" ColumnWidth="*" >
+        <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" />
+        <DataGrid x:Name="gvMovimientos" AutoGenerateColumns="False" ColumnWidth="*" Grid.Column="2">
             <DataGrid.Columns >
                 <DataGridTextColumn Header="Id" Binding="{Binding id}" />
 
