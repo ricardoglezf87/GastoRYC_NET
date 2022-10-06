@@ -51,24 +51,24 @@
             </ListView.GroupStyle>
         </ListView>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" />
-        <DataGrid x:Name="gvMovimientos" AutoGenerateColumns="False" ColumnWidth="*" Grid.Column="2">
+        <DataGrid x:Name="gvMovimientos" AutoGenerateColumns="False" ColumnWidth="*" Grid.Column="2" CellEditEnding="gvMovimientos_CellEditEnding" RowEditEnding="gvMovimientos_RowEditEnding">
             <DataGrid.Columns >
                 <DataGridTextColumn Header="Id" Binding="{Binding id}" />
 
                 <DataGridTemplateColumn Header="Fecha">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DatePicker SelectedDate="{Binding date}" BorderThickness="0" />
+                            <DatePicker SelectedDate="{Binding date, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridComboBoxColumn Header="Cuenta" x:Name="cbAccounts"  SelectedItemBinding="{Binding account}" 
+                <DataGridComboBoxColumn Header="Cuenta" x:Name="cbAccounts"  SelectedItemBinding="{Binding account, UpdateSourceTrigger=PropertyChanged}" 
                                         DisplayMemberPath="description" SelectedValuePath="id" />
-                <DataGridComboBoxColumn Header="Persona" x:Name="cbPersons"  SelectedItemBinding="{Binding person}" 
+                <DataGridComboBoxColumn Header="Persona" x:Name="cbPersons"  SelectedItemBinding="{Binding person, UpdateSourceTrigger=PropertyChanged}" 
                                         DisplayMemberPath="name" SelectedValuePath="id"  />
-                <DataGridComboBoxColumn Header="Categoria" x:Name="cbCategories"  SelectedItemBinding="{Binding category}" 
+                <DataGridComboBoxColumn Header="Categoria" x:Name="cbCategories"  SelectedItemBinding="{Binding category, UpdateSourceTrigger=PropertyChanged}" 
                                         DisplayMemberPath="description" SelectedValuePath="id"  />
-                <DataGridTextColumn Header="Importe" Binding="{Binding amount}" />
+                <DataGridTextColumn Header="Importe" Binding="{Binding amount, UpdateSourceTrigger=PropertyChanged}" />
                 <DataGridTextColumn Header="Saldo" Binding="{Binding balance}" />
             </DataGrid.Columns>
         </DataGrid>
