@@ -17,6 +17,7 @@ namespace GastosRYC
 
         private RYCContext? rycContext;
         private ICollectionView? viewTransaction;
+        private ICollectionView? viewAccounts;
 
         public MainWindow()
         {
@@ -35,12 +36,40 @@ namespace GastosRYC
             rycContext.transactions?.Load();            
         }
 
+        private void reiniciarSaldosCuentas()
+        {
+            foreach(Accounts accounts in lvCuentas.ItemsSource)
+            {
+                accounts.balance = 0;
+            }
+        }
+
+        private void addSaldoCuenta(long? id, Decimal balance)
+        {
+            if (id != null && lvCuentas.ItemsSource != null 
+                && viewAccounts != null && viewAccounts.SourceCollection != null)
+            {
+                List<Accounts> trans = (List<Accounts>) viewAccounts.SourceCollection;
+                Accounts? accounts = trans.FirstOrDefault(x => x.id == id);
+                
+                if (accounts != null)
+                {
+                    accounts.balance += balance;
+                }
+
+                lvCuentas.ItemsSource = null;
+                lvCuentas.ItemsSource = trans;
+            }
+        }
+
         private void refreshBalance()
         {
             Decimal? balance = 0;
 
             if (viewTransaction != null)
             {
+                reiniciarSaldosCuentas();
+
                 foreach (Transactions t in from x in ((List<Transactions>)viewTransaction.SourceCollection)
                                            orderby x.orden ascending
                                            select x)
@@ -56,6 +85,9 @@ namespace GastosRYC
                         t.balance = balance;
                     }
 
+                    if(t.amount != null)
+                        addSaldoCuenta(t.account?.id, t.amount.Value);
+
                 }
             }
 
@@ -63,15 +95,17 @@ namespace GastosRYC
             gvMovimientos.ItemsSource = viewTransaction;
 
             viewTransaction?.SortDescriptions.Add(new SortDescription("orden", ListSortDirection.Ascending));
-            viewTransaction?.Refresh();
+            viewTransaction?.Refresh(); 
         }
+
+
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            lvCuentas.ItemsSource = rycContext?.accounts?.ToList();
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvCuentas.ItemsSource);
-            PropertyGroupDescription groupDescription = new PropertyGroupDescription("accountsTypes");
-            view.GroupDescriptions.Add(groupDescription);
+            viewAccounts = CollectionViewSource.GetDefaultView(rycContext?.accounts?.ToList());
+            lvCuentas.ItemsSource = viewAccounts;
+            viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
+            viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
 
             cbAccounts.ItemsSource = rycContext?.accounts?.ToList();
             cbPersons.ItemsSource = rycContext?.persons?.ToList();
@@ -134,7 +168,6 @@ namespace GastosRYC
 
         private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
-
             if (gvMovimientos != null && gvMovimientos.SelectedItem != null)
             {
                 Transactions t = (Transactions)gvMovimientos.SelectedItem;

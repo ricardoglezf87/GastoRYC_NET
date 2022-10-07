@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -18,7 +19,7 @@ namespace GastosRYCLib.Models
 
         public virtual AccountsTypes? accountsTypes { set; get; }
 
+        [NotMapped]
         public virtual  Decimal balance { set; get; }
-
     }
 }

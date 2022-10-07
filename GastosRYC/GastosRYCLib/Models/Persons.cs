@@ -16,6 +16,5 @@ namespace GastosRYCLib.Models
         public virtual long id { set; get; }
 
         public virtual String? name { set; get; }
-
     }
 }

@@ -24,6 +24,7 @@ namespace GastosRYCLib.Models
 
         public virtual Double? orden { set; get; }
 
+        [NotMapped]
         public virtual Decimal? balance { set; get; }
 
     }

@@ -20,6 +20,5 @@ namespace GastosRYCLib.Models
         [JsonIgnore]
         [IgnoreDataMember]
         public virtual List<Accounts>? accounts { set; get; }
-
     }
 }
