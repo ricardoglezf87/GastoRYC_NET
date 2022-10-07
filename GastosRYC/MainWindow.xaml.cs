@@ -2,6 +2,7 @@
 using GastosRYCLib.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -41,7 +42,9 @@ namespace GastosRYC
         {
             Decimal? balance = 0;
 
-            foreach (Transactions t in viewTransaction.SourceCollection)
+            foreach (Transactions t in from x in((List<Transactions>) viewTransaction.SourceCollection)
+                                       orderby x.orden ascending
+                                       select x)
             {       
                 if(lvCuentas.SelectedItem != null && ((Accounts)lvCuentas.SelectedItem).id == t.account.id)
                 {                    
@@ -57,8 +60,19 @@ namespace GastosRYC
             }
 
             gvMovimientos.ItemsSource = null;
-            gvMovimientos.ItemsSource = viewTransaction;            
+            //gvMovimientos.Columns.FirstOrDefault(x => x.SortMemberPath == "orden").SortDirection = null;
+
+            //viewTransaction.SortDescriptions.Clear();
             
+
+            gvMovimientos.ItemsSource = viewTransaction;
+
+            viewTransaction.SortDescriptions.Add(new SortDescription("orden", ListSortDirection.Ascending));
+            viewTransaction.Refresh();
+
+            // gvMovimientos.Columns.FirstOrDefault(x => x.SortMemberPath == "orden").SortDirection = ListSortDirection.Ascending;
+
+
         }
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
@@ -71,9 +85,8 @@ namespace GastosRYC
             cbAccounts.ItemsSource = rycContext?.accounts?.ToList();
             cbPersons.ItemsSource = rycContext?.persons?.ToList();
             cbCategories.ItemsSource = rycContext?.categories?.ToList();
-             
+
             viewTransaction = CollectionViewSource.GetDefaultView(rycContext?.transactions?.ToList());
-            viewTransaction.SortDescriptions.Add(new SortDescription("orden", ListSortDirection.Ascending));
             refreshBalance();
         }
 
@@ -126,6 +139,29 @@ namespace GastosRYC
             rycContext?.Update(t);
             rycContext?.SaveChangesAsync();
             refreshBalance();
+        }
+
+        private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            if (gvMovimientos != null && gvMovimientos.SelectedItem != null)
+            {
+                Transactions t = (Transactions)gvMovimientos.SelectedItem;
+                DateTime date = DateTime.Parse(e.Source.ToString());
+
+                if (date != t.date)
+                {
+                    t.orden = Double.Parse(date.Year.ToString("0000")
+                            + date.Month.ToString("00")
+                            + date.Day.ToString("00")
+                            + t.id.ToString("000000")
+                            + (t.amount < 0 ? "1" : "0"));
+                    t.date = date;
+                    rycContext?.Update(t);
+                    rycContext?.SaveChangesAsync();
+                    refreshBalance();
+                }
+            }
         }
     }
 }

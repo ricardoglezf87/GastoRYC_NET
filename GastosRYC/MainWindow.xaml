@@ -58,7 +58,7 @@
                 <DataGridTemplateColumn Header="Fecha">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <DatePicker SelectedDate="{Binding date, UpdateSourceTrigger=PropertyChanged}" BorderThickness="0" />
+                            <DatePicker SelectedDate="{Binding date, Mode=TwoWay, UpdateSourceTrigger=Explicit}" SelectedDateChanged="DatePicker_SelectedDateChanged" BorderThickness="0" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
