@@ -12,14 +12,11 @@ using System.Windows.Data;
 
 namespace GastosRYC
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
 
         private RYCContext? rycContext;
-        private ICollectionView viewTransaction;
+        private ICollectionView? viewTransaction;
 
         public MainWindow()
         {
@@ -42,37 +39,31 @@ namespace GastosRYC
         {
             Decimal? balance = 0;
 
-            foreach (Transactions t in from x in((List<Transactions>) viewTransaction.SourceCollection)
-                                       orderby x.orden ascending
-                                       select x)
-            {       
-                if(lvCuentas.SelectedItem != null && ((Accounts)lvCuentas.SelectedItem).id == t.account.id)
-                {                    
-                    balance += t.amount;
-                    t.balance = balance;
-                }
-                else if (lvCuentas.SelectedItem == null)
+            if (viewTransaction != null)
+            {
+                foreach (Transactions t in from x in ((List<Transactions>)viewTransaction.SourceCollection)
+                                           orderby x.orden ascending
+                                           select x)
                 {
-                    balance += t.amount;
-                    t.balance = balance;
+                    if (lvCuentas.SelectedItem != null && ((Accounts)lvCuentas.SelectedItem).id == t.account?.id)
+                    {
+                        balance += t.amount;
+                        t.balance = balance;
+                    }
+                    else if (lvCuentas.SelectedItem == null)
+                    {
+                        balance += t.amount;
+                        t.balance = balance;
+                    }
+
                 }
-                
             }
 
-            gvMovimientos.ItemsSource = null;
-            //gvMovimientos.Columns.FirstOrDefault(x => x.SortMemberPath == "orden").SortDirection = null;
-
-            //viewTransaction.SortDescriptions.Clear();
-            
-
+            gvMovimientos.ItemsSource = null;            
             gvMovimientos.ItemsSource = viewTransaction;
 
-            viewTransaction.SortDescriptions.Add(new SortDescription("orden", ListSortDirection.Ascending));
-            viewTransaction.Refresh();
-
-            // gvMovimientos.Columns.FirstOrDefault(x => x.SortMemberPath == "orden").SortDirection = ListSortDirection.Ascending;
-
-
+            viewTransaction?.SortDescriptions.Add(new SortDescription("orden", ListSortDirection.Ascending));
+            viewTransaction?.Refresh();
         }
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
@@ -147,7 +138,8 @@ namespace GastosRYC
             if (gvMovimientos != null && gvMovimientos.SelectedItem != null)
             {
                 Transactions t = (Transactions)gvMovimientos.SelectedItem;
-                DateTime date = DateTime.Parse(e.Source.ToString());
+                DateTime date;
+                DateTime.TryParse(e.Source.ToString(),out date);
 
                 if (date != t.date)
                 {
