@@ -9,6 +9,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
+//TODO: quitar orden de la BBDD
+//TODO: error desaparecen filan al confirmar cantidad con enter
 
 namespace GastosRYC
 {
@@ -38,9 +40,12 @@ namespace GastosRYC
 
         private void reiniciarSaldosCuentas()
         {
-            foreach(Accounts accounts in lvCuentas.ItemsSource)
+            if (lvCuentas.ItemsSource != null)
             {
-                accounts.balance = 0;
+                foreach (Accounts accounts in lvCuentas.ItemsSource)
+                {
+                    accounts.balance = 0;
+                }
             }
         }
 
@@ -49,16 +54,14 @@ namespace GastosRYC
             if (id != null && lvCuentas.ItemsSource != null 
                 && viewAccounts != null && viewAccounts.SourceCollection != null)
             {
-                List<Accounts> trans = (List<Accounts>) viewAccounts.SourceCollection;
-                Accounts? accounts = trans.FirstOrDefault(x => x.id == id);
+                List<Accounts> lAccounts = (List<Accounts>) viewAccounts.SourceCollection;
+                Accounts? accounts = lAccounts.FirstOrDefault(x => x.id == id);
                 
                 if (accounts != null)
                 {
                     accounts.balance += balance;
                 }
 
-                lvCuentas.ItemsSource = null;
-                lvCuentas.ItemsSource = trans;
             }
         }
 
@@ -91,11 +94,13 @@ namespace GastosRYC
                 }
             }
 
+            viewAccounts?.Refresh();
+            
             gvMovimientos.ItemsSource = null;            
             gvMovimientos.ItemsSource = viewTransaction;
 
             viewTransaction?.SortDescriptions.Add(new SortDescription("orden", ListSortDirection.Ascending));
-            viewTransaction?.Refresh(); 
+            viewTransaction?.Refresh();      
         }
 
 
@@ -104,7 +109,7 @@ namespace GastosRYC
         {
             viewAccounts = CollectionViewSource.GetDefaultView(rycContext?.accounts?.ToList());
             lvCuentas.ItemsSource = viewAccounts;
-            viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
+            viewAccounts.SortDescriptions.Add(new SortDescription("id",ListSortDirection.Ascending));
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
 
             cbAccounts.ItemsSource = rycContext?.accounts?.ToList();
@@ -113,6 +118,7 @@ namespace GastosRYC
 
             viewTransaction = CollectionViewSource.GetDefaultView(rycContext?.transactions?.ToList());
             refreshBalance();
+            moveToLastDataGrid();
         }
 
         public void ApplyFilters()
@@ -138,9 +144,30 @@ namespace GastosRYC
                     return false;
         }
 
+        private void moveToLastDataGrid()
+        {
+            if (viewTransaction != null)
+            {
+                List<Transactions> lTrans = (List<Transactions>)viewTransaction.SourceCollection;
+                Transactions? trans;
+                if (lvCuentas.SelectedItem != null)
+                {
+                    trans = lTrans?.OrderBy(x => x.orden).LastOrDefault(x => x.account?.id == ((Accounts)lvCuentas.SelectedItem).id);
+                }
+                else
+                {
+                    trans = lTrans?.OrderBy(x => x.orden).LastOrDefault();
+                }
+                   
+                gvMovimientos.ScrollIntoView(trans);
+            }
+        }
+
         private void lvCuentas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyFilters();
+
+            moveToLastDataGrid();
         }
 
         private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
