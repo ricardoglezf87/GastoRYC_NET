@@ -8,15 +8,21 @@ using System.Threading.Tasks;
 
 namespace GastosRYCLib.Models
 {
-    public class Transactions : ICollection
+    public class Transactions
     {
         public virtual long id { set; get; }
 
         public virtual DateTime date { set; get; }
 
+        public virtual long accountid { set; get; }
+
         public virtual Accounts? account { set; get; }
 
+        public virtual long personid { set; get; }
+
         public virtual Persons? person { set; get; }
+
+        public virtual long categoryid { set; get; }
 
         public virtual Categories? category { set; get; }
 

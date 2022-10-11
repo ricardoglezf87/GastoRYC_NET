@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GastosRYC"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized">
 
@@ -51,27 +51,34 @@
             </ListView.GroupStyle>
         </ListView>
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" />
-        <DataGrid x:Name="gvMovimientos" AutoGenerateColumns="False" ColumnWidth="*" Grid.Column="2" CellEditEnding="gvMovimientos_CellEditEnding" RowEditEnding="gvMovimientos_RowEditEnding">
-            <DataGrid.Columns >
-                <DataGridTextColumn Header="Id" Binding="{Binding id}" />
+        <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvMovimientos"
+                               AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
+                               AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="True"
+                               RowValidated="gvMovimientos_RowValidated"
+                               EditTrigger="OnTap"  ScrollMode="Async">
+            <syncfusion:SfDataGrid.SortColumnDescriptions>
+                <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
+            </syncfusion:SfDataGrid.SortColumnDescriptions>
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
+                <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
+                <syncfusion:GridComboBoxColumn  HeaderText="Cuenta"
+                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
+                    x:Name="cbAccounts" MappingName="accountid" 
+                                                DisplayMemberPath="description" SelectedValuePath="id"/>
+                <syncfusion:GridComboBoxColumn  HeaderText="Persona" 
+                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
+                    x:Name="cbPersons" MappingName="personid"
+                                                DisplayMemberPath="name" SelectedValuePath="id" />
+                <syncfusion:GridComboBoxColumn  HeaderText="Categoría" 
+                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
+                    x:Name="cbCategories" MappingName="categoryid" 
+                                                DisplayMemberPath="description" SelectedValuePath="id" />
+                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad"/>
+                <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
+                <syncfusion:GridTextColumn MappingName="orden" IsHidden="True" />
+            </syncfusion:SfDataGrid.Columns>
 
-                <DataGridTemplateColumn Header="Fecha">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <DatePicker SelectedDate="{Binding date, Mode=TwoWay, UpdateSourceTrigger=Explicit}" SelectedDateChanged="DatePicker_SelectedDateChanged" BorderThickness="0" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridComboBoxColumn Header="Cuenta" x:Name="cbAccounts"  SelectedItemBinding="{Binding account, UpdateSourceTrigger=PropertyChanged}" 
-                                        DisplayMemberPath="description" SelectedValuePath="id" />
-                <DataGridComboBoxColumn Header="Persona" x:Name="cbPersons"  SelectedItemBinding="{Binding person, UpdateSourceTrigger=PropertyChanged}" 
-                                        DisplayMemberPath="name" SelectedValuePath="id"  />
-                <DataGridComboBoxColumn Header="Categoria" x:Name="cbCategories"  SelectedItemBinding="{Binding category, UpdateSourceTrigger=PropertyChanged}" 
-                                        DisplayMemberPath="description" SelectedValuePath="id"  />
-                <DataGridTextColumn Header="Importe" Binding="{Binding amount, UpdateSourceTrigger=PropertyChanged}" />
-                <DataGridTextColumn Header="Saldo" Binding="{Binding balance}" />
-            </DataGrid.Columns>
-        </DataGrid>
-
+        </syncfusion:SfDataGrid>
     </Grid>
 </Window>

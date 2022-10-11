@@ -2,15 +2,22 @@
 using GastosRYCLib.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
 //TODO: quitar orden de la BBDD
-//TODO: error desaparecen filan al confirmar cantidad con enter
 
 namespace GastosRYC
 {
@@ -18,7 +25,7 @@ namespace GastosRYC
     {
 
         private RYCContext? rycContext;
-        private ICollectionView? viewTransaction;
+        private ObservableCollection<Transactions>? viewTransaction;
         private ICollectionView? viewAccounts;
 
         public MainWindow()
@@ -61,48 +68,48 @@ namespace GastosRYC
                 {
                     accounts.balance += balance;
                 }
-
             }
         }
 
         private void refreshBalance()
         {
-            Decimal? balance = 0;
+            //Application.Current.Dispatcher.Invoke(new Action(() =>
+            //{
+            //    Decimal? balance = 0;
 
-            if (viewTransaction != null)
-            {
-                reiniciarSaldosCuentas();
+            //    if (viewTransaction != null)
+            //    {
+            //        reiniciarSaldosCuentas();
 
-                foreach (Transactions t in from x in ((List<Transactions>)viewTransaction.SourceCollection)
-                                           orderby x.orden ascending
-                                           select x)
-                {
-                    if (lvCuentas.SelectedItem != null && ((Accounts)lvCuentas.SelectedItem).id == t.account?.id)
-                    {
-                        balance += t.amount;
-                        t.balance = balance;
-                    }
-                    else if (lvCuentas.SelectedItem == null)
-                    {
-                        balance += t.amount;
-                        t.balance = balance;
-                    }
+            //        foreach (Transactions t in from x in ((List<Transactions>)viewTransaction.SourceCollection)
+            //                                   orderby x.orden ascending
+            //                                   select x)
+            //        {
+            //            if (lvCuentas.SelectedItem != null && ((Accounts)lvCuentas.SelectedItem).id == t.account?.id)
+            //            {
+            //                balance += t.amount;
+            //                t.balance = balance;
+            //            }
+            //            else if (lvCuentas.SelectedItem == null)
+            //            {
+            //                balance += t.amount;
+            //                t.balance = balance;
+            //            }
 
-                    if(t.amount != null)
-                        addSaldoCuenta(t.account?.id, t.amount.Value);
+            //            if (t.amount != null)
+            //                addSaldoCuenta(t.account?.id, t.amount.Value);
 
-                }
-            }
+            //        }
+            //    }
 
-            viewAccounts?.Refresh();
-            
-            gvMovimientos.ItemsSource = null;            
-            gvMovimientos.ItemsSource = viewTransaction;
+            //    viewAccounts?.Refresh();
 
-            viewTransaction?.SortDescriptions.Add(new SortDescription("orden", ListSortDirection.Ascending));
-            viewTransaction?.Refresh();      
+            //    //gvMovimientos.ItemsSource = null;
+            //    //gvMovimientos.ItemsSource = viewTransaction;
+                
+            //    //viewTransaction?.Refresh();
+            //}));
         }
-
 
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
@@ -113,22 +120,28 @@ namespace GastosRYC
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
 
             cbAccounts.ItemsSource = rycContext?.accounts?.ToList();
+
             cbPersons.ItemsSource = rycContext?.persons?.ToList();
+           
             cbCategories.ItemsSource = rycContext?.categories?.ToList();
 
-            viewTransaction = CollectionViewSource.GetDefaultView(rycContext?.transactions?.ToList());
+            if (rycContext?.transactions != null)
+            {
+                viewTransaction = new ObservableCollection<Transactions>(from x in rycContext.transactions
+                                                                         select x);
+                gvMovimientos.ItemsSource = CollectionViewSource.GetDefaultView(rycContext.transactions.ToList());
+            }
+
+            gvMovimientos.ItemsSource = viewTransaction;
+
             refreshBalance();
-            moveToLastDataGrid();
         }
 
         public void ApplyFilters()
         {
-            if (viewTransaction != null)
-            {
-                viewTransaction.Filter = accountFilter;
-            }
-
-            refreshBalance();
+            gvMovimientos.View.Filter = accountFilter;
+            gvMovimientos.View.RefreshFilter();
+            Task.Factory.StartNew(refreshBalance);
         }
 
 
@@ -144,53 +157,15 @@ namespace GastosRYC
                     return false;
         }
 
-        private void moveToLastDataGrid()
-        {
-            if (viewTransaction != null)
-            {
-                List<Transactions> lTrans = (List<Transactions>)viewTransaction.SourceCollection;
-                Transactions? trans;
-                if (lvCuentas.SelectedItem != null)
-                {
-                    trans = lTrans?.OrderBy(x => x.orden).LastOrDefault(x => x.account?.id == ((Accounts)lvCuentas.SelectedItem).id);
-                }
-                else
-                {
-                    trans = lTrans?.OrderBy(x => x.orden).LastOrDefault();
-                }
-                   
-                gvMovimientos.ScrollIntoView(trans);
-            }
-        }
-
         private void lvCuentas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ApplyFilters();
-
-            moveToLastDataGrid();
+            ApplyFilters();            
+            //gvMovimientos.Columns.FirstOrDefault(x => x.MappingName == "account").IsHidden = true;            
         }
 
         private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
             lvCuentas.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-        }
-
-        private void gvMovimientos_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {
-           //TODO: Hacer validaciones
-        }
-
-        private void gvMovimientos_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
-        {
-            Transactions t = (Transactions)e.Row.Item;
-            t.orden = Double.Parse(t.date.Year.ToString("0000") 
-                    + t.date.Month.ToString("00")
-                    + t.date.Day.ToString("00") 
-                    + t.id.ToString("000000")
-                    + (t.amount < 0? "1": "0"));
-            rycContext?.Update(t);
-            rycContext?.SaveChangesAsync();
-            refreshBalance();
         }
 
         private void DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
@@ -203,17 +178,30 @@ namespace GastosRYC
 
                 if (date != t.date)
                 {
-                    t.orden = Double.Parse(date.Year.ToString("0000")
-                            + date.Month.ToString("00")
-                            + date.Day.ToString("00")
-                            + t.id.ToString("000000")
-                            + (t.amount < 0 ? "1" : "0"));
+                    //t.orden = Double.Parse(date.Year.ToString("0000")
+                    //        + date.Month.ToString("00")
+                    //        + date.Day.ToString("00")
+                    //        + t.id.ToString("000000")
+                    //        + (t.amount < 0 ? "1" : "0"));
                     t.date = date;
                     rycContext?.Update(t);
                     rycContext?.SaveChangesAsync();
                     refreshBalance();
                 }
             }
+        }
+
+        private void gvMovimientos_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        {
+            //t.orden = Double.Parse(t.date.Year.ToString("0000")
+            //        + t.date.Month.ToString("00")
+            //        + t.date.Day.ToString("00")
+            //        + t.id.ToString("000000")
+            //        + (t.amount < 0 ? "1" : "0"));
+            
+            rycContext.Update((Transactions)e.RowData);
+            rycContext?.SaveChanges();
+            //Task.Factory.StartNew(refreshBalance);   
         }
     }
 }

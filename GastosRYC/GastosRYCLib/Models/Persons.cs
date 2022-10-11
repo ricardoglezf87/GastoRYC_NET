@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GastosRYCLib.Models
 {
-    public class Persons : ICollection
+    public class Persons
     {
         [Key]
         public virtual long id { set; get; }
