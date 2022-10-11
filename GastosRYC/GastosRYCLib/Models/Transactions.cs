@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYCLib.Models
 {
@@ -28,7 +23,17 @@ namespace GastosRYCLib.Models
 
         public virtual Decimal? amount { set; get; }
 
-        public virtual Double? orden { set; get; }
+        [NotMapped]
+        public virtual Double? orden { 
+            get {
+                return Double.Parse(
+                    date.Year.ToString("0000")
+                    + date.Month.ToString("00")
+                    + date.Day.ToString("00")
+                    + id.ToString("000000")
+                    + (amount < 0 ? "1" : "0")); 
+            } 
+        }
 
         [NotMapped]
         public virtual Decimal? balance { set; get; }

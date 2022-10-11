@@ -17,8 +17,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-//TODO: quitar orden de la BBDD
-
 namespace GastosRYC
 {
     public partial class MainWindow : Window
@@ -178,30 +176,24 @@ namespace GastosRYC
 
                 if (date != t.date)
                 {
-                    //t.orden = Double.Parse(date.Year.ToString("0000")
-                    //        + date.Month.ToString("00")
-                    //        + date.Day.ToString("00")
-                    //        + t.id.ToString("000000")
-                    //        + (t.amount < 0 ? "1" : "0"));
                     t.date = date;
-                    rycContext?.Update(t);
-                    rycContext?.SaveChangesAsync();
-                    refreshBalance();
+                    saveChanges(t);
+                    Task.Factory.StartNew(refreshBalance); 
                 }
             }
         }
 
         private void gvMovimientos_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            //t.orden = Double.Parse(t.date.Year.ToString("0000")
-            //        + t.date.Month.ToString("00")
-            //        + t.date.Day.ToString("00")
-            //        + t.id.ToString("000000")
-            //        + (t.amount < 0 ? "1" : "0"));
-            
-            rycContext.Update((Transactions)e.RowData);
+            saveChanges((Transactions)e.RowData);
+            Task.Factory.StartNew(refreshBalance);   
+        }
+
+        private void saveChanges(Transactions transactions)
+        {
+            rycContext.Update(transactions);
             rycContext?.SaveChanges();
-            //Task.Factory.StartNew(refreshBalance);   
+            gvMovimientos.View.Refresh();
         }
     }
 }
