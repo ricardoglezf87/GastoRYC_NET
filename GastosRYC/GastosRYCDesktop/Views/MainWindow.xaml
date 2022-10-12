@@ -53,7 +53,7 @@
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" />
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvMovimientos"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
-                               AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="True"
+                               AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="false"
                                RowValidated="gvMovimientos_RowValidated"
                                EditTrigger="OnTap"  ScrollMode="Async">
             <syncfusion:SfDataGrid.SortColumnDescriptions>

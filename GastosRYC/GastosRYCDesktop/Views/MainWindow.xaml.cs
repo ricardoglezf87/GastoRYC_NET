@@ -1,6 +1,7 @@
 ﻿using GastosRYCLib.Manager;
 using GastosRYCLib.Models;
 using Microsoft.EntityFrameworkCore;
+using Syncfusion.Data.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -71,42 +72,74 @@ namespace GastosRYC
 
         private void refreshBalance()
         {
-            //Application.Current.Dispatcher.Invoke(new Action(() =>
-            //{
-            //    Decimal? balance = 0;
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                Decimal? balanceTotal = 0;
 
-            //    if (viewTransaction != null)
-            //    {
-            //        reiniciarSaldosCuentas();
+                if (viewTransaction != null)
+                {
+                    reiniciarSaldosCuentas();
 
-            //        foreach (Transactions t in from x in ((List<Transactions>)viewTransaction.SourceCollection)
-            //                                   orderby x.orden ascending
-            //                                   select x)
-            //        {
-            //            if (lvCuentas.SelectedItem != null && ((Accounts)lvCuentas.SelectedItem).id == t.account?.id)
-            //            {
-            //                balance += t.amount;
-            //                t.balance = balance;
-            //            }
-            //            else if (lvCuentas.SelectedItem == null)
-            //            {
-            //                balance += t.amount;
-            //                t.balance = balance;
-            //            }
+                    //gvMovimientos.SortColumnDescriptions.Clear();
+                    //gvMovimientos.SortColumnDescriptions.Add(new Syncfusion.UI.Xaml.Grid.SortColumnDescription()
+                    //{ ColumnName = "orden", SortDirection = ListSortDirection.Ascending });
 
-            //            if (t.amount != null)
-            //                addSaldoCuenta(t.account?.id, t.amount.Value);
+                    //gvMovimientos.View.Refresh();
 
-            //        }
-            //    }
+                    Syncfusion.UI.Xaml.Grid.
+                        GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
+                        GridQueryableCollectionViewWrapper) gvMovimientos.View;
 
-            //    viewAccounts?.Refresh();
+                    foreach (Transactions t in col.ViewSource)
+                    {
+                        if (t.amount != null)
+                        {
+                            if (lvCuentas.SelectedItem != null && ((Accounts)lvCuentas.SelectedItem).id == t.account?.id)
+                            {
+                                balanceTotal += t.amount;
+                            }
+                            else if (lvCuentas.SelectedItem == null)
+                            {
+                                balanceTotal += t.amount;
+                            }
+                        }
+                    }
 
-            //    //gvMovimientos.ItemsSource = null;
-            //    //gvMovimientos.ItemsSource = viewTransaction;
-                
-            //    //viewTransaction?.Refresh();
-            //}));
+                    foreach (Transactions t in col.ViewSource)
+                    {
+                        if (t.amount != null)
+                        {
+                            if (lvCuentas.SelectedItem != null && ((Accounts)lvCuentas.SelectedItem).id == t.account?.id)
+                            {
+                                t.balance = balanceTotal;
+                                balanceTotal -= t.amount;
+                                
+                            }
+                            else if (lvCuentas.SelectedItem == null)
+                            {
+                                t.balance = balanceTotal;
+                                balanceTotal -= t.amount;                                
+                            }
+
+                            addSaldoCuenta(t.account?.id, t.amount.Value);
+                        }
+                    }
+                }
+
+
+                //gvMovimientos.SortColumnDescriptions.Clear();
+                //gvMovimientos.SortColumnDescriptions.Add(new Syncfusion.UI.Xaml.Grid.SortColumnDescription()
+                //{ ColumnName = "orden", SortDirection = ListSortDirection.Descending });
+
+
+                //viewAccounts?.Refresh();
+                //gvMovimientos.View.Refresh();
+
+                //gvMovimientos.ItemsSource = null;
+                //gvMovimientos.ItemsSource = viewTransaction;
+
+                //viewTransaction?.Refresh();
+            }));
         }
 
 
@@ -125,9 +158,8 @@ namespace GastosRYC
 
             if (rycContext?.transactions != null)
             {
-                viewTransaction = new ObservableCollection<Transactions>(from x in rycContext.transactions
-                                                                         select x);
-                gvMovimientos.ItemsSource = CollectionViewSource.GetDefaultView(rycContext.transactions.ToList());
+                viewTransaction = new ObservableCollection<Transactions>(rycContext.transactions);
+                gvMovimientos.ItemsSource = viewTransaction;
             }
 
             gvMovimientos.ItemsSource = viewTransaction;
@@ -157,8 +189,8 @@ namespace GastosRYC
 
         private void lvCuentas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ApplyFilters();            
-            //gvMovimientos.Columns.FirstOrDefault(x => x.MappingName == "account").IsHidden = true;            
+            ApplyFilters();
+            gvMovimientos.Columns["accountid"].IsHidden = true;           
         }
 
         private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
