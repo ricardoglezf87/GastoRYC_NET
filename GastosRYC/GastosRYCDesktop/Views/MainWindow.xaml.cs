@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace GastosRYC
 {
@@ -19,11 +20,14 @@ namespace GastosRYC
 
         private RYCContext? rycContext;
         private ICollectionView? viewAccounts;
+        private Boolean needRefresh;
+        private DispatcherTimer dispatcherTimer;
 
         public MainWindow()
         {
             InitializeComponent();
             loadContext();
+            loadTimer();
         }
 
         private void loadContext()
@@ -35,6 +39,24 @@ namespace GastosRYC
             rycContext.accountsTypes?.Load();
             rycContext.accounts?.Load();
             rycContext.transactions?.Load();
+        }
+
+        private void loadTimer()
+        {
+            needRefresh = false;
+            dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0,100);
+            dispatcherTimer.Start();
+        }
+
+        private void dispatcherTimer_Tick(object? sender, EventArgs e)
+        {
+            if (needRefresh)
+            {
+                refreshBalance();
+                needRefresh = false;
+            }
         }
 
         private void reiniciarSaldosCuentas()
@@ -125,14 +147,14 @@ namespace GastosRYC
                 gvMovimientos.ItemsSource = viewTransaction;
             }
 
-            refreshBalance();
+            needRefresh = true;
         }
 
         public void ApplyFilters()
         {
             gvMovimientos.View.Filter = accountFilter;
             gvMovimientos.View.RefreshFilter();
-            refreshBalance();
+            needRefresh = true;
         }
 
         public bool accountFilter(object? o)
@@ -149,8 +171,7 @@ namespace GastosRYC
 
         private void lvCuentas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ApplyFilters();
-            
+            ApplyFilters();            
             gvMovimientos.Columns["accountid"].IsHidden = true;
         }
 
@@ -162,7 +183,7 @@ namespace GastosRYC
         private void gvMovimientos_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {            
             saveChanges((Transactions)e.RowData);
-            refreshBalance();
+            needRefresh = true;
         }
 
         private void saveChanges(Transactions transactions)
