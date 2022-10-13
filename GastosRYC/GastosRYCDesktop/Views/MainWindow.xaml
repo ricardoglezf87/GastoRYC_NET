@@ -14,7 +14,8 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.Column="0">
+        <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.Column="0"
+                  SizeChanged="lvCuentas_SizeChanged">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -24,7 +25,7 @@
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
-                    <GridViewColumn   DisplayMemberBinding="{Binding balance}"  />
+                    <GridViewColumn   DisplayMemberBinding="{Binding balance}" />
                 </GridView>
             </ListView.View>
             <ListView.GroupStyle>
@@ -51,12 +52,10 @@
             </ListView.GroupStyle>
         </ListView>
         <input:SfGridSplitter Name="gridSplitter"
-                                   HorizontalAlignment="Stretch" 
-                                   ResizeBehavior="PreviousAndNext"
-                                   Width="auto"
-                                   Grid.Column="1">
+                              HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
+                              Width="auto" Grid.Column="1">
         </input:SfGridSplitter>
-        <GridSplitter Grid.Column="2" Width="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" />
+        <GridSplitter Grid.Column="2" Width="5" HorizontalAlignment="Stretch"  />
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvMovimientos"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
                                AddNewRowText="Hacer Click aquí para añadir nueva linea" CanMaintainScrollPosition="True"

@@ -46,7 +46,7 @@ namespace GastosRYC
             needRefresh = false;
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0,100);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             dispatcherTimer.Start();
         }
 
@@ -123,6 +123,20 @@ namespace GastosRYC
                 }
 
                 viewAccounts?.Refresh();
+                autoResizeListView();
+
+            }
+        }
+
+        private void autoResizeListView() 
+        {
+            double remainingSpace = lvCuentas.ActualWidth * .95;
+            GridView? gv = (lvCuentas.View as GridView);
+
+            if (remainingSpace > 0)
+            {
+                gv.Columns[0].Width = Math.Ceiling(remainingSpace / 2);
+                gv.Columns[1].Width = Math.Ceiling(remainingSpace / 2);                
             }
         }
 
@@ -173,12 +187,7 @@ namespace GastosRYC
         {
             ApplyFilters();            
             gvMovimientos.Columns["accountid"].IsHidden = true;
-        }
-
-        private void GridSplitter_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
-        {
-            lvCuentas.HorizontalContentAlignment = HorizontalAlignment.Stretch;
-        }
+        }        
 
         private void gvMovimientos_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {            
@@ -231,6 +240,11 @@ namespace GastosRYC
                 e.IsValid = false;
                 e.ErrorMessages.Add("amount", "Tiene que rellenar la cantidad");
             }
+        }       
+
+        private void lvCuentas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            autoResizeListView();
         }
     }
 }
