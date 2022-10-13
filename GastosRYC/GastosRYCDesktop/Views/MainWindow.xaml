@@ -53,9 +53,11 @@
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" DragDelta="GridSplitter_DragDelta" />
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvMovimientos"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
+                               AddNewRowText="Hacer Click aquí para añadir nueva linea" CanMaintainScrollPosition="True"
                                AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="false"
-                               RowValidated="gvMovimientos_RowValidated"
-                               EditTrigger="OnTap"  ScrollMode="Async">
+                               RowValidated="gvMovimientos_RowValidated" AddNewRowInitiating="gvMovimientos_AddNewRowInitiating"
+                               EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star" LiveDataUpdateMode="AllowDataShaping"
+                               RowValidating="gvMovimientos_RowValidating">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

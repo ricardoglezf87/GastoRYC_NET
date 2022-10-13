@@ -1,19 +1,13 @@
 ﻿using GastosRYCLib.Manager;
 using GastosRYCLib.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Syncfusion.Data.Extensions;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -24,7 +18,6 @@ namespace GastosRYC
     {
 
         private RYCContext? rycContext;
-        private ObservableCollection<Transactions>? viewTransaction;
         private ICollectionView? viewAccounts;
 
         public MainWindow()
@@ -74,7 +67,7 @@ namespace GastosRYC
         {
             Decimal? balanceTotal = 0;
 
-            if (viewTransaction != null)
+            if (gvMovimientos.View != null)
             {
                 reiniciarSaldosCuentas();
 
@@ -106,6 +99,7 @@ namespace GastosRYC
                         addSaldoCuenta(t.account?.id, t.amount.Value);
                     }
                 }
+
                 viewAccounts?.Refresh();
             }
         }
@@ -123,13 +117,13 @@ namespace GastosRYC
 
             cbCategories.ItemsSource = rycContext?.categories?.ToList();
 
+            ObservableCollection<Transactions>? viewTransaction;
+
             if (rycContext?.transactions != null)
             {
                 viewTransaction = new ObservableCollection<Transactions>(rycContext.transactions);
                 gvMovimientos.ItemsSource = viewTransaction;
             }
-
-            gvMovimientos.ItemsSource = viewTransaction;
 
             refreshBalance();
         }
@@ -156,6 +150,7 @@ namespace GastosRYC
         private void lvCuentas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyFilters();
+            
             gvMovimientos.Columns["accountid"].IsHidden = true;
         }
 
@@ -165,16 +160,56 @@ namespace GastosRYC
         }
 
         private void gvMovimientos_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
-        {
+        {            
             saveChanges((Transactions)e.RowData);
             refreshBalance();
         }
 
         private void saveChanges(Transactions transactions)
         {
-            rycContext.Update(transactions);
+            rycContext.Update(transactions);          
             rycContext?.SaveChanges();
             gvMovimientos.View.Refresh();
+        }
+
+        private void gvMovimientos_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
+        {
+            var data = e.NewObject as Transactions;
+            data.date = DateTime.Now;
+
+            if (lvCuentas.SelectedItem != null)
+            {
+                data.accountid = (lvCuentas.SelectedItem as Accounts).id;
+            }
+        }
+
+        private void gvMovimientos_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
+        {
+            Transactions transactions = (Transactions)e.RowData;
+
+            if (transactions.date == null)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("date", "Tiene que rellenar la fecha");
+            }
+
+            if (transactions.accountid == null)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("accountid", "Tiene que rellenar la cuenta");
+            }
+
+            if (transactions.categoryid == null)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
+            }
+            
+            if (transactions.amount == null)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("amount", "Tiene que rellenar la cantidad");
+            }
         }
     }
 }
