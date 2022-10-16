@@ -1,7 +1,5 @@
-﻿using GastosRYCLib.Manager;
-using GastosRYCLib.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using GastosRYC.BBDDLib.Services;
+using BBDDLib.Models;
 using Syncfusion.Data.Extensions;
 using System;
 using System.Collections.Generic;
@@ -17,28 +15,21 @@ namespace GastosRYC
 {
     public partial class MainWindow : Window
     {
+        
 
-        private RYCContext? rycContext;
         private ICollectionView? viewAccounts;
         private Boolean needRefresh;
-        private DispatcherTimer dispatcherTimer;
+        private DispatcherTimer? dispatcherTimer;
+
+        private readonly AccountsService accountsService = new AccountsService();
+        private readonly CategoriesService categoriesService = new CategoriesService();
+        private readonly PersonService personService = new PersonService();
+        private readonly TransactionsService transactionsService = new TransactionsService();
 
         public MainWindow()
         {
-            InitializeComponent();
-            loadContext();
+            InitializeComponent();         
             loadTimer();
-        }
-
-        private void loadContext()
-        {
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-            rycContext = new RYCContext();
-            rycContext.categories?.Load();
-            rycContext.persons?.Load();
-            rycContext.accountsTypes?.Load();
-            rycContext.accounts?.Load();
-            rycContext.transactions?.Load();
         }
 
         private void loadTimer()
@@ -142,24 +133,15 @@ namespace GastosRYC
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            viewAccounts = CollectionViewSource.GetDefaultView(rycContext?.accounts?.ToList());
+            viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
             lvCuentas.ItemsSource = viewAccounts;
             viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
 
-            cbAccounts.ItemsSource = rycContext?.accounts?.ToList();
-
-            cbPersons.ItemsSource = rycContext?.persons?.ToList();
-
-            cbCategories.ItemsSource = rycContext?.categories?.ToList();
-
-            ObservableCollection<Transactions>? viewTransaction;
-
-            if (rycContext?.transactions != null)
-            {
-                viewTransaction = new ObservableCollection<Transactions>(rycContext.transactions);
-                gvMovimientos.ItemsSource = viewTransaction;
-            }
+            cbAccounts.ItemsSource = accountsService.getAll();
+            cbPersons.ItemsSource = personService.getAll();
+            cbCategories.ItemsSource = categoriesService.getAll();
+            gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
 
             needRefresh = true;
         }
@@ -197,8 +179,7 @@ namespace GastosRYC
 
         private void saveChanges(Transactions transactions)
         {
-            rycContext.Update(transactions);          
-            rycContext?.SaveChanges();
+            transactionsService.update(transactions);
             gvMovimientos.View.Refresh();
         }
 

@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace GastosRYCLib.Models
+namespace BBDDLib.Models
 {
     public class Persons
     {

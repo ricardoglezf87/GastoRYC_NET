@@ -8,14 +8,17 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace GastosRYCLib.Models
+namespace BBDDLib.Models
 {
-    public class Categories
+    public class AccountsTypes
     {
         [Key]
         public virtual long id { set; get; }
 
         public virtual String? description { set; get; }
 
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public virtual List<Accounts>? accounts { set; get; }
     }
 }

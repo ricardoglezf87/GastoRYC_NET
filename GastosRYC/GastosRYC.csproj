@@ -12,9 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
     <PackageReference Include="Syncfusion.SfGrid.WPF" Version="20.3.0.49" />
-    <PackageReference Include="syncfusion.ui.wpf.net" Version="20.3.0.47" />
+    <PackageReference Include="syncfusion.ui.wpf.net" Version="20.3.0.49" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BBDDLib\BBDDLib.csproj" />
   </ItemGroup>
 
 </Project>

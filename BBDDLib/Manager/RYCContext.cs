@@ -1,4 +1,4 @@
-﻿using GastosRYCLib.Models;
+﻿using BBDDLib.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GastosRYCLib.Manager
+namespace BBDDLib.Manager
 {
     public class RYCContext : DbContext
     {
