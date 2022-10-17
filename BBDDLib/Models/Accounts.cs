@@ -21,6 +21,10 @@ namespace BBDDLib.Models
 
         public virtual AccountsTypes? accountsTypes { set; get; }
 
+        public virtual int? categoryid { set; get; }
+
+        public virtual Categories? category { set; get; }
+
         [NotMapped]
         public virtual  Decimal balance { set; get; }
     }
