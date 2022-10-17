@@ -122,13 +122,13 @@ namespace GastosRYC
 
         private void autoResizeListView() 
         {
-            double remainingSpace = lvCuentas.ActualWidth * .95;
+            double remainingSpace = lvCuentas.ActualWidth * .93;
             GridView? gv = (lvCuentas.View as GridView);
 
             if (remainingSpace > 0)
             {
-                gv.Columns[0].Width = Math.Ceiling(remainingSpace / 2);
-                gv.Columns[1].Width = Math.Ceiling(remainingSpace / 2);                
+                gv.Columns[0].Width = Math.Ceiling(remainingSpace * .6);
+                gv.Columns[1].Width = Math.Ceiling(remainingSpace * .4);                
             }
         }
 
