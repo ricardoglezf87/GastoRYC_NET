@@ -13,11 +13,11 @@ namespace BBDDLib.Models
     public class Accounts
     {
         [Key]
-        public virtual long id { set; get; }
+        public virtual int id { set; get; }
 
         public virtual String? description { set; get; }
 
-        public virtual long accountsTypesid { set; get; }
+        public virtual int accountsTypesid { set; get; }
 
         public virtual AccountsTypes? accountsTypes { set; get; }
 

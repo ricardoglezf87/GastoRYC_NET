@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -13,7 +14,7 @@ namespace BBDDLib.Models
     public class AccountsTypes
     {
         [Key]
-        public virtual long id { set; get; }
+        public virtual int id { set; get; }
 
         public virtual String? description { set; get; }
 

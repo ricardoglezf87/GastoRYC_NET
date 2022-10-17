@@ -14,7 +14,7 @@ namespace GastosRYC.BBDDLib.Services
             return RYCContextService.Instance.BBDD.persons?.ToList();
         }
 
-        public Persons? getByID(long? id)
+        public Persons? getByID(int? id)
         {
             return RYCContextService.Instance.BBDD.persons?.FirstOrDefault(x => id.Equals(x.id));
         }

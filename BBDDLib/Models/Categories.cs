@@ -13,7 +13,7 @@ namespace BBDDLib.Models
     public class Categories
     {
         [Key]
-        public virtual long id { set; get; }
+        public virtual int id { set; get; }
 
         public virtual String? description { set; get; }
 

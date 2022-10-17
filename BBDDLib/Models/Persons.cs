@@ -13,7 +13,7 @@ namespace BBDDLib.Models
     public class Persons
     {
         [Key]
-        public virtual long id { set; get; }
+        public virtual int id { set; get; }
 
         public virtual String? name { set; get; }
     }

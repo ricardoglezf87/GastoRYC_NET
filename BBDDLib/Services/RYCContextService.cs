@@ -19,8 +19,7 @@ namespace GastosRYC.BBDDLib.Services
         }
 
         private void loadContext()
-        {
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);            
+        {        
             context.categories?.Load();
             context.persons?.Load();
             context.accountsTypes?.Load();

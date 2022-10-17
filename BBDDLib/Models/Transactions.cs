@@ -7,19 +7,19 @@ namespace BBDDLib.Models
 {
     public class Transactions
     {
-        public virtual long id { set; get; }
+        public virtual int id { set; get; }
 
         public virtual DateTime? date { set; get; }
 
-        public virtual long? accountid { set; get; }
+        public virtual int? accountid { set; get; }
 
         public virtual Accounts? account { set; get; }
 
-        public virtual long? personid { set; get; }
+        public virtual int? personid { set; get; }
 
         public virtual Persons? person { set; get; }
 
-        public virtual long? categoryid { set; get; }
+        public virtual int? categoryid { set; get; }
 
         public virtual Categories? category { set; get; }
 
