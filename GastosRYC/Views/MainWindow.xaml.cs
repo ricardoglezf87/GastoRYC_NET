@@ -179,6 +179,12 @@ namespace GastosRYC
 
         private void saveChanges(Transactions transactions)
         {
+            if (transactions.amountIn == null)
+                transactions.amountIn = 0;
+
+            if (transactions.amountOut == null)
+                transactions.amountOut = 0;
+
             transactionsService.update(transactions);
             gvMovimientos.View.Refresh();
         }
@@ -216,10 +222,11 @@ namespace GastosRYC
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
             }
             
-            if (transactions.amount == null)
+            if (transactions.amountIn == null && transactions.amountOut == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("amount", "Tiene que rellenar la cantidad");
+                e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
+                e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
             }
         }       
 

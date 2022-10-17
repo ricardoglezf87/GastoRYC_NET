@@ -81,7 +81,8 @@
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbCategories" MappingName="categoryid" 
                                                 DisplayMemberPath="description" SelectedValuePath="id" />
-                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad"/>
+                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Ingreso"/>
+                <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
                 <syncfusion:GridTextColumn MappingName="orden" IsHidden="True" />
             </syncfusion:SfDataGrid.Columns>

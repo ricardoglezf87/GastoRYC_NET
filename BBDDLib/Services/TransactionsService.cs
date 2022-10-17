@@ -20,7 +20,7 @@ namespace GastosRYC.BBDDLib.Services
         }
 
         public void update(Transactions transactions)
-        {
+        {            
             RYCContextService.Instance.BBDD.Update(transactions);
             RYCContextService.Instance.BBDD.SaveChanges();
         }

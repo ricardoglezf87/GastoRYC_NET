@@ -23,7 +23,12 @@ namespace BBDDLib.Models
 
         public virtual Categories? category { set; get; }
 
-        public virtual Decimal? amount { set; get; }
+        public virtual Decimal? amountIn { set; get; }
+
+        public virtual Decimal? amountOut { set; get; }
+
+        [NotMapped]
+        public virtual Decimal? amount { get { return amountIn - amountOut; } }
 
         [NotMapped]
         public virtual Double? orden { 
@@ -33,7 +38,7 @@ namespace BBDDLib.Models
                     + date?.Month.ToString("00")
                     + date?.Day.ToString("00")
                     + id.ToString("000000")
-                    + (amount < 0 ? "1" : "0")); 
+                    + (amountIn != 0 ? "1" : "0")); 
             } 
         }
 
