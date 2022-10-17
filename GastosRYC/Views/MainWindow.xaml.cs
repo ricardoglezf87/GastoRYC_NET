@@ -25,6 +25,7 @@ namespace GastosRYC
         private readonly CategoriesService categoriesService = new CategoriesService();
         private readonly PersonService personService = new PersonService();
         private readonly TransactionsService transactionsService = new TransactionsService();
+        private readonly TransactionsStatusService transactionsStatusService = new TransactionsStatusService();
 
         public MainWindow()
         {
@@ -141,6 +142,7 @@ namespace GastosRYC
             cbAccounts.ItemsSource = accountsService.getAll();
             cbPersons.ItemsSource = personService.getAll();
             cbCategories.ItemsSource = categoriesService.getAll();
+            cbTransStatus.ItemsSource = transactionsStatusService.getAll();
             gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
 
             needRefresh = true;
@@ -198,6 +200,8 @@ namespace GastosRYC
             {
                 data.accountid = (lvCuentas.SelectedItem as Accounts).id;
             }
+
+            data.transactionStatusid = transactionsStatusService.getFirst()?.id;
         }
 
         private void gvMovimientos_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -227,6 +231,12 @@ namespace GastosRYC
                 e.IsValid = false;
                 e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
                 e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
+            }
+
+            if (transactions.transactionStatusid == null )
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("transactionStatusid", "Tiene que rellenar el estado");
             }
         }       
 

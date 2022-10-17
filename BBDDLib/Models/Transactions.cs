@@ -27,6 +27,10 @@ namespace BBDDLib.Models
 
         public virtual Decimal? amountOut { set; get; }
 
+        public virtual int? transactionStatusid { set; get; }
+
+        public virtual TransactionsStatus? transactionStatus { set; get; }
+
         [NotMapped]
         public virtual Decimal? amount { get { return amountIn - amountOut; } }
 

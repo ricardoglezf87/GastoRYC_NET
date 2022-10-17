@@ -29,7 +29,7 @@ INSERT INTO persons ("name") VALUES
 	 ('Mercadona'),
 	 ('Alcampo');
 
-insert into transactionStatus  (description) values 
+insert into transactionsStatus  (description) values 
 	 ('Pendiente'),
 	 ('Provisional'),
 	 ('Conciliado');

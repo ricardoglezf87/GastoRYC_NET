@@ -24,6 +24,7 @@ namespace GastosRYC.BBDDLib.Services
             context.persons?.Load();
             context.accountsTypes?.Load();
             context.accounts?.Load();
+            context.transactionsStatus?.Load();
             context.transactions?.Load();
         }
 
