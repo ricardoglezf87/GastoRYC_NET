@@ -14,9 +14,7 @@ using System.Windows.Threading;
 namespace GastosRYC
 {
     public partial class MainWindow : Window
-    {
-        
-
+    {        
         private ICollectionView? viewAccounts;
         private Boolean needRefresh;
         private DispatcherTimer? dispatcherTimer;
@@ -87,7 +85,7 @@ namespace GastosRYC
 
                 Syncfusion.UI.Xaml.Grid.
                     GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
-                    GridQueryableCollectionViewWrapper)gvMovimientos.View;
+                        GridQueryableCollectionViewWrapper)gvMovimientos.View;
 
                 if (lvCuentas.SelectedItem != null)
                     balanceTotal = (decimal?)col.ViewSource.Where("accountid",
@@ -144,13 +142,21 @@ namespace GastosRYC
             cbCategories.ItemsSource = categoriesService.getAll();
             cbTransStatus.ItemsSource = transactionsStatusService.getAll();
             gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
-
+            
             needRefresh = true;
         }
 
         public void ApplyFilters()
         {
-            gvMovimientos.View.Filter = accountFilter;
+            if (lvCuentas.SelectedValue != null)
+            {
+                gvMovimientos.View.Filter = accountFilter;
+            }
+            else
+            {
+                gvMovimientos.View.Filter = null;
+            }
+
             gvMovimientos.View.RefreshFilter();
             needRefresh = true;
         }
@@ -181,14 +187,77 @@ namespace GastosRYC
 
         private void saveChanges(Transactions transactions)
         {
+            if (transactions.account == null && transactions.accountid != null)
+            {
+                transactions.account = accountsService.getByID(transactions.accountid);               
+                transactions.person = personService.getByID(transactions.personid);               
+                transactions.category = categoriesService.getByID(transactions.categoryid);
+                transactions.transactionStatus = transactionsStatusService.getByID(transactions.transactionStatusid);
+            }
+
             if (transactions.amountIn == null)
                 transactions.amountIn = 0;
 
             if (transactions.amountOut == null)
                 transactions.amountOut = 0;
 
+            updateTranfer(transactions);            
             transactionsService.update(transactions);
-            gvMovimientos.View.Refresh();
+
+            gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
+            ApplyFilters();
+
+
+        }
+
+        private void updateTranfer(Transactions transactions)
+        {
+            if (transactions.transactionid != null && transactions.category.categoriesTypesid != 3)
+            {
+                Transactions? tContraria = transactionsService.getByID(transactions.transactionid);
+                if (tContraria != null)
+                {
+                    transactionsService.delete(tContraria);
+                }
+                transactions.transactionid = null;
+            }
+            else if (transactions.transactionid == null && transactions.category.categoriesTypesid == 3)
+            {
+                transactions.transactionid = transactionsService.getNextID();
+
+                Transactions? tContraria = new Transactions();
+                tContraria.date = transactions.date;
+                tContraria.accountid = transactions.category.accounts.id;
+                tContraria.personid = transactions.personid;
+                tContraria.categoryid = transactions.account.categoryid;
+                tContraria.amountIn = transactions.amountOut;
+                tContraria.amountOut = transactions.amountIn;
+                
+                if (transactions.id != 0)                
+                    tContraria.transactionid = transactions.id;
+                else
+                    tContraria.transactionid = transactionsService.getNextID() + 1;
+
+                tContraria.transactionStatusid = transactions.transactionStatusid;
+
+                transactionsService.update(tContraria);
+                
+            }
+            else if (transactions.transactionid != null && transactions.category.categoriesTypesid == 3)
+            {
+                Transactions? tContraria = transactionsService.getByID(transactions.transactionid);
+                if (tContraria != null)
+                {
+                    tContraria.date = transactions.date;
+                    tContraria.accountid = transactions.category.accounts.id;
+                    tContraria.personid = transactions.personid;
+                    tContraria.categoryid = transactions.account.categoryid;
+                    tContraria.amountIn = transactions.amountOut;
+                    tContraria.amountOut = transactions.amountIn;
+                    tContraria.transactionStatusid = transactions.transactionStatusid;
+                    transactionsService.update(tContraria);
+                }                
+            }
         }
 
         private void gvMovimientos_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
@@ -243,6 +312,29 @@ namespace GastosRYC
         private void lvCuentas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             autoResizeListView();
+        }
+
+        private void gvMovimientos_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        {
+            Transactions transactions = (Transactions)gvMovimientos.SelectedItem;
+            if (transactions != null)
+            {
+                switch (gvMovimientos.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
+                {
+                    case "accountid":
+                        transactions.account = accountsService.getByID(transactions.accountid);
+                        break;
+                    case "personid":
+                        transactions.person = personService.getByID(transactions.personid);
+                        break;
+                    case "categoryid":
+                        transactions.category = categoriesService.getByID(transactions.categoryid);
+                        break;
+                    case "transactionStatusid":
+                        transactions.transactionStatus = transactionsStatusService.getByID(transactions.transactionStatusid);
+                        break;
+                }
+            }
         }
     }
 }

@@ -27,6 +27,8 @@ namespace BBDDLib.Models
 
         public virtual Decimal? amountOut { set; get; }
 
+        public virtual int? transactionid { set; get; }
+
         public virtual int? transactionStatusid { set; get; }
 
         public virtual TransactionsStatus? transactionStatus { set; get; }

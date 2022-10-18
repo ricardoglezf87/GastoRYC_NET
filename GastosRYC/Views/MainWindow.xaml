@@ -60,8 +60,8 @@
                                AddNewRowText="Hacer Click aquí para añadir nueva linea" CanMaintainScrollPosition="True"
                                AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="false"
                                RowValidated="gvMovimientos_RowValidated" AddNewRowInitiating="gvMovimientos_AddNewRowInitiating"
-                               EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star" LiveDataUpdateMode="AllowDataShaping"
-                               RowValidating="gvMovimientos_RowValidating">
+                               EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star"
+                               RowValidating="gvMovimientos_RowValidating" CurrentCellDropDownSelectionChanged="gvMovimientos_CurrentCellDropDownSelectionChanged">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

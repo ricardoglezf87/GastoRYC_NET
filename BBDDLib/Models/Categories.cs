@@ -21,5 +21,9 @@ namespace BBDDLib.Models
 
         public virtual CategoriesTypes? categoriesTypes { set; get; }
 
+        [JsonIgnore]
+        [IgnoreDataMember]
+        public virtual Accounts? accounts { set; get; }
+
     }
 }
