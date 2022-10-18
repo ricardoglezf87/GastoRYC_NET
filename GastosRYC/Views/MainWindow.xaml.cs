@@ -11,6 +11,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 
+//TODO: implementar split
+
 namespace GastosRYC
 {
     public partial class MainWindow : Window
@@ -335,6 +337,26 @@ namespace GastosRYC
                         break;
                 }
             }
+        }
+
+        private void MenuItem_Cuentas_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Formulario emergente con mantenimiento de cuentas
+        }
+
+        private void MenuItem_Personas_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Formulario emergente con mantenimiento de personas
+        }
+
+        private void MenuItem_Categorias_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Formulario emergente con mantenimiento de categorias
+        }
+
+        private void MenuItem_Salir_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

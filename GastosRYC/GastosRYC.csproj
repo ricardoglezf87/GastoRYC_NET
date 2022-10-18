@@ -9,7 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Resources\Logo.ico" />
+    <None Remove="Views\Logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Logo.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +29,16 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BBDDLib\BBDDLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Views\Logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Resources\Logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
