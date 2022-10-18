@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized">
+        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -13,7 +13,7 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-
+        
         <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.Column="0"
                   SizeChanged="lvCuentas_SizeChanged">
             <ListView.Resources>
@@ -55,7 +55,6 @@
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
                               Width="auto" Grid.Column="1">
         </input:SfGridSplitter>
-        <GridSplitter Grid.Column="2" Width="5" HorizontalAlignment="Stretch"  />
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvMovimientos"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
                                AddNewRowText="Hacer Click aquí para añadir nueva linea" CanMaintainScrollPosition="True"
