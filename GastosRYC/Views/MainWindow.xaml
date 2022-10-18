@@ -5,20 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
         mc:Ignorable="d"
-        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized">
+        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Views/Logo.png">
     
     <Grid>
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="50" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -34,11 +32,7 @@
             </Menu>
             <TextBox AcceptsReturn="True" />
         </DockPanel>
-
-        <Image Grid.Column="0" Grid.Row="1" Source="/Views/Logo.png" Margin="5" />
-        <TextBlock Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="22" FontWeight="Bold" > Gastos RYC</TextBlock>
-
-        <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"
+        <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.Column="0" Grid.Row="1" 
                   SizeChanged="lvCuentas_SizeChanged">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
@@ -77,15 +71,14 @@
         </ListView>
         <input:SfGridSplitter Name="gridSplitter"
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
-                              Width="auto" Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
-        </input:SfGridSplitter>
-        <syncfusion:SfDataGrid Grid.Column="3" x:Name="gvMovimientos"
+                              Width="auto" Grid.Column="1" Grid.Row="1"/>
+        <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvMovimientos"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
                                AddNewRowText="Hacer Click aquí para añadir nueva linea" CanMaintainScrollPosition="True"
                                AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="false"
                                RowValidated="gvMovimientos_RowValidated" AddNewRowInitiating="gvMovimientos_AddNewRowInitiating"
                                EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star"
-                               RowValidating="gvMovimientos_RowValidating" CurrentCellDropDownSelectionChanged="gvMovimientos_CurrentCellDropDownSelectionChanged" Grid.Row="1" Grid.RowSpan="2">
+                               RowValidating="gvMovimientos_RowValidating" CurrentCellDropDownSelectionChanged="gvMovimientos_CurrentCellDropDownSelectionChanged" Grid.Row="1" Grid.ColumnSpan="9">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
