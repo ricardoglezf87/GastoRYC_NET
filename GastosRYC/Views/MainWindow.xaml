@@ -26,7 +26,7 @@
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_Opciones">
                     <MenuItem Header="_Cuentas" Click="MenuItem_Cuentas_Click" />
-                    <MenuItem Header="_Personas" Click="MenuItem_Personas_Click_"/>
+                    <MenuItem Header="_Personas" Click="MenuItem_Personas_Click"/>
                     <MenuItem Header="_Categorias" Click="MenuItem_Categorias_Click" />
                     <Separator />
                     <MenuItem Header="_Salir" Click="MenuItem_Salir_Click"/>
