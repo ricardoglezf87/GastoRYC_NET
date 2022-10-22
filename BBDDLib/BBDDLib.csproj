@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
@@ -15,11 +15,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="BBDD\Data.mdf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    <None Update="Data\Data.mdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="BBDD\Data_log.ldf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    <None Update="Data\Data_log.ldf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Test.mdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Test_log.ldf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

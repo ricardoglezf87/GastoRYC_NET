@@ -12,9 +12,9 @@ namespace BBDDLib.Helpers
         public static string getPathDDBB()
         {
 #if DEBUG
-            return AppDomain.CurrentDomain.BaseDirectory + "Test.mdf";
+            return AppDomain.CurrentDomain.BaseDirectory + "Data\\Test.mdf";
 #else
-            return AppDomain.CurrentDomain.BaseDirectory +  "Data.mdf";
+            return AppDomain.CurrentDomain.BaseDirectory +  "Data\\Data.mdf";
 #endif
         }
     }

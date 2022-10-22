@@ -41,7 +41,7 @@ namespace GastosRYC.BBDDLib.Services
             }
             else
             {
-                throw new DataBaseNotFoundException("No se encuentra la BBDD en la ubicación del ejecutable");
+                throw new DataBaseNotFoundException("No se encuentra la BBDD en la ubicación del ejecutable:\n" + PathHelpers.getPathDDBB());
             }
 
         }
