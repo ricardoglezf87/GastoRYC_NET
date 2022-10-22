@@ -12,34 +12,34 @@ namespace GastosRYC.BBDDLib.Services
     {
         public List<Transactions>? getAll()
         {
-            return RYCContextService.Instance.BBDD.transactions?.ToList();
+            return RYCContextService.getInstance().BBDD.transactions?.ToList();
         }
 
         public Transactions? getByID(int? id)
         {
-            return RYCContextService.Instance.BBDD.transactions?.FirstOrDefault(x => id.Equals(x.id));
+            return RYCContextService.getInstance().BBDD.transactions?.FirstOrDefault(x => id.Equals(x.id));
         }
 
         public void update(Transactions transactions)
         {            
-            RYCContextService.Instance.BBDD.Update(transactions);
-            RYCContextService.Instance.BBDD.SaveChanges();
+            RYCContextService.getInstance().BBDD.Update(transactions);
+            RYCContextService.getInstance().BBDD.SaveChanges();
         }
 
         public void delete(Transactions transactions)
         {
-            RYCContextService.Instance.BBDD.Remove(transactions);
-            RYCContextService.Instance.BBDD.SaveChanges();
+            RYCContextService.getInstance().BBDD.Remove(transactions);
+            RYCContextService.getInstance().BBDD.SaveChanges();
         }
 
 
         public int getNextID()
         {
-            var cmd = RYCContextService.Instance.BBDD.Database.
+            var cmd = RYCContextService.getInstance().BBDD.Database.
                 GetDbConnection().CreateCommand();
             cmd.CommandText = "SELECT CASE WHEN (SELECT COUNT(1) FROM transactions) = 0 THEN 1 ELSE convert(int,IDENT_CURRENT('transactions') + 1) END AS Current_Identity;";
             
-            RYCContextService.Instance.BBDD.Database.OpenConnection();
+            RYCContextService.getInstance().BBDD.Database.OpenConnection();
             var result = cmd.ExecuteReader();
             result.Read();
             int id = (int) result[0];

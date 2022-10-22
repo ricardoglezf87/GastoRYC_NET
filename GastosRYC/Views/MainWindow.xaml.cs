@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
+using System.Windows.Interop;
+using BBDDLib.Exceptions;
 
 //TODO: implementar split
 
@@ -134,18 +136,25 @@ namespace GastosRYC
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
-            lvCuentas.ItemsSource = viewAccounts;
-            viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
-            viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
+            try
+            {
+                viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
+                lvCuentas.ItemsSource = viewAccounts;
+                viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
+                viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
 
-            cbAccounts.ItemsSource = accountsService.getAll();
-            cbPersons.ItemsSource = personService.getAll();
-            cbCategories.ItemsSource = categoriesService.getAll();
-            cbTransStatus.ItemsSource = transactionsStatusService.getAll();
-            gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
-            
-            needRefresh = true;
+                cbAccounts.ItemsSource = accountsService.getAll();
+                cbPersons.ItemsSource = personService.getAll();
+                cbCategories.ItemsSource = categoriesService.getAll();
+                cbTransStatus.ItemsSource = transactionsStatusService.getAll();
+                gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
+
+                needRefresh = true;
+            }
+            catch(DataBaseNotFoundException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         public void ApplyFilters()

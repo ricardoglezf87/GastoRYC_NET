@@ -1,5 +1,8 @@
-﻿using BBDDLib.Models;
+﻿using BBDDLib.Helpers;
+using BBDDLib.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using System.Windows;
 
 namespace BBDDLib.Manager
 {
@@ -12,17 +15,8 @@ namespace BBDDLib.Manager
         public DbSet<Categories>? categories { get; set; }
         public DbSet<TransactionsStatus>? transactionsStatus { get; set; }
 
-        private string getPathDDBB()
-        {
-#if DEBUG
-            return "C:\\Users\\Ricardo\\source\\repos\\GastosRYC_ASP\\BBDDLib\\BBDD\\test.mdf";
-#else
-             return "C:\\Users\\Ricardo\\source\\repos\\GastosRYC_ASP\\BBDDLib\\BBDD\\Data.mdf";
-#endif
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-             => optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+ getPathDDBB() + ";Integrated Security=True");
+             => optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+ PathHelpers.getPathDDBB() + ";Integrated Security=True");
 
     }
 }

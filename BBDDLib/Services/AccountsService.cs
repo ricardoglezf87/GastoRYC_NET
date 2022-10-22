@@ -12,12 +12,12 @@ namespace GastosRYC.BBDDLib.Services
 
         public List<Accounts>? getAll()
         {
-            return RYCContextService.Instance.BBDD.accounts?.ToList();
+            return RYCContextService.getInstance().BBDD.accounts?.ToList();
         }
 
         public Accounts? getByID(int? id)
         {
-            return RYCContextService.Instance.BBDD.accounts?.FirstOrDefault(x => id.Equals(x.id));
+            return RYCContextService.getInstance().BBDD.accounts?.FirstOrDefault(x => id.Equals(x.id));
         }
 
     }

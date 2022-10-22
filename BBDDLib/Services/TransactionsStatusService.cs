@@ -12,17 +12,17 @@ namespace GastosRYC.BBDDLib.Services
 
         public List<TransactionsStatus>? getAll()
         {
-            return RYCContextService.Instance.BBDD.transactionsStatus?.ToList();
+            return RYCContextService.getInstance().BBDD.transactionsStatus?.ToList();
         }
 
         public TransactionsStatus? getFirst()
         {
-            return RYCContextService.Instance.BBDD.transactionsStatus?.FirstOrDefault();
+            return RYCContextService.getInstance().BBDD.transactionsStatus?.FirstOrDefault();
         }
 
         public TransactionsStatus? getByID(int? id)
         {
-            return RYCContextService.Instance.BBDD.transactionsStatus?.FirstOrDefault(x => id.Equals(x.id));
+            return RYCContextService.getInstance().BBDD.transactionsStatus?.FirstOrDefault(x => id.Equals(x.id));
         }
 
 

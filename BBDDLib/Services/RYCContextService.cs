@@ -1,7 +1,10 @@
-﻿using BBDDLib.Manager;
+﻿using BBDDLib.Exceptions;
+using BBDDLib.Helpers;
+using BBDDLib.Manager;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +18,7 @@ namespace GastosRYC.BBDDLib.Services
 
         private RYCContextService()
         {
-            loadContext();            
+            loadContext();
         }
 
         private void loadContext()
@@ -30,6 +33,17 @@ namespace GastosRYC.BBDDLib.Services
 
         public RYCContext BBDD { get { return context; } }
 
-        public static RYCContextService Instance { get { return _instance; } }
+        public static RYCContextService getInstance() {
+
+            if (File.Exists(PathHelpers.getPathDDBB()))
+            {
+                return _instance;
+            }
+            else
+            {
+                throw new DataBaseNotFoundException("No se encuentra la BBDD en la ubicación del ejecutable");
+            }
+
+        }
     }
 }
