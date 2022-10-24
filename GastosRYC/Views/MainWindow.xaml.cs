@@ -11,14 +11,13 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 using System.Windows.Interop;
-using BBDDLib.Exceptions;
 
 //TODO: implementar split
 
 namespace GastosRYC
 {
     public partial class MainWindow : Window
-    {        
+    {
         private ICollectionView? viewAccounts;
         private Boolean needRefresh;
         private DispatcherTimer? dispatcherTimer;
@@ -31,7 +30,7 @@ namespace GastosRYC
 
         public MainWindow()
         {
-            InitializeComponent();         
+            InitializeComponent();
             loadTimer();
         }
 
@@ -122,7 +121,7 @@ namespace GastosRYC
             }
         }
 
-        private void autoResizeListView() 
+        private void autoResizeListView()
         {
             double remainingSpace = lvCuentas.ActualWidth * .93;
             GridView? gv = (lvCuentas.View as GridView);
@@ -130,31 +129,24 @@ namespace GastosRYC
             if (remainingSpace > 0)
             {
                 gv.Columns[0].Width = Math.Ceiling(remainingSpace * .6);
-                gv.Columns[1].Width = Math.Ceiling(remainingSpace * .4);                
+                gv.Columns[1].Width = Math.Ceiling(remainingSpace * .4);
             }
         }
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
-                lvCuentas.ItemsSource = viewAccounts;
-                viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
-                viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
+            viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
+            lvCuentas.ItemsSource = viewAccounts;
+            viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
+            viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
 
-                cbAccounts.ItemsSource = accountsService.getAll();
-                cbPersons.ItemsSource = personService.getAll();
-                cbCategories.ItemsSource = categoriesService.getAll();
-                cbTransStatus.ItemsSource = transactionsStatusService.getAll();
-                gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
+            cbAccounts.ItemsSource = accountsService.getAll();
+            cbPersons.ItemsSource = personService.getAll();
+            cbCategories.ItemsSource = categoriesService.getAll();
+            cbTransStatus.ItemsSource = transactionsStatusService.getAll();
+            gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
 
-                needRefresh = true;
-            }
-            catch(DataBaseNotFoundException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            needRefresh = true;
         }
 
         public void ApplyFilters()
@@ -186,12 +178,12 @@ namespace GastosRYC
 
         private void lvCuentas_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ApplyFilters();            
+            ApplyFilters();
             gvMovimientos.Columns["accountid"].IsHidden = true;
-        }        
+        }
 
         private void gvMovimientos_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
-        {            
+        {
             saveChanges((Transactions)e.RowData);
             needRefresh = true;
         }
@@ -200,8 +192,8 @@ namespace GastosRYC
         {
             if (transactions.account == null && transactions.accountid != null)
             {
-                transactions.account = accountsService.getByID(transactions.accountid);               
-                transactions.person = personService.getByID(transactions.personid);               
+                transactions.account = accountsService.getByID(transactions.accountid);
+                transactions.person = personService.getByID(transactions.personid);
                 transactions.category = categoriesService.getByID(transactions.categoryid);
                 transactions.transactionStatus = transactionsStatusService.getByID(transactions.transactionStatusid);
             }
@@ -212,7 +204,7 @@ namespace GastosRYC
             if (transactions.amountOut == null)
                 transactions.amountOut = 0;
 
-            updateTranfer(transactions);            
+            updateTranfer(transactions);
             transactionsService.update(transactions);
 
             gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
@@ -243,8 +235,8 @@ namespace GastosRYC
                 tContraria.categoryid = transactions.account.categoryid;
                 tContraria.amountIn = transactions.amountOut;
                 tContraria.amountOut = transactions.amountIn;
-                
-                if (transactions.id != 0)                
+
+                if (transactions.id != 0)
                     tContraria.transactionid = transactions.id;
                 else
                     tContraria.transactionid = transactionsService.getNextID() + 1;
@@ -252,7 +244,7 @@ namespace GastosRYC
                 tContraria.transactionStatusid = transactions.transactionStatusid;
 
                 transactionsService.update(tContraria);
-                
+
             }
             else if (transactions.transactionid != null && transactions.category.categoriesTypesid == 3)
             {
@@ -267,7 +259,7 @@ namespace GastosRYC
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transactionStatusid = transactions.transactionStatusid;
                     transactionsService.update(tContraria);
-                }                
+                }
             }
         }
 
@@ -305,7 +297,7 @@ namespace GastosRYC
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
             }
-            
+
             if (transactions.amountIn == null && transactions.amountOut == null)
             {
                 e.IsValid = false;
@@ -313,12 +305,12 @@ namespace GastosRYC
                 e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
             }
 
-            if (transactions.transactionStatusid == null )
+            if (transactions.transactionStatusid == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("transactionStatusid", "Tiene que rellenar el estado");
             }
-        }       
+        }
 
         private void lvCuentas_SizeChanged(object sender, SizeChangedEventArgs e)
         {

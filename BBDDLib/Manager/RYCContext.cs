@@ -1,6 +1,7 @@
-﻿using BBDDLib.Helpers;
-using BBDDLib.Models;
+﻿using BBDDLib.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 
@@ -15,8 +16,19 @@ namespace BBDDLib.Manager
         public DbSet<Categories>? categories { get; set; }
         public DbSet<TransactionsStatus>? transactionsStatus { get; set; }
 
+        public RYCContext() : base()
+        {
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                + "\\GastosRYC\\Data\\"))
+                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                + "\\GastosRYC\\Data\\");
+
+            Database.Migrate();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-             => optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+ PathHelpers.getPathDDBB() + ";Integrated Security=True");
+             => optionsBuilder.UseSqlite("Data Source="
+                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+ "\\GastosRYC\\Data\\rycBBDD.db");
 
     }
 }
