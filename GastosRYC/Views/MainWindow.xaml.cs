@@ -25,6 +25,7 @@ namespace GastosRYC
         private readonly AccountsService accountsService = new AccountsService();
         private readonly CategoriesService categoriesService = new CategoriesService();
         private readonly PersonService personService = new PersonService();
+        private readonly TagsService tagsService = new TagsService();
         private readonly TransactionsService transactionsService = new TransactionsService();
         private readonly TransactionsStatusService transactionsStatusService = new TransactionsStatusService();
 
@@ -143,6 +144,7 @@ namespace GastosRYC
             cbAccounts.ItemsSource = accountsService.getAll();
             cbPersons.ItemsSource = personService.getAll();
             cbCategories.ItemsSource = categoriesService.getAll();
+            cbTags.ItemsSource = tagsService.getAll();
             cbTransStatus.ItemsSource = transactionsStatusService.getAll();
             gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
 
@@ -182,6 +184,13 @@ namespace GastosRYC
             gvMovimientos.Columns["accountid"].IsHidden = true;
         }
 
+
+        private void ButtonAdv_Click(object sender, RoutedEventArgs e)
+        {
+            lvCuentas.SelectedItem = null;
+            gvMovimientos.Columns["accountid"].IsHidden = false;
+        }
+
         private void gvMovimientos_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             saveChanges((Transactions)e.RowData);
@@ -195,6 +204,7 @@ namespace GastosRYC
                 transactions.account = accountsService.getByID(transactions.accountid);
                 transactions.person = personService.getByID(transactions.personid);
                 transactions.category = categoriesService.getByID(transactions.categoryid);
+                transactions.tags = tagsService.getByID(transactions.tagsid);
                 transactions.transactionStatus = transactionsStatusService.getByID(transactions.transactionStatusid);
             }
 
@@ -233,6 +243,8 @@ namespace GastosRYC
                 tContraria.accountid = transactions.category.accounts.id;
                 tContraria.personid = transactions.personid;
                 tContraria.categoryid = transactions.account.categoryid;
+                tContraria.memo = transactions.memo;
+                tContraria.tagsid = transactions.tagsid;
                 tContraria.amountIn = transactions.amountOut;
                 tContraria.amountOut = transactions.amountIn;
 
@@ -255,6 +267,8 @@ namespace GastosRYC
                     tContraria.accountid = transactions.category.accounts.id;
                     tContraria.personid = transactions.personid;
                     tContraria.categoryid = transactions.account.categoryid;
+                    tContraria.memo = transactions.memo;
+                    tContraria.tagsid = transactions.tagsid;
                     tContraria.amountIn = transactions.amountOut;
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transactionStatusid = transactions.transactionStatusid;
@@ -333,6 +347,9 @@ namespace GastosRYC
                     case "categoryid":
                         transactions.category = categoriesService.getByID(transactions.categoryid);
                         break;
+                    case "tagsid":
+                        transactions.tags = tagsService.getByID(transactions.tagsid);
+                        break;
                     case "transactionStatusid":
                         transactions.transactionStatus = transactionsStatusService.getByID(transactions.transactionStatusid);
                         break;
@@ -359,5 +376,11 @@ namespace GastosRYC
         {
             this.Close();
         }
+
+        private void MenuItem_Tags_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Formulario emergente con mantenimiento de tags
+        }
+
     }
 }

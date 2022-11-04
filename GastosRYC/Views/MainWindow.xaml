@@ -6,9 +6,8 @@
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
         mc:Ignorable="d"
         Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Views/Logo.png">
-    
+
     <Grid>
-        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="auto" />
@@ -16,6 +15,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="20"/>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -26,19 +26,22 @@
                     <MenuItem Header="_Cuentas" Click="MenuItem_Cuentas_Click" />
                     <MenuItem Header="_Personas" Click="MenuItem_Personas_Click"/>
                     <MenuItem Header="_Categorias" Click="MenuItem_Categorias_Click" />
+                    <MenuItem Header="_Tags" Click="MenuItem_Tags_Click" />
                     <Separator />
                     <MenuItem Header="_Salir" Click="MenuItem_Salir_Click"/>
                 </MenuItem>
             </Menu>
             <TextBox AcceptsReturn="True" />
         </DockPanel>
-        <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.Column="0" Grid.Row="1" 
-                  SizeChanged="lvCuentas_SizeChanged">
+        <syncfusion:ButtonAdv Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" 
+                                 Background="{x:Null}" BorderBrush="{x:Null}" Click="ButtonAdv_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>
+        <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.Column="0" Grid.Row="2" 
+                  SizeChanged="lvCuentas_SizeChanged" BorderBrush="{x:Null}" Background="{x:Null}">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
-              
+
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
@@ -71,28 +74,33 @@
         </ListView>
         <input:SfGridSplitter Name="gridSplitter"
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
-                              Width="auto" Grid.Column="1" Grid.Row="1"/>
+                              Width="auto" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"/>
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvMovimientos"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
                                AddNewRowText="Hacer Click aquí para añadir nueva linea" CanMaintainScrollPosition="True"
                                AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="false"
                                RowValidated="gvMovimientos_RowValidated" AddNewRowInitiating="gvMovimientos_AddNewRowInitiating"
                                EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star"
-                               RowValidating="gvMovimientos_RowValidating" CurrentCellDropDownSelectionChanged="gvMovimientos_CurrentCellDropDownSelectionChanged" Grid.Row="1" Grid.ColumnSpan="9">
+                               RowValidating="gvMovimientos_RowValidating" CurrentCellDropDownSelectionChanged="gvMovimientos_CurrentCellDropDownSelectionChanged" Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
                 <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
+
                 <syncfusion:GridComboBoxColumn  HeaderText="Cuenta"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbAccounts" MappingName="accountid" 
                                                 DisplayMemberPath="description" SelectedValuePath="id"/>
+
                 <syncfusion:GridComboBoxColumn  HeaderText="Persona" 
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbPersons" MappingName="personid"
                                                 DisplayMemberPath="name" SelectedValuePath="id" />
+
+                <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
+
                 <syncfusion:GridComboBoxColumn  HeaderText="Categoría" 
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbCategories" MappingName="categoryid" 
@@ -100,11 +108,16 @@
                 <syncfusion:GridComboBoxColumn  HeaderText="Estado"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbTransStatus" MappingName="transactionStatusid" 
+                                                DisplayMemberPath="description" SelectedValuePath="id"  />
+                <syncfusion:GridComboBoxColumn  HeaderText="Tag"
+                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
+                    x:Name="cbTags" MappingName="tagsid" 
                                                 DisplayMemberPath="description" SelectedValuePath="id" />
-                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Ingreso"/>
                 <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
+                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Ingreso"/>
+                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad" AllowFocus="False"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
-               
+
                 <syncfusion:GridTextColumn MappingName="orden" IsHidden="True" />
             </syncfusion:SfDataGrid.Columns>
 

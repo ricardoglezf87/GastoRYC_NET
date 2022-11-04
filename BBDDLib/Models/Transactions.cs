@@ -29,12 +29,18 @@ namespace BBDDLib.Models
 
         public virtual int? transactionid { set; get; }
 
+        public virtual String? memo { set; get; }
+
         public virtual int? transactionStatusid { set; get; }
 
         public virtual TransactionsStatus? transactionStatus { set; get; }
 
         [NotMapped]
         public virtual Decimal? amount { get { return amountIn - amountOut; } }
+
+        public virtual int? tagsid { set; get; }
+
+        public virtual Tags? tags { set; get; }
 
         [NotMapped]
         public virtual Double? orden { 
