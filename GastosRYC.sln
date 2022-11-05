@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GastosRYC", "GastosRYC\GastosRYC.csproj", "{A1211A16-EC7B-4AAF-875B-3DECB82B8C3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BBDDLib", "BBDDLib\BBDDLib.csproj", "{BF4D5990-5A85-4D25-AC61-F0FBCA2AF670}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BBDDLib", "BBDDLib\BBDDLib.csproj", "{BF4D5990-5A85-4D25-AC61-F0FBCA2AF670}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

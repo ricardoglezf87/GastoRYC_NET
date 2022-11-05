@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
-using System.Windows.Interop;
 
 //TODO: implementar split
 
@@ -31,7 +30,7 @@ namespace GastosRYC
 
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();            
             loadTimer();
         }
 
@@ -137,13 +136,13 @@ namespace GastosRYC
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
-            lvCuentas.ItemsSource = viewAccounts;
+            lvCuentas.ItemsSource = viewAccounts;            
             viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
 
             cbAccounts.ItemsSource = accountsService.getAll();
             cbPersons.ItemsSource = personService.getAll();
-            cbCategories.ItemsSource = categoriesService.getAll();
+            cbCategories.ItemsSource = categoriesService.getAll();            
             cbTags.ItemsSource = tagsService.getAll();
             cbTransStatus.ItemsSource = transactionsStatusService.getAll();
             gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
@@ -281,7 +280,7 @@ namespace GastosRYC
         {
             var data = e.NewObject as Transactions;
             data.date = DateTime.Now;
-
+            
             if (lvCuentas.SelectedItem != null)
             {
                 data.accountid = (lvCuentas.SelectedItem as Accounts).id;
@@ -382,5 +381,6 @@ namespace GastosRYC
             //TODO: Formulario emergente con mantenimiento de tags
         }
 
+    
     }
 }

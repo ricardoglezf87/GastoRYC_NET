@@ -15,9 +15,9 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*" />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" >
@@ -36,12 +36,11 @@
         <syncfusion:ButtonAdv Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="ButtonAdv_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>
         <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.Column="0" Grid.Row="2" 
-                  SizeChanged="lvCuentas_SizeChanged" BorderBrush="{x:Null}" Background="{x:Null}">
+                  SizeChanged="lvCuentas_SizeChanged" BorderBrush="{x:Null}" Background="{x:Null}" d:ItemsSource="{d:SampleData ItemCount=5}" BorderThickness="1,1,1,0">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
-
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
@@ -104,11 +103,11 @@
                 <syncfusion:GridComboBoxColumn  HeaderText="Categoría" 
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbCategories" MappingName="categoryid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id" />
+                                                DisplayMemberPath="description" SelectedValuePath="id" StaysOpenOnEdit="False" />
                 <syncfusion:GridComboBoxColumn  HeaderText="Estado"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbTransStatus" MappingName="transactionStatusid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id"  />
+                                                DisplayMemberPath="description" SelectedValuePath="id" StaysOpenOnEdit="False"  />
                 <syncfusion:GridComboBoxColumn  HeaderText="Tag"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbTags" MappingName="tagsid" 
