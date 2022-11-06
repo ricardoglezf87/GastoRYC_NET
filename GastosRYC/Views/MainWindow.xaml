@@ -110,8 +110,8 @@
                                                 DisplayMemberPath="description" SelectedValuePath="id" StaysOpenOnEdit="False"  />
                 <syncfusion:GridComboBoxColumn  HeaderText="Tag"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbTags" MappingName="tagsid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id" />
+                    x:Name="cbTags" MappingName="tagid" 
+                                                DisplayMemberPath="description" SelectedValuePath="id" StaysOpenOnEdit="False"/>
                 <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
                 <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Ingreso"/>
                 <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad" AllowFocus="False"/>

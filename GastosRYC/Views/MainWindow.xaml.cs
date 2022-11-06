@@ -219,7 +219,7 @@ namespace GastosRYC
                 transactions.account = accountsService.getByID(transactions.accountid);
                 transactions.person = personService.getByID(transactions.personid);
                 transactions.category = categoriesService.getByID(transactions.categoryid);
-                transactions.tags = tagsService.getByID(transactions.tagsid);
+                transactions.tag = tagsService.getByID(transactions.tagid);
                 transactions.transactionStatus = transactionsStatusService.getByID(transactions.transactionStatusid);
             }
 
@@ -257,7 +257,7 @@ namespace GastosRYC
                 tContraria.personid = transactions.personid;
                 tContraria.categoryid = transactions.account.categoryid;
                 tContraria.memo = transactions.memo;
-                tContraria.tagsid = transactions.tagsid;
+                tContraria.tagid = transactions.tagid;
                 tContraria.amountIn = transactions.amountOut;
                 tContraria.amountOut = transactions.amountIn;
 
@@ -281,7 +281,7 @@ namespace GastosRYC
                     tContraria.personid = transactions.personid;
                     tContraria.categoryid = transactions.account.categoryid;
                     tContraria.memo = transactions.memo;
-                    tContraria.tagsid = transactions.tagsid;
+                    tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transactionStatusid = transactions.transactionStatusid;
@@ -360,8 +360,8 @@ namespace GastosRYC
                     case "categoryid":
                         transactions.category = categoriesService.getByID(transactions.categoryid);
                         break;
-                    case "tagsid":
-                        transactions.tags = tagsService.getByID(transactions.tagsid);
+                    case "tagid":
+                        transactions.tag = tagsService.getByID(transactions.tagid);
                         break;
                     case "transactionStatusid":
                         transactions.transactionStatus = transactionsStatusService.getByID(transactions.transactionStatusid);

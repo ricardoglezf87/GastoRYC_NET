@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BBDDLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    [Migration("20221024105539_InsertData")]
+    [Migration("20221106113605_InsertData")]
     partial class InsertData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace BBDDLib.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("accountsTypesid")
+                    b.Property<int?>("accountsTypesid")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("categoryid")
@@ -64,7 +64,7 @@ namespace BBDDLib.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("categoriesTypesid")
+                    b.Property<int?>("categoriesTypesid")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
@@ -88,7 +88,7 @@ namespace BBDDLib.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("CategoriesTypes");
+                    b.ToTable("categoriesTypes");
                 });
 
             modelBuilder.Entity("BBDDLib.Models.Persons", b =>
@@ -103,6 +103,20 @@ namespace BBDDLib.Migrations
                     b.HasKey("id");
 
                     b.ToTable("persons");
+                });
+
+            modelBuilder.Entity("BBDDLib.Models.Tags", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("description")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("tags");
                 });
 
             modelBuilder.Entity("BBDDLib.Models.Transactions", b =>
@@ -126,7 +140,13 @@ namespace BBDDLib.Migrations
                     b.Property<DateTime?>("date")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("memo")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("personid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tagid")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("transactionStatusid")
@@ -142,6 +162,8 @@ namespace BBDDLib.Migrations
                     b.HasIndex("categoryid");
 
                     b.HasIndex("personid");
+
+                    b.HasIndex("tagid");
 
                     b.HasIndex("transactionStatusid");
 
@@ -166,9 +188,7 @@ namespace BBDDLib.Migrations
                 {
                     b.HasOne("BBDDLib.Models.AccountsTypes", "accountsTypes")
                         .WithMany("accounts")
-                        .HasForeignKey("accountsTypesid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("accountsTypesid");
 
                     b.HasOne("BBDDLib.Models.Categories", "category")
                         .WithOne("accounts")
@@ -183,9 +203,7 @@ namespace BBDDLib.Migrations
                 {
                     b.HasOne("BBDDLib.Models.CategoriesTypes", "categoriesTypes")
                         .WithMany("categories")
-                        .HasForeignKey("categoriesTypesid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("categoriesTypesid");
 
                     b.Navigation("categoriesTypes");
                 });
@@ -204,6 +222,10 @@ namespace BBDDLib.Migrations
                         .WithMany()
                         .HasForeignKey("personid");
 
+                    b.HasOne("BBDDLib.Models.Tags", "tag")
+                        .WithMany()
+                        .HasForeignKey("tagid");
+
                     b.HasOne("BBDDLib.Models.TransactionsStatus", "transactionStatus")
                         .WithMany()
                         .HasForeignKey("transactionStatusid");
@@ -213,6 +235,8 @@ namespace BBDDLib.Migrations
                     b.Navigation("category");
 
                     b.Navigation("person");
+
+                    b.Navigation("tag");
 
                     b.Navigation("transactionStatus");
                 });

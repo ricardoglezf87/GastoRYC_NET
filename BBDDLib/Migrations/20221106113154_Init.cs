@@ -15,7 +15,7 @@ namespace BBDDLib.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    description = table.Column<string>(type: "nvarchar(150)", nullable: true)
+                    description = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -28,7 +28,7 @@ namespace BBDDLib.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    description = table.Column<string>(type: "nvarchar(150)", nullable: true)
+                    description = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -41,11 +41,24 @@ namespace BBDDLib.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    name = table.Column<string>(type: "nvarchar(150)", nullable: true)
+                    name = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_persons", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tags",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    description = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tags", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -54,7 +67,7 @@ namespace BBDDLib.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    description = table.Column<string>(type: "nvarchar(150)", nullable: true)
+                    description = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,8 +80,8 @@ namespace BBDDLib.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    description = table.Column<string>(type: "nvarchar(150)", nullable: true),
-                    categoriesTypesid = table.Column<int>(type: "int", nullable: false)
+                    description = table.Column<string>(type: "TEXT", nullable: true),
+                    categoriesTypesid = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -77,8 +90,7 @@ namespace BBDDLib.Migrations
                         name: "FK_categories_categoriesTypes_categoriesTypesid",
                         column: x => x.categoriesTypesid,
                         principalTable: "categoriesTypes",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
@@ -87,9 +99,9 @@ namespace BBDDLib.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    description = table.Column<string>(type: "nvarchar(150)", nullable: true),
-                    accountsTypesid = table.Column<int>(type: "int", nullable: false),
-                    categoryid = table.Column<int>(type: "int", nullable: true)
+                    description = table.Column<string>(type: "TEXT", nullable: true),
+                    accountsTypesid = table.Column<int>(type: "INTEGER", nullable: true),
+                    categoryid = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -98,8 +110,7 @@ namespace BBDDLib.Migrations
                         name: "FK_accounts_accountsTypes_accountsTypesid",
                         column: x => x.accountsTypesid,
                         principalTable: "accountsTypes",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_accounts_categories_categoryid",
                         column: x => x.categoryid,
@@ -113,14 +124,16 @@ namespace BBDDLib.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    date = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    accountid = table.Column<int>(type: "int", nullable: true),
-                    personid = table.Column<int>(type: "int", nullable: true),
-                    categoryid = table.Column<int>(type: "int", nullable: true),
-                    amountIn = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    amountOut = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    transactionid = table.Column<int>(type: "int", nullable: true),
-                    transactionStatusid = table.Column<int>(type: "int", nullable: true)
+                    date = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    accountid = table.Column<int>(type: "INTEGER", nullable: true),
+                    personid = table.Column<int>(type: "INTEGER", nullable: true),
+                    tagid = table.Column<int>(type: "INTEGER", nullable: true),
+                    categoryid = table.Column<int>(type: "INTEGER", nullable: true),
+                    amountIn = table.Column<decimal>(type: "TEXT", nullable: true),
+                    amountOut = table.Column<decimal>(type: "TEXT", nullable: true),
+                    transactionid = table.Column<int>(type: "INTEGER", nullable: true),
+                    memo = table.Column<string>(type: "TEXT", nullable: true),
+                    transactionStatusid = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -141,6 +154,11 @@ namespace BBDDLib.Migrations
                         principalTable: "persons",
                         principalColumn: "id");
                     table.ForeignKey(
+                        name: "FK_transactions_tags_tagid",
+                        column: x => x.tagid,
+                        principalTable: "tags",
+                        principalColumn: "id");
+                    table.ForeignKey(
                         name: "FK_transactions_transactionsStatus_transactionStatusid",
                         column: x => x.transactionStatusid,
                         principalTable: "transactionsStatus",
@@ -156,8 +174,7 @@ namespace BBDDLib.Migrations
                 name: "IX_accounts_categoryid",
                 table: "accounts",
                 column: "categoryid",
-                unique: true,
-                filter: "[categoryid] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_categories_categoriesTypesid",
@@ -180,12 +197,15 @@ namespace BBDDLib.Migrations
                 column: "personid");
 
             migrationBuilder.CreateIndex(
+                name: "IX_transactions_tagid",
+                table: "transactions",
+                column: "tagid");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_transactions_transactionStatusid",
                 table: "transactions",
                 column: "transactionStatusid");
         }
-
-        
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
@@ -197,6 +217,9 @@ namespace BBDDLib.Migrations
 
             migrationBuilder.DropTable(
                 name: "persons");
+
+            migrationBuilder.DropTable(
+                name: "tags");
 
             migrationBuilder.DropTable(
                 name: "transactionsStatus");

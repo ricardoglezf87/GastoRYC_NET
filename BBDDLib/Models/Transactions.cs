@@ -19,6 +19,10 @@ namespace BBDDLib.Models
 
         public virtual Persons? person { set; get; }
 
+        public virtual int? tagid { set; get; }
+
+        public virtual Tags? tag { set; get; }
+
         public virtual int? categoryid { set; get; }
 
         public virtual Categories? category { set; get; }
@@ -36,11 +40,7 @@ namespace BBDDLib.Models
         public virtual TransactionsStatus? transactionStatus { set; get; }
 
         [NotMapped]
-        public virtual Decimal? amount { get { return amountIn - amountOut; } }
-
-        public virtual int? tagsid { set; get; }
-
-        public virtual Tags? tags { set; get; }
+        public virtual Decimal? amount { get { return amountIn - amountOut; } }        
 
         [NotMapped]
         public virtual Double? orden { 

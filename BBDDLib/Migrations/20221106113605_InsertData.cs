@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -40,7 +38,7 @@ namespace BBDDLib.Migrations
 
 #endif
 
-            
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

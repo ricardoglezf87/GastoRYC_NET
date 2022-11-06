@@ -17,9 +17,5 @@ namespace BBDDLib.Models
 
         public virtual String? description { set; get; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public virtual Transactions? transactions { set; get; }
-
     }
 }

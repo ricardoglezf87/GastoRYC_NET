@@ -3,7 +3,6 @@ using System;
 using BBDDLib.Manager;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -12,42 +11,35 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BBDDLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    [Migration("20221023213107_Init")]
+    [Migration("20221106113154_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
 
             modelBuilder.Entity("BBDDLib.Models.Accounts", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                    b.Property<int>("accountsTypesid")
-                        .HasColumnType("int");
+                    b.Property<int?>("accountsTypesid")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("categoryid")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("id");
 
                     b.HasIndex("accountsTypesid");
 
                     b.HasIndex("categoryid")
-                        .IsUnique()
-                        .HasFilter("[categoryid] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("accounts");
                 });
@@ -56,12 +48,10 @@ namespace BBDDLib.Migrations
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("id");
 
@@ -72,15 +62,13 @@ namespace BBDDLib.Migrations
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
-
-                    b.Property<int>("categoriesTypesid")
-                        .HasColumnType("int");
+                    b.Property<int?>("categoriesTypesid")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("id");
 
@@ -93,65 +81,79 @@ namespace BBDDLib.Migrations
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("id");
 
-                    b.ToTable("CategoriesTypes");
+                    b.ToTable("categoriesTypes");
                 });
 
             modelBuilder.Entity("BBDDLib.Models.Persons", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("id");
 
                     b.ToTable("persons");
                 });
 
+            modelBuilder.Entity("BBDDLib.Models.Tags", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("description")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("tags");
+                });
+
             modelBuilder.Entity("BBDDLib.Models.Transactions", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("accountid")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal?>("amountIn")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal?>("amountOut")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("categoryid")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("memo")
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("personid")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tagid")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("transactionStatusid")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int?>("transactionid")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("id");
 
@@ -160,6 +162,8 @@ namespace BBDDLib.Migrations
                     b.HasIndex("categoryid");
 
                     b.HasIndex("personid");
+
+                    b.HasIndex("tagid");
 
                     b.HasIndex("transactionStatusid");
 
@@ -170,12 +174,10 @@ namespace BBDDLib.Migrations
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("id");
 
@@ -186,9 +188,7 @@ namespace BBDDLib.Migrations
                 {
                     b.HasOne("BBDDLib.Models.AccountsTypes", "accountsTypes")
                         .WithMany("accounts")
-                        .HasForeignKey("accountsTypesid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("accountsTypesid");
 
                     b.HasOne("BBDDLib.Models.Categories", "category")
                         .WithOne("accounts")
@@ -203,9 +203,7 @@ namespace BBDDLib.Migrations
                 {
                     b.HasOne("BBDDLib.Models.CategoriesTypes", "categoriesTypes")
                         .WithMany("categories")
-                        .HasForeignKey("categoriesTypesid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("categoriesTypesid");
 
                     b.Navigation("categoriesTypes");
                 });
@@ -224,6 +222,10 @@ namespace BBDDLib.Migrations
                         .WithMany()
                         .HasForeignKey("personid");
 
+                    b.HasOne("BBDDLib.Models.Tags", "tag")
+                        .WithMany()
+                        .HasForeignKey("tagid");
+
                     b.HasOne("BBDDLib.Models.TransactionsStatus", "transactionStatus")
                         .WithMany()
                         .HasForeignKey("transactionStatusid");
@@ -233,6 +235,8 @@ namespace BBDDLib.Migrations
                     b.Navigation("category");
 
                     b.Navigation("person");
+
+                    b.Navigation("tag");
 
                     b.Navigation("transactionStatus");
                 });
