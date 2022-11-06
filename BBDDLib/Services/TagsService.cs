@@ -24,5 +24,11 @@ namespace GastosRYC.BBDDLib.Services
             RYCContextService.getInstance().BBDD.Update(tags);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
+
+        public void delete(Tags tags)
+        {
+            RYCContextService.getInstance().BBDD.Remove(tags);
+            RYCContextService.getInstance().BBDD.SaveChanges();
+        }
     }
 }

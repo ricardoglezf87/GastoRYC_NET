@@ -402,7 +402,10 @@ namespace GastosRYC
 
         private void MenuItem_Tags_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Formulario emergente con mantenimiento de tags
+            frmTags frm = new frmTags();
+            frm.ShowDialog();
+            loadComboBox();
+            loadTransactions();
         }
 
     

@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GastosRYC.Views"
-        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.frmPersons"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.frmTags"
         mc:Ignorable="d"
-        Title="Personas" Height="450" Width="400
+        Title="Tags" Height="450" Width="400
     " WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid Margin="0,5,0,0">
         <Grid.ColumnDefinitions>
@@ -18,22 +18,22 @@
         </Grid.RowDefinitions>
         <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="0"  
                                  TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Center" ShowClearButton="True" />
-        <syncfusion:SfDataGrid x:Name="gvPersons" HorizontalContentAlignment="Center" 
+        <syncfusion:SfDataGrid x:Name="gvTags" HorizontalContentAlignment="Center" 
                                Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AddNewRowPosition="Top" AddNewRowText="Inserte nueva categoría" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
                                AutoGenerateColumns="False" 
-                               RowValidated="gvPersons_RowValidated" 
-                               RowValidating="gvPersons_RowValidating" 
-                               RecordDeleted="gvPersons_RecordDeleted" 
-                               RecordDeleting="gvPersons_RecordDeleting" Grid.Row="1">
+                               RowValidated="gvTags_RowValidated" 
+                               RowValidating="gvTags_RowValidating" 
+                               RecordDeleted="gvTags_RecordDeleted" 
+                               RecordDeleting="gvTags_RecordDeleting" Grid.Row="1">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SortColumnDescription ColumnName="name" SortDirection="Ascending"/>
+                <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="name" HeaderText="Nombre" />
+                <syncfusion:GridTextColumn MappingName="description" HeaderText="Descripción" />
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 
