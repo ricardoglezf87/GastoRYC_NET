@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class PersonService
+    public class PersonsService
     {
         public List<Persons>? getAll()
         {
@@ -22,6 +22,12 @@ namespace GastosRYC.BBDDLib.Services
         public void update(Persons persons)
         {
             RYCContextService.getInstance().BBDD.Update(persons);
+            RYCContextService.getInstance().BBDD.SaveChanges();
+        }
+
+        public void delete(Persons persons)
+        {
+            RYCContextService.getInstance().BBDD.Remove(persons);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
     }

@@ -24,7 +24,7 @@ namespace GastosRYC
 
         private readonly AccountsService accountsService = new AccountsService();
         private readonly CategoriesService categoriesService = new CategoriesService();
-        private readonly PersonService personService = new PersonService();
+        private readonly PersonsService personService = new PersonsService();
         private readonly TagsService tagsService = new TagsService();
         private readonly TransactionsService transactionsService = new TransactionsService();
         private readonly TransactionsStatusService transactionsStatusService = new TransactionsStatusService();
@@ -381,7 +381,10 @@ namespace GastosRYC
 
         private void MenuItem_Persons_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Formulario emergente con mantenimiento de personas
+            frmPersons frm = new frmPersons();
+            frm.ShowDialog();
+            loadComboBox();
+            loadTransactions();
         }
 
         private void MenuItem_Categories_Click(object sender, RoutedEventArgs e)
