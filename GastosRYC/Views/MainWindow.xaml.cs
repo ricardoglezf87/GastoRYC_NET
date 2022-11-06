@@ -377,7 +377,6 @@ namespace GastosRYC
             loadAccounts();
             loadComboBox();
             loadTransactions();
-            //TODO Reload listview y grid
         }
 
         private void MenuItem_Personas_Click(object sender, RoutedEventArgs e)
