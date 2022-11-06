@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
+using GastosRYC.Views;
 
 //TODO: implementar split
 
@@ -358,7 +359,9 @@ namespace GastosRYC
 
         private void MenuItem_Cuentas_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Formulario emergente con mantenimiento de cuentas
+            frmCuentas frm = new frmCuentas();
+            frm.ShowDialog();
+            //TODO Reload listview y grid
         }
 
         private void MenuItem_Personas_Click(object sender, RoutedEventArgs e)

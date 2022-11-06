@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class AccountsTypesStatus
+    public class AccountsTypesService
     {
 
         public List<AccountsTypes>? getAll()

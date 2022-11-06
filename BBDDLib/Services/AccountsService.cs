@@ -25,5 +25,17 @@ namespace GastosRYC.BBDDLib.Services
             return RYCContextService.getInstance().BBDD.accounts?.FirstOrDefault(x => id.Equals(x.id));
         }
 
+        public void update(Accounts accounts)
+        {
+            RYCContextService.getInstance().BBDD.Update(accounts);
+            RYCContextService.getInstance().BBDD.SaveChanges();
+        }
+
+        public void delete(Accounts accounts)
+        {
+            RYCContextService.getInstance().BBDD.Remove(accounts);
+            RYCContextService.getInstance().BBDD.SaveChanges();
+        }
+
     }
 }

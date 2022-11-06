@@ -37,7 +37,7 @@ namespace GastosRYC.BBDDLib.Services
         {
             var cmd = RYCContextService.getInstance().BBDD.Database.
                 GetDbConnection().CreateCommand();
-            cmd.CommandText = "SELECT CASE WHEN (SELECT COUNT(1) FROM transactions) = 0 THEN 1 ELSE (select max(rowid) + 1 from transactions) END AS Current_Identity;";
+            cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactions';";
             
             RYCContextService.getInstance().BBDD.Database.OpenConnection();
             var result = cmd.ExecuteReader();
