@@ -10,9 +10,22 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class CategoriesService
     {
+
+        public enum eCategoriesTypes : int
+        {
+            Ingresos = 1,
+            Gastos = 2,            
+            Transferencias = 3
+        }
+
         public List<Categories>? getAll()
         {
             return RYCContextService.getInstance().BBDD.categories?.ToList();
+        }
+
+        public List<Categories>? getAllFilterTransfer()
+        {
+            return RYCContextService.getInstance().BBDD.categories?.Where(x => !x.categoriesTypesid.Equals((int)CategoriesService.eCategoriesTypes.Transferencias)).ToList();
         }
 
         public Categories? getByID(int? id)

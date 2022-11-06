@@ -372,7 +372,7 @@ namespace GastosRYC
 
         private void MenuItem_Cuentas_Click(object sender, RoutedEventArgs e)
         {
-            frmCuentas frm = new frmCuentas();
+            frmAccounts frm = new frmAccounts();
             frm.ShowDialog();
             loadAccounts();
             loadComboBox();
@@ -386,7 +386,10 @@ namespace GastosRYC
 
         private void MenuItem_Categorias_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Formulario emergente con mantenimiento de categorias
+            frmCategories frm = new frmCategories();
+            frm.ShowDialog();
+            loadComboBox();
+            loadTransactions();
         }
 
         private void MenuItem_Salir_Click(object sender, RoutedEventArgs e)

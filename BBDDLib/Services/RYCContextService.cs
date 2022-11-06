@@ -20,7 +20,8 @@ namespace GastosRYC.BBDDLib.Services
         }
 
         private void loadContext()
-        {        
+        {
+            context.categoriesTypes?.Load();
             context.categories?.Load();
             context.persons?.Load();
             context.accountsTypes?.Load();

@@ -8,14 +8,14 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para Cuentas.xaml
     /// </summary>
-    public partial class frmCuentas : Window
+    public partial class frmAccounts : Window
     {
 
         private readonly AccountsService accountsService = new AccountsService();
         private readonly AccountsTypesService accountsTypesService = new AccountsTypesService();
         private readonly CategoriesService categoriesService = new CategoriesService();
 
-        public frmCuentas()
+        public frmAccounts()
         {
             InitializeComponent();
         }
@@ -75,7 +75,7 @@ namespace GastosRYC.Views
                 categories = new Categories();
                 accounts.categoryid = categoriesService.getNextID(); ;
                 categories.description = "[" + accounts.description + "]";
-                categories.categoriesTypesid = 3;
+                categories.categoriesTypesid = (int) CategoriesService.eCategoriesTypes.Transferencias;
 
             }
 

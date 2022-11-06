@@ -17,7 +17,7 @@ namespace BBDDLib.Models
 
         public virtual String? description { set; get; }
 
-        public virtual int categoriesTypesid { set; get; }
+        public virtual int? categoriesTypesid { set; get; }
 
         public virtual CategoriesTypes? categoriesTypes { set; get; }
 
