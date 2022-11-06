@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" >
-            <Menu DockPanel.Dock="Top">
+            <Menu DockPanel.Dock="Top" Margin="0,0,0,10">
                 <MenuItem Header="_Opciones">
                     <MenuItem Header="_Cuentas" Click="MenuItem_Cuentas_Click" />
                     <MenuItem Header="_Personas" Click="MenuItem_Personas_Click"/>
@@ -31,7 +31,6 @@
                     <MenuItem Header="_Salir" Click="MenuItem_Salir_Click"/>
                 </MenuItem>
             </Menu>
-            <TextBox AcceptsReturn="True" />
         </DockPanel>
         <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="btnAllAccounts_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>

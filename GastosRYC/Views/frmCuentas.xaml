@@ -7,19 +7,21 @@
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.frmCuentas"
         mc:Ignorable="d"
         Title="Cuentas" Height="450" Width="400
-    " WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
-    <Grid>
+    " WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+    <Grid Margin="0,5,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
+        <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="0"  
+                                 TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Center" ShowClearButton="True" />
         <syncfusion:SfDataGrid x:Name="gvCuentas" HorizontalContentAlignment="Center" 
                                Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
-                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva Cuenta" AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" AutoGenerateColumns="False" CurrentCellDropDownSelectionChanged="gvCuentas_CurrentCellDropDownSelectionChanged" RowValidated="gvCuentas_RowValidated" RowValidating="gvCuentas_RowValidating" RecordDeleted="gvCuentas_RecordDeleted" RecordDeleting="gvCuentas_RecordDeleting">
+                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva Cuenta" AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" AutoGenerateColumns="False" CurrentCellDropDownSelectionChanged="gvCuentas_CurrentCellDropDownSelectionChanged" RowValidated="gvCuentas_RowValidated" RowValidating="gvCuentas_RowValidating" RecordDeleted="gvCuentas_RecordDeleted" RecordDeleting="gvCuentas_RecordDeleting" Grid.Row="1">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
