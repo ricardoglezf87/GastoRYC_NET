@@ -122,5 +122,14 @@ namespace GastosRYC.Views
                 accountsService.delete(accounts);
             }            
         }
+
+        private void gvCuentas_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
+        {
+            if(MessageBox.Show("Esta seguro de querer eliminar esta cuenta?","Eliminación Cuenta",MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation,MessageBoxResult.No) == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+            }
+        }
     }
 }

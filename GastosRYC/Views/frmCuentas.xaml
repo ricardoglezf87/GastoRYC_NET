@@ -19,7 +19,7 @@
         <syncfusion:SfDataGrid x:Name="gvCuentas" HorizontalContentAlignment="Center" 
                                Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
-                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva Cuenta" AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" AutoGenerateColumns="False" CurrentCellDropDownSelectionChanged="gvCuentas_CurrentCellDropDownSelectionChanged" RowValidated="gvCuentas_RowValidated" RowValidating="gvCuentas_RowValidating" RecordDeleted="gvCuentas_RecordDeleted">
+                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva Cuenta" AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" AutoGenerateColumns="False" CurrentCellDropDownSelectionChanged="gvCuentas_CurrentCellDropDownSelectionChanged" RowValidated="gvCuentas_RowValidated" RowValidating="gvCuentas_RowValidating" RecordDeleted="gvCuentas_RecordDeleted" RecordDeleting="gvCuentas_RecordDeleting">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

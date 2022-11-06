@@ -134,21 +134,36 @@ namespace GastosRYC
             }
         }
 
-        private void frmInicio_Loaded(object sender, RoutedEventArgs e)
+        private void loadAccounts()
         {
             viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
-            lvCuentas.ItemsSource = viewAccounts;            
+            lvCuentas.ItemsSource = viewAccounts;
             viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
+            needRefresh = true;
+        }
 
+        private void loadComboBox()
+        {
             cbAccounts.ItemsSource = accountsService.getAll();
             cbPersons.ItemsSource = personService.getAll();
-            cbCategories.ItemsSource = categoriesService.getAll();            
+            cbCategories.ItemsSource = categoriesService.getAll();
             cbTags.ItemsSource = tagsService.getAll();
-            cbTransStatus.ItemsSource = transactionsStatusService.getAll();
-            gvMovimientos.ItemsSource = transactionsService.getAll();
+            cbTransStatus.ItemsSource = transactionsStatusService.getAll();       
+        }
 
+        private void loadTransactions()
+        {
+            gvMovimientos.ItemsSource = transactionsService.getAll();
+            ApplyFilters();
             needRefresh = true;
+        }
+
+        private void frmInicio_Loaded(object sender, RoutedEventArgs e)
+        {
+            loadAccounts();
+            loadComboBox();
+            loadTransactions();       
         }
 
         public void ApplyFilters()
@@ -185,7 +200,7 @@ namespace GastosRYC
         }
 
 
-        private void ButtonAdv_Click(object sender, RoutedEventArgs e)
+        private void btnAllAccounts_Click(object sender, RoutedEventArgs e)
         {
             lvCuentas.SelectedItem = null;
             gvMovimientos.Columns["accountid"].IsHidden = false;
@@ -217,10 +232,8 @@ namespace GastosRYC
             updateTranfer(transactions);
             transactionsService.update(transactions);
 
-            gvMovimientos.ItemsSource = transactionsService.getAll();
-            ApplyFilters();
-
-
+            loadTransactions();
+           
         }
 
         private void updateTranfer(Transactions transactions)
@@ -361,6 +374,9 @@ namespace GastosRYC
         {
             frmCuentas frm = new frmCuentas();
             frm.ShowDialog();
+            loadAccounts();
+            loadComboBox();
+            loadTransactions();
             //TODO Reload listview y grid
         }
 
