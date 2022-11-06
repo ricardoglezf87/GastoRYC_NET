@@ -1,0 +1,34 @@
+﻿using BBDDLib.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace GastosRYC.BBDDLib.Services
+{
+    public class PersonsService
+    {
+        public List<Persons>? getAll()
+        {
+            return RYCContextService.getInstance().BBDD.persons?.ToList();
+        }
+
+        public Persons? getByID(int? id)
+        {
+            return RYCContextService.getInstance().BBDD.persons?.FirstOrDefault(x => id.Equals(x.id));
+        }
+
+        public void update(Persons persons)
+        {
+            RYCContextService.getInstance().BBDD.Update(persons);
+            RYCContextService.getInstance().BBDD.SaveChanges();
+        }
+
+        public void delete(Persons persons)
+        {
+            RYCContextService.getInstance().BBDD.Remove(persons);
+            RYCContextService.getInstance().BBDD.SaveChanges();
+        }
+    }
+}
