@@ -35,7 +35,7 @@ namespace GastosRYC.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbAccountsTypes.ItemsSource = accountsTypesService.getAll();
-            gvCuentas.ItemsSource = new ObservableCollection<Accounts>(accountsService.getAll());            
+            gvCuentas.ItemsSource = accountsService.getAll();            
         }
 
         private void gvCuentas_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)

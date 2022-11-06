@@ -146,7 +146,7 @@ namespace GastosRYC
             cbCategories.ItemsSource = categoriesService.getAll();            
             cbTags.ItemsSource = tagsService.getAll();
             cbTransStatus.ItemsSource = transactionsStatusService.getAll();
-            gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
+            gvMovimientos.ItemsSource = transactionsService.getAll();
 
             needRefresh = true;
         }
@@ -217,7 +217,7 @@ namespace GastosRYC
             updateTranfer(transactions);
             transactionsService.update(transactions);
 
-            gvMovimientos.ItemsSource = new ObservableCollection<Transactions>(transactionsService.getAll());
+            gvMovimientos.ItemsSource = transactionsService.getAll();
             ApplyFilters();
 
 
