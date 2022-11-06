@@ -23,15 +23,15 @@ namespace GastosRYC.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbAccountsTypes.ItemsSource = accountsTypesService.getAll();
-            gvCuentas.ItemsSource = accountsService.getAll();            
+            gvAccounts.ItemsSource = accountsService.getAll();            
         }
 
-        private void gvCuentas_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
-            Accounts accounts = (Accounts)gvCuentas.SelectedItem;
+            Accounts accounts = (Accounts)gvAccounts.SelectedItem;
             if (accounts != null)
             {
-                switch (gvCuentas.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
+                switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
                         accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);
@@ -41,7 +41,7 @@ namespace GastosRYC.Views
         }
 
        
-        private void gvCuentas_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
+        private void gvAccounts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             Accounts accounts = (Accounts)e.RowData;
 
@@ -85,7 +85,7 @@ namespace GastosRYC.Views
             }
         }
         
-        private void gvCuentas_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Accounts accounts = (Accounts)e.RowData;
 
@@ -98,7 +98,7 @@ namespace GastosRYC.Views
             accountsService.update(accounts);
         }
 
-        private void gvCuentas_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items) {
                 Categories? categories = categoriesService.getByID(accounts.categoryid);
@@ -111,7 +111,7 @@ namespace GastosRYC.Views
             }            
         }
 
-        private void gvCuentas_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
+        private void gvAccounts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
             if(MessageBox.Show("Esta seguro de querer eliminar esta cuenta?","Eliminación Cuenta",MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation,MessageBoxResult.No) == MessageBoxResult.No)
@@ -122,8 +122,8 @@ namespace GastosRYC.Views
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            gvCuentas.SearchHelper.AllowFiltering = true;
-            gvCuentas.SearchHelper.Search(txtSearch.Text);
+            gvAccounts.SearchHelper.AllowFiltering = true;
+            gvAccounts.SearchHelper.Search(txtSearch.Text);
         }
     }
 }

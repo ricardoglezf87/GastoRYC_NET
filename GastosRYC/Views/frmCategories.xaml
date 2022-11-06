@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:GastosRYC.Views"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.frmCategories"
         mc:Ignorable="d"
-        Title="Categorias" Height="450" Width="400
+        Title="Categorías" Height="450" Width="400
     " WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid Margin="0,5,0,0">
         <Grid.ColumnDefinitions>
@@ -21,7 +21,7 @@
         <syncfusion:SfDataGrid x:Name="gvCategories" HorizontalContentAlignment="Center" 
                                Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
-                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva categoria" 
+                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva categoría" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
                                AutoGenerateColumns="False" 
                                CurrentCellDropDownSelectionChanged="gvCategories_CurrentCellDropDownSelectionChanged" 

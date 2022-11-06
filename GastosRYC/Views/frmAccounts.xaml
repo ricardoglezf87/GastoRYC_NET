@@ -18,10 +18,10 @@
         </Grid.RowDefinitions>
         <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="0"  
                                  TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Center" ShowClearButton="True" />
-        <syncfusion:SfDataGrid x:Name="gvCuentas" HorizontalContentAlignment="Center" 
+        <syncfusion:SfDataGrid x:Name="gvAccounts" HorizontalContentAlignment="Center" 
                                Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
-                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva cuenta" AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" AutoGenerateColumns="False" CurrentCellDropDownSelectionChanged="gvCuentas_CurrentCellDropDownSelectionChanged" RowValidated="gvCuentas_RowValidated" RowValidating="gvCuentas_RowValidating" RecordDeleted="gvCuentas_RecordDeleted" RecordDeleting="gvCuentas_RecordDeleting" Grid.Row="1">
+                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva cuenta" AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" AutoGenerateColumns="False" CurrentCellDropDownSelectionChanged="gvAccounts_CurrentCellDropDownSelectionChanged" RowValidated="gvAccounts_RowValidated" RowValidating="gvAccounts_RowValidating" RecordDeleted="gvAccounts_RecordDeleted" RecordDeleting="gvAccounts_RecordDeleting" Grid.Row="1">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

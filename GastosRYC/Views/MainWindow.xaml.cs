@@ -55,9 +55,9 @@ namespace GastosRYC
 
         private void reiniciarSaldosCuentas()
         {
-            if (lvCuentas.ItemsSource != null)
+            if (lvAccounts.ItemsSource != null)
             {
-                foreach (Accounts accounts in lvCuentas.ItemsSource)
+                foreach (Accounts accounts in lvAccounts.ItemsSource)
                 {
                     accounts.balance = 0;
                 }
@@ -66,7 +66,7 @@ namespace GastosRYC
 
         private void addSaldoCuenta(long? id, Decimal balance)
         {
-            if (id != null && lvCuentas.ItemsSource != null
+            if (id != null && lvAccounts.ItemsSource != null
                 && viewAccounts != null && viewAccounts.SourceCollection != null)
             {
                 List<Accounts> lAccounts = (List<Accounts>)viewAccounts.SourceCollection;
@@ -83,17 +83,17 @@ namespace GastosRYC
         {
             Decimal? balanceTotal = 0;
 
-            if (gvMovimientos.View != null)
+            if (gvTransactions.View != null)
             {
                 reiniciarSaldosCuentas();
 
                 Syncfusion.UI.Xaml.Grid.
                     GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
-                        GridQueryableCollectionViewWrapper)gvMovimientos.View;
+                        GridQueryableCollectionViewWrapper)gvTransactions.View;
 
-                if (lvCuentas.SelectedItem != null)
+                if (lvAccounts.SelectedItem != null)
                     balanceTotal = (decimal?)col.ViewSource.Where("accountid",
-                        ((Accounts)lvCuentas.SelectedItem).id, Syncfusion.Data.FilterType.Equals, false).Sum("amount");
+                        ((Accounts)lvAccounts.SelectedItem).id, Syncfusion.Data.FilterType.Equals, false).Sum("amount");
                 else
                     balanceTotal = (decimal?)col.ViewSource.Sum("amount");
 
@@ -101,12 +101,12 @@ namespace GastosRYC
                 {
                     if (t.amount != null)
                     {
-                        if (lvCuentas.SelectedItem != null && ((Accounts)lvCuentas.SelectedItem).id == t.account?.id)
+                        if (lvAccounts.SelectedItem != null && ((Accounts)lvAccounts.SelectedItem).id == t.account?.id)
                         {
                             t.balance = balanceTotal;
                             balanceTotal -= t.amount;
                         }
-                        else if (lvCuentas.SelectedItem == null)
+                        else if (lvAccounts.SelectedItem == null)
                         {
                             t.balance = balanceTotal;
                             balanceTotal -= t.amount;
@@ -124,8 +124,8 @@ namespace GastosRYC
 
         private void autoResizeListView()
         {
-            double remainingSpace = lvCuentas.ActualWidth * .93;
-            GridView? gv = (lvCuentas.View as GridView);
+            double remainingSpace = lvAccounts.ActualWidth * .93;
+            GridView? gv = (lvAccounts.View as GridView);
 
             if (remainingSpace > 0)
             {
@@ -137,7 +137,7 @@ namespace GastosRYC
         private void loadAccounts()
         {
             viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
-            lvCuentas.ItemsSource = viewAccounts;
+            lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.SortDescriptions.Add(new SortDescription("id", ListSortDirection.Ascending));
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
             needRefresh = true;
@@ -154,7 +154,7 @@ namespace GastosRYC
 
         private void loadTransactions()
         {
-            gvMovimientos.ItemsSource = transactionsService.getAll();
+            gvTransactions.ItemsSource = transactionsService.getAll();
             ApplyFilters();
             needRefresh = true;
         }
@@ -168,16 +168,16 @@ namespace GastosRYC
 
         public void ApplyFilters()
         {
-            if (lvCuentas.SelectedValue != null)
+            if (lvAccounts.SelectedValue != null)
             {
-                gvMovimientos.View.Filter = accountFilter;
+                gvTransactions.View.Filter = accountFilter;
             }
             else
             {
-                gvMovimientos.View.Filter = null;
+                gvTransactions.View.Filter = null;
             }
 
-            gvMovimientos.View.RefreshFilter();
+            gvTransactions.View.RefreshFilter();
             needRefresh = true;
         }
 
@@ -187,26 +187,26 @@ namespace GastosRYC
             if (p == null)
                 return false;
             else
-                if (p.account?.id == ((Accounts)lvCuentas.SelectedValue)?.id)
+                if (p.account?.id == ((Accounts)lvAccounts.SelectedValue)?.id)
                 return true;
             else
                 return false;
         }
 
-        private void lvCuentas_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyFilters();
-            gvMovimientos.Columns["accountid"].IsHidden = true;
+            gvTransactions.Columns["accountid"].IsHidden = true;
         }
 
 
         private void btnAllAccounts_Click(object sender, RoutedEventArgs e)
         {
-            lvCuentas.SelectedItem = null;
-            gvMovimientos.Columns["accountid"].IsHidden = false;
+            lvAccounts.SelectedItem = null;
+            gvTransactions.Columns["accountid"].IsHidden = false;
         }
 
-        private void gvMovimientos_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private void gvTransactions_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             saveChanges((Transactions)e.RowData);
             needRefresh = true;
@@ -290,20 +290,20 @@ namespace GastosRYC
             }
         }
 
-        private void gvMovimientos_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
+        private void gvTransactions_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
         {
             var data = e.NewObject as Transactions;
             data.date = DateTime.Now;
             
-            if (lvCuentas.SelectedItem != null)
+            if (lvAccounts.SelectedItem != null)
             {
-                data.accountid = (lvCuentas.SelectedItem as Accounts).id;
+                data.accountid = (lvAccounts.SelectedItem as Accounts).id;
             }
 
             data.transactionStatusid = transactionsStatusService.getFirst()?.id;
         }
 
-        private void gvMovimientos_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
+        private void gvTransactions_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             Transactions transactions = (Transactions)e.RowData;
 
@@ -339,17 +339,17 @@ namespace GastosRYC
             }
         }
 
-        private void lvCuentas_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void lvAccounts_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             autoResizeListView();
         }
 
-        private void gvMovimientos_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private void gvTransactions_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
-            Transactions transactions = (Transactions)gvMovimientos.SelectedItem;
+            Transactions transactions = (Transactions)gvTransactions.SelectedItem;
             if (transactions != null)
             {
-                switch (gvMovimientos.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
+                switch (gvTransactions.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountid":
                         transactions.account = accountsService.getByID(transactions.accountid);
@@ -370,7 +370,7 @@ namespace GastosRYC
             }
         }
 
-        private void MenuItem_Cuentas_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_Accounts_Click(object sender, RoutedEventArgs e)
         {
             frmAccounts frm = new frmAccounts();
             frm.ShowDialog();
@@ -379,12 +379,12 @@ namespace GastosRYC
             loadTransactions();
         }
 
-        private void MenuItem_Personas_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_Persons_Click(object sender, RoutedEventArgs e)
         {
             //TODO: Formulario emergente con mantenimiento de personas
         }
 
-        private void MenuItem_Categorias_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_Categories_Click(object sender, RoutedEventArgs e)
         {
             frmCategories frm = new frmCategories();
             frm.ShowDialog();

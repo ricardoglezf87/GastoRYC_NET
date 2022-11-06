@@ -23,9 +23,9 @@
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" >
             <Menu DockPanel.Dock="Top" Margin="0,0,0,10">
                 <MenuItem Header="_Opciones">
-                    <MenuItem Header="_Cuentas" Click="MenuItem_Cuentas_Click" />
-                    <MenuItem Header="_Personas" Click="MenuItem_Personas_Click"/>
-                    <MenuItem Header="_Categorias" Click="MenuItem_Categorias_Click" />
+                    <MenuItem Header="_Cuentas" Click="MenuItem_Accounts_Click" />
+                    <MenuItem Header="_Personas" Click="MenuItem_Persons_Click"/>
+                    <MenuItem Header="_Categorias" Click="MenuItem_Categories_Click" />
                     <MenuItem Header="_Tags" Click="MenuItem_Tags_Click" />
                     <Separator />
                     <MenuItem Header="_Salir" Click="MenuItem_Salir_Click"/>
@@ -34,8 +34,8 @@
         </DockPanel>
         <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="btnAllAccounts_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>
-        <ListView x:Name="lvCuentas" SelectionChanged="lvCuentas_SelectionChanged" Grid.Column="0" Grid.Row="2" 
-                  SizeChanged="lvCuentas_SizeChanged" BorderBrush="{x:Null}" Background="{x:Null}" d:ItemsSource="{d:SampleData ItemCount=5}" BorderThickness="1,1,1,0">
+        <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged" Grid.Column="0" Grid.Row="2" 
+                  SizeChanged="lvAccounts_SizeChanged" BorderBrush="{x:Null}" Background="{x:Null}" d:ItemsSource="{d:SampleData ItemCount=5}" BorderThickness="1,1,1,0">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -73,13 +73,14 @@
         <input:SfGridSplitter Name="gridSplitter"
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
                               Width="auto" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"/>
-        <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvMovimientos"
+        <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvTransactions"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
-                               AddNewRowText="Hacer Click aquí para añadir nueva linea" CanMaintainScrollPosition="True"
+                               AddNewRowText="Hacer click aquí para añadir nueva línea" CanMaintainScrollPosition="True"
                                AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="false"
-                               RowValidated="gvMovimientos_RowValidated" AddNewRowInitiating="gvMovimientos_AddNewRowInitiating"
+                               RowValidated="gvTransactions_RowValidated" AddNewRowInitiating="gvTransactions_AddNewRowInitiating"
                                EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star"
-                               RowValidating="gvMovimientos_RowValidating" CurrentCellDropDownSelectionChanged="gvMovimientos_CurrentCellDropDownSelectionChanged" Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2">
+                               RowValidating="gvTransactions_RowValidating" CurrentCellDropDownSelectionChanged="gvTransactions_CurrentCellDropDownSelectionChanged" 
+                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

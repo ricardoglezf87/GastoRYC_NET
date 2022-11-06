@@ -53,7 +53,7 @@ namespace GastosRYC.Views
             if (categories.categoriesTypesid == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("categoriesTypesid", "Tiene que rellenar el tipo de categoria");
+                e.ErrorMessages.Add("categoriesTypesid", "Tiene que rellenar el tipo de categoría");
             }
         }                
         
@@ -78,7 +78,7 @@ namespace GastosRYC.Views
 
         private void gvCategories_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if(MessageBox.Show("Esta seguro de querer eliminar esta categoria?","Eliminación categoria",MessageBoxButton.YesNo,
+            if(MessageBox.Show("Esta seguro de querer eliminar esta categoría?","Eliminación categoría",MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation,MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
