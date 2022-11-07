@@ -17,6 +17,7 @@ namespace BBDDLib.Manager
         public DbSet<CategoriesTypes>? categoriesTypes { get; set; }
         public DbSet<Tags>? tags { get; set; }
         public DbSet<TransactionsStatus>? transactionsStatus { get; set; }
+        public DbSet<Splits>? splits { get; set; }
 
         public RYCContext() : base()
         {

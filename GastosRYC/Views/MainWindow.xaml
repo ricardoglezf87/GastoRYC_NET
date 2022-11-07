@@ -116,8 +116,7 @@
                 <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Ingreso"/>
                 <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad" AllowFocus="False"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
-
-                <syncfusion:GridTextColumn MappingName="orden" IsHidden="True" />
+                
             </syncfusion:SfDataGrid.Columns>
 
         </syncfusion:SfDataGrid>

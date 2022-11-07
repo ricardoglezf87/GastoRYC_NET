@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -38,6 +39,8 @@ namespace BBDDLib.Models
         public virtual int? transactionStatusid { set; get; }
 
         public virtual TransactionsStatus? transactionStatus { set; get; }
+
+        public virtual List<Splits>? splits { set; get; }
 
         [NotMapped]
         public virtual Decimal? amount { get { return amountIn - amountOut; } }        

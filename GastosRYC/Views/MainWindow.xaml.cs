@@ -324,6 +324,21 @@ namespace GastosRYC
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
             }
+            else {
+
+                if (transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split && 
+                    transactions.splits.Count == 0)
+                {
+                    e.IsValid = false;
+                    e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria Split si no se tiene desglose de movimiento");
+                }
+                else if(transactions.categoryid != (int)CategoriesService.eSpecialCategories.Split &&
+                    transactions.splits.Count > 0)
+                {
+                    e.IsValid = false;
+                    e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria distinta de Split si se tiene desglose de movimiento");
+                }
+            }
 
             if (transactions.amountIn == null && transactions.amountOut == null)
             {
@@ -408,6 +423,5 @@ namespace GastosRYC
             loadTransactions();
         }
 
-    
     }
 }
