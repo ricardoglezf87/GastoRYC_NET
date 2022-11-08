@@ -31,7 +31,7 @@ namespace GastosRYC
 
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
             loadTimer();
         }
 
@@ -423,5 +423,10 @@ namespace GastosRYC
             loadTransactions();
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Transactions transactions = (Transactions)gvTransactions.SelectedItem;
+            //TODO: Abrir pantalla split
+        }
     }
 }

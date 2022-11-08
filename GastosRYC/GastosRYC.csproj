@@ -48,10 +48,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controls\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Views\frmTags.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
