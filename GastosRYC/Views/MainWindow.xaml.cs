@@ -31,7 +31,7 @@ namespace GastosRYC
 
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
             loadTimer();
         }
 
@@ -324,6 +324,21 @@ namespace GastosRYC
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
             }
+            else {
+
+                if (transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split &&
+                    (transactions.splits == null || transactions.splits.Count == 0))
+                {
+                    e.IsValid = false;
+                    e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria Split si no se tiene desglose de movimiento");
+                }
+                else if(transactions.categoryid != (int)CategoriesService.eSpecialCategories.Split &&
+                    transactions.splits != null && transactions.splits.Count > 0)
+                {
+                    e.IsValid = false;
+                    e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria distinta de Split si se tiene desglose de movimiento");
+                }
+            }
 
             if (transactions.amountIn == null && transactions.amountOut == null)
             {
@@ -408,6 +423,40 @@ namespace GastosRYC
             loadTransactions();
         }
 
-    
+        private void updateSplits(Transactions transactions)
+        {
+            if (transactions.splits != null && transactions.splits.Count != 0)
+            {
+                transactions.amountIn = 0;
+                transactions.amountOut = 0;
+
+                foreach (Splits splits in transactions.splits)
+                {
+                    transactions.amountIn += (splits.amountIn == null ? 0 : splits.amountIn);
+                    transactions.amountOut += (splits.amountOut == null ? 0 : splits.amountOut);
+                }
+
+                transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
+                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
+            }
+            else if(transactions.categoryid != null
+                && transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split)
+            {
+                transactions.categoryid = (int)CategoriesService.eSpecialCategories.SinCategoria;
+                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.SinCategoria);
+            }
+
+
+            transactionsService.update(transactions);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Transactions transactions = (Transactions)gvTransactions.SelectedItem;
+            frmSplits frm = new frmSplits(transactions);
+            frm.ShowDialog();
+            updateSplits(transactions);
+            loadTransactions();
+        }
     }
 }

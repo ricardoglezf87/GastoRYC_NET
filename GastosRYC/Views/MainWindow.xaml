@@ -3,9 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
+        xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
         mc:Ignorable="d"
-        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Views/Logo.png">
+        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo.png">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -73,6 +74,10 @@
         <input:SfGridSplitter Name="gridSplitter"
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
                               Width="auto" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"/>
+        
+        
+        
+        
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvTransactions"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
                                AddNewRowText="Hacer click aquí para añadir nueva línea" CanMaintainScrollPosition="True"
@@ -116,10 +121,20 @@
                 <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Ingreso"/>
                 <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad" AllowFocus="False"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
-
-                <syncfusion:GridTextColumn MappingName="orden" IsHidden="True" />
+                <syncfusion:GridTemplateColumn Width="25"
+                                               AllowFiltering="False"
+                                               AllowSorting="False">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button syncfusion:FocusManagerHelper.FocusedElement="True"
+                                    Background="Transparent"                                    
+                                    Click="Button_Click">
+                                <Image Source="/Resources/Split.png" />
+                            </Button>
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
             </syncfusion:SfDataGrid.Columns>
-
         </syncfusion:SfDataGrid>
     </Grid>
 </Window>

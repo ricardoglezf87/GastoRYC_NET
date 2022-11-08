@@ -21,7 +21,7 @@
         <syncfusion:SfDataGrid x:Name="gvPersons" HorizontalContentAlignment="Center" 
                                Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
-                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva categoría" 
+                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva persona" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
                                AutoGenerateColumns="False" 
                                RowValidated="gvPersons_RowValidated" 

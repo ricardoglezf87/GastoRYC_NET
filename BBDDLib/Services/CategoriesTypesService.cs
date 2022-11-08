@@ -17,7 +17,9 @@ namespace GastosRYC.BBDDLib.Services
 
         public List<CategoriesTypes>? getAllFilterTransfer()
         {
-            return RYCContextService.getInstance().BBDD.categoriesTypes?.Where(x=>!x.id.Equals((int)CategoriesService.eCategoriesTypes.Transferencias)).ToList();
+            return RYCContextService.getInstance().BBDD.categoriesTypes?
+                .Where(x=>!x.id.Equals((int)CategoriesService.eCategoriesTypes.Transferencias) &&
+                !x.id.Equals((int)CategoriesService.eCategoriesTypes.Especiales)).ToList();
         }
 
         public CategoriesTypes? getByID(int? id)

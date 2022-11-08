@@ -21,7 +21,7 @@
         <syncfusion:SfDataGrid x:Name="gvTags" HorizontalContentAlignment="Center" 
                                Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
-                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva categoría" 
+                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva tag" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
                                AutoGenerateColumns="False" 
                                RowValidated="gvTags_RowValidated" 
