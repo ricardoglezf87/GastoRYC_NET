@@ -6,7 +6,7 @@
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
         xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
         mc:Ignorable="d"
-        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Views/Logo.png">
+        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo.png">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -121,19 +121,20 @@
                 <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Ingreso"/>
                 <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad" AllowFocus="False"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
-                <syncfusion:GridTemplateColumn>
+                <syncfusion:GridTemplateColumn Width="25"
+                                               AllowFiltering="False"
+                                               AllowSorting="False">
                     <syncfusion:GridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Split"
-                                    syncfusion:FocusManagerHelper.FocusedElement="True"
+                            <Button syncfusion:FocusManagerHelper.FocusedElement="True"
+                                    Background="Transparent"                                    
                                     Click="Button_Click">
-                                
+                                <Image Source="/Resources/Split.png" />
                             </Button>
                         </DataTemplate>
                     </syncfusion:GridTemplateColumn.CellTemplate>
                 </syncfusion:GridTemplateColumn>
             </syncfusion:SfDataGrid.Columns>
-
         </syncfusion:SfDataGrid>
     </Grid>
 </Window>
