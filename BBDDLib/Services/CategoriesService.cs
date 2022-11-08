@@ -21,7 +21,8 @@ namespace GastosRYC.BBDDLib.Services
 
         public enum eSpecialCategories : int
         {
-            Split = -1
+            Split = -1,
+            SinCategoria = 0
         }
 
         public List<Categories>? getAll()

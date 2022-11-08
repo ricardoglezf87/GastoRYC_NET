@@ -25,10 +25,7 @@ namespace BBDDLib.Models
 
         public virtual Decimal? amountOut { set; get; }        
 
-        public virtual String? memo { set; get; }
-
-        [NotMapped]
-        public virtual Decimal? amount { get { return amountIn - amountOut; } }        
+        public virtual String? memo { set; get; }  
   
     }
 }

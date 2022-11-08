@@ -58,7 +58,7 @@ namespace BBDDLib.Migrations
 
             migrationBuilder.Sql("INSERT INTO categoriesTypes (description) VALUES ('Especiales');");
 
-            migrationBuilder.Sql("INSERT INTO categories(id,description,categoriesTypesid) VALUES (-1,'Splits...',4);");
+            migrationBuilder.Sql("INSERT INTO categories(id,description,categoriesTypesid) VALUES (-1,'Splits...',4), (0,'*** Sin Categoría ***',4);");
 
         }
 
