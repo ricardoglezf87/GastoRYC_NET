@@ -22,11 +22,12 @@ namespace GastosRYC
         private Boolean needRefresh;
         private DispatcherTimer? dispatcherTimer;
 
-        private readonly AccountsService accountsService = new AccountsService();
+        private readonly AccountsService accountsService = new AccountsService();        
         private readonly CategoriesService categoriesService = new CategoriesService();
         private readonly PersonsService personService = new PersonsService();
         private readonly TagsService tagsService = new TagsService();
         private readonly TransactionsService transactionsService = new TransactionsService();
+        private readonly SplitsService splitsService = new SplitsService();
         private readonly TransactionsStatusService transactionsStatusService = new TransactionsStatusService();
 
         public MainWindow()
@@ -230,6 +231,7 @@ namespace GastosRYC
                 transactions.amountOut = 0;
 
             updateTranfer(transactions);
+            updateTranferSplit(transactions);
             transactionsService.update(transactions);
 
             loadTransactions();
@@ -238,18 +240,20 @@ namespace GastosRYC
 
         private void updateTranfer(Transactions transactions)
         {
-            if (transactions.transactionid != null && transactions.category.categoriesTypesid != 3)
+            if (transactions.tranferid != null && 
+                transactions.category.categoriesTypesid != (int)CategoriesService.eCategoriesTypes.Transferencias)
             {
-                Transactions? tContraria = transactionsService.getByID(transactions.transactionid);
+                Transactions? tContraria = transactionsService.getByID(transactions.tranferid);
                 if (tContraria != null)
                 {
                     transactionsService.delete(tContraria);
                 }
-                transactions.transactionid = null;
+                transactions.tranferid = null;
             }
-            else if (transactions.transactionid == null && transactions.category.categoriesTypesid == 3)
+            else if (transactions.tranferid == null && 
+                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
             {
-                transactions.transactionid = transactionsService.getNextID();
+                transactions.tranferid = transactionsService.getNextID();
 
                 Transactions? tContraria = new Transactions();
                 tContraria.date = transactions.date;
@@ -262,18 +266,19 @@ namespace GastosRYC
                 tContraria.amountOut = transactions.amountIn;
 
                 if (transactions.id != 0)
-                    tContraria.transactionid = transactions.id;
+                    tContraria.tranferid = transactions.id;
                 else
-                    tContraria.transactionid = transactionsService.getNextID() + 1;
+                    tContraria.tranferid = transactionsService.getNextID() + 1;
 
                 tContraria.transactionStatusid = transactions.transactionStatusid;
 
                 transactionsService.update(tContraria);
 
             }
-            else if (transactions.transactionid != null && transactions.category.categoriesTypesid == 3)
+            else if (transactions.tranferid != null && 
+                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
             {
-                Transactions? tContraria = transactionsService.getByID(transactions.transactionid);
+                Transactions? tContraria = transactionsService.getByID(transactions.tranferid);
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;
@@ -286,6 +291,27 @@ namespace GastosRYC
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transactionStatusid = transactions.transactionStatusid;
                     transactionsService.update(tContraria);
+                }
+            }
+        }
+
+        private void updateTranferSplit(Transactions transactions)
+        {
+            if (transactions.tranferSplitid != null && 
+                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+            {
+                Splits? tContraria = splitsService.getByID(transactions.tranferSplitid);
+                if (tContraria != null)
+                {
+                    tContraria.transaction.date = transactions.date;                    
+                    tContraria.transaction.personid = transactions.personid;
+                    tContraria.categoryid = transactions.account.categoryid;
+                    tContraria.memo = transactions.memo;
+                    tContraria.tagid = transactions.tagid;
+                    tContraria.amountIn = transactions.amountOut;
+                    tContraria.amountOut = transactions.amountIn;
+                    tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
+                    splitsService.update(tContraria);
                 }
             }
         }
@@ -305,53 +331,65 @@ namespace GastosRYC
 
         private void gvTransactions_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            Transactions transactions = (Transactions)e.RowData;
+            //Transactions transactions = (Transactions)e.RowData;
 
-            if (transactions.date == null)
-            {
+            //if (transactions.date == null)
+            //{
+            //    e.IsValid = false;
+            //    e.ErrorMessages.Add("date", "Tiene que rellenar la fecha");
+            //}
+
+            //if (transactions.accountid == null)
+            //{
+            //    e.IsValid = false;
+            //    e.ErrorMessages.Add("accountid", "Tiene que rellenar la cuenta");
+            //}
+
+            //if (transactions.categoryid == null)
+            //{
+            //    e.IsValid = false;
+            //    e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
+            //}
+            //else {
+
+            //    if (transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split &&
+            //        (transactions.splits == null || transactions.splits.Count == 0))
+            //    {
+            //        e.IsValid = false;
+            //        e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria Split si no se tiene desglose de movimiento");
+            //    }
+            //    else if(transactions.categoryid != (int)CategoriesService.eSpecialCategories.Split &&
+            //        transactions.splits != null && transactions.splits.Count > 0)
+            //    {
+            //        e.IsValid = false;
+            //        e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria distinta de Split si se tiene desglose de movimiento");
+            //    }
+            //    else if (transactions.categoryid != (int)CategoriesService.eSpecialCategories.Split &&
+            //        (transactions.tranferSplitid != null))
+            //    {
+            //        e.IsValid = false;
+            //        e.ErrorMessages.Add("categoryid", "No se puede cambiar la categoria cuando la transferencia proviene de un split.");
+            //    }
+            //}
+
+            //if (transactions.amountIn == null && transactions.amountOut == null)
+            //{
+            //    e.IsValid = false;
+            //    e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
+            //    e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
+            //}else if(transactions.splits != null && transactions.splits.Count > 0 
+            //    && splitsService.getAmountTotal(transactions) != transactions.amount)
+            //{
+            //    e.IsValid = false;
+            //    e.ErrorMessages.Add("amountIn", "No se puede cambiar las cantidades cuando el movimiento es un split.");
+            //    e.ErrorMessages.Add("amountOut", "No se puede cambiar las cantidades cuando el movimiento es un split.");
+            //}
+
+            //if (transactions.transactionStatusid == null)
+            //{
                 e.IsValid = false;
-                e.ErrorMessages.Add("date", "Tiene que rellenar la fecha");
-            }
-
-            if (transactions.accountid == null)
-            {
-                e.IsValid = false;
-                e.ErrorMessages.Add("accountid", "Tiene que rellenar la cuenta");
-            }
-
-            if (transactions.categoryid == null)
-            {
-                e.IsValid = false;
-                e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
-            }
-            else {
-
-                if (transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split &&
-                    (transactions.splits == null || transactions.splits.Count == 0))
-                {
-                    e.IsValid = false;
-                    e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria Split si no se tiene desglose de movimiento");
-                }
-                else if(transactions.categoryid != (int)CategoriesService.eSpecialCategories.Split &&
-                    transactions.splits != null && transactions.splits.Count > 0)
-                {
-                    e.IsValid = false;
-                    e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria distinta de Split si se tiene desglose de movimiento");
-                }
-            }
-
-            if (transactions.amountIn == null && transactions.amountOut == null)
-            {
-                e.IsValid = false;
-                e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
-                e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
-            }
-
-            if (transactions.transactionStatusid == null)
-            {
-                e.IsValid = false;
-                e.ErrorMessages.Add("transactionStatusid", "Tiene que rellenar el estado");
-            }
+            //    e.ErrorMessages.Add("transactionStatusid", "Tiene que rellenar el estado");
+            //}
         }
 
         private void lvAccounts_SizeChanged(object sender, SizeChangedEventArgs e)

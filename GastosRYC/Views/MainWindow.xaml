@@ -85,6 +85,7 @@
                                RowValidated="gvTransactions_RowValidated" AddNewRowInitiating="gvTransactions_AddNewRowInitiating"
                                EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star"
                                RowValidating="gvTransactions_RowValidating" CurrentCellDropDownSelectionChanged="gvTransactions_CurrentCellDropDownSelectionChanged" 
+                               LiveDataUpdateMode="AllowDataShaping"
                                Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
