@@ -331,65 +331,68 @@ namespace GastosRYC
 
         private void gvTransactions_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            //Transactions transactions = (Transactions)e.RowData;
+            Transactions transactions = (Transactions)e.RowData;
 
-            //if (transactions.date == null)
-            //{
-            //    e.IsValid = false;
-            //    e.ErrorMessages.Add("date", "Tiene que rellenar la fecha");
-            //}
-
-            //if (transactions.accountid == null)
-            //{
-            //    e.IsValid = false;
-            //    e.ErrorMessages.Add("accountid", "Tiene que rellenar la cuenta");
-            //}
-
-            //if (transactions.categoryid == null)
-            //{
-            //    e.IsValid = false;
-            //    e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
-            //}
-            //else {
-
-            //    if (transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split &&
-            //        (transactions.splits == null || transactions.splits.Count == 0))
-            //    {
-            //        e.IsValid = false;
-            //        e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria Split si no se tiene desglose de movimiento");
-            //    }
-            //    else if(transactions.categoryid != (int)CategoriesService.eSpecialCategories.Split &&
-            //        transactions.splits != null && transactions.splits.Count > 0)
-            //    {
-            //        e.IsValid = false;
-            //        e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria distinta de Split si se tiene desglose de movimiento");
-            //    }
-            //    else if (transactions.categoryid != (int)CategoriesService.eSpecialCategories.Split &&
-            //        (transactions.tranferSplitid != null))
-            //    {
-            //        e.IsValid = false;
-            //        e.ErrorMessages.Add("categoryid", "No se puede cambiar la categoria cuando la transferencia proviene de un split.");
-            //    }
-            //}
-
-            //if (transactions.amountIn == null && transactions.amountOut == null)
-            //{
-            //    e.IsValid = false;
-            //    e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
-            //    e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
-            //}else if(transactions.splits != null && transactions.splits.Count > 0 
-            //    && splitsService.getAmountTotal(transactions) != transactions.amount)
-            //{
-            //    e.IsValid = false;
-            //    e.ErrorMessages.Add("amountIn", "No se puede cambiar las cantidades cuando el movimiento es un split.");
-            //    e.ErrorMessages.Add("amountOut", "No se puede cambiar las cantidades cuando el movimiento es un split.");
-            //}
-
-            //if (transactions.transactionStatusid == null)
-            //{
+            if (transactions.date == null)
+            {
                 e.IsValid = false;
-            //    e.ErrorMessages.Add("transactionStatusid", "Tiene que rellenar el estado");
-            //}
+                e.ErrorMessages.Add("date", "Tiene que rellenar la fecha");
+            }
+
+            if (transactions.accountid == null)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("accountid", "Tiene que rellenar la cuenta");
+            }
+
+            if (transactions.categoryid == null)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
+            }
+            else
+            {
+
+                if (transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split &&
+                    (transactions.splits == null || transactions.splits.Count == 0))
+                {
+                    e.IsValid = false;
+                    e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria Split si no se tiene desglose de movimiento");
+                }
+                else if (transactions.categoryid != (int)CategoriesService.eSpecialCategories.Split &&
+                    transactions.splits != null && transactions.splits.Count > 0)
+                {
+                    e.IsValid = false;
+                    e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria distinta de Split si se tiene desglose de movimiento");
+                }
+                else if (transactions.tranferSplitid != null)
+                {
+                    e.IsValid = false;
+                    e.ErrorMessages.Add("categoryid", "No se puede cambiar el movimiento cuando la transferencia proviene de un split.");
+                    e.ErrorMessages.Add("amountIn", "No se puede cambiar el movimiento cuando la transferencia proviene de un split.");
+                    e.ErrorMessages.Add("amountOut", "No se puede cambiar el movimiento cuando la transferencia proviene de un split.");
+                }
+            }
+
+            if (transactions.amountIn == null && transactions.amountOut == null)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
+                e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
+            }
+            else if (transactions.splits != null && transactions.splits.Count > 0
+                && splitsService.getAmountTotal(transactions) != transactions.amount)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("amountIn", "No se puede cambiar las cantidades cuando el movimiento es un split.");
+                e.ErrorMessages.Add("amountOut", "No se puede cambiar las cantidades cuando el movimiento es un split.");
+            }
+
+            if (transactions.transactionStatusid == null)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("transactionStatusid", "Tiene que rellenar el estado");
+            }
         }
 
         private void lvAccounts_SizeChanged(object sender, SizeChangedEventArgs e)

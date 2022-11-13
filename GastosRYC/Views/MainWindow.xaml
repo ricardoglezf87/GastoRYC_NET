@@ -123,6 +123,7 @@
                 <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad" AllowFocus="False"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
                 <syncfusion:GridTemplateColumn Width="25"
+                                               MappingName="id"
                                                AllowFiltering="False"
                                                AllowSorting="False">
                     <syncfusion:GridTemplateColumn.CellTemplate>
