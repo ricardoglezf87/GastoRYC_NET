@@ -25,7 +25,9 @@ namespace BBDDLib.Models
 
         public virtual Decimal? amountOut { set; get; }        
 
-        public virtual String? memo { set; get; }  
-  
+        public virtual String? memo { set; get; }
+
+        public virtual int? tranferid { set; get; }
+
     }
 }

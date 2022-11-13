@@ -32,7 +32,9 @@ namespace BBDDLib.Models
 
         public virtual Decimal? amountOut { set; get; }
 
-        public virtual int? transactionid { set; get; }
+        public virtual int? tranferid { set; get; }
+
+        public virtual int? tranferSplitid { set; get; }
 
         public virtual String? memo { set; get; }
 

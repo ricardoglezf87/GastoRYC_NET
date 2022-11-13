@@ -1,5 +1,6 @@
 ﻿using BBDDLib.Models;
 using GastosRYC.BBDDLib.Services;
+using System.Configuration;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,6 +14,7 @@ namespace GastosRYC.Views
 
         private readonly CategoriesService categoriesService = new CategoriesService();
         private readonly SplitsService splitsService = new SplitsService();
+        private readonly TransactionsService transactionsService = new TransactionsService();
         private readonly Transactions transactions;
 
         public frmSplits(Transactions transactions)
@@ -69,13 +71,84 @@ namespace GastosRYC.Views
         {
             Splits splits = (Splits)e.RowData;
 
+            saveChanges(splits);
+        }
+
+        private void saveChanges(Splits splits)
+        {
             if (splits.category == null && splits.categoryid != null)
             {
-                splits.category = categoriesService.getByID(splits.categoryid);               
+                splits.category = categoriesService.getByID(splits.categoryid);
             }
-            
+
+            if (splits.amountIn == null)
+                splits.amountIn = 0;
+
+            if (splits.amountOut == null)
+                splits.amountOut = 0;
+
+            updateTranfer(splits);
+
             splitsService.update(splits);
         }
+
+        private void updateTranfer(Splits splits)
+        {
+            if (splits.tranferid != null && 
+                splits.category.categoriesTypesid != (int)CategoriesService.eCategoriesTypes.Transferencias)
+            {
+                Transactions? tContraria = transactionsService.getByID(splits.tranferid);
+                if (tContraria != null)
+                {
+                    transactionsService.delete(tContraria);
+                }
+                splits.tranferid = null;
+            }
+            else if (splits.tranferid == null && 
+                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+            {
+                splits.tranferid = transactionsService.getNextID();
+
+                Transactions? tContraria = new Transactions();
+                tContraria.date = transactions.date;
+                tContraria.accountid = splits.category.accounts.id;
+                tContraria.personid = transactions.personid;
+                tContraria.categoryid = transactions.account.categoryid;
+                tContraria.memo = splits.memo;
+                tContraria.tagid = transactions.tagid;
+                tContraria.amountIn = splits.amountOut;
+                tContraria.amountOut = splits.amountIn;
+
+                if (splits.id != 0)
+                    tContraria.tranferSplitid = splits.id;
+                else
+                    tContraria.tranferSplitid = splitsService.getNextID() + 1;
+
+                tContraria.transactionStatusid = transactions.transactionStatusid;
+
+                transactionsService.update(tContraria);
+
+            }
+            else if (splits.tranferid != null && 
+                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+            {
+                Transactions? tContraria = transactionsService.getByID(splits.tranferid);
+                if (tContraria != null)
+                {
+                    tContraria.date = transactions.date;
+                    tContraria.accountid = splits.category.accounts.id;
+                    tContraria.personid = transactions.personid;
+                    tContraria.categoryid = transactions.account.categoryid;
+                    tContraria.memo = splits.memo;
+                    tContraria.tagid = transactions.tagid;
+                    tContraria.amountIn = splits.amountOut??0;
+                    tContraria.amountOut = splits.amountIn??0;
+                    tContraria.transactionStatusid = transactions.transactionStatusid;
+                    transactionsService.update(tContraria);
+                }
+            }
+        }
+
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
