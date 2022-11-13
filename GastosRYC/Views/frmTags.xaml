@@ -23,7 +23,7 @@
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AddNewRowPosition="Top" AddNewRowText="Inserte nueva tag" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
-                               AutoGenerateColumns="False" 
+                               AutoGenerateColumns="False" EditTrigger="OnTap"
                                RowValidated="gvTags_RowValidated" 
                                RowValidating="gvTags_RowValidating" 
                                RecordDeleted="gvTags_RecordDeleted" 

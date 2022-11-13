@@ -20,7 +20,7 @@
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AddNewRowPosition="Top" AddNewRowText="Inserte nuevo split" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
-                               AutoGenerateColumns="False" 
+                               AutoGenerateColumns="False" EditTrigger="OnTap"
                                CurrentCellDropDownSelectionChanged="gvSplits_CurrentCellDropDownSelectionChanged"
                                AddNewRowInitiating="gvSplits_AddNewRowInitiating"
                                RowValidated="gvSplits_RowValidated" 

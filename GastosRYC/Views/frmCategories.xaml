@@ -23,7 +23,7 @@
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AddNewRowPosition="Top" AddNewRowText="Inserte nueva categoría" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
-                               AutoGenerateColumns="False" 
+                               AutoGenerateColumns="False" EditTrigger="OnTap"
                                CurrentCellDropDownSelectionChanged="gvCategories_CurrentCellDropDownSelectionChanged" 
                                RowValidated="gvCategories_RowValidated" 
                                RowValidating="gvCategories_RowValidating" 
