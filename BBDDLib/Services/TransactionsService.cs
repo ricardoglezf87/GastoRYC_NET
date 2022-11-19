@@ -26,10 +26,13 @@ namespace GastosRYC.BBDDLib.Services
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
 
-        public void delete(Transactions transactions)
+        public void delete(Transactions? transactions)
         {
-            RYCContextService.getInstance().BBDD.Remove(transactions);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            if (transactions != null)
+            {
+                RYCContextService.getInstance().BBDD.Remove(transactions);
+                RYCContextService.getInstance().BBDD.SaveChanges();
+            }
         }
 
 

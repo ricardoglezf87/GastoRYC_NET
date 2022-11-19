@@ -19,11 +19,11 @@
         <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="0"  
                                  TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Center" ShowClearButton="True" />
         <syncfusion:SfDataGrid x:Name="gvPersons" HorizontalContentAlignment="Center" 
-                               Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
+                               AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AddNewRowPosition="Top" AddNewRowText="Inserte nueva persona" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
-                               AutoGenerateColumns="False" EditTrigger="OnTap"
+                               AutoGenerateColumns="False" EditTrigger="OnTap" ShowRowHeader="True"
                                RowValidated="gvPersons_RowValidated" 
                                RowValidating="gvPersons_RowValidating" 
                                RecordDeleted="gvPersons_RecordDeleted" 

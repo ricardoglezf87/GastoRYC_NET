@@ -16,13 +16,13 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <syncfusion:SfDataGrid x:Name="gvSplits" HorizontalContentAlignment="Center" 
-                               Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
+                               AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AddNewRowPosition="Top" AddNewRowText="Inserte nuevo split" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
                                AutoGenerateColumns="False" EditTrigger="OnTap"
                                CurrentCellDropDownSelectionChanged="gvSplits_CurrentCellDropDownSelectionChanged"
-                               AddNewRowInitiating="gvSplits_AddNewRowInitiating"
+                               AddNewRowInitiating="gvSplits_AddNewRowInitiating" ShowRowHeader="True"
                                RowValidated="gvSplits_RowValidated" 
                                RowValidating="gvSplits_RowValidating" 
                                RecordDeleted="gvSplits_RecordDeleted" 

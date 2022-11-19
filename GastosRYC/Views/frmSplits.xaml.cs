@@ -152,7 +152,11 @@ namespace GastosRYC.Views
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (Splits splits in e.Items) {                
+            foreach (Splits splits in e.Items) {
+                if (splits.tranferid != null)
+                {
+                    transactionsService.delete(transactionsService.getByID(splits.tranferid));
+                }
                 splitsService.delete(splits);
             }            
         }

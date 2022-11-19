@@ -19,11 +19,11 @@
         <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="0"  
                                  TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Center" ShowClearButton="True" />
         <syncfusion:SfDataGrid x:Name="gvTags" HorizontalContentAlignment="Center" 
-                               Margin="0,0,0,-434" AllowEditing="True" AllowDeleting="True" 
+                               AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AddNewRowPosition="Top" AddNewRowText="Inserte nueva tag" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
-                               AutoGenerateColumns="False" EditTrigger="OnTap"
+                               AutoGenerateColumns="False" EditTrigger="OnTap" ShowRowHeader="True"
                                RowValidated="gvTags_RowValidated" 
                                RowValidating="gvTags_RowValidating" 
                                RecordDeleted="gvTags_RecordDeleted" 

@@ -8,9 +8,20 @@
         mc:Ignorable="d"
         Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo.png">
 
+    <Window.Resources>
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+
+        <DataTemplate x:Key="BalanceTemplate">
+            <TextBlock HorizontalAlignment="Right" 
+               Text="{Binding balance, StringFormat={}{0:N2} €}" Margin="0,0,5,0"/>
+        </DataTemplate>
+    </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
@@ -35,17 +46,23 @@
         </DockPanel>
         <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="btnAllAccounts_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>
-        <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged" Grid.Column="0" Grid.Row="2" 
-                  SizeChanged="lvAccounts_SizeChanged" BorderBrush="{x:Null}" Background="{x:Null}" d:ItemsSource="{d:SampleData ItemCount=5}" BorderThickness="1,1,1,0">
+        <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged" 
+                  Grid.Column="0" Grid.Row="2" 
+                  SizeChanged="lvAccounts_SizeChanged" 
+                  BorderBrush="{x:Null}" Background="{x:Null}" 
+                  d:ItemsSource="{d:SampleData ItemCount=5}" 
+                  BorderThickness="1,1,1,0" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
             </ListView.Resources>
+            
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
-                    <GridViewColumn   DisplayMemberBinding="{Binding balance}"/>
+                    <GridViewColumn   CellTemplate="{StaticResource BalanceTemplate}"  />
+
                 </GridView>
             </ListView.View>
             <ListView.GroupStyle>
@@ -76,17 +93,18 @@
                               Width="auto" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"/>
         
         
-        
-        
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvTransactions"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
                                AddNewRowText="Hacer click aquí para añadir nueva línea" CanMaintainScrollPosition="True"
-                               AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="false"
-                               RowValidated="gvTransactions_RowValidated" AddNewRowInitiating="gvTransactions_AddNewRowInitiating"
+                               AllowResizingColumns="True" AddNewRowPosition="FixedTop"
+                               RowValidated="gvTransactions_RowValidated" 
+                               AddNewRowInitiating="gvTransactions_AddNewRowInitiating"
                                EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star"
-                               RowValidating="gvTransactions_RowValidating" CurrentCellDropDownSelectionChanged="gvTransactions_CurrentCellDropDownSelectionChanged" 
-                               LiveDataUpdateMode="AllowDataShaping"
-                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2">
+                               RowValidating="gvTransactions_RowValidating" 
+                               CurrentCellDropDownSelectionChanged="gvTransactions_CurrentCellDropDownSelectionChanged" 
+                               LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True" 
+                               RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
+                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
@@ -124,6 +142,7 @@
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
                 <syncfusion:GridTemplateColumn Width="25"
                                                MappingName="id"
+                                               HeaderText=""
                                                AllowFiltering="False"
                                                AllowSorting="False">
                     <syncfusion:GridTemplateColumn.CellTemplate>
