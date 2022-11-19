@@ -25,7 +25,7 @@
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
                                AutoGenerateColumns="False" EditTrigger="OnTap"
                                CurrentCellDropDownSelectionChanged="gvCategories_CurrentCellDropDownSelectionChanged" 
-                               RowValidated="gvCategories_RowValidated" 
+                               RowValidated="gvCategories_RowValidated" ShowRowHeader="True"
                                RowValidating="gvCategories_RowValidating" 
                                RecordDeleted="gvCategories_RecordDeleted" 
                                RecordDeleting="gvCategories_RecordDeleting" Grid.Row="1">

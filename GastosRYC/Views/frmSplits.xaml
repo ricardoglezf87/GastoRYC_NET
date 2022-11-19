@@ -22,7 +22,7 @@
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
                                AutoGenerateColumns="False" EditTrigger="OnTap"
                                CurrentCellDropDownSelectionChanged="gvSplits_CurrentCellDropDownSelectionChanged"
-                               AddNewRowInitiating="gvSplits_AddNewRowInitiating"
+                               AddNewRowInitiating="gvSplits_AddNewRowInitiating" ShowRowHeader="True"
                                RowValidated="gvSplits_RowValidated" 
                                RowValidating="gvSplits_RowValidating" 
                                RecordDeleted="gvSplits_RecordDeleted" 

@@ -23,7 +23,7 @@
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AddNewRowPosition="Top" AddNewRowText="Inserte nueva persona" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
-                               AutoGenerateColumns="False" EditTrigger="OnTap"
+                               AutoGenerateColumns="False" EditTrigger="OnTap" ShowRowHeader="True"
                                RowValidated="gvPersons_RowValidated" 
                                RowValidating="gvPersons_RowValidating" 
                                RecordDeleted="gvPersons_RecordDeleted" 
