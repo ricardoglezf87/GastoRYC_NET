@@ -139,8 +139,8 @@ namespace GastosRYC
         {
             viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
             lvAccounts.ItemsSource = viewAccounts;
-            //viewAccounts.SortDescriptions.Add(new SortDescription("accountTypeId", ListSortDirection.Ascending));
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
+            viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypes.id", ListSortDirection.Ascending));
             needRefresh = true;
         }
 
