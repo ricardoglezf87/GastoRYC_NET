@@ -499,5 +499,55 @@ namespace GastosRYC
             updateSplits(transactions);
             loadTransactions();
         }
+
+        private void gvTransactions_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
+        {
+            foreach (Transactions transactions in e.Items)
+            {
+                if (transactions.tranferSplitid != null)
+                {
+                    MessageBox.Show("No se puede borrar un movimiento que venga de una transferencia de split","Eliminación movimiento");
+                    e.Cancel = true;
+
+                }
+            }
+
+            if (!e.Cancel && MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimiento", MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        {
+            foreach (Transactions transactions in e.Items)
+            {
+                if (transactions.splits != null)
+                {
+                    List<Splits> lSplits = transactions.splits;
+                    for (int i=0; i < lSplits.Count; i++)
+                    {
+                        Splits splits = lSplits[i];
+                        if (splits.tranferid != null)
+                        {
+                            transactionsService.delete(transactionsService.getByID(splits.tranferid));
+                        }
+
+                        splitsService.delete(splits);
+                    }
+                }
+
+                if (transactions.tranferid != null)
+                {
+                    transactionsService.delete(transactionsService.getByID(transactions.tranferid));
+                }
+
+                transactionsService.delete(transactions);
+
+                loadAccounts();
+                loadTransactions();
+            }
+        }
     }
 }

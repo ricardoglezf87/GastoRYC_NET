@@ -93,17 +93,18 @@
                               Width="auto" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"/>
         
         
-        
-        
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvTransactions"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
                                AddNewRowText="Hacer click aquí para añadir nueva línea" CanMaintainScrollPosition="True"
-                               AllowResizingColumns="True" AddNewRowPosition="FixedTop" AllowDeleting="false"
-                               RowValidated="gvTransactions_RowValidated" AddNewRowInitiating="gvTransactions_AddNewRowInitiating"
+                               AllowResizingColumns="True" AddNewRowPosition="FixedTop"
+                               RowValidated="gvTransactions_RowValidated" 
+                               AddNewRowInitiating="gvTransactions_AddNewRowInitiating"
                                EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star"
-                               RowValidating="gvTransactions_RowValidating" CurrentCellDropDownSelectionChanged="gvTransactions_CurrentCellDropDownSelectionChanged" 
-                               LiveDataUpdateMode="AllowDataShaping"
-                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2">
+                               RowValidating="gvTransactions_RowValidating" 
+                               CurrentCellDropDownSelectionChanged="gvTransactions_CurrentCellDropDownSelectionChanged" 
+                               LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True" 
+                               RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
+                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
