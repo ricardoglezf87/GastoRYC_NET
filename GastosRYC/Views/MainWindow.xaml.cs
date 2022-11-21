@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 using GastosRYC.Views;
+using GastosRYC.Extensions;
 
 //TODO: implementar split
 
@@ -502,31 +503,27 @@ namespace GastosRYC
 
         private void gvTransactions_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            foreach (Transactions transactions in e.Items)
-            {
-                if (transactions.tranferSplitid != null)
-                {
-                    MessageBox.Show("No se puede borrar un movimiento que venga de una transferencia de split","Eliminación movimiento");
-                    e.Cancel = true;
-
-                }
-            }
-
-            if (!e.Cancel && MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimiento", MessageBoxButton.YesNo,
+          
+            if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimiento", MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
             }
         }
 
-        private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private void removeTransaction(Transactions transactions)
         {
-            foreach (Transactions transactions in e.Items)
+            if (transactions.tranferSplitid != null)
+            {
+                MessageBox.Show("El movimiento Id: " + transactions.id.ToString() +
+                    " de fecha: " + transactions.date.toShortDateString() + " viene de una transferencia desde split, para borrar diríjase al split que lo generó.", "Eliminación movimiento");
+            }
+            else
             {
                 if (transactions.splits != null)
                 {
                     List<Splits> lSplits = transactions.splits;
-                    for (int i=0; i < lSplits.Count; i++)
+                    for (int i = 0; i < lSplits.Count; i++)
                     {
                         Splits splits = lSplits[i];
                         if (splits.tranferid != null)
@@ -544,10 +541,18 @@ namespace GastosRYC
                 }
 
                 transactionsService.delete(transactions);
-
-                loadAccounts();
-                loadTransactions();
             }
+        }
+
+        private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        {
+            foreach (Transactions transactions in e.Items)
+            {
+                removeTransaction(transactions);   
+            }
+
+            loadAccounts();
+            loadTransactions();
         }
 
         private void btnCopy_Click(object sender, RoutedEventArgs e)
@@ -570,8 +575,18 @@ namespace GastosRYC
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Implementar funcionalidad
-            MessageBox.Show("Funcionalidad no implementada");
+            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
+            {
+                foreach (Transactions transactions in gvTransactions.SelectedItems)
+                {
+                    removeTransaction(transactions);
+                }
+                loadTransactions();
+            }
+            else
+            {
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
+            }
         }
 
         private void btnPending_Click(object sender, RoutedEventArgs e)
