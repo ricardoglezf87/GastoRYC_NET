@@ -242,7 +242,7 @@ namespace GastosRYC
         private void updateTranfer(Transactions transactions)
         {
             if (transactions.tranferid != null && 
-                transactions.category.categoriesTypesid != (int)CategoriesService.eCategoriesTypes.Transferencias)
+                transactions.category.categoriesTypesid != (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = transactionsService.getByID(transactions.tranferid);
                 if (tContraria != null)
@@ -252,7 +252,7 @@ namespace GastosRYC
                 transactions.tranferid = null;
             }
             else if (transactions.tranferid == null && 
-                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 transactions.tranferid = transactionsService.getNextID();
 
@@ -277,7 +277,7 @@ namespace GastosRYC
 
             }
             else if (transactions.tranferid != null && 
-                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = transactionsService.getByID(transactions.tranferid);
                 if (tContraria != null)
@@ -299,7 +299,7 @@ namespace GastosRYC
         private void updateTranferSplit(Transactions transactions)
         {
             if (transactions.tranferSplitid != null && 
-                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 Splits? tContraria = splitsService.getByID(transactions.tranferSplitid);
                 if (tContraria != null)
@@ -484,8 +484,8 @@ namespace GastosRYC
             else if(transactions.categoryid != null
                 && transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split)
             {
-                transactions.categoryid = (int)CategoriesService.eSpecialCategories.SinCategoria;
-                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.SinCategoria);
+                transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
+                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
             }
 
 
