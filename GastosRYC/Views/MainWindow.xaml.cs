@@ -326,7 +326,7 @@ namespace GastosRYC
                 data.accountid = (lvAccounts.SelectedItem as Accounts).id;
             }
 
-            data.transactionStatusid = transactionsStatusService.getFirst()?.id;
+            data.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
         }
 
         private void gvTransactions_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -491,7 +491,7 @@ namespace GastosRYC
             transactionsService.update(transactions);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
             frmSplits frm = new frmSplits(transactions);
@@ -547,6 +547,81 @@ namespace GastosRYC
 
                 loadAccounts();
                 loadTransactions();
+            }
+        }
+
+        private void btnCopy_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Implementar funcionalidad
+            MessageBox.Show("Funcionalidad no implementada");
+        }
+
+        private void btnPaste_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Implementar funcionalidad
+            MessageBox.Show("Funcionalidad no implementada");
+        }
+
+        private void btnCut_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Implementar funcionalidad
+            MessageBox.Show("Funcionalidad no implementada");
+        }
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Implementar funcionalidad
+            MessageBox.Show("Funcionalidad no implementada");
+        }
+
+        private void btnPending_Click(object sender, RoutedEventArgs e)
+        {
+            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
+            {
+                foreach (Transactions transactions in gvTransactions.SelectedItems)
+                {
+                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                    transactionsService.update(transactions);
+                }
+                loadTransactions();
+            }
+            else
+            {
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
+            }
+        }
+
+        private void btnProvisional_Click(object sender, RoutedEventArgs e)
+        {
+            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
+            {
+                foreach (Transactions transactions in gvTransactions.SelectedItems)
+                {
+                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
+                    transactionsService.update(transactions);
+                }
+                loadTransactions();
+            }
+            else
+            {
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
+            }
+        }
+
+        private void btnReconciled_Click(object sender, RoutedEventArgs e)
+        {
+            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
+            {
+                foreach (Transactions transactions in gvTransactions.SelectedItems)
+                {
+                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
+                    transactionsService.update(transactions);
+                }
+                loadTransactions();
+            }
+            else
+            {
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
             }
         }
     }

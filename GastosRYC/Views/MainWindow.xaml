@@ -104,10 +104,23 @@
                                CurrentCellDropDownSelectionChanged="gvTransactions_CurrentCellDropDownSelectionChanged" 
                                LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True" 
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
-                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True">
+                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True" SelectionMode="Extended">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
+            <syncfusion:SfDataGrid.RecordContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Estado Movimiento">
+                        <MenuItem x:Name="btnPending" Header="Pendiente" Click="btnPending_Click"/>
+                        <MenuItem x:Name="btnProvisional" Header="Provisional" Click="btnProvisional_Click"/>
+                        <MenuItem x:Name="btnReconciled" Header="Conciliado" Click="btnReconciled_Click"/>
+                    </MenuItem>
+                    <MenuItem x:Name="btnCut" Header="Cortar" Click="btnCut_Click" />
+                    <MenuItem x:Name="btnCopy" Header="Copiar" Click="btnCopy_Click" />
+                    <MenuItem x:Name="btnPaste" Header="Pegar" Click="btnPaste_Click" />
+                    <MenuItem x:Name="btnDelete" Header="Borrar" Click="btnDelete_Click" />
+                </ContextMenu>
+            </syncfusion:SfDataGrid.RecordContextMenu>
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
                 <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
@@ -149,7 +162,7 @@
                         <DataTemplate>
                             <Button syncfusion:FocusManagerHelper.FocusedElement="True"
                                     Background="Transparent"                                    
-                                    Click="Button_Click">
+                                    Click="ButtonSplit_Click">
                                 <Image Source="/Resources/Split.png" />
                             </Button>
                         </DataTemplate>
