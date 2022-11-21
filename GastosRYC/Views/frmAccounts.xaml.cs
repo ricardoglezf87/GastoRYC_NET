@@ -75,7 +75,7 @@ namespace GastosRYC.Views
                 categories = new Categories();
                 accounts.categoryid = categoriesService.getNextID(); ;
                 categories.description = "[" + accounts.description + "]";
-                categories.categoriesTypesid = (int) CategoriesService.eCategoriesTypes.Transferencias;
+                categories.categoriesTypesid = (int) CategoriesService.eCategoriesTypes.Transfers;
 
             }
 

@@ -95,7 +95,7 @@ namespace GastosRYC.Views
         private void updateTranfer(Splits splits)
         {
             if (splits.tranferid != null && 
-                splits.category.categoriesTypesid != (int)CategoriesService.eCategoriesTypes.Transferencias)
+                splits.category.categoriesTypesid != (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = transactionsService.getByID(splits.tranferid);
                 if (tContraria != null)
@@ -105,7 +105,7 @@ namespace GastosRYC.Views
                 splits.tranferid = null;
             }
             else if (splits.tranferid == null && 
-                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 splits.tranferid = transactionsService.getNextID();
 
@@ -130,7 +130,7 @@ namespace GastosRYC.Views
 
             }
             else if (splits.tranferid != null && 
-                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = transactionsService.getByID(splits.tranferid);
                 if (tContraria != null)
