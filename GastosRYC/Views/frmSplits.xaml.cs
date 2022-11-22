@@ -15,9 +15,9 @@ namespace GastosRYC.Views
         private readonly CategoriesService categoriesService = new CategoriesService();
         private readonly SplitsService splitsService = new SplitsService();
         private readonly TransactionsService transactionsService = new TransactionsService();
-        private readonly Transactions transactions;
+        private readonly Transactions? transactions;
 
-        public frmSplits(Transactions transactions)
+        public frmSplits(Transactions? transactions)
         {
             InitializeComponent();
             this.transactions = transactions;
@@ -26,7 +26,14 @@ namespace GastosRYC.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = categoriesService.getAll();
-            gvSplits.ItemsSource = splitsService.getbyTransactionid(transactions.id);            
+            if (transactions != null && transactions.id > 0)
+            {
+                gvSplits.ItemsSource = splitsService.getbyTransactionid(transactions.id);
+            }
+            else
+            {
+                gvSplits.ItemsSource = splitsService.getbyTransactionidNull();
+            }
         }
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
