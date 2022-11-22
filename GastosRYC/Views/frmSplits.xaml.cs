@@ -15,9 +15,9 @@ namespace GastosRYC.Views
         private readonly CategoriesService categoriesService = new CategoriesService();
         private readonly SplitsService splitsService = new SplitsService();
         private readonly TransactionsService transactionsService = new TransactionsService();
-        private readonly Transactions transactions;
+        private readonly Transactions? transactions;
 
-        public frmSplits(Transactions transactions)
+        public frmSplits(Transactions? transactions)
         {
             InitializeComponent();
             this.transactions = transactions;
@@ -26,7 +26,14 @@ namespace GastosRYC.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = categoriesService.getAll();
-            gvSplits.ItemsSource = splitsService.getbyTransactionid(transactions.id);            
+            if (transactions != null && transactions.id > 0)
+            {
+                gvSplits.ItemsSource = splitsService.getbyTransactionid(transactions.id);
+            }
+            else
+            {
+                gvSplits.ItemsSource = splitsService.getbyTransactionidNull();
+            }
         }
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -95,7 +102,7 @@ namespace GastosRYC.Views
         private void updateTranfer(Splits splits)
         {
             if (splits.tranferid != null && 
-                splits.category.categoriesTypesid != (int)CategoriesService.eCategoriesTypes.Transferencias)
+                splits.category.categoriesTypesid != (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = transactionsService.getByID(splits.tranferid);
                 if (tContraria != null)
@@ -105,7 +112,7 @@ namespace GastosRYC.Views
                 splits.tranferid = null;
             }
             else if (splits.tranferid == null && 
-                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 splits.tranferid = transactionsService.getNextID();
 
@@ -130,7 +137,7 @@ namespace GastosRYC.Views
 
             }
             else if (splits.tranferid != null && 
-                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transferencias)
+                splits.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = transactionsService.getByID(splits.tranferid);
                 if (tContraria != null)

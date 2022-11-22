@@ -15,6 +15,11 @@ namespace GastosRYC.BBDDLib.Services
             return RYCContextService.getInstance().BBDD.splits?.ToList();
         }
 
+        public List<Splits>? getbyTransactionidNull()
+        {
+            return RYCContextService.getInstance().BBDD.splits?.Where(x => x.transactionid == null).ToList();
+        }
+
         public List<Splits>? getbyTransactionid(int transactionid)
         {
             return RYCContextService.getInstance().BBDD.splits?.Where(x=>x.transactionid == transactionid).ToList();
