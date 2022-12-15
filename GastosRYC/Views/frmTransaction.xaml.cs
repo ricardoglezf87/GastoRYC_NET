@@ -25,6 +25,7 @@ namespace GastosRYC.Views
     {
 
         private readonly Transactions? transaction;
+        private readonly int? accountidDefault;
 
         private readonly AccountsService accountsService = new AccountsService();
         private readonly CategoriesService categoriesService = new CategoriesService();
@@ -34,10 +35,17 @@ namespace GastosRYC.Views
         private readonly SplitsService splitsService = new SplitsService();
         private readonly TransactionsStatusService transactionsStatusService = new TransactionsStatusService();
 
-        public frmTransaction(Transactions transaction)
+        public frmTransaction(Transactions transaction, int accountidDefault)
         {
             InitializeComponent();
             this.transaction = transaction;
+            this.accountidDefault = accountidDefault;
+        }
+
+        public frmTransaction(Transactions transaction)
+        {
+            InitializeComponent();
+            this.transaction = transaction;            
         }
 
         public frmTransaction()
@@ -68,6 +76,12 @@ namespace GastosRYC.Views
             else
             {
                 dtpDate.SelectedDate = DateTime.Now;
+                
+                if (accountidDefault != null)
+                {
+                    cbAccount.SelectedValue = accountidDefault;
+                }
+
                 cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.eTransactionsTypes.Pending;
             }
         }

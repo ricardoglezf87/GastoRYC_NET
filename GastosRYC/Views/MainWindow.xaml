@@ -123,12 +123,12 @@
                 <syncfusion:GridTextColumn MappingName="person.name" HeaderText="Persona"/>
                 <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
                 <syncfusion:GridTextColumn MappingName="category.description" HeaderText="Categoría"/>
-                <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado" />
-                <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag" />
-                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada" AllowFocus="False"/>
-                <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida" AllowFocus="False"/>
-                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad" AllowFocus="False"/>
-                <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
+                <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado"/>
+                <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag"/>
+                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
+                <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
+                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad"/>
+                <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo"/>
                 <syncfusion:GridTemplateColumn Width="25"
                                                MappingName="id"
                                                HeaderText=""
