@@ -125,6 +125,8 @@
                 <syncfusion:GridTextColumn MappingName="category.description" HeaderText="Categoría"/>
                 <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado" />
                 <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag" />
+                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada" AllowFocus="False"/>
+                <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida" AllowFocus="False"/>
                 <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad" AllowFocus="False"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
                 <syncfusion:GridTemplateColumn Width="25"
