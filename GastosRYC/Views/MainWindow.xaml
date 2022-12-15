@@ -94,15 +94,10 @@
         
         
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvTransactions"
-                               AutoGenerateColumns="False" AllowFiltering="true" AllowEditing="True" AllowSorting="False"
-                               AddNewRowText="Hacer click aquí para añadir nueva línea" CanMaintainScrollPosition="True"
-                               AllowResizingColumns="True" AddNewRowPosition="FixedTop"
-                               RowValidated="gvTransactions_RowValidated" 
-                               AddNewRowInitiating="gvTransactions_AddNewRowInitiating"
-                               EditTrigger="OnTap"  ScrollMode="Async" ColumnSizer="Star"
-                               RowValidating="gvTransactions_RowValidating" 
-                               CurrentCellDropDownSelectionChanged="gvTransactions_CurrentCellDropDownSelectionChanged" 
+                               AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               CanMaintainScrollPosition="True"
+                               AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
                                LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True" 
+                               MouseDoubleClick="gvTransactions_MouseDoubleClick"
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
                                Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True" SelectionMode="Extended">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
@@ -124,33 +119,12 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
                 <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
-
-                <syncfusion:GridComboBoxColumn  HeaderText="Cuenta"
-                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbAccounts" MappingName="accountid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id"/>
-
-                <syncfusion:GridComboBoxColumn  HeaderText="Persona" 
-                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbPersons" MappingName="personid"
-                                                DisplayMemberPath="name" SelectedValuePath="id" />
-
+                <syncfusion:GridTextColumn MappingName="account.description" HeaderText="Cuenta"/>
+                <syncfusion:GridTextColumn MappingName="person.name" HeaderText="Persona"/>
                 <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
-
-                <syncfusion:GridComboBoxColumn  HeaderText="Categoría" 
-                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbCategories" MappingName="categoryid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id" StaysOpenOnEdit="False" />
-                <syncfusion:GridComboBoxColumn  HeaderText="Estado"
-                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbTransStatus" MappingName="transactionStatusid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id" StaysOpenOnEdit="False"  />
-                <syncfusion:GridComboBoxColumn  HeaderText="Tag"
-                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbTags" MappingName="tagid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id" StaysOpenOnEdit="False"/>
-                <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
-                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Ingreso"/>
+                <syncfusion:GridTextColumn MappingName="category.description" HeaderText="Categoría"/>
+                <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado" />
+                <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag" />
                 <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad" AllowFocus="False"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo" AllowFocus="False"/>
                 <syncfusion:GridTemplateColumn Width="25"
