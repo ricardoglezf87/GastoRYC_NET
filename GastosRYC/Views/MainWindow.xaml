@@ -6,7 +6,8 @@
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
         xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
         mc:Ignorable="d"
-        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo.png">
+        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo.png" 
+        PreviewKeyUp="frmInicio_PreviewKeyUp">
 
     <Window.Resources>
         <Style TargetType="ListViewItem">
@@ -35,6 +36,8 @@
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" >
             <Menu DockPanel.Dock="Top" Margin="0,0,0,10">
                 <MenuItem Header="_Opciones">
+                    <MenuItem Header="_Nueva Transacción" Click="MenuItem_NewTransaction_Click" InputGestureText="F1"/>
+                    <Separator />
                     <MenuItem Header="_Cuentas" Click="MenuItem_Accounts_Click" />
                     <MenuItem Header="_Personas" Click="MenuItem_Persons_Click"/>
                     <MenuItem Header="_Categorias" Click="MenuItem_Categories_Click" />
@@ -94,12 +97,13 @@
         
         
         <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvTransactions"
-                               AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               CanMaintainScrollPosition="True"
+                               AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
+                               CanMaintainScrollPosition="True"
                                AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
-                               LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True" 
+                               LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True"
                                MouseDoubleClick="gvTransactions_MouseDoubleClick"
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
-                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True" SelectionMode="Extended" PreviewKeyUp="gvTransactions_PreviewKeyUp">
+                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True" SelectionMode="Extended">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

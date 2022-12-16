@@ -301,6 +301,30 @@ namespace GastosRYC
             MessageBox.Show("Funcionalidad no implementada");
         }
 
+        private void openNewTransaction()
+        {
+            frmTransaction frm;
+
+            if (lvAccounts.SelectedItem == null)
+            {
+                frm = new frmTransaction();
+            }
+            else
+            {
+                frm = new frmTransaction(((Accounts)lvAccounts.SelectedItem).id);
+            }
+
+            frm.ShowDialog();
+            loadAccounts();
+            loadTransactions();
+            refreshBalance();
+        }
+
+        private void MenuItem_NewTransaction_Click(object sender, RoutedEventArgs e)
+        {
+            openNewTransaction();
+        }
+
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
@@ -384,25 +408,12 @@ namespace GastosRYC
             }
         }
 
-        private void gvTransactions_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+
+        private void frmInicio_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.F1)
             {
-                frmTransaction frm;
-               
-                if (lvAccounts.SelectedItem == null)
-                {
-                    frm = new frmTransaction();
-                }
-                else
-                {
-                    frm = new frmTransaction(((Accounts)lvAccounts.SelectedItem).id);
-                }
-
-                frm.ShowDialog();
-                loadAccounts();
-                loadTransactions();
-                refreshBalance();
+                openNewTransaction();
             }
         }
     }
