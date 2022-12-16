@@ -32,12 +32,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="20.3.0.56" />
-    <PackageReference Include="syncfusion.ui.wpf.net" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="20.3.0.61" />
+    <PackageReference Include="syncfusion.ui.wpf.net" Version="20.3.0.61" />
   </ItemGroup>
 
   <ItemGroup>

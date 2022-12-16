@@ -35,8 +35,8 @@
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbCategories" MappingName="categoryid" 
                                                 DisplayMemberPath="description" SelectedValuePath="id"/>
+                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
                 <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
-                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Ingreso"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 
