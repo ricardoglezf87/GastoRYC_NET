@@ -148,7 +148,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public void updateSplits(Transactions? transactions)
         {
-            List<Splits>? lSplits = transactions.splits ?? splitsService.getbyTransactionidNull();
+            List<Splits>? lSplits = transactions.splits ?? splitsService.getbyTransactionid(transactions.id);
 
             if (lSplits != null && lSplits.Count != 0)
             {

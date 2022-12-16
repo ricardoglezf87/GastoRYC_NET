@@ -221,31 +221,6 @@ namespace GastosRYC
         private void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
-
-            if(gvTransactions.View.IsAddingNew && transactions == null)
-            {
-                if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
-                    MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    Syncfusion.UI.Xaml.Grid.GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
-                               GridQueryableCollectionViewWrapper)gvTransactions.View;
-                    transactions = (Transactions)col.CurrentAddItem;
-
-                    if(transactions != null)
-                    {
-                        if(transactions.date == null || transactions.accountid == null)
-                        {
-                            MessageBox.Show("Debe rellenar la fecha y cuenta para continuar", "Inserción movimiento");
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-
             frmSplits frm = new frmSplits(transactions);
             frm.ShowDialog();
             transactionsService.updateSplits(transactions);
@@ -402,6 +377,28 @@ namespace GastosRYC
             if (gvTransactions.CurrentItem != null)
             {
                 frmTransaction frm = new frmTransaction((Transactions)gvTransactions.CurrentItem);
+                frm.ShowDialog();
+                loadAccounts();
+                loadTransactions();
+                refreshBalance();
+            }
+        }
+
+        private void gvTransactions_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.F1)
+            {
+                frmTransaction frm;
+               
+                if (lvAccounts.SelectedItem == null)
+                {
+                    frm = new frmTransaction();
+                }
+                else
+                {
+                    frm = new frmTransaction(((Accounts)lvAccounts.SelectedItem).id);
+                }
+
                 frm.ShowDialog();
                 loadAccounts();
                 loadTransactions();

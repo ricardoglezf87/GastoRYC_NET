@@ -60,6 +60,7 @@ namespace BBDDLib.Models
         }
 
         [NotMapped]
-        public virtual Decimal? balance { set; get; }     
+        public virtual Decimal? balance { set; get; }   
+        
     }
 }

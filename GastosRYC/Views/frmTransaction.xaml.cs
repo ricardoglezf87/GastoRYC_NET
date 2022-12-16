@@ -24,7 +24,7 @@ namespace GastosRYC.Views
     public partial class frmTransaction : Window
     {
 
-        private readonly Transactions? transaction;
+        private Transactions? transaction;
         private readonly int? accountidDefault;
 
         private readonly AccountsService accountsService = new AccountsService();
@@ -45,11 +45,17 @@ namespace GastosRYC.Views
         public frmTransaction(Transactions transaction)
         {
             InitializeComponent();
-            this.transaction = transaction;            
+            this.transaction = transaction;
+        }
+
+        public frmTransaction(int accountidDefault)
+        {
+            InitializeComponent();
+            this.accountidDefault = accountidDefault;
         }
 
         public frmTransaction()
-        {            
+        {
             InitializeComponent();
             this.transaction = null;
         }
@@ -76,7 +82,7 @@ namespace GastosRYC.Views
             else
             {
                 dtpDate.SelectedDate = DateTime.Now;
-                
+
                 if (accountidDefault != null)
                 {
                     cbAccount.SelectedValue = accountidDefault;
@@ -84,6 +90,49 @@ namespace GastosRYC.Views
 
                 cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.eTransactionsTypes.Pending;
             }
+        }
+
+        private void updateTransaction()
+        {
+            if (transaction == null)
+            {
+                transaction = new Transactions();
+            }
+
+            transaction.date = dtpDate.SelectedDate;
+            transaction.accountid = (int)cbAccount.SelectedValue;
+            transaction.account = accountsService.getByID(transaction.accountid);
+
+            if (cbPerson.SelectedValue != null)
+            {
+                transaction.personid = (int)cbPerson.SelectedValue;
+                transaction.person = personService.getByID(transaction.personid);
+            }
+
+            transaction.memo = txtMemo.Text;
+
+            transaction.categoryid = (int)cbCategory.SelectedValue;
+            transaction.category = categoriesService.getByID(transaction.categoryid);
+
+            if (txtAmount.Value > 0)
+            {
+                transaction.amountIn = txtAmount.Value;
+                transaction.amountOut = 0;
+            }
+            else
+            {
+                transaction.amountOut = -txtAmount.Value;
+                transaction.amountIn = 0;
+            }
+
+            if (cbTag.SelectedValue != null)
+            {
+                transaction.tagid = (int)cbTag.SelectedValue;
+                transaction.tag = tagsService.getByID(transaction.tagid);
+            }
+
+            transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
+            transaction.transactionStatus = transactionsStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
@@ -99,42 +148,11 @@ namespace GastosRYC.Views
         {
             if (isTransactionValid())
             {
-                transaction.date = dtpDate.SelectedDate;
-                transaction.accountid = (int)cbAccount.SelectedValue;
-                transaction.account = accountsService.getByID(transaction.accountid);
-
-                if (cbPerson.SelectedValue != null)
+                updateTransaction();
+                if (transaction != null)
                 {
-                    transaction.personid = (int)cbPerson.SelectedValue;
-                    transaction.person = personService.getByID(transaction.personid);
+                    transactionsService.saveChanges(transaction);
                 }
-
-                transaction.memo = txtMemo.Text;
-
-                transaction.categoryid = (int)cbCategory.SelectedValue;
-                transaction.category = categoriesService.getByID(transaction.categoryid);
-
-                if (txtAmount.Value > 0)
-                {
-                    transaction.amountIn = txtAmount.Value;
-                    transaction.amountOut = 0;
-                }
-                else
-                {
-                    transaction.amountOut = -txtAmount.Value;
-                    transaction.amountIn = 0;
-                }
-
-                if (cbTag.SelectedValue != null)
-                {
-                    transaction.tagid = (int)cbTag.SelectedValue;
-                    transaction.tag = tagsService.getByID(transaction.tagid);
-                }
-
-                transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-                transaction.transactionStatus = transactionsStatusService.getByID(transaction.transactionStatusid);
-
-                transactionsService.saveChanges(transaction);
 
                 this.Close();
             }
@@ -142,105 +160,72 @@ namespace GastosRYC.Views
 
         private bool isTransactionValid()
         {
-            //    Transactions transactions = (Transactions)e.RowData;
-            //    if (transactions != null)
-            //    {
-            //        if (transactions.date == null)
-            //        {
-            //            e.IsValid = false;
-            //            e.ErrorMessages.Add("date", "Tiene que rellenar la fecha");
-            //        }
+            String errorMessage = "";
+            bool valid = true;
 
-            //        if (transactions.accountid == null)
-            //        {
-            //            e.IsValid = false;
-            //            e.ErrorMessages.Add("accountid", "Tiene que rellenar la cuenta");
-            //        }
+            if (dtpDate.SelectedDate == null)
+            {
+                errorMessage += "- Fecha\n";
+                valid = false;
+            }
 
-            //        if (transactions.categoryid == null)
-            //        {
-            //            e.IsValid = false;
-            //            e.ErrorMessages.Add("categoryid", "Tiene que rellenar la categoria");
-            //        }
-            //        else
-            //        {
+            if (cbAccount.SelectedValue == null)
+            {
+                errorMessage += "- Cuenta\n";
+                valid = false;
+            }
 
-            //            if (transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split &&
-            //                (transactions.splits == null || transactions.splits.Count == 0))
-            //            {
-            //                e.IsValid = false;
-            //                e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria Split si no se tiene desglose de movimiento");
-            //            }
-            //            else if (transactions.categoryid != (int)CategoriesService.eSpecialCategories.Split &&
-            //                transactions.splits != null && transactions.splits.Count > 0)
-            //            {
-            //                e.IsValid = false;
-            //                e.ErrorMessages.Add("categoryid", "No se puede utilizar la categoria distinta de Split si se tiene desglose de movimiento");
-            //            }
-            //            else if (transactions.tranferSplitid != null)
-            //            {
-            //                e.IsValid = false;
-            //                e.ErrorMessages.Add("categoryid", "No se puede cambiar el movimiento cuando la transferencia proviene de un split.");
-            //                e.ErrorMessages.Add("amountIn", "No se puede cambiar el movimiento cuando la transferencia proviene de un split.");
-            //                e.ErrorMessages.Add("amountOut", "No se puede cambiar el movimiento cuando la transferencia proviene de un split.");
-            //            }
-            //        }
+            if (cbCategory.SelectedValue == null)
+            {
+                errorMessage += "- Categoría\n";
+                valid = false;
+            }
 
-            //        if (transactions.amountIn == null && transactions.amountOut == null)
-            //        {
-            //            e.IsValid = false;
-            //            e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
-            //            e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
-            //        }
-            //        else if (transactions.splits != null && transactions.splits.Count > 0
-            //            && splitsService.getAmountTotal(transactions) != transactions.amount)
-            //        {
-            //            e.IsValid = false;
-            //            e.ErrorMessages.Add("amountIn", "No se puede cambiar las cantidades cuando el movimiento es un split.");
-            //            e.ErrorMessages.Add("amountOut", "No se puede cambiar las cantidades cuando el movimiento es un split.");
-            //        }
+            if (txtAmount.Value == null)
+            {
+                errorMessage += "- Cantidad\n";
+                valid = false;
+            }
 
-            //        if (transactions.transactionStatusid == null)
-            //        {
-            //            e.IsValid = false;
-            //            e.ErrorMessages.Add("transactionStatusid", "Tiene que rellenar el estado");
-            //        }
-            //    }
-            return true;
+            if (cbTransactionStatus.SelectedValue == null)
+            {
+                errorMessage += "- Estado\n";
+                valid = false;
+            }
+
+            if (errorMessage != "")
+            {
+                errorMessage = "Tiene que rellenar los siguiente campos para continuar:\n" + errorMessage.TrimEnd('\n');
+                MessageBox.Show(errorMessage, "Error de validación", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return valid;
         }
 
         private void btnSplit_Click(object sender, RoutedEventArgs e)
         {
-            //Transactions transactions = (Transactions)gvTransactions.SelectedItem;
+            if (transaction == null)
+            {
+                if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    updateTransaction();
+                    if (transaction != null)
+                    {
+                        transactionsService.saveChanges(transaction);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
+                    return;
+                }
+            }
 
-            //if (gvTransactions.View.IsAddingNew && transactions == null)
-            //{
-            //    if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
-            //        MessageBoxImage.Question) == MessageBoxResult.Yes)
-            //    {
-            //        Syncfusion.UI.Xaml.Grid.GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
-            //                   GridQueryableCollectionViewWrapper)gvTransactions.View;
-            //        transactions = (Transactions)col.CurrentAddItem;
-
-            //        if (transactions != null)
-            //        {
-            //            if (transactions.date == null || transactions.accountid == null)
-            //            {
-            //                MessageBox.Show("Debe rellenar la fecha y cuenta para continuar", "Inserción movimiento");
-            //                return;
-            //            }
-            //        }
-            //    }
-            //    else
-            //    {
-            //        return;
-            //    }
-            //}
-
-            //frmSplits frm = new frmSplits(transactions);
-            //frm.ShowDialog();
-            //updateSplits(transactions);
-            //loadTransactions();
+            frmSplits frm = new frmSplits(transaction);
+            frm.ShowDialog();
+            transactionsService.updateSplits(transaction);
+            loadTransaction();
         }
 
     }
