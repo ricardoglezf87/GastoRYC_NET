@@ -158,14 +158,8 @@ namespace GastosRYC.Views
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            if (isTransactionValid())
-            {
-                updateTransaction();
-                if (transaction != null)
-                {
-                    transactionsService.saveChanges(transaction);
-                }
-
+            if (saveTransaction())
+            {                
                 this.Close();
             }
         }
@@ -216,52 +210,60 @@ namespace GastosRYC.Views
 
         private void btnSplit_Click(object sender, RoutedEventArgs e)
         {
+            if (transaction == null && !saveTransaction())
+            {                    
+                MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
+                return;                 
+            }
+
+            frmSplits frm = new frmSplits(transaction);
+            frm.ShowDialog();
+            transactionsService.updateSplits(transaction);
+            loadTransaction();         
+        }
+
+        private bool saveTransaction()
+        {
             if (isTransactionValid())
             {
-                if (transaction == null)
+                if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
-                    MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    updateTransaction();
+                    if (transaction != null)
                     {
-                        updateTransaction();
-                        if (transaction != null)
-                        {
-                            transactionsService.saveChanges(transaction);
-                        }
+                        transactionsService.saveChanges(transaction);
                     }
-                    else
-                    {
-                        MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
-                        return;
-                    }
+                    return true;
                 }
-
-                frmSplits frm = new frmSplits(transaction);
-                frm.ShowDialog();
-                transactionsService.updateSplits(transaction);
-                loadTransaction();
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
             }
         }
 
         private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.F1)
-            {
-                if (isTransactionValid())
-                {
-                    if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
-                    MessageBoxImage.Question) == MessageBoxResult.Yes)
+            switch(e.Key)
+            { 
+               case Key.F1:           
+                    if (saveTransaction())
                     {
-                        updateTransaction();
-                        if (transaction != null)
-                        {
-                            transactionsService.saveChanges(transaction);
-                        }
-
                         transaction = null;
-                        loadTransaction();
+                        loadTransaction();                        
                     }
-                }
+                    break;
+                case Key.F2:
+                    saveTransaction();
+                    break;
+                case Key.Escape:
+                    this.Close();
+                    break;
             }
         }
     }

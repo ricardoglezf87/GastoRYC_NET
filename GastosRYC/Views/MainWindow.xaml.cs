@@ -15,6 +15,7 @@ using GastosRYC.Extensions;
 using System.Collections;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 using Syncfusion.Data;
+using System.Windows.Input;
 
 //TODO: implementar split
 
@@ -411,9 +412,16 @@ namespace GastosRYC
 
         private void frmInicio_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.F1)
+            switch (e.Key)
             {
-                openNewTransaction();
+                case Key.F1:
+                    openNewTransaction();
+                    break;
+                case Key.F5:
+                    loadAccounts();
+                    loadTransactions();
+                    refreshBalance();
+                    break;
             }
         }
     }
