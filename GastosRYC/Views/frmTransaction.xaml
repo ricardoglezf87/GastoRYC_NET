@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:GastosRYC.Views"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.frmTransaction"
         mc:Ignorable="d"
-        Title="Transacción" Height="450" Width="400" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="Transacción" Height="450" Width="400" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" PreviewKeyUp="Window_PreviewKeyUp">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

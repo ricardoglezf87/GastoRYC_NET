@@ -35,15 +35,16 @@
 
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" >
             <Menu DockPanel.Dock="Top" Margin="0,0,0,10">
-                <MenuItem Header="_Opciones">
+                <MenuItem Header="_Acciones">
                     <MenuItem Header="_Nueva Transacción" Click="MenuItem_NewTransaction_Click" InputGestureText="F1"/>
                     <Separator />
+                    <MenuItem Header="_Salir" Click="MenuItem_Salir_Click"/>
+                </MenuItem>
+                <MenuItem Header="_Configuración">
                     <MenuItem Header="_Cuentas" Click="MenuItem_Accounts_Click" />
                     <MenuItem Header="_Personas" Click="MenuItem_Persons_Click"/>
                     <MenuItem Header="_Categorias" Click="MenuItem_Categories_Click" />
                     <MenuItem Header="_Tags" Click="MenuItem_Tags_Click" />
-                    <Separator />
-                    <MenuItem Header="_Salir" Click="MenuItem_Salir_Click"/>
                 </MenuItem>
             </Menu>
         </DockPanel>
