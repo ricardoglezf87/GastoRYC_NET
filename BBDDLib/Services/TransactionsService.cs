@@ -11,8 +11,14 @@ namespace GastosRYC.BBDDLib.Services
     public class TransactionsService
     {
 
+        #region Variables
+
         private readonly SplitsService splitsService = new SplitsService();
         private readonly CategoriesService categoriesService = new CategoriesService();
+
+        #endregion
+
+        #region TransactionsActions
 
         public List<Transactions>? getAll()
         {
@@ -125,6 +131,10 @@ namespace GastosRYC.BBDDLib.Services
             }
         }
 
+        #endregion
+
+        #region SplitsActions
+
         public void updateTranferSplit(Transactions transactions)
         {
             if (transactions.tranferSplitid != null &&
@@ -185,6 +195,12 @@ namespace GastosRYC.BBDDLib.Services
                 update(transactions);
             }
         }
+
+        #endregion
+
+        #region ChartsActions
+
+        #endregion
 
     }
 }
