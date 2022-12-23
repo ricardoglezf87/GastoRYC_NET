@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
-        xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
+        xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf" xmlns:chart="clr-namespace:Syncfusion.UI.Xaml.Charts;assembly=Syncfusion.SfChart.WPF"
         mc:Ignorable="d"
         Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo.png" 
         PreviewKeyUp="frmInicio_PreviewKeyUp">
@@ -19,7 +19,7 @@
                Text="{Binding balance, StringFormat={}{0:N2} €}" Margin="0,0,5,0"/>
         </DataTemplate>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>
@@ -29,12 +29,13 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="20"/>
             <RowDefinition />
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" >
-            <Menu DockPanel.Dock="Top" Margin="0,0,0,10">
+            <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_Acciones">
                     <MenuItem Header="_Nueva Transacción" Click="MenuItem_NewTransaction_Click" InputGestureText="F1"/>
                     <Separator />
@@ -48,10 +49,10 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
-        <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center" 
+        <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="btnAllAccounts_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>
         <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged" 
-                  Grid.Column="0" Grid.Row="2" 
+                  Grid.Column="0" Grid.Row="3" 
                   SizeChanged="lvAccounts_SizeChanged" 
                   BorderBrush="{x:Null}" Background="{x:Null}" 
                   d:ItemsSource="{d:SampleData ItemCount=5}" 
@@ -61,7 +62,7 @@
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
             </ListView.Resources>
-            
+
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
@@ -94,17 +95,17 @@
         </ListView>
         <input:SfGridSplitter Name="gridSplitter"
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
-                              Width="auto" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"/>
-        
-        
-        <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvTransactions"
+                              Width="auto" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"/>
+
+
+        <syncfusion:SfDataGrid Visibility="Hidden" Grid.Column="2" x:Name="gvTransactions"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
                                CanMaintainScrollPosition="True"
                                AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
                                LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True"
                                MouseDoubleClick="gvTransactions_MouseDoubleClick"
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
-                               Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True" SelectionMode="Extended">
+                               Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True" SelectionMode="Extended">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
@@ -151,5 +152,42 @@
                 </syncfusion:GridTemplateColumn>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
+
+
+
+        <Grid x:Name="gridHome" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <syncfusion:SfChart x:Name="chForecast" Grid.Row="0" Grid.ColumnSpan="2"/>
+            <syncfusion:SfChart  x:Name="chExpenses" Margin="0,0,0,0" Grid.Row="1" Grid.Column="0" />
+            <syncfusion:SfDataGrid x:Name="gvExpenses"  Margin="0,0,0,0" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1" ColumnSizer="Star" 
+                                   >
+                <syncfusion:SfDataGrid.Columns >
+                    <syncfusion:GridTextColumn MappingName="category" HeaderText="Categoría"/>
+                    <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>
+                </syncfusion:SfDataGrid.Columns>
+            </syncfusion:SfDataGrid>
+
+
+        </Grid>
+        <ToolBar  Margin="0,0,0,10" Grid.Row="1" Grid.ColumnSpan="3" Background="#FFF0F0F0" >
+            <Button Name="btnHome" Width="32" Height="32" Click="btnHome_Click">
+                <Image Source="/Resources/home.png"/>
+            </Button>
+            <Separator/>
+            <Button Name="btnNewTransaction" Width="32" Height="32" Click="btnNewTransaction_Click">
+                <Image Source="/Resources/add.png"/>
+            </Button>
+        </ToolBar>
+
+
+
+
     </Grid>
 </Window>
