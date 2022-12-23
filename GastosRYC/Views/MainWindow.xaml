@@ -49,6 +49,20 @@
                 </MenuItem>
             </Menu>
         </DockPanel>
+
+        <ToolBar  Margin="0,0,0,10" Grid.Row="1" Grid.ColumnSpan="3" Background="#FFF0F0F0" >
+            <Button Name="btnNewTransaction" Width="32" Height="32" Click="btnNewTransaction_Click">
+                <Image Source="/Resources/add.png"/>
+            </Button>
+            <Separator/>
+            <Button Name="btnHome" Width="32" Height="32" Click="btnHome_Click">
+                <Image Source="/Resources/home.png"/>
+            </Button>
+            <Button Name="btnReminders" Width="32" Height="32" Click="btnReminders_Click">
+                <Image Source="/Resources/reminders.png"/>
+            </Button>
+        </ToolBar>
+
         <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="btnAllAccounts_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>
         <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged" 
@@ -93,67 +107,69 @@
                 </GroupStyle>
             </ListView.GroupStyle>
         </ListView>
+
         <input:SfGridSplitter Name="gridSplitter"
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
                               Width="auto" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"/>
 
+        <Grid x:Name="gridTransactions" Visibility="Hidden"  Grid.Column="2"  Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2">
 
-        <syncfusion:SfDataGrid Visibility="Hidden" Grid.Column="2" x:Name="gvTransactions"
+            <syncfusion:SfDataGrid  x:Name="gvTransactions"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
                                CanMaintainScrollPosition="True"
                                AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
                                LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True"
                                MouseDoubleClick="gvTransactions_MouseDoubleClick"
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
-                               Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2" ShowRowHeader="True" SelectionMode="Extended">
-            <syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
-            </syncfusion:SfDataGrid.SortColumnDescriptions>
-            <syncfusion:SfDataGrid.RecordContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Estado Movimiento">
-                        <MenuItem x:Name="btnPending" Header="Pendiente" Click="btnPending_Click"/>
-                        <MenuItem x:Name="btnProvisional" Header="Provisional" Click="btnProvisional_Click"/>
-                        <MenuItem x:Name="btnReconciled" Header="Conciliado" Click="btnReconciled_Click"/>
-                    </MenuItem>
-                    <MenuItem x:Name="btnCut" Header="Cortar" Click="btnCut_Click" />
-                    <MenuItem x:Name="btnCopy" Header="Copiar" Click="btnCopy_Click" />
-                    <MenuItem x:Name="btnPaste" Header="Pegar" Click="btnPaste_Click" />
-                    <MenuItem x:Name="btnDelete" Header="Borrar" Click="btnDelete_Click" />
-                </ContextMenu>
-            </syncfusion:SfDataGrid.RecordContextMenu>
-            <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
-                <syncfusion:GridTextColumn MappingName="account.description" HeaderText="Cuenta"/>
-                <syncfusion:GridTextColumn MappingName="person.name" HeaderText="Persona"/>
-                <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
-                <syncfusion:GridTextColumn MappingName="category.description" HeaderText="Categoría"/>
-                <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado"/>
-                <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag"/>
-                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
-                <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
-                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad"/>
-                <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo"/>
-                <syncfusion:GridTemplateColumn Width="25"
+                               ShowRowHeader="True" SelectionMode="Extended">
+                <syncfusion:SfDataGrid.SortColumnDescriptions>
+                    <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
+                </syncfusion:SfDataGrid.SortColumnDescriptions>
+                <syncfusion:SfDataGrid.RecordContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Estado Movimiento">
+                            <MenuItem x:Name="btnPending" Header="Pendiente" Click="btnPending_Click"/>
+                            <MenuItem x:Name="btnProvisional" Header="Provisional" Click="btnProvisional_Click"/>
+                            <MenuItem x:Name="btnReconciled" Header="Conciliado" Click="btnReconciled_Click"/>
+                        </MenuItem>
+                        <MenuItem x:Name="btnCut" Header="Cortar" Click="btnCut_Click" />
+                        <MenuItem x:Name="btnCopy" Header="Copiar" Click="btnCopy_Click" />
+                        <MenuItem x:Name="btnPaste" Header="Pegar" Click="btnPaste_Click" />
+                        <MenuItem x:Name="btnDelete" Header="Borrar" Click="btnDelete_Click" />
+                    </ContextMenu>
+                </syncfusion:SfDataGrid.RecordContextMenu>
+                <syncfusion:SfDataGrid.Columns>
+                    <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
+                    <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
+                    <syncfusion:GridTextColumn MappingName="account.description" HeaderText="Cuenta"/>
+                    <syncfusion:GridTextColumn MappingName="person.name" HeaderText="Persona"/>
+                    <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
+                    <syncfusion:GridTextColumn MappingName="category.description" HeaderText="Categoría"/>
+                    <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado"/>
+                    <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag"/>
+                    <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
+                    <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
+                    <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad"/>
+                    <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo"/>
+                    <syncfusion:GridTemplateColumn Width="25"
                                                MappingName="id"
                                                HeaderText=""
                                                AllowFiltering="False"
                                                AllowSorting="False">
-                    <syncfusion:GridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button syncfusion:FocusManagerHelper.FocusedElement="True"
+                        <syncfusion:GridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button syncfusion:FocusManagerHelper.FocusedElement="True"
                                     Background="Transparent"                                    
                                     Click="ButtonSplit_Click">
-                                <Image Source="/Resources/Split.png" />
-                            </Button>
-                        </DataTemplate>
-                    </syncfusion:GridTemplateColumn.CellTemplate>
-                </syncfusion:GridTemplateColumn>
-            </syncfusion:SfDataGrid.Columns>
-        </syncfusion:SfDataGrid>
+                                    <Image Source="/Resources/Split.png" />
+                                </Button>
+                            </DataTemplate>
+                        </syncfusion:GridTemplateColumn.CellTemplate>
+                    </syncfusion:GridTemplateColumn>
+                </syncfusion:SfDataGrid.Columns>
+            </syncfusion:SfDataGrid>
 
-
+        </Grid>
 
         <Grid x:Name="gridHome" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2">
             <Grid.ColumnDefinitions>
@@ -176,21 +192,12 @@
 
 
         </Grid>
-        <ToolBar  Margin="0,0,0,10" Grid.Row="1" Grid.ColumnSpan="3" Background="#FFF0F0F0" >
-            <Button Name="btnNewTransaction" Width="32" Height="32" Click="btnNewTransaction_Click">
-                <Image Source="/Resources/add.png"/>
-            </Button>
-            <Separator/>
-            <Button Name="btnHome" Width="32" Height="32" Click="btnHome_Click">
-                <Image Source="/Resources/home.png"/>
-            </Button>
-            <Button Name="btnReminders" Width="32" Height="32" Click="btnReminders_Click">
-                <Image Source="/Resources/reminders.png"/>
-            </Button>
-        </ToolBar>
+
+
+        <Grid x:Name="gridReminder" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2">
 
 
 
-
+        </Grid>
     </Grid>
 </Window>

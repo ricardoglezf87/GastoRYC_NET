@@ -39,7 +39,8 @@ namespace GastosRYC
         private readonly TransactionsService transactionsService = new TransactionsService();
         private readonly SplitsService splitsService = new SplitsService();
 
-        private enum eViews:int{
+        private enum eViews : int
+        {
             Home = 1,
             Transactions = 2,
             Reminders = 3
@@ -62,14 +63,12 @@ namespace GastosRYC
 
         private void btnReminders_Click(object sender, RoutedEventArgs e)
         {
-
+            toggleViews(eViews.Reminders);
         }
 
         private void btnHome_Click(object sender, RoutedEventArgs e)
         {
-            gridHome.Visibility = Visibility.Visible;
-            gvTransactions.Visibility = Visibility.Hidden;
-            loadCharts();
+            toggleViews(eViews.Home);
         }
 
         private void btnNewTransaction_Click(object sender, RoutedEventArgs e)
@@ -174,10 +173,17 @@ namespace GastosRYC
                     openNewTransaction();
                     break;
                 case Key.F5:
-                    loadAccounts();
-                    loadTransactions();
-                    refreshBalance();
-                    loadCharts();
+                    switch (activeView)
+                    {
+                        case eViews.Transactions:
+                            loadAccounts();
+                            loadTransactions();
+                            refreshBalance();
+                            break;
+                        case eViews.Home:
+                            loadCharts();
+                            break;
+                    }
                     break;
             }
         }
@@ -185,19 +191,16 @@ namespace GastosRYC
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             loadAccounts();
-            loadTransactions();            
+            loadTransactions();
             refreshBalance();
             loadCharts();
         }
-
-
 
         private void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplyFilters();
             gvTransactions.Columns["account.description"].IsHidden = true;
-            gridHome.Visibility = Visibility.Hidden;
-            gvTransactions.Visibility = Visibility.Visible;
+            toggleViews(eViews.Transactions);
         }
 
         private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -235,8 +238,7 @@ namespace GastosRYC
         {
             lvAccounts.SelectedItem = null;
             gvTransactions.Columns["account.description"].IsHidden = false;
-            gridHome.Visibility = Visibility.Hidden;
-            gvTransactions.Visibility = Visibility.Visible;
+            toggleViews(eViews.Transactions);
         }
 
         private void lvAccounts_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -305,6 +307,31 @@ namespace GastosRYC
         #endregion
 
         #region Functions
+
+        private void toggleViews(eViews views)
+        {
+            gridTransactions.Visibility = Visibility.Hidden;
+            gridHome.Visibility = Visibility.Hidden;
+            gridReminder.Visibility = Visibility.Hidden;
+
+            switch (views)
+            {
+                case eViews.Home:
+                    gridHome.Visibility = Visibility.Visible;
+                    loadCharts();
+                    break;
+                case eViews.Transactions:
+                    gridTransactions.Visibility = Visibility.Visible;
+                    loadTransactions();
+                    refreshBalance();
+                    break;
+                case eViews.Reminders:
+                    gridReminder.Visibility = Visibility.Visible;
+                    break;
+            }
+
+            activeView = views;
+        }
 
         private void reiniciarSaldosCuentas()
         {
@@ -388,7 +415,7 @@ namespace GastosRYC
         }
 
         private void loadCharts()
-        {   
+        {
             //Header
 
             Border border = new Border()
@@ -439,9 +466,9 @@ namespace GastosRYC
             chExpenses.SecondaryAxis = secondaryAxis;
 
             //ToolTip
-           
+
             DataTemplate tooltip = new DataTemplate();
-            
+
             FrameworkElementFactory stackpanel = new FrameworkElementFactory(typeof(StackPanel));
             stackpanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
 
@@ -464,17 +491,18 @@ namespace GastosRYC
             stackpanel.AppendChild(textblock1);
 
             FrameworkElementFactory textblock2 = new FrameworkElementFactory(typeof(TextBlock));
-            textblock2.SetBinding(TextBlock.TextProperty, 
-                new Binding("Item.amount") { 
+            textblock2.SetBinding(TextBlock.TextProperty,
+                new Binding("Item.amount")
+                {
                     StringFormat = "C",
-                    ConverterCulture = new System.Globalization.CultureInfo("es-ES") 
+                    ConverterCulture = new System.Globalization.CultureInfo("es-ES")
                 });
-            
+
             textblock2.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
             textblock2.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
             textblock2.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
             textblock2.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
-           
+
             stackpanel.AppendChild(textblock2);
             tooltip.VisualTree = stackpanel;
 
@@ -485,16 +513,16 @@ namespace GastosRYC
 
             ColumnSeries series = new ColumnSeries()
             {
-                ItemsSource = lExpensesCharts.OrderByDescending(x=>x.amount).Take(10),
+                ItemsSource = lExpensesCharts.OrderByDescending(x => x.amount).Take(10),
                 XBindingPath = "category",
                 YBindingPath = "amount",
                 ShowTooltip = true,
                 TooltipTemplate = tooltip,
                 EnableAnimation = true,
-                AnimationDuration = new TimeSpan(0,0,3)
+                AnimationDuration = new TimeSpan(0, 0, 3)
             };
 
-            ChartTooltip.SetShowDuration(series,5000);
+            ChartTooltip.SetShowDuration(series, 5000);
             chExpenses.Series.Add(series);
 
             //Grid
@@ -515,7 +543,7 @@ namespace GastosRYC
         {
             gvTransactions.ItemsSource = transactionsService.getAll();
             ApplyFilters();
-            
+
         }
 
         public void ApplyFilters()
@@ -599,6 +627,6 @@ namespace GastosRYC
 
         #endregion
 
-       
+
     }
 }
