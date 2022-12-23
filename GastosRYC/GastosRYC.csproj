@@ -53,6 +53,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\frmSplitsReminder.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\frmSplits.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -65,9 +68,16 @@
     <Compile Update="Views\frmCategories.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\frmTransactionReminder.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\frmSplitsReminder.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\frmSplits.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -81,6 +91,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\frmCategories.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\frmTransactionReminder.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

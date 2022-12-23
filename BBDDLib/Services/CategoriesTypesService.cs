@@ -9,6 +9,13 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class CategoriesTypesService
     {
+        public enum eCategoriesTypes : int
+        {
+            Incomes = 1,
+            Expenses = 2,
+            Transfers = 3,
+            Specials = 4
+        }
 
         public List<CategoriesTypes>? getAll()
         {
@@ -18,8 +25,8 @@ namespace GastosRYC.BBDDLib.Services
         public List<CategoriesTypes>? getAllFilterTransfer()
         {
             return RYCContextService.getInstance().BBDD.categoriesTypes?
-                .Where(x=>!x.id.Equals((int)CategoriesService.eCategoriesTypes.Transfers) &&
-                !x.id.Equals((int)CategoriesService.eCategoriesTypes.Transfers)).ToList();
+                .Where(x=>!x.id.Equals((int)eCategoriesTypes.Transfers) &&
+                !x.id.Equals((int)eCategoriesTypes.Transfers)).ToList();
         }
 
         public CategoriesTypes? getByID(int? id)

@@ -78,7 +78,7 @@ namespace GastosRYC.BBDDLib.Services
         public void updateTranfer(Transactions transactions)
         {
             if (transactions.tranferid != null &&
-                transactions.category.categoriesTypesid != (int)CategoriesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = getByID(transactions.tranferid);
                 if (tContraria != null)
@@ -88,7 +88,7 @@ namespace GastosRYC.BBDDLib.Services
                 transactions.tranferid = null;
             }
             else if (transactions.tranferid == null &&
-                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 transactions.tranferid = getNextID();
 
@@ -113,7 +113,7 @@ namespace GastosRYC.BBDDLib.Services
 
             }
             else if (transactions.tranferid != null &&
-                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = getByID(transactions.tranferid);
                 if (tContraria != null)
@@ -139,7 +139,7 @@ namespace GastosRYC.BBDDLib.Services
         public void updateTranferSplit(Transactions transactions)
         {
             if (transactions.tranferSplitid != null &&
-                transactions.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 Splits? tContraria = splitsService.getByID(transactions.tranferSplitid);
                 if (tContraria != null)
@@ -206,7 +206,7 @@ namespace GastosRYC.BBDDLib.Services
             List<ExpensesChart> lChart = new List<ExpensesChart>();
 
             foreach (var g in RYCContextService.getInstance().BBDD.transactions?
-                                .Where(x=> x.category != null && x.category.categoriesTypesid == (int)CategoriesService.eCategoriesTypes.Expenses)
+                                .Where(x=> x.category != null && x.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Expenses)
                                 .GroupBy(g=>g.category))
             {
                 lChart.Add(new ExpensesChart(g.Key.description, -g.Sum(x => x.amount)));
