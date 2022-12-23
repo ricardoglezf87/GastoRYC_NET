@@ -11,11 +11,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\add.png" />
+    <None Remove="Resources\home.png" />
     <None Remove="Resources\Logo.png" />
     <None Remove="Resources\Split.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Resources\add.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\home.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Logo.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

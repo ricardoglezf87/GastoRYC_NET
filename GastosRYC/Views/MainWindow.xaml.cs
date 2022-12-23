@@ -52,6 +52,18 @@ namespace GastosRYC
 
         #region Events
 
+        private void btnHome_Click(object sender, RoutedEventArgs e)
+        {
+            gridHome.Visibility = Visibility.Visible;
+            gvTransactions.Visibility = Visibility.Hidden;
+            loadCharts();
+        }
+
+        private void btnNewTransaction_Click(object sender, RoutedEventArgs e)
+        {
+            openNewTransaction();
+        }
+
         private void MenuItem_NewTransaction_Click(object sender, RoutedEventArgs e)
         {
             openNewTransaction();
@@ -152,6 +164,7 @@ namespace GastosRYC
                     loadAccounts();
                     loadTransactions();
                     refreshBalance();
+                    loadCharts();
                     break;
             }
         }
@@ -362,7 +375,7 @@ namespace GastosRYC
         }
 
         private void loadCharts()
-        {
+        {   
             //Header
 
             Border border = new Border()
@@ -455,6 +468,7 @@ namespace GastosRYC
             //Series
 
             List<ExpensesChart> lExpensesCharts = transactionsService.getExpenses();
+            chExpenses.Series.Clear();
 
             ColumnSeries series = new ColumnSeries()
             {
@@ -571,5 +585,6 @@ namespace GastosRYC
 
         #endregion
 
+        
     }
 }
