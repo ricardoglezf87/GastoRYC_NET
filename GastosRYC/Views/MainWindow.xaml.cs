@@ -39,6 +39,14 @@ namespace GastosRYC
         private readonly TransactionsService transactionsService = new TransactionsService();
         private readonly SplitsService splitsService = new SplitsService();
 
+        private enum eViews:int{
+            Home = 1,
+            Transactions = 2,
+            Reminders = 3
+        }
+
+        private eViews activeView = eViews.Home;
+
         #endregion
 
         #region Constructors
@@ -51,6 +59,11 @@ namespace GastosRYC
         #endregion
 
         #region Events
+
+        private void btnReminders_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 
         private void btnHome_Click(object sender, RoutedEventArgs e)
         {
@@ -583,8 +596,9 @@ namespace GastosRYC
             refreshBalance();
         }
 
+
         #endregion
 
-        
+       
     }
 }

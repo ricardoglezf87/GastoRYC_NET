@@ -177,12 +177,15 @@
 
         </Grid>
         <ToolBar  Margin="0,0,0,10" Grid.Row="1" Grid.ColumnSpan="3" Background="#FFF0F0F0" >
+            <Button Name="btnNewTransaction" Width="32" Height="32" Click="btnNewTransaction_Click">
+                <Image Source="/Resources/add.png"/>
+            </Button>
+            <Separator/>
             <Button Name="btnHome" Width="32" Height="32" Click="btnHome_Click">
                 <Image Source="/Resources/home.png"/>
             </Button>
-            <Separator/>
-            <Button Name="btnNewTransaction" Width="32" Height="32" Click="btnNewTransaction_Click">
-                <Image Source="/Resources/add.png"/>
+            <Button Name="btnReminders" Width="32" Height="32" Click="btnReminders_Click">
+                <Image Source="/Resources/reminders.png"/>
             </Button>
         </ToolBar>
 
