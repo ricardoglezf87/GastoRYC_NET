@@ -16,6 +16,13 @@ using System.Collections;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 using Syncfusion.Data;
 using System.Windows.Input;
+using Syncfusion.UI.Xaml.Charts;
+using Syncfusion.XPS;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using BBDDLib.Models.Charts;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
 
 //TODO: implementar split
 
@@ -152,8 +159,9 @@ namespace GastosRYC
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             loadAccounts();
-            loadTransactions();
+            loadTransactions();            
             refreshBalance();
+            loadCharts();
         }
 
 
@@ -353,6 +361,121 @@ namespace GastosRYC
             }
         }
 
+        private void loadCharts()
+        {
+            //Header
+
+            Border border = new Border()
+            {
+
+                BorderThickness = new Thickness(0.5),
+
+                BorderBrush = new System.Windows.Media.SolidColorBrush(Colors.Black),
+
+                Margin = new Thickness(10),
+
+                CornerRadius = new CornerRadius(5)
+
+            };
+
+            TextBlock textBlock = new TextBlock()
+            {
+
+                Text = "Clasificación Gastos",
+
+                Margin = new Thickness(5),
+
+                FontSize = 14
+
+            };
+
+            textBlock.Effect = new DropShadowEffect()
+            {
+
+                Color = Colors.Black,
+
+                Opacity = 0.5
+
+            };
+
+            border.Child = textBlock;
+
+            chExpenses.Header = border;
+
+            //Axis
+
+            CategoryAxis primaryAxis = new CategoryAxis();
+            primaryAxis.Header = "Categoría";
+            chExpenses.PrimaryAxis = primaryAxis;
+
+            NumericalAxis secondaryAxis = new NumericalAxis();
+            secondaryAxis.Header = "Importe (€)";
+            chExpenses.SecondaryAxis = secondaryAxis;
+
+            //ToolTip
+           
+            DataTemplate tooltip = new DataTemplate();
+            
+            FrameworkElementFactory stackpanel = new FrameworkElementFactory(typeof(StackPanel));
+            stackpanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+
+            FrameworkElementFactory textblock = new FrameworkElementFactory(typeof(TextBlock));
+            textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.category"));
+            textblock.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
+            textblock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textblock.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
+            textblock.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
+
+            stackpanel.AppendChild(textblock);
+
+            FrameworkElementFactory textblock1 = new FrameworkElementFactory(typeof(TextBlock));
+            textblock1.SetValue(TextBlock.TextProperty, " : ");
+            textblock1.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
+            textblock1.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textblock1.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
+            textblock1.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
+
+            stackpanel.AppendChild(textblock1);
+
+            FrameworkElementFactory textblock2 = new FrameworkElementFactory(typeof(TextBlock));
+            textblock2.SetBinding(TextBlock.TextProperty, 
+                new Binding("Item.amount") { 
+                    StringFormat = "C",
+                    ConverterCulture = new System.Globalization.CultureInfo("es-ES") 
+                });
+            
+            textblock2.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
+            textblock2.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textblock2.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
+            textblock2.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
+           
+            stackpanel.AppendChild(textblock2);
+            tooltip.VisualTree = stackpanel;
+
+            //Series
+
+            List<ExpensesChart> lExpensesCharts = transactionsService.getExpenses();
+
+            ColumnSeries series = new ColumnSeries()
+            {
+                ItemsSource = lExpensesCharts.OrderByDescending(x=>x.amount).Take(10),
+                XBindingPath = "category",
+                YBindingPath = "amount",
+                ShowTooltip = true,
+                TooltipTemplate = tooltip,
+                EnableAnimation = true,
+                AnimationDuration = new TimeSpan(0,0,3)
+            };
+
+            ChartTooltip.SetShowDuration(series,5000);
+            chExpenses.Series.Add(series);
+
+            //Grid
+
+            gvExpenses.ItemsSource = lExpensesCharts.OrderByDescending(x => x.amount);
+
+        }
+
         private void loadAccounts()
         {
             viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
@@ -365,6 +488,7 @@ namespace GastosRYC
         {
             gvTransactions.ItemsSource = transactionsService.getAll();
             ApplyFilters();
+            
         }
 
         public void ApplyFilters()

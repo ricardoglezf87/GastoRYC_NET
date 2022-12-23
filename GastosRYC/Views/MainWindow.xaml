@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
-        xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"
+        xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf" xmlns:chart="clr-namespace:Syncfusion.UI.Xaml.Charts;assembly=Syncfusion.SfChart.WPF"
         mc:Ignorable="d"
         Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo.png" 
         PreviewKeyUp="frmInicio_PreviewKeyUp">
@@ -19,7 +19,7 @@
                Text="{Binding balance, StringFormat={}{0:N2} €}" Margin="0,0,5,0"/>
         </DataTemplate>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>
@@ -61,7 +61,7 @@
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
             </ListView.Resources>
-            
+
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
@@ -95,9 +95,9 @@
         <input:SfGridSplitter Name="gridSplitter"
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
                               Width="auto" Grid.Column="1" Grid.Row="1" Grid.RowSpan="2"/>
-        
-        
-        <syncfusion:SfDataGrid Grid.Column="2" x:Name="gvTransactions"
+
+
+        <syncfusion:SfDataGrid Visibility="Hidden" Grid.Column="2" x:Name="gvTransactions"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
                                CanMaintainScrollPosition="True"
                                AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
@@ -151,5 +151,33 @@
                 </syncfusion:GridTemplateColumn>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
+
+
+
+        <Grid x:Name="gridHome" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="9" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <syncfusion:SfChart x:Name="chForecast" Grid.Row="0" Grid.ColumnSpan="2"/>
+            <syncfusion:SfChart  x:Name="chExpenses" Margin="0,0,0,0" Grid.Row="1" Grid.Column="0" />
+            <syncfusion:SfDataGrid x:Name="gvExpenses"  Margin="0,0,0,0" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1" ColumnSizer="Star" 
+                                   >
+                <syncfusion:SfDataGrid.Columns >
+                    <syncfusion:GridTextColumn MappingName="category" HeaderText="Categoría"/>
+                    <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>
+                </syncfusion:SfDataGrid.Columns>
+            </syncfusion:SfDataGrid>
+
+
+        </Grid>
+
+
+
+
     </Grid>
 </Window>
