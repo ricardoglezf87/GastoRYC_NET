@@ -65,6 +65,7 @@
 
         <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="btnAllAccounts_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>
+       
         <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged" 
                   Grid.Column="0" Grid.Row="3" 
                   SizeChanged="lvAccounts_SizeChanged" 
@@ -193,10 +194,9 @@
 
         </Grid>
 
+        <Grid x:Name="gridReminders" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2" Visibility="Hidden">
 
-        <Grid x:Name="gridReminder" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2">
-
-
+            <syncfusion:CardView x:Name="cvReminders" ShowHeader="False"/>
 
         </Grid>
     </Grid>

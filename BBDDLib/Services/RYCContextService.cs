@@ -30,9 +30,10 @@ namespace GastosRYC.BBDDLib.Services
             context.tags?.Load();
             context.splits?.Load();
             context.transactions?.Load();
-            context.periodsReminder?.Load();
-            context.splitsReminder?.Load();
-            context.transactionsReminder?.Load();            
+            context.periodsReminders?.Load();
+            context.splitsReminders?.Load();
+            context.transactionsReminders?.Load();
+            context.expirationsReminders?.Load();
         }
 
         public RYCContext BBDD { get { return context; } }

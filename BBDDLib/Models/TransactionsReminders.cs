@@ -6,12 +6,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BBDDLib.Models
 {
-    public class TransactionsReminder
+    public class TransactionsReminders
     {
         public virtual int id { set; get; }
 
-        public virtual int? perdiodReminderid { set; get; }
-        public virtual PeriodsReminder? periodsReminder { set; get; }
+        public virtual int? perdiodRemindersid { set; get; }
+        public virtual PeriodsReminders? periodsReminders { set; get; }
 
         public virtual DateTime? date { set; get; }
 
@@ -45,7 +45,7 @@ namespace BBDDLib.Models
 
         public virtual TransactionsStatus? transactionStatus { set; get; }
 
-        public virtual List<SplitsReminder>? splits { set; get; }
+        public virtual List<SplitsReminders>? splits { set; get; }
 
         [NotMapped]
         public virtual Decimal? amount { get { return amountIn - amountOut; } }        

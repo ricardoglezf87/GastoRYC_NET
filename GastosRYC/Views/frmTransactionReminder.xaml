@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GastosRYC.Views"
-        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.frmTransactionReminder"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.frmTransactionReminders"
         mc:Ignorable="d"
         Title="Transacción" Height="450" Width="400" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" PreviewKeyUp="Window_PreviewKeyUp">
     <Grid>

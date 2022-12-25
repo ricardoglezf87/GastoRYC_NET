@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BBDDLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    [Migration("20221223104714_reminder")]
-    partial class reminder
+    [Migration("20221225220014_ExpiracionReminders")]
+    partial class ExpiracionReminders
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -90,6 +90,28 @@ namespace BBDDLib.Migrations
                     b.HasKey("id");
 
                     b.ToTable("categoriesTypes");
+                });
+
+            modelBuilder.Entity("BBDDLib.Models.ExpirationsReminders", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool?>("done")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("transactaionsRemindersid")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("transactaionsRemindersid");
+
+                    b.ToTable("expirationsReminders");
                 });
 
             modelBuilder.Entity("BBDDLib.Models.PeriodsReminders", b =>
@@ -362,6 +384,15 @@ namespace BBDDLib.Migrations
                         .HasForeignKey("categoriesTypesid");
 
                     b.Navigation("categoriesTypes");
+                });
+
+            modelBuilder.Entity("BBDDLib.Models.ExpirationsReminders", b =>
+                {
+                    b.HasOne("BBDDLib.Models.TransactionsReminders", "transactaionsReminders")
+                        .WithMany()
+                        .HasForeignKey("transactaionsRemindersid");
+
+                    b.Navigation("transactaionsReminders");
                 });
 
             modelBuilder.Entity("BBDDLib.Models.Splits", b =>

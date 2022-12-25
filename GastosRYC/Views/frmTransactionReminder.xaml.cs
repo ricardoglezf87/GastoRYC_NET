@@ -20,40 +20,40 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para frmTransaction.xaml
     /// </summary>
-    public partial class frmTransactionReminder : Window
+    public partial class frmTransactionReminders : Window
     {
 
-        private TransactionsReminder? transaction;
+        private TransactionsReminders? transaction;
         private readonly int? accountidDefault;
 
         private readonly AccountsService accountsService = new AccountsService();
         private readonly CategoriesService categoriesService = new CategoriesService();
         private readonly PersonsService personService = new PersonsService();
         private readonly TagsService tagsService = new TagsService();
-        private readonly TransactionsReminderService transactionsReminderService = new TransactionsReminderService();
-        private readonly SplitsReminderService splitsReminderService = new SplitsReminderService();
-        private readonly TransactionsStatusService transactionsReminderStatusService = new TransactionsStatusService();
+        private readonly TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
+        private readonly SplitsRemindersService splitsRemindersService = new SplitsRemindersService();
+        private readonly TransactionsStatusService transactionsRemindersStatusService = new TransactionsStatusService();
 
-        public frmTransactionReminder(TransactionsReminder transaction, int accountidDefault)
+        public frmTransactionReminders(TransactionsReminders transaction, int accountidDefault)
         {
             InitializeComponent();
             this.transaction = transaction;
             this.accountidDefault = accountidDefault;
         }
 
-        public frmTransactionReminder(TransactionsReminder transaction)
+        public frmTransactionReminders(TransactionsReminders transaction)
         {
             InitializeComponent();
             this.transaction = transaction;
         }
 
-        public frmTransactionReminder(int accountidDefault)
+        public frmTransactionReminders(int accountidDefault)
         {
             InitializeComponent();
             this.accountidDefault = accountidDefault;
         }
 
-        public frmTransactionReminder()
+        public frmTransactionReminders()
         {
             InitializeComponent();
             this.transaction = null;
@@ -107,7 +107,7 @@ namespace GastosRYC.Views
         {
             if (transaction == null)
             {
-                transaction = new TransactionsReminder();
+                transaction = new TransactionsReminders();
             }
 
             transaction.date = dtpDate.SelectedDate;
@@ -143,7 +143,7 @@ namespace GastosRYC.Views
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = transactionsReminderStatusService.getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = transactionsRemindersStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
@@ -152,7 +152,7 @@ namespace GastosRYC.Views
             cbPerson.ItemsSource = personService.getAll();
             cbCategory.ItemsSource = categoriesService.getAll();
             cbTag.ItemsSource = tagsService.getAll();
-            cbTransactionStatus.ItemsSource = transactionsReminderStatusService.getAll();
+            cbTransactionStatus.ItemsSource = transactionsRemindersStatusService.getAll();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -215,9 +215,9 @@ namespace GastosRYC.Views
                 return;                 
             }
 
-            frmSplitsReminder frm = new frmSplitsReminder(transaction);
+            frmSplitsReminders frm = new frmSplitsReminders(transaction);
             frm.ShowDialog();
-            transactionsReminderService.updateSplitsReminder(transaction);
+            transactionsRemindersService.updateSplitsReminders(transaction);
             loadTransaction();         
         }
 
@@ -231,7 +231,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        transactionsReminderService.saveChanges(transaction);
+                        transactionsRemindersService.saveChanges(transaction);
                     }
                     return true;
                 }

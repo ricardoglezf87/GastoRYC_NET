@@ -5,13 +5,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BBDDLib.Models
 {
-    public class SplitsReminder
+    public class SplitsReminders
     {
         public virtual int id { set; get; }
 
         public virtual int? transactionid { set; get; }
 
-        public virtual TransactionsReminder? transaction { set; get; }
+        public virtual TransactionsReminders? transaction { set; get; }
 
         public virtual int? tagid { set; get; }
 

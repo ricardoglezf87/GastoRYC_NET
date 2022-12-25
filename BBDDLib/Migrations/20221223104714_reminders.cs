@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BBDDLib.Migrations
 {
     /// <inheritdoc />
-    public partial class reminders : Migration
+    public partial class reminder : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "periodsReminder",
+                name: "periodsReminders",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -21,17 +21,17 @@ namespace BBDDLib.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_periodsReminder", x => x.id);
+                    table.PrimaryKey("PK_periodsReminders", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "transactionsReminder",
+                name: "transactionsReminders",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    perdiodReminderid = table.Column<int>(type: "INTEGER", nullable: true),
-                    periodsReminderid = table.Column<int>(type: "INTEGER", nullable: true),
+                    perdiodRemindersid = table.Column<int>(type: "INTEGER", nullable: true),
+                    periodsRemindersid = table.Column<int>(type: "INTEGER", nullable: true),
                     date = table.Column<DateTime>(type: "TEXT", nullable: true),
                     accountid = table.Column<int>(type: "INTEGER", nullable: true),
                     personid = table.Column<int>(type: "INTEGER", nullable: true),
@@ -46,41 +46,41 @@ namespace BBDDLib.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_transactionsReminder", x => x.id);
+                    table.PrimaryKey("PK_transactionsReminders", x => x.id);
                     table.ForeignKey(
-                        name: "FK_transactionsReminder_accounts_accountid",
+                        name: "FK_transactionsReminders_accounts_accountid",
                         column: x => x.accountid,
                         principalTable: "accounts",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_transactionsReminder_categories_categoryid",
+                        name: "FK_transactionsReminders_categories_categoryid",
                         column: x => x.categoryid,
                         principalTable: "categories",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_transactionsReminder_periodsReminder_periodsReminderid",
-                        column: x => x.periodsReminderid,
-                        principalTable: "periodsReminder",
+                        name: "FK_transactionsReminders_periodsReminders_periodsRemindersid",
+                        column: x => x.periodsRemindersid,
+                        principalTable: "periodsReminders",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_transactionsReminder_persons_personid",
+                        name: "FK_transactionsReminders_persons_personid",
                         column: x => x.personid,
                         principalTable: "persons",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_transactionsReminder_tags_tagid",
+                        name: "FK_transactionsReminders_tags_tagid",
                         column: x => x.tagid,
                         principalTable: "tags",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_transactionsReminder_transactionsStatus_transactionStatusid",
+                        name: "FK_transactionsReminders_transactionsStatus_transactionStatusid",
                         column: x => x.transactionStatusid,
                         principalTable: "transactionsStatus",
                         principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "splitsReminder",
+                name: "splitsReminders",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -95,72 +95,72 @@ namespace BBDDLib.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_splitsReminder", x => x.id);
+                    table.PrimaryKey("PK_splitsReminders", x => x.id);
                     table.ForeignKey(
-                        name: "FK_splitsReminder_categories_categoryid",
+                        name: "FK_splitsReminders_categories_categoryid",
                         column: x => x.categoryid,
                         principalTable: "categories",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_splitsReminder_tags_tagid",
+                        name: "FK_splitsReminders_tags_tagid",
                         column: x => x.tagid,
                         principalTable: "tags",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_splitsReminder_transactionsReminder_transactionid",
+                        name: "FK_splitsReminders_transactionsReminders_transactionid",
                         column: x => x.transactionid,
-                        principalTable: "transactionsReminder",
+                        principalTable: "transactionsReminders",
                         principalColumn: "id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_splitsReminder_categoryid",
-                table: "splitsReminder",
+                name: "IX_splitsReminders_categoryid",
+                table: "splitsReminders",
                 column: "categoryid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_splitsReminder_tagid",
-                table: "splitsReminder",
+                name: "IX_splitsReminders_tagid",
+                table: "splitsReminders",
                 column: "tagid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_splitsReminder_transactionid",
-                table: "splitsReminder",
+                name: "IX_splitsReminders_transactionid",
+                table: "splitsReminders",
                 column: "transactionid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_transactionsReminder_accountid",
-                table: "transactionsReminder",
+                name: "IX_transactionsReminders_accountid",
+                table: "transactionsReminders",
                 column: "accountid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_transactionsReminder_categoryid",
-                table: "transactionsReminder",
+                name: "IX_transactionsReminders_categoryid",
+                table: "transactionsReminders",
                 column: "categoryid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_transactionsReminder_periodsReminderid",
-                table: "transactionsReminder",
-                column: "periodsReminderid");
+                name: "IX_transactionsReminders_periodsRemindersid",
+                table: "transactionsReminders",
+                column: "periodsRemindersid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_transactionsReminder_personid",
-                table: "transactionsReminder",
+                name: "IX_transactionsReminders_personid",
+                table: "transactionsReminders",
                 column: "personid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_transactionsReminder_tagid",
-                table: "transactionsReminder",
+                name: "IX_transactionsReminders_tagid",
+                table: "transactionsReminders",
                 column: "tagid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_transactionsReminder_transactionStatusid",
-                table: "transactionsReminder",
+                name: "IX_transactionsReminders_transactionStatusid",
+                table: "transactionsReminders",
                 column: "transactionStatusid");
 
 
 
-            migrationBuilder.Sql("INSERT INTO periodsReminder([description]) VALUES"
+            migrationBuilder.Sql("INSERT INTO periodsReminders([description]) VALUES"
                  + " ('Diario'),('Semanal'),('Mensual'),('Bimestral'),('Trimestral'),('Semestral'),('Anual'); ");
 
         }
@@ -169,13 +169,13 @@ namespace BBDDLib.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "splitsReminder");
+                name: "splitsReminders");
 
             migrationBuilder.DropTable(
-                name: "transactionsReminder");
+                name: "transactionsReminders");
 
             migrationBuilder.DropTable(
-                name: "periodsReminder");
+                name: "periodsReminders");
         }
     }
 }

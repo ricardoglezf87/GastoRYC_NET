@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using BBDDLib.Models.Charts;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using Syncfusion.Windows.Tools.Controls;
 
 //TODO: implementar split
 
@@ -180,6 +181,9 @@ namespace GastosRYC
                             loadTransactions();
                             refreshBalance();
                             break;
+                        case eViews.Reminders:
+                            loadReminders();
+                            break;
                         case eViews.Home:
                             loadCharts();
                             break;
@@ -192,8 +196,8 @@ namespace GastosRYC
         {
             loadAccounts();
             loadTransactions();
-            refreshBalance();
-            loadCharts();
+            refreshBalance();            
+            loadCharts();            
         }
 
         private void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -312,7 +316,7 @@ namespace GastosRYC
         {
             gridTransactions.Visibility = Visibility.Hidden;
             gridHome.Visibility = Visibility.Hidden;
-            gridReminder.Visibility = Visibility.Hidden;
+            gridReminders.Visibility = Visibility.Hidden;
 
             switch (views)
             {
@@ -326,11 +330,22 @@ namespace GastosRYC
                     refreshBalance();
                     break;
                 case eViews.Reminders:
-                    gridReminder.Visibility = Visibility.Visible;
+                    gridReminders.Visibility = Visibility.Visible;
+                    loadReminders();
                     break;
             }
 
             activeView = views;
+        }
+
+        private void loadReminders()
+        {
+            CardViewItem item = new CardViewItem()
+            {
+                Header = "Item 1",
+                Content = new TextBlock() { Text = "Fruits" }
+            };
+            cvReminders.Items.Add(item);
         }
 
         private void reiniciarSaldosCuentas()

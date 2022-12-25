@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BBDDLib.Models
 {
-    public class PeriodsReminder
+    public class PeriodsReminders
     {
         [Key]
         public virtual int id { set; get; }

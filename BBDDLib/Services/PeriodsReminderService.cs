@@ -10,9 +10,9 @@ using GastosRYC.Extensions;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class PeriodsReminderService
+    public class PeriodsRemindersService
     {
-        public enum ePeriodsReminder : int
+        public enum ePeriodsReminders : int
         {
             Diary = 1,
             Weekly = 2,
@@ -24,47 +24,47 @@ namespace GastosRYC.BBDDLib.Services
         }
 
 
-        public List<PeriodsReminder>? getAll()
+        public List<PeriodsReminders>? getAll()
         {
-            return RYCContextService.getInstance().BBDD.periodsReminder?.ToList();
+            return RYCContextService.getInstance().BBDD.periodsReminders?.ToList();
         }
 
-        public PeriodsReminder? getByID(int? id)
+        public PeriodsReminders? getByID(int? id)
         {
-            return RYCContextService.getInstance().BBDD.periodsReminder?.FirstOrDefault(x => id.Equals(x.id));
+            return RYCContextService.getInstance().BBDD.periodsReminders?.FirstOrDefault(x => id.Equals(x.id));
         }
 
-        public void update(PeriodsReminder periodsReminder)
+        public void update(PeriodsReminders periodsReminders)
         {
-            RYCContextService.getInstance().BBDD.Update(periodsReminder);
+            RYCContextService.getInstance().BBDD.Update(periodsReminders);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
 
-        public void delete(PeriodsReminder periodsReminder)
+        public void delete(PeriodsReminders periodsReminders)
         {
-            RYCContextService.getInstance().BBDD.Remove(periodsReminder);
+            RYCContextService.getInstance().BBDD.Remove(periodsReminders);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
 
-        public DateTime? getNextDate(DateTime? date, ePeriodsReminder periodsReminder)
+        public DateTime? getNextDate(DateTime? date, ePeriodsReminders periodsReminders)
         {
             if(date != null)
             {
-                switch(periodsReminder)
+                switch(periodsReminders)
                 {
-                    case ePeriodsReminder.Diary:
+                    case ePeriodsReminders.Diary:
                         return date.addDay();                        
-                    case ePeriodsReminder.Weekly:
+                    case ePeriodsReminders.Weekly:
                         return date.addWeek();                        
-                    case ePeriodsReminder.Monthly:
+                    case ePeriodsReminders.Monthly:
                         return date.addMonth();                        
-                    case ePeriodsReminder.Bimonthly:
+                    case ePeriodsReminders.Bimonthly:
                         return date.addMonth(2);
-                    case ePeriodsReminder.Quarterly:
+                    case ePeriodsReminders.Quarterly:
                         return date.addMonth(3);
-                    case ePeriodsReminder.Bianual:
+                    case ePeriodsReminders.Bianual:
                         return date.addMonth(6);
-                    case ePeriodsReminder.Annual:
+                    case ePeriodsReminders.Annual:
                         return date.addYear();
                 }
                 

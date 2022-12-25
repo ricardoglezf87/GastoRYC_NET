@@ -7,66 +7,66 @@ using System.Windows.Controls;
 namespace GastosRYC.Views
 {
     /// <summary>
-    /// Lógica de interacción para SplitsReminder.xaml
+    /// Lógica de interacción para SplitsReminders.xaml
     /// </summary>
-    public partial class frmSplitsReminder : Window
+    public partial class frmSplitsReminders : Window
     {
 
         private readonly CategoriesService categoriesService = new CategoriesService();
-        private readonly SplitsReminderService splitsReminderService = new SplitsReminderService();
-        private readonly TransactionsReminderService transactionsReminderService = new TransactionsReminderService();
-        private readonly TransactionsReminder? transactionsReminder;
+        private readonly SplitsRemindersService splitsRemindersService = new SplitsRemindersService();
+        private readonly TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
+        private readonly TransactionsReminders? transactionsReminders;
 
-        public frmSplitsReminder(TransactionsReminder? transactionsReminder)
+        public frmSplitsReminders(TransactionsReminders? transactionsReminders)
         {
             InitializeComponent();
-            this.transactionsReminder = transactionsReminder;
+            this.transactionsReminders = transactionsReminders;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = categoriesService.getAll();
-            if (transactionsReminder != null && transactionsReminder.id > 0)
+            if (transactionsReminders != null && transactionsReminders.id > 0)
             {
-                gvSplitsReminder.ItemsSource = splitsReminderService.getbyTransactionid(transactionsReminder.id);
+                gvSplitsReminders.ItemsSource = splitsRemindersService.getbyTransactionid(transactionsReminders.id);
             }
             else
             {
-                gvSplitsReminder.ItemsSource = splitsReminderService.getbyTransactionidNull();
+                gvSplitsReminders.ItemsSource = splitsRemindersService.getbyTransactionidNull();
             }
         }
 
-        private void gvSplitsReminder_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
-            SplitsReminder splitsReminder = (SplitsReminder)gvSplitsReminder.SelectedItem;
-            if (splitsReminder != null)
+            SplitsReminders splitsReminders = (SplitsReminders)gvSplitsReminders.SelectedItem;
+            if (splitsReminders != null)
             {
-                switch (gvSplitsReminder.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
+                switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminder.category = categoriesService.getByID(splitsReminder.categoryid);
+                        splitsReminders.category = categoriesService.getByID(splitsReminders.categoryid);
                         break;                    
                 }
             }
         }
 
        
-        private void gvSplitsReminder_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
+        private void gvSplitsReminders_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            SplitsReminder splitsReminder = (SplitsReminder)e.RowData;
+            SplitsReminders splitsReminders = (SplitsReminders)e.RowData;
             
-            if (splitsReminder.categoryid == null)
+            if (splitsReminders.categoryid == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if(splitsReminder.categoryid == (int)CategoriesService.eSpecialCategories.Split)
+            else if(splitsReminders.categoryid == (int)CategoriesService.eSpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
             }
 
-            if (splitsReminder.amountIn == null && splitsReminder.amountOut == null)
+            if (splitsReminders.amountIn == null && splitsReminders.amountOut == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
@@ -74,101 +74,101 @@ namespace GastosRYC.Views
             }
         }                
         
-        private void gvSplitsReminder_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private void gvSplitsReminders_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            SplitsReminder splitsReminder = (SplitsReminder)e.RowData;
+            SplitsReminders splitsReminders = (SplitsReminders)e.RowData;
 
-            saveChanges(splitsReminder);
+            saveChanges(splitsReminders);
         }
 
-        private void saveChanges(SplitsReminder splitsReminder)
+        private void saveChanges(SplitsReminders splitsReminders)
         {
-            if (splitsReminder.category == null && splitsReminder.categoryid != null)
+            if (splitsReminders.category == null && splitsReminders.categoryid != null)
             {
-                splitsReminder.category = categoriesService.getByID(splitsReminder.categoryid);
+                splitsReminders.category = categoriesService.getByID(splitsReminders.categoryid);
             }
 
-            if (splitsReminder.amountIn == null)
-                splitsReminder.amountIn = 0;
+            if (splitsReminders.amountIn == null)
+                splitsReminders.amountIn = 0;
 
-            if (splitsReminder.amountOut == null)
-                splitsReminder.amountOut = 0;
+            if (splitsReminders.amountOut == null)
+                splitsReminders.amountOut = 0;
 
-            updateTranfer(splitsReminder);
+            updateTranfer(splitsReminders);
 
-            splitsReminderService.update(splitsReminder);
+            splitsRemindersService.update(splitsReminders);
         }
 
-        private void updateTranfer(SplitsReminder splitsReminder)
+        private void updateTranfer(SplitsReminders splitsReminders)
         {
-            if (splitsReminder.tranferid != null && 
-                splitsReminder.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            if (splitsReminders.tranferid != null && 
+                splitsReminders.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                TransactionsReminder? tContraria = transactionsReminderService.getByID(splitsReminder.tranferid);
+                TransactionsReminders? tContraria = transactionsRemindersService.getByID(splitsReminders.tranferid);
                 if (tContraria != null)
                 {
-                    transactionsReminderService.delete(tContraria);
+                    transactionsRemindersService.delete(tContraria);
                 }
-                splitsReminder.tranferid = null;
+                splitsReminders.tranferid = null;
             }
-            else if (splitsReminder.tranferid == null && 
-                splitsReminder.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            else if (splitsReminders.tranferid == null && 
+                splitsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                splitsReminder.tranferid = transactionsReminderService.getNextID();
+                splitsReminders.tranferid = transactionsRemindersService.getNextID();
 
-                TransactionsReminder? tContraria = new TransactionsReminder();
-                tContraria.date = transactionsReminder.date;
-                tContraria.accountid = splitsReminder.category.accounts.id;
-                tContraria.personid = transactionsReminder.personid;
-                tContraria.categoryid = transactionsReminder.account.categoryid;
-                tContraria.memo = splitsReminder.memo;
-                tContraria.tagid = transactionsReminder.tagid;
-                tContraria.amountIn = splitsReminder.amountOut;
-                tContraria.amountOut = splitsReminder.amountIn;
+                TransactionsReminders? tContraria = new TransactionsReminders();
+                tContraria.date = transactionsReminders.date;
+                tContraria.accountid = splitsReminders.category.accounts.id;
+                tContraria.personid = transactionsReminders.personid;
+                tContraria.categoryid = transactionsReminders.account.categoryid;
+                tContraria.memo = splitsReminders.memo;
+                tContraria.tagid = transactionsReminders.tagid;
+                tContraria.amountIn = splitsReminders.amountOut;
+                tContraria.amountOut = splitsReminders.amountIn;
 
-                if (splitsReminder.id != 0)
-                    tContraria.tranferSplitid = splitsReminder.id;
+                if (splitsReminders.id != 0)
+                    tContraria.tranferSplitid = splitsReminders.id;
                 else
-                    tContraria.tranferSplitid = splitsReminderService.getNextID() + 1;
+                    tContraria.tranferSplitid = splitsRemindersService.getNextID() + 1;
 
-                tContraria.transactionStatusid = transactionsReminder.transactionStatusid;
+                tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
 
-                transactionsReminderService.update(tContraria);
+                transactionsRemindersService.update(tContraria);
 
             }
-            else if (splitsReminder.tranferid != null && 
-                splitsReminder.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            else if (splitsReminders.tranferid != null && 
+                splitsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                TransactionsReminder? tContraria = transactionsReminderService.getByID(splitsReminder.tranferid);
+                TransactionsReminders? tContraria = transactionsRemindersService.getByID(splitsReminders.tranferid);
                 if (tContraria != null)
                 {
-                    tContraria.date = transactionsReminder.date;
-                    tContraria.accountid = splitsReminder.category.accounts.id;
-                    tContraria.personid = transactionsReminder.personid;
-                    tContraria.categoryid = transactionsReminder.account.categoryid;
-                    tContraria.memo = splitsReminder.memo;
-                    tContraria.tagid = transactionsReminder.tagid;
-                    tContraria.amountIn = splitsReminder.amountOut??0;
-                    tContraria.amountOut = splitsReminder.amountIn??0;
-                    tContraria.transactionStatusid = transactionsReminder.transactionStatusid;
-                    transactionsReminderService.update(tContraria);
+                    tContraria.date = transactionsReminders.date;
+                    tContraria.accountid = splitsReminders.category.accounts.id;
+                    tContraria.personid = transactionsReminders.personid;
+                    tContraria.categoryid = transactionsReminders.account.categoryid;
+                    tContraria.memo = splitsReminders.memo;
+                    tContraria.tagid = transactionsReminders.tagid;
+                    tContraria.amountIn = splitsReminders.amountOut??0;
+                    tContraria.amountOut = splitsReminders.amountIn??0;
+                    tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
+                    transactionsRemindersService.update(tContraria);
                 }
             }
         }
 
 
-        private void gvSplitsReminder_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (SplitsReminder splitsReminder in e.Items) {
-                if (splitsReminder.tranferid != null)
+            foreach (SplitsReminders splitsReminders in e.Items) {
+                if (splitsReminders.tranferid != null)
                 {
-                    transactionsReminderService.delete(transactionsReminderService.getByID(splitsReminder.tranferid));
+                    transactionsRemindersService.delete(transactionsRemindersService.getByID(splitsReminders.tranferid));
                 }
-                splitsReminderService.delete(splitsReminder);
+                splitsRemindersService.delete(splitsReminders);
             }            
         }
 
-        private void gvSplitsReminder_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
+        private void gvSplitsReminders_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
             if(MessageBox.Show("Esta seguro de querer eliminar esta split?","Eliminación split",MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation,MessageBoxResult.No) == MessageBoxResult.No)
@@ -177,11 +177,11 @@ namespace GastosRYC.Views
             }
         }
 
-        private void gvSplitsReminder_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
+        private void gvSplitsReminders_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
         {
-            SplitsReminder splitsReminder = (SplitsReminder)e.NewObject;
-            splitsReminder.transactionid = transactionsReminder.id;
-            splitsReminder.transaction = transactionsReminder;
+            SplitsReminders splitsReminders = (SplitsReminders)e.NewObject;
+            splitsReminders.transactionid = transactionsReminders.id;
+            splitsReminders.transaction = transactionsReminders;
         }
     }
 }

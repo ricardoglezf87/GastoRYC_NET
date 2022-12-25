@@ -18,9 +18,11 @@ namespace BBDDLib.Manager
         public DbSet<Tags>? tags { get; set; }
         public DbSet<TransactionsStatus>? transactionsStatus { get; set; }
         public DbSet<Splits>? splits { get; set; }
-        public DbSet<PeriodsReminder>? periodsReminder { get; set; }
-        public DbSet<TransactionsReminder>? transactionsReminder { get; set; }
-        public DbSet<SplitsReminder>? splitsReminder { get; set; }
+        public DbSet<PeriodsReminders>? periodsReminders { get; set; }
+        public DbSet<TransactionsReminders>? transactionsReminders { get; set; }
+        public DbSet<SplitsReminders>? splitsReminders { get; set; }
+
+        public DbSet<ExpirationsReminders>? expirationsReminders { get; set; }
 
         public RYCContext() : base()
         {
