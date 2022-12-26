@@ -197,8 +197,53 @@
 
         <Grid x:Name="gridReminders" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2" Visibility="Hidden">
 
-            <syncfusion:CardView x:Name="cvReminders" ShowHeader="False" Orientation="Horizontal"/>
-
+            <syncfusion:CardView x:Name="cvReminders" ShowHeader="false" Orientation="Horizontal">
+                <syncfusion:CardView.HeaderTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding transactaionsReminders.person.name}"/>
+                    </DataTemplate>
+                </syncfusion:CardView.HeaderTemplate>
+                <syncfusion:CardView.ItemTemplate>
+                    <DataTemplate >
+                        <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBoxItem Padding="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="75" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Fecha:" />
+                                    <TextBlock Grid.Column="1" 
+                                    Text="{Binding date, StringFormat='{}{0:dd/MM/yyyy}'}" />
+                                </Grid>
+                            </ListBoxItem>
+                            <ListBoxItem Padding="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="75" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Categoría:" />
+                                    <TextBlock Grid.Column="1"
+                                    Text="{Binding transactaionsReminders.category.description}" />
+                                </Grid>
+                            </ListBoxItem>
+                            
+                            <ListBoxItem Padding="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="75" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Importe:" />
+                                    <TextBlock Grid.Column="1"
+                                   Text="{Binding transactaionsReminders.amount,ConverterCulture='es-ES', StringFormat='{}{0:C}'}" />
+                                </Grid>
+                            </ListBoxItem>
+                        </ListBox>
+                    </DataTemplate>
+                </syncfusion:CardView.ItemTemplate>
+            </syncfusion:CardView>
         </Grid>
     </Grid>
 </Window>
