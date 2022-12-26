@@ -379,20 +379,31 @@ namespace GastosRYC
 
         private void loadReminders()
         {
-            //TODO: Evitar error al volver al cargar que no agrupa           
+            //TODO: Evitar error al volver al cargar que no agrupa, ahora no esta del todo como me gustaria         
 
-            //if (cvReminders.ItemsSource != null)
-            //{
-            //    ((ListCollectionView)cvReminders.ItemsSource).Refresh();
-            //}
-            //else
-            //{
-                cvReminders.ItemsSource = new ListCollectionView(expirationsRemindersService.getAllWithGeneration()?.Where(x => x.done != true).ToList());
+            if (cvReminders.ItemsSource == null)
+            {
+                cvReminders.ItemsSource = new ListCollectionView(expirationsRemindersService.getAllWithGeneration()?.Where(x => x.done != true && x.groupDate != "Futuro").ToList());
+
                 cvReminders.CanGroup = true;
                 cvReminders.GroupCards("groupDate");
-            //}
-            
+            }
+            else
+            {
+                for (int i = 0; i < ((ListCollectionView)cvReminders.ItemsSource).Count; i++)
+                {
+                    ((ListCollectionView)cvReminders.ItemsSource).RemoveAt(i);
+                }
 
+                foreach (ExpirationsReminders expirationsReminders in expirationsRemindersService
+                                                   .getAllWithGeneration()?.Where(x => x.done != true && x.groupDate != "Futuro").ToList())
+                {
+                    ((ListCollectionView)cvReminders.ItemsSource).AddNewItem(expirationsReminders);
+                }
+
+                ((ListCollectionView)cvReminders.ItemsSource).CommitNew();
+
+            }
         }
 
         private void reiniciarSaldosCuentas()
