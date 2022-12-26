@@ -379,29 +379,19 @@ namespace GastosRYC
 
         private void loadReminders()
         {
-            //TODO: Evitar error al volver al cargar que no agrupa
+            //TODO: Evitar error al volver al cargar que no agrupa           
 
-            //cvReminders.Items.Clear();
-
-            cvReminders.ItemsSource = expirationsRemindersService.getAllWithGeneration()?.Where(x => x.done != true);
-            
-            
-            //foreach (ExpirationsReminders expirationsReminders in expirationsRemindersService.
-            //                                                                getAllWithGeneration()?.Where(x=>x.done != true))
+            //if (cvReminders.ItemsSource != null)
             //{
-            //    CardViewItem item = new CardViewItem()
-            //    {
-            //        Header = expirationsReminders?.transactaionsReminders?.person?.name + " " + expirationsReminders?.transactaionsReminders?.memo,  
-            //        Content = new TextBlock() { Text = expirationsReminders?.transactaionsReminders?.date.toShortDateString() + "\n" + 
-            //                                        expirationsReminders?.transactaionsReminders?.category?.description + "\n" +
-            //                                        expirationsReminders?.transactaionsReminders?.amount + " €"
-            //        }
-            //    };
-            //    cvReminders.Items.Add(item);
+            //    ((ListCollectionView)cvReminders.ItemsSource).Refresh();
+            //}
+            //else
+            //{
+                cvReminders.ItemsSource = new ListCollectionView(expirationsRemindersService.getAllWithGeneration()?.Where(x => x.done != true).ToList());
+                cvReminders.CanGroup = true;
+                cvReminders.GroupCards("groupDate");
             //}
             
-            cvReminders.CanGroup = true;
-            cvReminders.GroupCards("groupDate");                
 
         }
 

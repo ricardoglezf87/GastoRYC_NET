@@ -32,7 +32,8 @@ namespace GastosRYC.BBDDLib.Services
         }
 
         public void update(TransactionsReminders transactionsReminders)
-        {            
+        {
+            //TODO: Cuando actualizo este modelo hay que borrar los vencimientos para recalcularlos.
             RYCContextService.getInstance().BBDD.Update(transactionsReminders);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
@@ -41,6 +42,7 @@ namespace GastosRYC.BBDDLib.Services
         {
             if (transactionsReminders != null)
             {
+                //TODO: Cuando actualizo este modelo hay que borrar los vencimientos.
                 RYCContextService.getInstance().BBDD.Remove(transactionsReminders);
                 RYCContextService.getInstance().BBDD.SaveChanges();
             }
