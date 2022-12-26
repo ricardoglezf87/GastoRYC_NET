@@ -10,7 +10,7 @@ namespace BBDDLib.Models
     {
         public virtual int id { set; get; }
 
-        public virtual int? perdiodRemindersid { set; get; }
+        public virtual int? periodsRemindersid { set; get; }
         public virtual PeriodsReminders? periodsReminders { set; get; }
 
         public virtual DateTime? date { set; get; }

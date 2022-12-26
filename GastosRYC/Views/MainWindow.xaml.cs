@@ -39,6 +39,8 @@ namespace GastosRYC
         private readonly AccountsService accountsService = new AccountsService();
         private readonly TransactionsService transactionsService = new TransactionsService();
         private readonly SplitsService splitsService = new SplitsService();
+        private readonly TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
+        private readonly ExpirationsRemindersService expirationsRemindersService = new ExpirationsRemindersService();
 
         private enum eViews : int
         {
@@ -196,8 +198,8 @@ namespace GastosRYC
         {
             loadAccounts();
             loadTransactions();
-            refreshBalance();            
-            loadCharts();            
+            refreshBalance();
+            loadCharts();
         }
 
         private void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -223,6 +225,43 @@ namespace GastosRYC
         {
             //TODO: Implementar funcionalidad
             MessageBox.Show("Funcionalidad no implementada");
+        }
+
+        private void btnAddReminder_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO: Preguntar periodo y traspasar el split
+            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
+            {
+                foreach (Transactions transactions in gvTransactions.SelectedItems)
+                {
+                    TransactionsReminders transactionsReminders = new TransactionsReminders();
+                    transactionsReminders.date = transactions.date;
+                    transactionsReminders.accountid = transactions.accountid;
+                    transactionsReminders.personid = transactions.personid;
+                    transactionsReminders.categoryid = transactions.categoryid;
+                    transactionsReminders.memo = transactions.memo;
+                    transactionsReminders.amountIn = transactions.amountIn;
+                    transactionsReminders.amountOut = transactions.amountOut;
+                    transactionsReminders.tagid = transactions.tagid;
+                    transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+
+                    transactionsRemindersService.update(transactionsReminders);
+                    //if (transactions.splits!= null)
+                    //{
+                    //    foreach(Splits splits in transactions.splits)
+                    //    {
+
+                    //    }
+                    //}                                        
+
+                }
+                MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
+
+            }
+            else
+            {
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Crear Recordatorio");
+            }
         }
 
         private void btnPaste_Click(object sender, RoutedEventArgs e)
@@ -340,12 +379,21 @@ namespace GastosRYC
 
         private void loadReminders()
         {
-            CardViewItem item = new CardViewItem()
+            cvReminders.Items.Clear();
+
+            foreach (ExpirationsReminders expirationsReminders in expirationsRemindersService.
+                                                                            getAllWithGeneration()?.Where(x=>x.done != true))
             {
-                Header = "Item 1",
-                Content = new TextBlock() { Text = "Fruits" }
-            };
-            cvReminders.Items.Add(item);
+                CardViewItem item = new CardViewItem()
+                {
+                    Header = expirationsReminders?.transactaionsReminders?.person?.name + " " + expirationsReminders?.transactaionsReminders?.memo,
+                    Content = new TextBlock() { Text = expirationsReminders?.transactaionsReminders?.date.toShortDateString() + "\n" + 
+                                                    expirationsReminders?.transactaionsReminders?.category?.description + "\n" +
+                                                    expirationsReminders?.transactaionsReminders?.amount + " €"
+                    }
+                };
+                cvReminders.Items.Add(item);
+            }
         }
 
         private void reiniciarSaldosCuentas()

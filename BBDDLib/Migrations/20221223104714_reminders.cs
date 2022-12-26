@@ -30,7 +30,6 @@ namespace BBDDLib.Migrations
                 {
                     id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    perdiodRemindersid = table.Column<int>(type: "INTEGER", nullable: true),
                     periodsRemindersid = table.Column<int>(type: "INTEGER", nullable: true),
                     date = table.Column<DateTime>(type: "TEXT", nullable: true),
                     accountid = table.Column<int>(type: "INTEGER", nullable: true),

@@ -46,7 +46,34 @@ namespace GastosRYC.BBDDLib.Services
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
 
-        public DateTime? getNextDate(DateTime? date, ePeriodsReminders periodsReminders)
+        public ePeriodsReminders? toEnum(PeriodsReminders? periodsReminders)
+        {
+            if (periodsReminders != null)
+            {
+                switch (periodsReminders.id)
+                {
+                    case 1:
+                        return ePeriodsReminders.Diary;
+                    case 2:
+                        return ePeriodsReminders.Weekly;
+                    case 3:
+                        return ePeriodsReminders.Monthly;
+                    case 4:
+                        return ePeriodsReminders.Bimonthly;
+                    case 5:
+                        return ePeriodsReminders.Quarterly;
+                    case 6:
+                        return ePeriodsReminders.Bianual;
+                    case 7:
+                        return ePeriodsReminders.Annual;
+
+                }
+            }
+
+            return null;
+        }
+
+        public DateTime? getNextDate(DateTime? date, ePeriodsReminders? periodsReminders)
         {
             if(date != null)
             {

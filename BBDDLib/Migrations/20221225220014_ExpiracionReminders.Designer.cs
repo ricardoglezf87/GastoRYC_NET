@@ -310,7 +310,7 @@ namespace BBDDLib.Migrations
                     b.Property<string>("memo")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("perdiodRemindersid")
+                    b.Property<int?>("periodsRemindersid")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("periodsRemindersid")

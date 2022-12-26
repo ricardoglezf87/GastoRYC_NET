@@ -133,6 +133,7 @@
                             <MenuItem x:Name="btnProvisional" Header="Provisional" Click="btnProvisional_Click"/>
                             <MenuItem x:Name="btnReconciled" Header="Conciliado" Click="btnReconciled_Click"/>
                         </MenuItem>
+                        <MenuItem x:Name="btnAddReminder" Header="Crear Recordatorio" Click="btnAddReminder_Click" />
                         <MenuItem x:Name="btnCut" Header="Cortar" Click="btnCut_Click" />
                         <MenuItem x:Name="btnCopy" Header="Copiar" Click="btnCopy_Click" />
                         <MenuItem x:Name="btnPaste" Header="Pegar" Click="btnPaste_Click" />
@@ -196,7 +197,7 @@
 
         <Grid x:Name="gridReminders" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2" Visibility="Hidden">
 
-            <syncfusion:CardView x:Name="cvReminders" ShowHeader="False"/>
+            <syncfusion:CardView x:Name="cvReminders" ShowHeader="False" Orientation="Horizontal"/>
 
         </Grid>
     </Grid>

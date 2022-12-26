@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GastosRYC.BBDDLib.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace BBDDLib.Models
         [Key]
         public virtual int id { set; get; }
 
-        public virtual String? description { set; get; }
+        public virtual String? description { set; get; }        
 
     }
 }
