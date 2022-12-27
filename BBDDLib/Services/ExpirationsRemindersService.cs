@@ -11,6 +11,7 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class ExpirationsRemindersService
     {
+        private TransactionsService transactionsService = new TransactionsService();
         private TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
         private PeriodsRemindersService periodsRemindersService = new PeriodsRemindersService();
 
@@ -73,6 +74,31 @@ namespace GastosRYC.BBDDLib.Services
 
                     date = periodsRemindersService.getNextDate(date, periodsRemindersService.toEnum(transactionsReminders.periodsReminders));
 
+                }
+            }
+        }
+
+        public void registerTransactionfromReminder(int? id)
+        {
+            if (id != null)
+            {
+                ExpirationsReminders? expirationsReminders = getByID(id);
+                if (expirationsReminders != null && expirationsReminders.transactaionsReminders != null)
+                {
+                    Transactions transactions = new Transactions();
+                    transactions.date = expirationsReminders.date;
+                    transactions.accountid = expirationsReminders.transactaionsReminders.accountid;
+                    transactions.personid = expirationsReminders.transactaionsReminders.personid;
+                    transactions.categoryid = expirationsReminders.transactaionsReminders.categoryid;
+                    transactions.memo = expirationsReminders.transactaionsReminders.memo;
+                    transactions.amountIn = expirationsReminders.transactaionsReminders.amountIn;
+                    transactions.amountOut = expirationsReminders.transactaionsReminders.amountOut;
+                    transactions.tagid = expirationsReminders.transactaionsReminders.tagid;
+                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+
+                    transactionsService.update(transactions);
+
+                    //TODO: Falta implementar los splits
                 }
             }
         }

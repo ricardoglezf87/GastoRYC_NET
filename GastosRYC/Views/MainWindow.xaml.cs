@@ -725,32 +725,11 @@ namespace GastosRYC
 
         private void makeTransactionFromReminder(int? id)
         {
-            if (id != null)
-            {
-                ExpirationsReminders? expirationsReminders = expirationsRemindersService.getByID(id);
-                if (expirationsReminders != null && expirationsReminders.transactaionsReminders != null)
-                {
-                    Transactions transactions = new Transactions();
-                    transactions.date = expirationsReminders.date;
-                    transactions.accountid = expirationsReminders.transactaionsReminders.accountid;
-                    transactions.personid = expirationsReminders.transactaionsReminders.personid;
-                    transactions.categoryid = expirationsReminders.transactaionsReminders.categoryid;
-                    transactions.memo = expirationsReminders.transactaionsReminders.memo;
-                    transactions.amountIn = expirationsReminders.transactaionsReminders.amountIn;
-                    transactions.amountOut = expirationsReminders.transactaionsReminders.amountOut;
-                    transactions.tagid = expirationsReminders.transactaionsReminders.tagid;
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+            expirationsRemindersService.registerTransactionfromReminder(id);
 
-                    transactionsService.update(transactions);
-
-                    //TODO: Falta implementar los splits
-
-                    loadTransactions();
-                    refreshBalance();
-                    loadAccounts();
-
-                }
-            }
+            loadTransactions();
+            refreshBalance();
+            loadAccounts();
         }
 
         private void putDoneReminder(int? id)
