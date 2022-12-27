@@ -64,6 +64,31 @@ namespace GastosRYC
 
         #region Events
 
+        private void btnRegister_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Esta seguro de querer registrar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
+               MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+            {
+                if (sender != null && ((Button)sender)?.Tag != null)
+                {
+                    makeTransactionFromReminder((int?)((Button)sender).Tag);
+                    putDoneReminder((int?)((Button)sender).Tag);
+                }
+            }
+        }
+
+        private void btnSkip_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Esta seguro de querer saltar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
+                   MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+            {
+                if (sender != null && ((Button)sender)?.Tag != null)
+                {
+                    putDoneReminder((int?)((Button)sender).Tag);
+                }
+            }
+        }
+
         private void btnReminders_Click(object sender, RoutedEventArgs e)
         {
             toggleViews(eViews.Reminders);
@@ -393,10 +418,10 @@ namespace GastosRYC
                     new System.ComponentModel.SortDescription("date", System.ComponentModel.ListSortDirection.Ascending));
             }
             else
-            {                
-                while(((ListCollectionView)cvReminders.ItemsSource).Count > 0)
+            {
+                while (((ListCollectionView)cvReminders.ItemsSource).Count > 0)
                 {
-                    ((ListCollectionView)cvReminders.ItemsSource).RemoveAt(0);                    
+                    ((ListCollectionView)cvReminders.ItemsSource).RemoveAt(0);
                 }
 
                 foreach (ExpirationsReminders expirationsReminders in expirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
@@ -698,9 +723,49 @@ namespace GastosRYC
             refreshBalance();
         }
 
+        private void makeTransactionFromReminder(int? id)
+        {
+            if (id != null)
+            {
+                ExpirationsReminders? expirationsReminders = expirationsRemindersService.getByID(id);
+                if (expirationsReminders != null && expirationsReminders.transactaionsReminders != null)
+                {
+                    Transactions transactions = new Transactions();
+                    transactions.date = expirationsReminders.date;
+                    transactions.accountid = expirationsReminders.transactaionsReminders.accountid;
+                    transactions.personid = expirationsReminders.transactaionsReminders.personid;
+                    transactions.categoryid = expirationsReminders.transactaionsReminders.categoryid;
+                    transactions.memo = expirationsReminders.transactaionsReminders.memo;
+                    transactions.amountIn = expirationsReminders.transactaionsReminders.amountIn;
+                    transactions.amountOut = expirationsReminders.transactaionsReminders.amountOut;
+                    transactions.tagid = expirationsReminders.transactaionsReminders.tagid;
+                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+
+                    transactionsService.update(transactions);
+
+                    //TODO: Falta implementar los splits
+
+                    loadTransactions();
+                    refreshBalance();
+                    loadAccounts();
+
+                }
+            }
+        }
+
+        private void putDoneReminder(int? id)
+        {
+            ExpirationsReminders? expirationsReminders = expirationsRemindersService.getByID(id);
+            if (expirationsReminders != null)
+            {
+                expirationsReminders.done = true;
+                expirationsRemindersService.update(expirationsReminders);
+            }
+
+            loadReminders();
+        }
 
         #endregion
-
 
     }
 }

@@ -14,7 +14,9 @@
     <None Remove="Resources\add.png" />
     <None Remove="Resources\home.png" />
     <None Remove="Resources\Logo.png" />
+    <None Remove="Resources\register.png" />
     <None Remove="Resources\reminders.png" />
+    <None Remove="Resources\skip.png" />
     <None Remove="Resources\Split.png" />
   </ItemGroup>
 
@@ -31,7 +33,13 @@
     <Content Include="Resources\Logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\register.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\reminders.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skip.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Split.png">
