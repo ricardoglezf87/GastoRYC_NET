@@ -22,7 +22,7 @@ namespace GastosRYC.BBDDLib.Services
         public List<ExpirationsReminders>? getAllWithGeneration()
         {
             GenerationAllExpirations();
-            return RYCContextService.getInstance().BBDD.expirationsReminders?.ToList();
+            return getAll();
         }
 
         public bool existsExpiration(TransactionsReminders? transactionsReminder, DateTime? date)
@@ -33,6 +33,16 @@ namespace GastosRYC.BBDDLib.Services
             }
             return RYCContextService.getInstance().BBDD.expirationsReminders?
                     .Any(x => x.transactaionsRemindersid == transactionsReminder.id && x.date == date) ?? false;
+        }
+
+        public List<ExpirationsReminders>? getAllPendingWithGeneration()
+        {        
+            return (List<ExpirationsReminders>?) getAllWithGeneration()?.Where(x=> x.done != true).ToList();
+        }
+
+        public List<ExpirationsReminders>? getAllPendingWithoutFutureWithGeneration()
+        {
+            return (List<ExpirationsReminders>?)getAllWithGeneration()?.Where(x => x.done != true && x.groupDate != "Futuro").ToList();
         }
 
 

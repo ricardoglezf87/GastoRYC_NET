@@ -383,26 +383,27 @@ namespace GastosRYC
 
             if (cvReminders.ItemsSource == null)
             {
-                cvReminders.ItemsSource = new ListCollectionView(expirationsRemindersService.getAllWithGeneration()?.Where(x => x.done != true && x.groupDate != "Futuro").ToList());
+                cvReminders.ItemsSource = new ListCollectionView(expirationsRemindersService.getAllPendingWithoutFutureWithGeneration());
 
                 cvReminders.CanGroup = true;
                 cvReminders.GroupCards("groupDate");
+
+                cvReminders.Items.SortDescriptions.Clear();
+                cvReminders.Items.SortDescriptions.Add(
+                    new System.ComponentModel.SortDescription("date", System.ComponentModel.ListSortDirection.Ascending));
             }
             else
-            {
-                for (int i = 0; i < ((ListCollectionView)cvReminders.ItemsSource).Count; i++)
+            {                
+                while(((ListCollectionView)cvReminders.ItemsSource).Count > 0)
                 {
-                    ((ListCollectionView)cvReminders.ItemsSource).RemoveAt(i);
+                    ((ListCollectionView)cvReminders.ItemsSource).RemoveAt(0);                    
                 }
 
-                foreach (ExpirationsReminders expirationsReminders in expirationsRemindersService
-                                                   .getAllWithGeneration()?.Where(x => x.done != true && x.groupDate != "Futuro").ToList())
+                foreach (ExpirationsReminders expirationsReminders in expirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
                 {
                     ((ListCollectionView)cvReminders.ItemsSource).AddNewItem(expirationsReminders);
+                    ((ListCollectionView)cvReminders.ItemsSource).CommitNew();
                 }
-
-                ((ListCollectionView)cvReminders.ItemsSource).CommitNew();
-
             }
         }
 
