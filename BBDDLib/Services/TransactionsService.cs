@@ -96,7 +96,7 @@ namespace GastosRYC.BBDDLib.Services
                 tContraria.date = transactions.date;
                 tContraria.accountid = transactions.category.accounts.id;
                 tContraria.personid = transactions.personid;
-                tContraria.categoryid = transactions.account.categoryid;
+                tContraria.categoryid = transactions.categoryid;
                 tContraria.memo = transactions.memo;
                 tContraria.tagid = transactions.tagid;
                 tContraria.amountIn = transactions.amountOut;
@@ -121,7 +121,7 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.date = transactions.date;
                     tContraria.accountid = transactions.category.accounts.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = transactions.account.categoryid;
+                    tContraria.categoryid = transactions.categoryid;
                     tContraria.memo = transactions.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;

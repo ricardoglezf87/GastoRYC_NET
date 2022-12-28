@@ -12,7 +12,7 @@ namespace GastosRYC.BBDDLib.Services
     public class ExpirationsRemindersService
     {
         private TransactionsService transactionsService = new TransactionsService();
-        private TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
+        //private TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
         private PeriodsRemindersService periodsRemindersService = new PeriodsRemindersService();
 
         public List<ExpirationsReminders>? getAll()
@@ -33,7 +33,7 @@ namespace GastosRYC.BBDDLib.Services
                 return false;
             }
             return RYCContextService.getInstance().BBDD.expirationsReminders?
-                    .Any(x => x.transactaionsRemindersid == transactionsReminder.id && x.date == date) ?? false;
+                    .Any(x => x.transactionsRemindersid == transactionsReminder.id && x.date == date) ?? false;
         }
 
         public List<ExpirationsReminders>? getAllPendingWithGeneration()
@@ -66,8 +66,8 @@ namespace GastosRYC.BBDDLib.Services
                     if(!existsExpiration(transactionsReminders,date))
                     {
                         ExpirationsReminders expirationsReminders = new ExpirationsReminders();
-                        expirationsReminders.transactaionsRemindersid = transactionsReminders.id;
-                        expirationsReminders.transactaionsReminders = transactionsReminders;
+                        expirationsReminders.transactionsRemindersid = transactionsReminders.id;
+                        expirationsReminders.transactionsReminders = transactionsReminders;
                         expirationsReminders.date = date;
                         update(expirationsReminders);
                     }
@@ -83,20 +83,21 @@ namespace GastosRYC.BBDDLib.Services
             if (id != null)
             {
                 ExpirationsReminders? expirationsReminders = getByID(id);
-                if (expirationsReminders != null && expirationsReminders.transactaionsReminders != null)
+                if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
                 {
                     Transactions transactions = new Transactions();
                     transactions.date = expirationsReminders.date;
-                    transactions.accountid = expirationsReminders.transactaionsReminders.accountid;
-                    transactions.personid = expirationsReminders.transactaionsReminders.personid;
-                    transactions.categoryid = expirationsReminders.transactaionsReminders.categoryid;
-                    transactions.memo = expirationsReminders.transactaionsReminders.memo;
-                    transactions.amountIn = expirationsReminders.transactaionsReminders.amountIn;
-                    transactions.amountOut = expirationsReminders.transactaionsReminders.amountOut;
-                    transactions.tagid = expirationsReminders.transactaionsReminders.tagid;
+                    transactions.accountid = expirationsReminders.transactionsReminders.accountid;                    
+                    transactions.personid = expirationsReminders.transactionsReminders.personid;
+                    transactions.categoryid = expirationsReminders.transactionsReminders.categoryid;
+                    transactions.category = expirationsReminders.transactionsReminders.category;
+                    transactions.memo = expirationsReminders.transactionsReminders.memo;
+                    transactions.amountIn = expirationsReminders.transactionsReminders.amountIn;
+                    transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
+                    transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
-                    transactionsService.update(transactions);
+                    transactionsService.saveChanges(transactions);
 
                     //TODO: Falta implementar los splits
                 }
@@ -106,6 +107,11 @@ namespace GastosRYC.BBDDLib.Services
         public ExpirationsReminders? getByID(int? id)
         {
             return RYCContextService.getInstance().BBDD.expirationsReminders?.FirstOrDefault(x => id.Equals(x.id));
+        }
+
+        public List<ExpirationsReminders>? getByTransactionReminderid(int? id)
+        {
+            return RYCContextService.getInstance().BBDD.expirationsReminders?.Where(x => id.Equals(x.transactionsRemindersid)).ToList();
         }
 
         public void update(ExpirationsReminders expirationsReminders)
@@ -118,6 +124,14 @@ namespace GastosRYC.BBDDLib.Services
         {
             RYCContextService.getInstance().BBDD.Remove(expirationsReminders);
             RYCContextService.getInstance().BBDD.SaveChanges();
+        }
+
+        public void deleteByTransactionReminderid(int id)
+        {
+            foreach (ExpirationsReminders expirationsReminder in getByTransactionReminderid(id))
+            {
+                delete(expirationsReminder);
+            }
         }
     }
 }

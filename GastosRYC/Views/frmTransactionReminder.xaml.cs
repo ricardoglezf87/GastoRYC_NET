@@ -33,6 +33,8 @@ namespace GastosRYC.Views
         private readonly TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
         private readonly SplitsRemindersService splitsRemindersService = new SplitsRemindersService();
         private readonly TransactionsStatusService transactionsRemindersStatusService = new TransactionsStatusService();
+        private readonly PeriodsRemindersService periodsRemindersService = new PeriodsRemindersService();
+
 
         public frmTransactionReminders(TransactionsReminders transaction, int accountidDefault)
         {
@@ -70,6 +72,7 @@ namespace GastosRYC.Views
             if (transaction != null)
             {
                 dtpDate.SelectedDate = transaction.date;
+                cbPeriodTransaction.SelectedValue = transaction.periodsRemindersid;
                 cbAccount.SelectedValue = transaction.accountid;
                 cbPerson.SelectedValue = transaction.personid;
                 txtMemo.Text = transaction.memo;
@@ -111,6 +114,10 @@ namespace GastosRYC.Views
             }
 
             transaction.date = dtpDate.SelectedDate;
+
+            transaction.periodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
+            transaction.periodsReminders = periodsRemindersService.getByID(transaction.periodsRemindersid);
+            
             transaction.accountid = (int)cbAccount.SelectedValue;
             transaction.account = accountsService.getByID(transaction.accountid);
 
@@ -153,6 +160,7 @@ namespace GastosRYC.Views
             cbCategory.ItemsSource = categoriesService.getAll();
             cbTag.ItemsSource = tagsService.getAll();
             cbTransactionStatus.ItemsSource = transactionsRemindersStatusService.getAll();
+            cbPeriodTransaction.ItemsSource = periodsRemindersService.getAll();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -171,6 +179,12 @@ namespace GastosRYC.Views
             if (dtpDate.SelectedDate == null)
             {
                 errorMessage += "- Fecha\n";
+                valid = false;
+            }
+
+            if (cbPeriodTransaction.SelectedValue == null)
+            {
+                errorMessage += "- Periodificación\n";
                 valid = false;
             }
 

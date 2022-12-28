@@ -197,12 +197,12 @@
 
         <Grid x:Name="gridReminders" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2" Visibility="Hidden">
 
-            <syncfusion:CardView x:Name="cvReminders" ShowHeader="false" Orientation="Horizontal">
+            <syncfusion:CardView x:Name="cvReminders" ShowHeader="false" Orientation="Horizontal" MouseDoubleClick="cvReminders_MouseDoubleClick">
                 <syncfusion:CardView.HeaderTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <TextBlock Text="{Binding transactaionsReminders.person.name}"/>
-                            <TextBlock Text="{Binding transactaionsReminders.memo}"/>
+                            <TextBlock Text="{Binding transactionsReminders.person.name}"/>
+                            <TextBlock Text="{Binding transactionsReminders.memo}"/>
                         </StackPanel>
                     </DataTemplate>
                 </syncfusion:CardView.HeaderTemplate>
@@ -229,7 +229,7 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="Categoría:" />
                                         <TextBlock Grid.Column="1"
-                                    Text="{Binding transactaionsReminders.category.description}" />
+                                    Text="{Binding transactionsReminders.category.description}" />
                                     </Grid>
                                 </ListBoxItem>
 
@@ -241,7 +241,7 @@
                                         </Grid.ColumnDefinitions>
                                         <TextBlock Text="Importe:" />
                                         <TextBlock Grid.Column="1"
-                                   Text="{Binding transactaionsReminders.amount,ConverterCulture='es-ES', StringFormat='{}{0:C}'}" />
+                                   Text="{Binding transactionsReminders.amount,ConverterCulture='es-ES', StringFormat='{}{0:C}'}" />
                                     </Grid>
                                 </ListBoxItem>
                             </ListBox>

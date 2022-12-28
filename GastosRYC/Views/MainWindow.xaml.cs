@@ -229,9 +229,12 @@ namespace GastosRYC
 
         private void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ApplyFilters();
-            gvTransactions.Columns["account.description"].IsHidden = true;
-            toggleViews(eViews.Transactions);
+            if (lvAccounts.SelectedValue != null)
+            {
+                ApplyFilters();
+                gvTransactions.Columns["account.description"].IsHidden = true;
+                toggleViews(eViews.Transactions);
+            }
         }
 
         private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -254,7 +257,6 @@ namespace GastosRYC
 
         private void btnAddReminder_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Preguntar periodo y traspasar el split
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
@@ -270,16 +272,10 @@ namespace GastosRYC
                     transactionsReminders.tagid = transactions.tagid;
                     transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
-                    transactionsRemindersService.update(transactionsReminders);
-                    //if (transactions.splits!= null)
-                    //{
-                    //    foreach(Splits splits in transactions.splits)
-                    //    {
-
-                    //    }
-                    //}                                        
-
+                    frmTransactionReminders frm = new frmTransactionReminders(transactionsReminders);
+                    frm.ShowDialog();
                 }
+
                 MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
 
             }
@@ -372,6 +368,16 @@ namespace GastosRYC
             }
         }
 
+        private void cvReminders_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders != null)
+            {
+                frmTransactionReminders frm = new frmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders);
+                frm.ShowDialog();
+                loadReminders();
+            }
+        }
+
         #endregion
 
         #region Functions
@@ -381,12 +387,15 @@ namespace GastosRYC
             gridTransactions.Visibility = Visibility.Hidden;
             gridHome.Visibility = Visibility.Hidden;
             gridReminders.Visibility = Visibility.Hidden;
+            
+            activeView = views;
 
             switch (views)
             {
                 case eViews.Home:
                     gridHome.Visibility = Visibility.Visible;
                     loadCharts();
+                    lvAccounts.SelectedValue = null;
                     break;
                 case eViews.Transactions:
                     gridTransactions.Visibility = Visibility.Visible;
@@ -396,10 +405,11 @@ namespace GastosRYC
                 case eViews.Reminders:
                     gridReminders.Visibility = Visibility.Visible;
                     loadReminders();
+                    lvAccounts.SelectedValue = null;
                     break;
             }
 
-            activeView = views;
+            
         }
 
         private void loadReminders()
@@ -746,5 +756,7 @@ namespace GastosRYC
 
         #endregion
 
+
+       
     }
 }

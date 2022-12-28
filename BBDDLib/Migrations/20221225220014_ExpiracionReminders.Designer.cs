@@ -104,12 +104,12 @@ namespace BBDDLib.Migrations
                     b.Property<bool?>("done")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("transactaionsRemindersid")
+                    b.Property<int?>("transactionsRemindersid")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("id");
 
-                    b.HasIndex("transactaionsRemindersid");
+                    b.HasIndex("transactionsRemindersid");
 
                     b.ToTable("expirationsReminders");
                 });
@@ -388,11 +388,11 @@ namespace BBDDLib.Migrations
 
             modelBuilder.Entity("BBDDLib.Models.ExpirationsReminders", b =>
                 {
-                    b.HasOne("BBDDLib.Models.TransactionsReminders", "transactaionsReminders")
+                    b.HasOne("BBDDLib.Models.TransactionsReminders", "transactionsReminders")
                         .WithMany()
-                        .HasForeignKey("transactaionsRemindersid");
+                        .HasForeignKey("transactionsRemindersid");
 
-                    b.Navigation("transactaionsReminders");
+                    b.Navigation("transactionsReminders");
                 });
 
             modelBuilder.Entity("BBDDLib.Models.Splits", b =>

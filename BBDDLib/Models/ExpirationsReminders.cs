@@ -15,9 +15,9 @@ namespace BBDDLib.Models
 
         public virtual DateTime? date { set; get; }
 
-        public virtual int? transactaionsRemindersid { set; get; }
+        public virtual int? transactionsRemindersid { set; get; }
 
-        public virtual TransactionsReminders? transactaionsReminders { set; get; }
+        public virtual TransactionsReminders? transactionsReminders { set; get; }
 
         public virtual bool? done { set; get; }
 

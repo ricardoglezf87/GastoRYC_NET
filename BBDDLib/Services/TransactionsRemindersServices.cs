@@ -16,6 +16,7 @@ namespace GastosRYC.BBDDLib.Services
 
         private readonly SplitsRemindersService splitsRemindersService = new SplitsRemindersService();
         private readonly CategoriesService categoriesService = new CategoriesService();
+        private readonly ExpirationsRemindersService expirationsRemindersService = new ExpirationsRemindersService();
 
         #endregion
 
@@ -33,7 +34,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public void update(TransactionsReminders transactionsReminders)
         {
-            //TODO: Cuando actualizo este modelo hay que borrar los vencimientos para recalcularlos.
+            expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
             RYCContextService.getInstance().BBDD.Update(transactionsReminders);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
@@ -42,7 +43,7 @@ namespace GastosRYC.BBDDLib.Services
         {
             if (transactionsReminders != null)
             {
-                //TODO: Cuando actualizo este modelo hay que borrar los vencimientos.
+                expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
                 RYCContextService.getInstance().BBDD.Remove(transactionsReminders);
                 RYCContextService.getInstance().BBDD.SaveChanges();
             }
@@ -72,92 +73,92 @@ namespace GastosRYC.BBDDLib.Services
             if (transactionsReminders.amountOut == null)
                 transactionsReminders.amountOut = 0;
 
-            updateTranfer(transactionsReminders);
-            updateTranferSplit(transactionsReminders);
+           // updateTranfer(transactionsReminders);
+           // updateTranferSplit(transactionsReminders);
             update(transactionsReminders);
         }
 
-        public void updateTranfer(TransactionsReminders transactionsReminders)
-        {
-            if (transactionsReminders.tranferid != null &&
-                transactionsReminders.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                TransactionsReminders? tContraria = getByID(transactionsReminders.tranferid);
-                if (tContraria != null)
-                {
-                    delete(tContraria);
-                }
-                transactionsReminders.tranferid = null;
-            }
-            else if (transactionsReminders.tranferid == null &&
-                transactionsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                transactionsReminders.tranferid = getNextID();
+        //public void updateTranfer(TransactionsReminders transactionsReminders)
+        //{
+        //    if (transactionsReminders.tranferid != null &&
+        //        transactionsReminders.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+        //    {
+        //        TransactionsReminders? tContraria = getByID(transactionsReminders.tranferid);
+        //        if (tContraria != null)
+        //        {
+        //            delete(tContraria);
+        //        }
+        //        transactionsReminders.tranferid = null;
+        //    }
+        //    else if (transactionsReminders.tranferid == null &&
+        //        transactionsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+        //    {
+        //        transactionsReminders.tranferid = getNextID();
 
-                TransactionsReminders? tContraria = new TransactionsReminders();
-                tContraria.date = transactionsReminders.date;
-                tContraria.accountid = transactionsReminders.category.accounts.id;
-                tContraria.personid = transactionsReminders.personid;
-                tContraria.categoryid = transactionsReminders.account.categoryid;
-                tContraria.memo = transactionsReminders.memo;
-                tContraria.tagid = transactionsReminders.tagid;
-                tContraria.amountIn = transactionsReminders.amountOut;
-                tContraria.amountOut = transactionsReminders.amountIn;
+        //        TransactionsReminders? tContraria = new TransactionsReminders();
+        //        tContraria.date = transactionsReminders.date;
+        //        tContraria.accountid = transactionsReminders.category.accounts.id;
+        //        tContraria.personid = transactionsReminders.personid;
+        //        tContraria.categoryid = transactionsReminders.account.categoryid;
+        //        tContraria.memo = transactionsReminders.memo;
+        //        tContraria.tagid = transactionsReminders.tagid;
+        //        tContraria.amountIn = transactionsReminders.amountOut;
+        //        tContraria.amountOut = transactionsReminders.amountIn;
 
-                if (transactionsReminders.id != 0)
-                    tContraria.tranferid = transactionsReminders.id;
-                else
-                    tContraria.tranferid = getNextID() + 1;
+        //        if (transactionsReminders.id != 0)
+        //            tContraria.tranferid = transactionsReminders.id;
+        //        else
+        //            tContraria.tranferid = getNextID() + 1;
 
-                tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
+        //        tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
 
-                update(tContraria);
+        //        update(tContraria);
 
-            }
-            else if (transactionsReminders.tranferid != null &&
-                transactionsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                TransactionsReminders? tContraria = getByID(transactionsReminders.tranferid);
-                if (tContraria != null)
-                {
-                    tContraria.date = transactionsReminders.date;
-                    tContraria.accountid = transactionsReminders.category.accounts.id;
-                    tContraria.personid = transactionsReminders.personid;
-                    tContraria.categoryid = transactionsReminders.account.categoryid;
-                    tContraria.memo = transactionsReminders.memo;
-                    tContraria.tagid = transactionsReminders.tagid;
-                    tContraria.amountIn = transactionsReminders.amountOut;
-                    tContraria.amountOut = transactionsReminders.amountIn;
-                    tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
-                    update(tContraria);
-                }
-            }
-        }
+        //    }
+        //    else if (transactionsReminders.tranferid != null &&
+        //        transactionsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+        //    {
+        //        TransactionsReminders? tContraria = getByID(transactionsReminders.tranferid);
+        //        if (tContraria != null)
+        //        {
+        //            tContraria.date = transactionsReminders.date;
+        //            tContraria.accountid = transactionsReminders.category.accounts.id;
+        //            tContraria.personid = transactionsReminders.personid;
+        //            tContraria.categoryid = transactionsReminders.account.categoryid;
+        //            tContraria.memo = transactionsReminders.memo;
+        //            tContraria.tagid = transactionsReminders.tagid;
+        //            tContraria.amountIn = transactionsReminders.amountOut;
+        //            tContraria.amountOut = transactionsReminders.amountIn;
+        //            tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
+        //            update(tContraria);
+        //        }
+        //    }
+        //}
 
         #endregion
 
         #region SplitsRemindersActions
 
-        public void updateTranferSplit(TransactionsReminders transactionsReminders)
-        {
-            if (transactionsReminders.tranferSplitid != null &&
-                transactionsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                SplitsReminders? tContraria = splitsRemindersService.getByID(transactionsReminders.tranferSplitid);
-                if (tContraria != null)
-                {
-                    tContraria.transaction.date = transactionsReminders.date;
-                    tContraria.transaction.personid = transactionsReminders.personid;
-                    tContraria.categoryid = transactionsReminders.account.categoryid;
-                    tContraria.memo = transactionsReminders.memo;
-                    tContraria.tagid = transactionsReminders.tagid;
-                    tContraria.amountIn = transactionsReminders.amountOut;
-                    tContraria.amountOut = transactionsReminders.amountIn;
-                    tContraria.transaction.transactionStatusid = transactionsReminders.transactionStatusid;
-                    splitsRemindersService.update(tContraria);
-                }
-            }
-        }
+        //public void updateTranferSplit(TransactionsReminders transactionsReminders)
+        //{
+        //    if (transactionsReminders.tranferSplitid != null &&
+        //        transactionsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+        //    {
+        //        SplitsReminders? tContraria = splitsRemindersService.getByID(transactionsReminders.tranferSplitid);
+        //        if (tContraria != null)
+        //        {
+        //            tContraria.transaction.date = transactionsReminders.date;
+        //            tContraria.transaction.personid = transactionsReminders.personid;
+        //            tContraria.categoryid = transactionsReminders.account.categoryid;
+        //            tContraria.memo = transactionsReminders.memo;
+        //            tContraria.tagid = transactionsReminders.tagid;
+        //            tContraria.amountIn = transactionsReminders.amountOut;
+        //            tContraria.amountOut = transactionsReminders.amountIn;
+        //            tContraria.transaction.transactionStatusid = transactionsReminders.transactionStatusid;
+        //            splitsRemindersService.update(tContraria);
+        //        }
+        //    }
+        //}
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {

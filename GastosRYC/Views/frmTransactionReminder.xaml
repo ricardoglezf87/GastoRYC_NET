@@ -9,48 +9,52 @@
         Title="Transacción" Height="450" Width="400" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" PreviewKeyUp="Window_PreviewKeyUp">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="6*"/>
             <ColumnDefinition Width="35*"/>
-            <ColumnDefinition Width="74*"/>
+            <ColumnDefinition Width="85*"/>
             <ColumnDefinition Width="235*"/>
             <ColumnDefinition Width="50*"/>
         </Grid.ColumnDefinitions>
         <DatePicker x:Name="dtpDate" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" Height="24" IsTabStop="True"/>
         <Label x:Name="lblDate" Grid.Column="2" Content="Fecha:" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="26" Width="43"/>
-        <Label x:Name="lblAccount" Grid.Column="2" Content="Cuenta:" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Center" Height="26" Width="50"/>
-        <Label x:Name="lblPerson" Grid.Column="2" Content="Persona:" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Height="26" Width="54"/>
-        <Label x:Name="lblMemo" Grid.Column="2" Content="Memo:" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Center" Height="26" Width="48"/>
+        <syncfusion:ComboBoxAdv x:Name="cbPeriodTransaction" Grid.Column="3" DefaultText="Seleccione Periodicidad..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="2" VerticalAlignment="Center" IsEditable="True" AutoCompleteMode="Suggest"  />
+        <Label x:Name="lblAccount" Grid.Column="2" Content="Cuenta:" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Height="26" Width="50"/>
+        <Label x:Name="lblPerson" Grid.Column="2" Content="Persona:" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Top" Height="26" Width="54" Margin="0,4,0,0" Grid.RowSpan="2"/>
+        <Label x:Name="lblMemo" Grid.Column="2" Content="Memo:" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Center" Height="26" Width="48"/>
 
 
 
-        <syncfusion:ComboBoxAdv x:Name="cbAccount"  Grid.Column="3" DefaultText="Seleccione Cuenta..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="2" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" />
-        <syncfusion:ComboBoxAdv x:Name="cbPerson"  Grid.Column="3" DefaultText="Seleccione Persona..." DisplayMemberPath="name" SelectedValuePath="id" Grid.Row="3" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" />
-        <syncfusion:ComboBoxAdv x:Name="cbCategory"  Grid.Column="3" DefaultText="Seleccione Categoría..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="5" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" />
-        <Label x:Name="lblCategory" Grid.Column="2" Content="Categoría:" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Center" Height="26" Width="64"/>
-        <TextBox x:Name="txtMemo" Grid.Column="3" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Margin="0,10,0,0" IsTabStop="False"/>
-        <Label x:Name="lblTag" Grid.Column="2" Content="Tag:" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Center" Height="26" Width="30"/>
-        <Label x:Name="lblAmount" Grid.Column="2" Content="Cantidad:" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Center" Height="26" Width="60"/>
-        <syncfusion:CurrencyTextBox x:Name="txtAmount" Grid.Column="3" Height="23" Grid.Row="7" TextWrapping="Wrap" Text="CurrencyTextBox" UseNullOption="True" WatermarkText="Inserta cantidad..." WatermarkTextIsVisible="True" Culture="es-ES" />
-        <Button x:Name="btnSave" Grid.Column="2" Content="Guardar" Grid.Row="10" Height="20" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="110" Margin="0,6,180,0" Click="btnSave_Click"/>
-        <Label x:Name="lblTransactionStatus" Grid.Column="2" Content="Estado:" HorizontalAlignment="Left" Grid.Row="8" VerticalAlignment="Center" Height="26" Width="48"/>
-        <syncfusion:ComboBoxAdv x:Name="cbTag"  Grid.Column="3" DefaultText="Seleccione Tag..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="6" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" IsTabStop="False"/>
-        <syncfusion:ComboBoxAdv x:Name="cbTransactionStatus"  Grid.Column="3" DefaultText="Seleccione Estado Transacción..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="8" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" IsTabStop="False"/>
-        <Button x:Name="btnSplit" Grid.Column="3" Content="Split" Grid.Row="10" VerticalAlignment="Top" Height="20" Margin="112,6,3,0" Click="btnSplit_Click" Width="110" IsTabStop="False"/>
+        <syncfusion:ComboBoxAdv x:Name="cbAccount"  Grid.Column="3" DefaultText="Seleccione Cuenta..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="3" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" />
+        <syncfusion:ComboBoxAdv x:Name="cbPerson"  Grid.Column="3" DefaultText="Seleccione Persona..." DisplayMemberPath="name" SelectedValuePath="id" Grid.Row="4" VerticalAlignment="Top" Height="22" AutoCompleteMode="Suggest" IsEditable="True" Margin="0,6,0,0" Grid.RowSpan="2" />
+        <syncfusion:ComboBoxAdv x:Name="cbCategory"  Grid.Column="3" DefaultText="Seleccione Categoría..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="6" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" />
+        <Label x:Name="lblCategory" Grid.Column="2" Content="Categoría:" HorizontalAlignment="Left" Grid.Row="6" VerticalAlignment="Center" Height="26" Width="64"/>
+        <TextBox x:Name="txtMemo" Grid.Column="3" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Top" Height="18" Margin="0,10,0,0" IsTabStop="False"/>
+        <Label x:Name="lblTag" Grid.Column="2" Content="Tag:" HorizontalAlignment="Left" Grid.Row="7" VerticalAlignment="Center" Height="26" Width="30"/>
+        <Label x:Name="lblAmount" Grid.Column="2" Content="Cantidad:" HorizontalAlignment="Left" Grid.Row="8" VerticalAlignment="Center" Height="26" Width="60"/>
+        <syncfusion:CurrencyTextBox x:Name="txtAmount" Grid.Column="3" Height="23" Grid.Row="8" TextWrapping="Wrap" Text="CurrencyTextBox" UseNullOption="True" WatermarkText="Inserta cantidad..." WatermarkTextIsVisible="True" Culture="es-ES" />
+        <Button x:Name="btnSave" Grid.Column="2" Content="Guardar" Grid.Row="11" Height="20" VerticalAlignment="Center" Grid.ColumnSpan="2" Width="110" Margin="9,0,190,0" Click="btnSave_Click"/>
+        <Label x:Name="lblTransactionStatus" Grid.Column="2" Content="Estado:" HorizontalAlignment="Left" Grid.Row="9" VerticalAlignment="Center" Height="26" Width="48"/>
+        <syncfusion:ComboBoxAdv x:Name="cbTag"  Grid.Column="3" DefaultText="Seleccione Tag..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="7" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" IsTabStop="False"/>
+        <syncfusion:ComboBoxAdv x:Name="cbTransactionStatus"  Grid.Column="3" DefaultText="Seleccione Estado Transacción..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="9" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" IsTabStop="False"/>
+        <Button x:Name="btnSplit" Grid.Column="3" Content="Split" Grid.Row="11" VerticalAlignment="Center" Height="20" Margin="117,0,8,0" Click="btnSplit_Click" Width="110" IsTabStop="False"/>
+        <Label x:Name="lblPeriodTransaction" Grid.Column="2" Content="Periodicidad:" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Center"/>
+       
 
 
 
