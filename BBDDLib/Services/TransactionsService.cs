@@ -15,6 +15,7 @@ namespace GastosRYC.BBDDLib.Services
         #region Variables
 
         private readonly SplitsService splitsService = new SplitsService();
+        private readonly AccountsService accountsService = new AccountsService();
         private readonly CategoriesService categoriesService = new CategoriesService();
 
         #endregion
@@ -96,7 +97,7 @@ namespace GastosRYC.BBDDLib.Services
                 tContraria.date = transactions.date;
                 tContraria.accountid = transactions.category.accounts.id;
                 tContraria.personid = transactions.personid;
-                tContraria.categoryid = transactions.categoryid;
+                tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
                 tContraria.memo = transactions.memo;
                 tContraria.tagid = transactions.tagid;
                 tContraria.amountIn = transactions.amountOut;
@@ -121,7 +122,7 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.date = transactions.date;
                     tContraria.accountid = transactions.category.accounts.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = transactions.categoryid;
+                    tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
                     tContraria.memo = transactions.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;
