@@ -37,9 +37,6 @@
         <Label x:Name="lblAccount" Grid.Column="2" Content="Cuenta:" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Height="26" Width="50"/>
         <Label x:Name="lblPerson" Grid.Column="2" Content="Persona:" HorizontalAlignment="Left" Grid.Row="4" VerticalAlignment="Top" Height="26" Width="54" Margin="0,4,0,0" Grid.RowSpan="2"/>
         <Label x:Name="lblMemo" Grid.Column="2" Content="Memo:" HorizontalAlignment="Left" Grid.Row="5" VerticalAlignment="Center" Height="26" Width="48"/>
-
-
-
         <syncfusion:ComboBoxAdv x:Name="cbAccount"  Grid.Column="3" DefaultText="Seleccione Cuenta..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="3" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" />
         <syncfusion:ComboBoxAdv x:Name="cbPerson"  Grid.Column="3" DefaultText="Seleccione Persona..." DisplayMemberPath="name" SelectedValuePath="id" Grid.Row="4" VerticalAlignment="Top" Height="22" AutoCompleteMode="Suggest" IsEditable="True" Margin="0,6,0,0" Grid.RowSpan="2" />
         <syncfusion:ComboBoxAdv x:Name="cbCategory"  Grid.Column="3" DefaultText="Seleccione Categoría..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="6" VerticalAlignment="Center" Height="22" AutoCompleteMode="Suggest" IsEditable="True" />

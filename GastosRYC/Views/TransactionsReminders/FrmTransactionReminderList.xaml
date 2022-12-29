@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:GastosRYC.Views"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.FrmTransactionReminderList"
         mc:Ignorable="d"
-        Title="TransactionsReminders" Height="450" Width="400
-    " WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+        Title="TransactionsReminders" Height="450" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid Margin="0,5,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -19,19 +18,23 @@
         <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="0"  
                                  TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Center" ShowClearButton="True" />
         <syncfusion:SfDataGrid x:Name="gvTransactionsReminders" HorizontalContentAlignment="Center" 
-                               AllowEditing="True" AllowDeleting="True" 
-                               ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
-                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva tag" 
+                               AllowDeleting="True" ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
-                               AutoGenerateColumns="False" EditTrigger="OnTap" ShowRowHeader="True"                              
+                               AutoGenerateColumns="False" ShowRowHeader="True"                              
                                RecordDeleted="gvTransactionsReminders_RecordDeleted" 
                                RecordDeleting="gvTransactionsReminders_RecordDeleting" Grid.Row="1">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
+                <syncfusion:SortColumnDescription ColumnName="date" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha" />
+                <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
+                <syncfusion:GridTextColumn  HeaderText="Periodicidad" MappingName="periodsReminders.description"/>
+                <syncfusion:GridTextColumn  HeaderText="Cuenta" MappingName="account.description"/>
+                <syncfusion:GridTextColumn  HeaderText="Persona" MappingName="person.name"/>
+                <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
+                <syncfusion:GridTextColumn  HeaderText="Categoria" MappingName="category.description"/>
+                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 

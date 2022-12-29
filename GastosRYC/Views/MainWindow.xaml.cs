@@ -348,6 +348,13 @@ namespace GastosRYC
             refreshBalance();
         }
 
+        private void MenuItem_Reminders_Click(object sender, RoutedEventArgs e)
+        {
+            FrmTransactionReminderList frm = new FrmTransactionReminderList();
+            frm.ShowDialog();
+            loadReminders();
+        }
+
         private void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;

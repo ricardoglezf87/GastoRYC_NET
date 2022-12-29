@@ -46,6 +46,7 @@
                     <MenuItem Header="_Personas" Click="MenuItem_Persons_Click"/>
                     <MenuItem Header="_Categorias" Click="MenuItem_Categories_Click" />
                     <MenuItem Header="_Tags" Click="MenuItem_Tags_Click" />
+                    <MenuItem Header="_Recordatorios" Click="MenuItem_Reminders_Click" />
                 </MenuItem>
             </Menu>
         </DockPanel>
