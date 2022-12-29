@@ -7,22 +7,26 @@
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.FrmTransactionReminderList"
         mc:Ignorable="d"
         Title="TransactionsReminders" Height="450" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
-    <Grid Margin="0,5,0,0">
+    <Grid Margin="0,5,0,0" >
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="0"  
-                                 TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Center" ShowClearButton="True" />
+
+        <syncfusion:ButtonAdv x:Name="btnAdd" Height="20" IconStretch="Fill" SizeMode="Small" SmallIcon="/Resources/add.png" Click="btnAdd_Click"/>
+
+        <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="1"  
+                                 TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Top" ShowClearButton="True" Height="20" />
         <syncfusion:SfDataGrid x:Name="gvTransactionsReminders" HorizontalContentAlignment="Center" 
                                AllowDeleting="True" ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
-                               AutoGenerateColumns="False" ShowRowHeader="True"                              
+                               AutoGenerateColumns="False" ShowRowHeader="True" MouseDoubleClick="gvTransactionsReminders_MouseDoubleClick"                            
                                RecordDeleted="gvTransactionsReminders_RecordDeleted" 
-                               RecordDeleting="gvTransactionsReminders_RecordDeleting" Grid.Row="1">
+                               RecordDeleting="gvTransactionsReminders_RecordDeleting" Grid.Row="1" Grid.ColumnSpan="2"  >
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="date" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

@@ -19,8 +19,8 @@ namespace GastosRYC.Views
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {           
-            gvTransactionsReminders.ItemsSource = transactionsRemindersService.getAll();            
+        {
+            loadTransactions();            
         }       
 
         private void gvTransactionsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -42,6 +42,28 @@ namespace GastosRYC.Views
         {
             gvTransactionsReminders.SearchHelper.AllowFiltering = true;
             gvTransactionsReminders.SearchHelper.Search(txtSearch.Text);
+        }
+
+        private void gvTransactionsReminders_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (gvTransactionsReminders.CurrentItem != null)
+            {
+                FrmTransactionReminders frm = new FrmTransactionReminders((TransactionsReminders)gvTransactionsReminders.CurrentItem);
+                frm.ShowDialog();
+                loadTransactions();
+            }
+        }
+
+        private void loadTransactions()
+        {
+            gvTransactionsReminders.ItemsSource = transactionsRemindersService.getAll();
+        }
+
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            FrmTransactionReminders frm = new FrmTransactionReminders();
+            frm.ShowDialog();
+            loadTransactions();
         }
     }
 }
