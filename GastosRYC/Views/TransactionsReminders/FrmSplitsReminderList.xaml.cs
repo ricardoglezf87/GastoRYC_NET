@@ -9,7 +9,7 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para SplitsReminders.xaml
     /// </summary>
-    public partial class frmSplitsReminders : Window
+    public partial class FrmSplitsRemindersList : Window
     {
 
         private readonly CategoriesService categoriesService = new CategoriesService();
@@ -17,7 +17,7 @@ namespace GastosRYC.Views
         private readonly TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
         private readonly TransactionsReminders? transactionsReminders;
 
-        public frmSplitsReminders(TransactionsReminders? transactionsReminders)
+        public FrmSplitsRemindersList(TransactionsReminders? transactionsReminders)
         {
             InitializeComponent();
             this.transactionsReminders = transactionsReminders;

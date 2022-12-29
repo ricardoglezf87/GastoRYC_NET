@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GastosRYC.Views"
-        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.frmAccounts"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.FrmCategoriesList"
         mc:Ignorable="d"
-        Title="Cuentas" Height="450" Width="400
+        Title="Categorías" Height="450" Width="400
     " WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid Margin="0,5,0,0">
         <Grid.ColumnDefinitions>
@@ -18,15 +18,17 @@
         </Grid.RowDefinitions>
         <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="0"  
                                  TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Center" ShowClearButton="True" />
-        <syncfusion:SfDataGrid x:Name="gvAccounts" HorizontalContentAlignment="Center" 
-                                AllowEditing="True" AllowDeleting="True" EditTrigger="OnTap" ShowRowHeader="True"
+        <syncfusion:SfDataGrid x:Name="gvCategories" HorizontalContentAlignment="Center" 
+                               AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
-                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva cuenta" AllowResizingColumns="True" 
-                               AllowFiltering="True" ColumnSizer="Star" AutoGenerateColumns="False" 
-                               CurrentCellDropDownSelectionChanged="gvAccounts_CurrentCellDropDownSelectionChanged" 
-                               RowValidated="gvAccounts_RowValidated" RowValidating="gvAccounts_RowValidating" 
-                               RecordDeleted="gvAccounts_RecordDeleted" RecordDeleting="gvAccounts_RecordDeleting" 
-                               Grid.Row="1">
+                               AddNewRowPosition="Top" AddNewRowText="Inserte nueva categoría" 
+                               AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
+                               AutoGenerateColumns="False" EditTrigger="OnTap"
+                               CurrentCellDropDownSelectionChanged="gvCategories_CurrentCellDropDownSelectionChanged" 
+                               RowValidated="gvCategories_RowValidated" ShowRowHeader="True"
+                               RowValidating="gvCategories_RowValidating" 
+                               RecordDeleted="gvCategories_RecordDeleted" 
+                               RecordDeleting="gvCategories_RecordDeleting" Grid.Row="1">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
@@ -35,7 +37,7 @@
                 <syncfusion:GridTextColumn MappingName="description" HeaderText="Descripción" />
                 <syncfusion:GridComboBoxColumn  HeaderText="Tipos"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbAccountsTypes" MappingName="accountsTypesid" 
+                    x:Name="cbCategoriesTypes" MappingName="categoriesTypesid" 
                                                 DisplayMemberPath="description" SelectedValuePath="id"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>

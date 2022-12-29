@@ -8,12 +8,12 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para Tags.xaml
     /// </summary>
-    public partial class frmTags : Window
+    public partial class FrmTagsList : Window
     {
 
         private readonly TagsService tagsService = new TagsService();
 
-        public frmTags()
+        public FrmTagsList()
         {
             InitializeComponent();
         }

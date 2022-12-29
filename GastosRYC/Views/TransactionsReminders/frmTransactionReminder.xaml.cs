@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,42 +18,44 @@ using System.Windows.Shapes;
 namespace GastosRYC.Views
 {
     /// <summary>
-    /// Lógica de interacción para frmTransaction.xaml
+    /// Lógica de interacción para FrmTransaction.xaml
     /// </summary>
-    public partial class frmTransaction : Window
+    public partial class FrmTransactionReminders : Window
     {
 
-        private Transactions? transaction;
+        private TransactionsReminders? transaction;
         private readonly int? accountidDefault;
 
         private readonly AccountsService accountsService = new AccountsService();
         private readonly CategoriesService categoriesService = new CategoriesService();
         private readonly PersonsService personService = new PersonsService();
         private readonly TagsService tagsService = new TagsService();
-        private readonly TransactionsService transactionsService = new TransactionsService();
-        private readonly SplitsService splitsService = new SplitsService();
-        private readonly TransactionsStatusService transactionsStatusService = new TransactionsStatusService();
+        private readonly TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
+        private readonly SplitsRemindersService splitsRemindersService = new SplitsRemindersService();
+        private readonly TransactionsStatusService transactionsRemindersStatusService = new TransactionsStatusService();
+        private readonly PeriodsRemindersService periodsRemindersService = new PeriodsRemindersService();
 
-        public frmTransaction(Transactions transaction, int accountidDefault)
+
+        public FrmTransactionReminders(TransactionsReminders transaction, int accountidDefault)
         {
             InitializeComponent();
             this.transaction = transaction;
             this.accountidDefault = accountidDefault;
         }
 
-        public frmTransaction(Transactions transaction)
+        public FrmTransactionReminders(TransactionsReminders transaction)
         {
             InitializeComponent();
             this.transaction = transaction;
         }
 
-        public frmTransaction(int accountidDefault)
+        public FrmTransactionReminders(int accountidDefault)
         {
             InitializeComponent();
             this.accountidDefault = accountidDefault;
         }
 
-        public frmTransaction()
+        public FrmTransactionReminders()
         {
             InitializeComponent();
             this.transaction = null;
@@ -71,6 +72,7 @@ namespace GastosRYC.Views
             if (transaction != null)
             {
                 dtpDate.SelectedDate = transaction.date;
+                cbPeriodTransaction.SelectedValue = transaction.periodsRemindersid;
                 cbAccount.SelectedValue = transaction.accountid;
                 cbPerson.SelectedValue = transaction.personid;
                 txtMemo.Text = transaction.memo;
@@ -108,10 +110,14 @@ namespace GastosRYC.Views
         {
             if (transaction == null)
             {
-                transaction = new Transactions();
+                transaction = new TransactionsReminders();
             }
 
             transaction.date = dtpDate.SelectedDate;
+
+            transaction.periodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
+            transaction.periodsReminders = periodsRemindersService.getByID(transaction.periodsRemindersid);
+            
             transaction.accountid = (int)cbAccount.SelectedValue;
             transaction.account = accountsService.getByID(transaction.accountid);
 
@@ -144,7 +150,7 @@ namespace GastosRYC.Views
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = transactionsStatusService.getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = transactionsRemindersStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
@@ -153,7 +159,8 @@ namespace GastosRYC.Views
             cbPerson.ItemsSource = personService.getAll();
             cbCategory.ItemsSource = categoriesService.getAll();
             cbTag.ItemsSource = tagsService.getAll();
-            cbTransactionStatus.ItemsSource = transactionsStatusService.getAll();
+            cbTransactionStatus.ItemsSource = transactionsRemindersStatusService.getAll();
+            cbPeriodTransaction.ItemsSource = periodsRemindersService.getAll();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -172,6 +179,12 @@ namespace GastosRYC.Views
             if (dtpDate.SelectedDate == null)
             {
                 errorMessage += "- Fecha\n";
+                valid = false;
+            }
+
+            if (cbPeriodTransaction.SelectedValue == null)
+            {
+                errorMessage += "- Periodificación\n";
                 valid = false;
             }
 
@@ -216,9 +229,9 @@ namespace GastosRYC.Views
                 return;                 
             }
 
-            frmSplits frm = new frmSplits(transaction);
+            FrmSplitsRemindersList frm = new FrmSplitsRemindersList(transaction);
             frm.ShowDialog();
-            transactionsService.updateSplits(transaction);
+            transactionsRemindersService.updateSplitsReminders(transaction);
             loadTransaction();         
         }
 
@@ -232,7 +245,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        transactionsService.saveChanges(transaction);
+                        transactionsRemindersService.saveChanges(transaction);
                     }
                     return true;
                 }

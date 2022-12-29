@@ -65,48 +65,55 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\frmSplitsReminders.xaml.cs">
+    <Compile Update="Views\FrmSplitsRemindersList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\frmSplits.xaml.cs">
+    <Compile Update="Views\Transactions\FrmSplitsListList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\frmTags.xaml.cs">
+    <Compile Update="Views\Tags\FrmTagsList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\frmPersons.xaml.cs">
+    <Compile Update="Views\Persons\FrmPersonsListFrmPersonsList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\frmCategories.xaml.cs">
+    <Compile Update="Views\Categories\FrmCategoriesListList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\frmTransactionReminders.xaml.cs">
+    <Compile Update="Views\FrmTransactionReminders.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\TransactionsReminders\FrmTransactionReminderList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Views\frmSplitsReminders.xaml">
+    <Page Update="Views\FrmSplitsRemindersList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\frmSplits.xaml">
+    <Page Update="Views\Transactions\FrmSplitsListList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\frmTags.xaml">
+    <Page Update="Views\Tags\FrmTagsListFrmTagsList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\frmPersons.xaml">
+    <Page Update="Views\Persons\FrmPersonsListFrmPersonsList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\frmCategories.xaml">
+    <Page Update="Views\Categories\FrmCategoriesListList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\frmTransactionReminders.xaml">
+    <Page Update="Views\FrmTransactionReminders.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\TransactionsReminders\FrmTransactionReminderListFrmTransaction.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

@@ -9,7 +9,7 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para Splits.xaml
     /// </summary>
-    public partial class frmSplits : Window
+    public partial class FrmSplitsList : Window
     {
 
         private readonly CategoriesService categoriesService = new CategoriesService();
@@ -17,7 +17,7 @@ namespace GastosRYC.Views
         private readonly TransactionsService transactionsService = new TransactionsService();
         private readonly Transactions? transactions;
 
-        public frmSplits(Transactions? transactions)
+        public FrmSplitsList(Transactions? transactions)
         {
             InitializeComponent();
             this.transactions = transactions;

@@ -184,7 +184,7 @@ namespace GastosRYC
         {
             if (gvTransactions.CurrentItem != null)
             {
-                frmTransaction frm = new frmTransaction((Transactions)gvTransactions.CurrentItem);
+                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem);
                 frm.ShowDialog();
                 loadAccounts();
                 loadTransactions();
@@ -272,7 +272,7 @@ namespace GastosRYC
                     transactionsReminders.tagid = transactions.tagid;
                     transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
-                    frmTransactionReminders frm = new frmTransactionReminders(transactionsReminders);
+                    FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders);
                     frm.ShowDialog();
                 }
 
@@ -312,7 +312,7 @@ namespace GastosRYC
 
         private void MenuItem_Accounts_Click(object sender, RoutedEventArgs e)
         {
-            frmAccounts frm = new frmAccounts();
+            FrmAccountsList frm = new FrmAccountsList();
             frm.ShowDialog();
             loadAccounts();
             loadTransactions();
@@ -321,7 +321,7 @@ namespace GastosRYC
 
         private void MenuItem_Persons_Click(object sender, RoutedEventArgs e)
         {
-            frmPersons frm = new frmPersons();
+            FrmPersonsList frm = new FrmPersonsList();
             frm.ShowDialog();
             loadTransactions();
             refreshBalance();
@@ -329,7 +329,7 @@ namespace GastosRYC
 
         private void MenuItem_Categories_Click(object sender, RoutedEventArgs e)
         {
-            frmCategories frm = new frmCategories();
+            FrmCategoriesList frm = new FrmCategoriesList();
             frm.ShowDialog();
             loadTransactions();
             refreshBalance();
@@ -342,7 +342,7 @@ namespace GastosRYC
 
         private void MenuItem_Tags_Click(object sender, RoutedEventArgs e)
         {
-            frmTags frm = new frmTags();
+            FrmTagsList frm = new FrmTagsList();
             frm.ShowDialog();
             loadTransactions();
             refreshBalance();
@@ -351,7 +351,7 @@ namespace GastosRYC
         private void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
-            frmSplits frm = new frmSplits(transactions);
+            FrmSplitsList frm = new FrmSplitsList(transactions);
             frm.ShowDialog();
             transactionsService.updateSplits(transactions);
             loadTransactions();
@@ -372,7 +372,7 @@ namespace GastosRYC
         {
             if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders != null)
             {
-                frmTransactionReminders frm = new frmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders);
+                FrmTransactionReminders frm = new FrmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders);
                 frm.ShowDialog();
                 loadReminders();
             }
@@ -716,15 +716,15 @@ namespace GastosRYC
         }
         private void openNewTransaction()
         {
-            frmTransaction frm;
+            FrmTransaction frm;
 
             if (lvAccounts.SelectedItem == null)
             {
-                frm = new frmTransaction();
+                frm = new FrmTransaction();
             }
             else
             {
-                frm = new frmTransaction(((Accounts)lvAccounts.SelectedItem).id);
+                frm = new FrmTransaction(((Accounts)lvAccounts.SelectedItem).id);
             }
 
             frm.ShowDialog();

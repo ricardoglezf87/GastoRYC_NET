@@ -8,13 +8,13 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para Categories.xaml
     /// </summary>
-    public partial class frmCategories : Window
+    public partial class FrmCategoriesList : Window
     {
 
         private readonly CategoriesTypesService categoriesTypesService = new CategoriesTypesService();
         private readonly CategoriesService categoriesService = new CategoriesService();
 
-        public frmCategories()
+        public FrmCategoriesList()
         {
             InitializeComponent();
         }

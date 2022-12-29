@@ -8,14 +8,14 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para Cuentas.xaml
     /// </summary>
-    public partial class frmAccounts : Window
+    public partial class FrmAccountsList : Window
     {
 
         private readonly AccountsService accountsService = new AccountsService();
         private readonly AccountsTypesService accountsTypesService = new AccountsTypesService();
         private readonly CategoriesService categoriesService = new CategoriesService();
 
-        public frmAccounts()
+        public FrmAccountsList()
         {
             InitializeComponent();
         }

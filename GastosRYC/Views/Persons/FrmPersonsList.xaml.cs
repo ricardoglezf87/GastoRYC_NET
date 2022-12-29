@@ -8,12 +8,12 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para Persons.xaml
     /// </summary>
-    public partial class frmPersons : Window
+    public partial class FrmPersonsList : Window
     {
 
         private readonly PersonsService personsService = new PersonsService();
 
-        public frmPersons()
+        public FrmPersonsList()
         {
             InitializeComponent();
         }
