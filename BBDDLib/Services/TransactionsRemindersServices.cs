@@ -49,7 +49,6 @@ namespace GastosRYC.BBDDLib.Services
             }
         }
 
-
         public int getNextID()
         {
             var cmd = RYCContextService.getInstance().BBDD.Database.
@@ -73,92 +72,12 @@ namespace GastosRYC.BBDDLib.Services
             if (transactionsReminders.amountOut == null)
                 transactionsReminders.amountOut = 0;
 
-           // updateTranfer(transactionsReminders);
-           // updateTranferSplit(transactionsReminders);
             update(transactionsReminders);
         }
-
-        //public void updateTranfer(TransactionsReminders transactionsReminders)
-        //{
-        //    if (transactionsReminders.tranferid != null &&
-        //        transactionsReminders.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-        //    {
-        //        TransactionsReminders? tContraria = getByID(transactionsReminders.tranferid);
-        //        if (tContraria != null)
-        //        {
-        //            delete(tContraria);
-        //        }
-        //        transactionsReminders.tranferid = null;
-        //    }
-        //    else if (transactionsReminders.tranferid == null &&
-        //        transactionsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-        //    {
-        //        transactionsReminders.tranferid = getNextID();
-
-        //        TransactionsReminders? tContraria = new TransactionsReminders();
-        //        tContraria.date = transactionsReminders.date;
-        //        tContraria.accountid = transactionsReminders.category.accounts.id;
-        //        tContraria.personid = transactionsReminders.personid;
-        //        tContraria.categoryid = transactionsReminders.account.categoryid;
-        //        tContraria.memo = transactionsReminders.memo;
-        //        tContraria.tagid = transactionsReminders.tagid;
-        //        tContraria.amountIn = transactionsReminders.amountOut;
-        //        tContraria.amountOut = transactionsReminders.amountIn;
-
-        //        if (transactionsReminders.id != 0)
-        //            tContraria.tranferid = transactionsReminders.id;
-        //        else
-        //            tContraria.tranferid = getNextID() + 1;
-
-        //        tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
-
-        //        update(tContraria);
-
-        //    }
-        //    else if (transactionsReminders.tranferid != null &&
-        //        transactionsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-        //    {
-        //        TransactionsReminders? tContraria = getByID(transactionsReminders.tranferid);
-        //        if (tContraria != null)
-        //        {
-        //            tContraria.date = transactionsReminders.date;
-        //            tContraria.accountid = transactionsReminders.category.accounts.id;
-        //            tContraria.personid = transactionsReminders.personid;
-        //            tContraria.categoryid = transactionsReminders.account.categoryid;
-        //            tContraria.memo = transactionsReminders.memo;
-        //            tContraria.tagid = transactionsReminders.tagid;
-        //            tContraria.amountIn = transactionsReminders.amountOut;
-        //            tContraria.amountOut = transactionsReminders.amountIn;
-        //            tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
-        //            update(tContraria);
-        //        }
-        //    }
-        //}
 
         #endregion
 
         #region SplitsRemindersActions
-
-        //public void updateTranferSplit(TransactionsReminders transactionsReminders)
-        //{
-        //    if (transactionsReminders.tranferSplitid != null &&
-        //        transactionsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-        //    {
-        //        SplitsReminders? tContraria = splitsRemindersService.getByID(transactionsReminders.tranferSplitid);
-        //        if (tContraria != null)
-        //        {
-        //            tContraria.transaction.date = transactionsReminders.date;
-        //            tContraria.transaction.personid = transactionsReminders.personid;
-        //            tContraria.categoryid = transactionsReminders.account.categoryid;
-        //            tContraria.memo = transactionsReminders.memo;
-        //            tContraria.tagid = transactionsReminders.tagid;
-        //            tContraria.amountIn = transactionsReminders.amountOut;
-        //            tContraria.amountOut = transactionsReminders.amountIn;
-        //            tContraria.transaction.transactionStatusid = transactionsReminders.transactionStatusid;
-        //            splitsRemindersService.update(tContraria);
-        //        }
-        //    }
-        //}
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {

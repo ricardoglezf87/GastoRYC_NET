@@ -763,7 +763,5 @@ namespace GastosRYC
 
         #endregion
 
-
-       
     }
 }

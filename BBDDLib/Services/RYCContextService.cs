@@ -11,6 +11,15 @@ namespace GastosRYC.BBDDLib.Services
 {
     public sealed class RYCContextService
     {
+
+        public readonly static AccountsService accountsService = new AccountsService();
+        public readonly static CategoriesService categoriesService = new CategoriesService();
+        public readonly static PersonsService personsService = new PersonsService();
+        public readonly static TransactionsService transactionsService = new TransactionsService();
+        public readonly static SplitsService splitsService = new SplitsService();
+        public readonly static TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
+        public readonly static ExpirationsRemindersService expirationsRemindersService = new ExpirationsRemindersService();
+
         private readonly static RYCContextService _instance = new RYCContextService();
         private readonly RYCContext context = new RYCContext();
 

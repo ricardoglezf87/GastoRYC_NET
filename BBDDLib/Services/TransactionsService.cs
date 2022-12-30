@@ -11,15 +11,6 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class TransactionsService
     {
-
-        #region Variables
-
-        private readonly SplitsService splitsService = new SplitsService();
-        private readonly AccountsService accountsService = new AccountsService();
-        private readonly CategoriesService categoriesService = new CategoriesService();
-
-        #endregion
-
         #region TransactionsActions
 
         public List<Transactions>? getAll()
@@ -97,7 +88,7 @@ namespace GastosRYC.BBDDLib.Services
                 tContraria.date = transactions.date;
                 tContraria.accountid = transactions.category.accounts.id;
                 tContraria.personid = transactions.personid;
-                tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
+                tContraria.categoryid = RYCContextService.accountsService.getByID(transactions.accountid)?.categoryid;
                 tContraria.memo = transactions.memo;
                 tContraria.tagid = transactions.tagid;
                 tContraria.amountIn = transactions.amountOut;
@@ -122,7 +113,7 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.date = transactions.date;
                     tContraria.accountid = transactions.category.accounts.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
+                    tContraria.categoryid = RYCContextService.accountsService.getByID(transactions.accountid)?.categoryid;
                     tContraria.memo = transactions.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;
@@ -142,7 +133,7 @@ namespace GastosRYC.BBDDLib.Services
             if (transactions.tranferSplitid != null &&
                 transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Splits? tContraria = splitsService.getByID(transactions.tranferSplitid);
+                Splits? tContraria = RYCContextService.splitsService.getByID(transactions.tranferSplitid);
                 if (tContraria != null)
                 {
                     tContraria.transaction.date = transactions.date;
@@ -153,14 +144,14 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.amountIn = transactions.amountOut;
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
-                    splitsService.update(tContraria);
+                    RYCContextService.splitsService.update(tContraria);
                 }
             }
         }
 
         public void updateSplits(Transactions? transactions)
         {
-            List<Splits>? lSplits = transactions.splits ?? splitsService.getbyTransactionid(transactions.id);
+            List<Splits>? lSplits = transactions.splits ?? RYCContextService.splitsService.getbyTransactionid(transactions.id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
@@ -174,13 +165,13 @@ namespace GastosRYC.BBDDLib.Services
                 }
 
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactions.category = RYCContextService.categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
             else if (transactions.categoryid != null
                 && transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split)
             {
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactions.category = RYCContextService.categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactions.id == 0)
@@ -189,7 +180,7 @@ namespace GastosRYC.BBDDLib.Services
                 foreach (Splits splits in lSplits)
                 {
                     splits.transactionid = transactions.id;
-                    splitsService.update(splits);
+                    RYCContextService.splitsService.update(splits);
                 }
             }
             else

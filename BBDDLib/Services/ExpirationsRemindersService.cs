@@ -11,9 +11,10 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class ExpirationsRemindersService
     {
-        private TransactionsService transactionsService = new TransactionsService();
-        //private TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
-        private PeriodsRemindersService periodsRemindersService = new PeriodsRemindersService();
+        private readonly TransactionsService transactionsService = new TransactionsService();
+        private readonly SplitsService splitsService = new SplitsService();
+        private readonly PeriodsRemindersService periodsRemindersService = new PeriodsRemindersService();
+
 
         public List<ExpirationsReminders>? getAll()
         {
@@ -96,10 +97,23 @@ namespace GastosRYC.BBDDLib.Services
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-
                     transactionsService.saveChanges(transactions);
 
-                    //TODO: Falta implementar los splits
+                    if (expirationsReminders.transactionsReminders.splits != null)
+                    {
+                        foreach (SplitsReminders splitsReminders in expirationsReminders.transactionsReminders.splits)
+                        {
+                            Splits splits = new Splits();
+                            splits.transactionid = transactions.id;
+                            splits.categoryid = splitsReminders.categoryid;
+                            splits.memo = splitsReminders.memo;
+                            splits.amountIn = splitsReminders.amountIn;
+                            splits.amountOut = splitsReminders.amountOut;
+                            splits.tagid = splitsReminders.tagid;
+                            splitsService.saveChanges(transactions,splits);
+                        }
+                    }
+                                       
                 }
             }
         }

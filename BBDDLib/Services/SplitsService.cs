@@ -10,6 +10,10 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class SplitsService
     {
+
+        private readonly CategoriesService categoriesService = new CategoriesService();
+        private readonly TransactionsService transactionsService = new TransactionsService();
+
         public List<Splits>? getAll()
         {
             return RYCContextService.getInstance().BBDD.splits?.ToList();
@@ -55,6 +59,81 @@ namespace GastosRYC.BBDDLib.Services
             }
 
             return total;
+        }
+
+        public void saveChanges(Transactions? transactions,Splits splits)
+        {
+            if (splits.category == null && splits.categoryid != null)
+            {
+                splits.category = categoriesService.getByID(splits.categoryid);
+            }
+
+            if (splits.amountIn == null)
+                splits.amountIn = 0;
+
+            if (splits.amountOut == null)
+                splits.amountOut = 0;
+
+            updateTranfer(transactions,splits);
+
+            update(splits);
+        }
+
+        public void updateTranfer(Transactions? transactions,Splits splits)
+        {
+            if (splits.tranferid != null &&
+                splits.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                Transactions? tContraria = transactionsService.getByID(splits.tranferid);
+                if (tContraria != null)
+                {
+                    transactionsService.delete(tContraria);
+                }
+                splits.tranferid = null;
+            }
+            else if (splits.tranferid == null &&
+                splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                splits.tranferid = transactionsService.getNextID();
+
+                Transactions? tContraria = new Transactions();
+                tContraria.date = transactions.date;
+                tContraria.accountid = splits.category.accounts.id;
+                tContraria.personid = transactions.personid;
+                tContraria.categoryid = transactions.account.categoryid;
+                tContraria.memo = splits.memo;
+                tContraria.tagid = transactions.tagid;
+                tContraria.amountIn = splits.amountOut;
+                tContraria.amountOut = splits.amountIn;
+
+                if (splits.id != 0)
+                    tContraria.tranferSplitid = splits.id;
+                else
+                    tContraria.tranferSplitid = getNextID() + 1;
+
+                tContraria.transactionStatusid = transactions.transactionStatusid;
+
+                transactionsService.update(tContraria);
+
+            }
+            else if (splits.tranferid != null &&
+                splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                Transactions? tContraria = transactionsService.getByID(splits.tranferid);
+                if (tContraria != null)
+                {
+                    tContraria.date = transactions.date;
+                    tContraria.accountid = splits.category.accounts.id;
+                    tContraria.personid = transactions.personid;
+                    tContraria.categoryid = transactions.account.categoryid;
+                    tContraria.memo = splits.memo;
+                    tContraria.tagid = transactions.tagid;
+                    tContraria.amountIn = splits.amountOut ?? 0;
+                    tContraria.amountOut = splits.amountIn ?? 0;
+                    tContraria.transactionStatusid = transactions.transactionStatusid;
+                    transactionsService.update(tContraria);
+                }
+            }
         }
 
         public int getNextID()

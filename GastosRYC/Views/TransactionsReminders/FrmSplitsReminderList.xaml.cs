@@ -50,7 +50,6 @@ namespace GastosRYC.Views
             }
         }
 
-       
         private void gvSplitsReminders_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             SplitsReminders splitsReminders = (SplitsReminders)e.RowData;
@@ -94,69 +93,8 @@ namespace GastosRYC.Views
             if (splitsReminders.amountOut == null)
                 splitsReminders.amountOut = 0;
 
-            updateTranfer(splitsReminders);
-
             splitsRemindersService.update(splitsReminders);
         }
-
-        private void updateTranfer(SplitsReminders splitsReminders)
-        {
-            if (splitsReminders.tranferid != null && 
-                splitsReminders.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                TransactionsReminders? tContraria = transactionsRemindersService.getByID(splitsReminders.tranferid);
-                if (tContraria != null)
-                {
-                    transactionsRemindersService.delete(tContraria);
-                }
-                splitsReminders.tranferid = null;
-            }
-            else if (splitsReminders.tranferid == null && 
-                splitsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                splitsReminders.tranferid = transactionsRemindersService.getNextID();
-
-                TransactionsReminders? tContraria = new TransactionsReminders();
-                tContraria.date = transactionsReminders.date;
-                tContraria.accountid = splitsReminders.category.accounts.id;
-                tContraria.personid = transactionsReminders.personid;
-                tContraria.categoryid = transactionsReminders.account.categoryid;
-                tContraria.memo = splitsReminders.memo;
-                tContraria.tagid = transactionsReminders.tagid;
-                tContraria.amountIn = splitsReminders.amountOut;
-                tContraria.amountOut = splitsReminders.amountIn;
-
-                if (splitsReminders.id != 0)
-                    tContraria.tranferSplitid = splitsReminders.id;
-                else
-                    tContraria.tranferSplitid = splitsRemindersService.getNextID() + 1;
-
-                tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
-
-                transactionsRemindersService.update(tContraria);
-
-            }
-            else if (splitsReminders.tranferid != null && 
-                splitsReminders.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                TransactionsReminders? tContraria = transactionsRemindersService.getByID(splitsReminders.tranferid);
-                if (tContraria != null)
-                {
-                    tContraria.date = transactionsReminders.date;
-                    tContraria.accountid = splitsReminders.category.accounts.id;
-                    tContraria.personid = transactionsReminders.personid;
-                    tContraria.categoryid = transactionsReminders.account.categoryid;
-                    tContraria.memo = splitsReminders.memo;
-                    tContraria.tagid = transactionsReminders.tagid;
-                    tContraria.amountIn = splitsReminders.amountOut??0;
-                    tContraria.amountOut = splitsReminders.amountIn??0;
-                    tContraria.transactionStatusid = transactionsReminders.transactionStatusid;
-                    transactionsRemindersService.update(tContraria);
-                }
-            }
-        }
-
-
         private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (SplitsReminders splitsReminders in e.Items) {
