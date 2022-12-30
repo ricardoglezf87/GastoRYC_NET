@@ -25,15 +25,7 @@ namespace GastosRYC.Views
     {
 
         private Transactions? transaction;
-        private readonly int? accountidDefault;
-
-        private readonly AccountsService accountsService = new AccountsService();
-        private readonly CategoriesService categoriesService = new CategoriesService();
-        private readonly PersonsService personService = new PersonsService();
-        private readonly TagsService tagsService = new TagsService();
-        private readonly TransactionsService transactionsService = new TransactionsService();
-        private readonly SplitsService splitsService = new SplitsService();
-        private readonly TransactionsStatusService transactionsStatusService = new TransactionsStatusService();
+        private readonly int? accountidDefault;    
 
         public FrmTransaction(Transactions transaction, int accountidDefault)
         {
@@ -113,18 +105,18 @@ namespace GastosRYC.Views
 
             transaction.date = dtpDate.SelectedDate;
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = accountsService.getByID(transaction.accountid);
+            transaction.account = RYCContextService.accountsService.getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = personService.getByID(transaction.personid);
+                transaction.person = RYCContextService.personsService.getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
 
             transaction.categoryid = (int)cbCategory.SelectedValue;
-            transaction.category = categoriesService.getByID(transaction.categoryid);
+            transaction.category = RYCContextService.categoriesService.getByID(transaction.categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -140,20 +132,20 @@ namespace GastosRYC.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = tagsService.getByID(transaction.tagid);
+                transaction.tag = RYCContextService.tagsService.getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = transactionsStatusService.getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = RYCContextService.transactionsStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = accountsService.getAll();
-            cbPerson.ItemsSource = personService.getAll();
-            cbCategory.ItemsSource = categoriesService.getAll();
-            cbTag.ItemsSource = tagsService.getAll();
-            cbTransactionStatus.ItemsSource = transactionsStatusService.getAll();
+            cbAccount.ItemsSource = RYCContextService.accountsService.getAll();
+            cbPerson.ItemsSource = RYCContextService.personsService.getAll();
+            cbCategory.ItemsSource = RYCContextService.categoriesService.getAll();
+            cbTag.ItemsSource = RYCContextService.tagsService.getAll();
+            cbTransactionStatus.ItemsSource = RYCContextService.transactionsStatusService.getAll();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -218,7 +210,7 @@ namespace GastosRYC.Views
 
             FrmSplitsList frm = new FrmSplitsList(transaction);
             frm.ShowDialog();
-            transactionsService.updateSplits(transaction);
+            RYCContextService.transactionsService.updateSplits(transaction);
             loadTransaction();         
         }
 
@@ -232,7 +224,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        transactionsService.saveChanges(transaction);
+                        RYCContextService.transactionsService.saveChanges(transaction);
                     }
                     return true;
                 }

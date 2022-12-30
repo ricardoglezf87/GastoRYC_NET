@@ -11,8 +11,6 @@ namespace GastosRYC.Views
     public partial class FrmTagsList : Window
     {
 
-        private readonly TagsService tagsService = new TagsService();
-
         public FrmTagsList()
         {
             InitializeComponent();
@@ -20,7 +18,7 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {           
-            gvTags.ItemsSource = tagsService.getAll();            
+            gvTags.ItemsSource = RYCContextService.tagsService.getAll();            
         }
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -38,13 +36,13 @@ namespace GastosRYC.Views
         private void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Tags tags = (Tags)e.RowData;            
-            tagsService.update(tags);
+            RYCContextService.tagsService.update(tags);
         }
 
         private void gvTags_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Tags tags in e.Items) {                
-                tagsService.delete(tags);
+                RYCContextService.tagsService.delete(tags);
             }            
         }
 

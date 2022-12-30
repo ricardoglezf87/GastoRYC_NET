@@ -10,11 +10,6 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmAccountsList : Window
     {
-
-        private readonly AccountsService accountsService = new AccountsService();
-        private readonly AccountsTypesService accountsTypesService = new AccountsTypesService();
-        private readonly CategoriesService categoriesService = new CategoriesService();
-
         public FrmAccountsList()
         {
             InitializeComponent();
@@ -22,8 +17,8 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = accountsTypesService.getAll();
-            gvAccounts.ItemsSource = accountsService.getAll();            
+            cbAccountsTypes.ItemsSource = RYCContextService.accountsTypesService.getAll();
+            gvAccounts.ItemsSource = RYCContextService.accountsService.getAll();            
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -34,7 +29,7 @@ namespace GastosRYC.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);
+                        accounts.accountsTypes = RYCContextService.accountsTypesService.getByID(accounts.accountsTypesid);
                         break;                    
                 }
             }
@@ -64,16 +59,16 @@ namespace GastosRYC.Views
 
             if (accounts.categoryid != null)
             {
-                categories = categoriesService.getByID(accounts.categoryid);
+                categories = RYCContextService.categoriesService.getByID(accounts.categoryid);
                 if(categories != null)
                 {
                     categories.description = "[" + accounts.description + "]";
-                    categoriesService.update(categories);
+                    RYCContextService.categoriesService.update(categories);
                 }
             }else
             {
                 categories = new Categories();
-                accounts.categoryid = categoriesService.getNextID(); ;
+                accounts.categoryid = RYCContextService.categoriesService.getNextID(); ;
                 categories.description = "[" + accounts.description + "]";
                 categories.categoriesTypesid = (int)CategoriesTypesService.eCategoriesTypes.Transfers;
 
@@ -81,7 +76,7 @@ namespace GastosRYC.Views
 
             if (categories != null)
             {
-                categoriesService.update(categories);
+                RYCContextService.categoriesService.update(categories);
             }
         }
         
@@ -91,23 +86,23 @@ namespace GastosRYC.Views
 
             if (accounts.accountsTypes == null && accounts.accountsTypesid != null)
             {
-                accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);               
+                accounts.accountsTypes = RYCContextService.accountsTypesService.getByID(accounts.accountsTypesid);               
             }
 
             updateCategory(accounts);
-            accountsService.update(accounts);
+            RYCContextService.accountsService.update(accounts);
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items) {
-                Categories? categories = categoriesService.getByID(accounts.categoryid);
+                Categories? categories = RYCContextService.categoriesService.getByID(accounts.categoryid);
                 if(categories!= null)
                 {
-                    categoriesService.delete(categories);
+                    RYCContextService.categoriesService.delete(categories);
                 }
 
-                accountsService.delete(accounts);
+                RYCContextService.accountsService.delete(accounts);
             }            
         }
 

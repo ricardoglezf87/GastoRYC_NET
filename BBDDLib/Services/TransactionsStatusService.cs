@@ -9,7 +9,6 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class TransactionsStatusService
     {
-
         public enum eTransactionsTypes : int
         {
             Pending = 1,
@@ -31,8 +30,5 @@ namespace GastosRYC.BBDDLib.Services
         {
             return RYCContextService.getInstance().BBDD.transactionsStatus?.FirstOrDefault(x => id.Equals(x.id));
         }
-
-
-
     }
 }

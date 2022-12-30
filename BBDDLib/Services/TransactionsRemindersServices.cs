@@ -12,14 +12,6 @@ namespace GastosRYC.BBDDLib.Services
     public class TransactionsRemindersService
     {
 
-        #region Variables
-
-        private readonly SplitsRemindersService splitsRemindersService = new SplitsRemindersService();
-        private readonly CategoriesService categoriesService = new CategoriesService();
-        private readonly ExpirationsRemindersService expirationsRemindersService = new ExpirationsRemindersService();
-
-        #endregion
-
         #region TransactionsRemindersActions
 
         public List<TransactionsReminders>? getAll()
@@ -34,7 +26,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public void update(TransactionsReminders transactionsReminders)
         {
-            expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
+            RYCContextService.expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
             RYCContextService.getInstance().BBDD.Update(transactionsReminders);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
@@ -43,7 +35,7 @@ namespace GastosRYC.BBDDLib.Services
         {
             if (transactionsReminders != null)
             {
-                expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
+                RYCContextService.expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
                 RYCContextService.getInstance().BBDD.Remove(transactionsReminders);
                 RYCContextService.getInstance().BBDD.SaveChanges();
             }
@@ -81,7 +73,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            List<SplitsReminders>? lSplitsReminders = transactionsReminders.splits ?? splitsRemindersService.getbyTransactionid(transactionsReminders.id);
+            List<SplitsReminders>? lSplitsReminders = transactionsReminders.splits ?? RYCContextService.splitsRemindersService.getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
@@ -95,13 +87,13 @@ namespace GastosRYC.BBDDLib.Services
                 }
 
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactionsReminders.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactionsReminders.category = RYCContextService.categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
             else if (transactionsReminders.categoryid != null
                 && transactionsReminders.categoryid == (int)CategoriesService.eSpecialCategories.Split)
             {
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactionsReminders.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactionsReminders.category = RYCContextService.categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.id == 0)
@@ -110,7 +102,7 @@ namespace GastosRYC.BBDDLib.Services
                 foreach (SplitsReminders splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.transactionid = transactionsReminders.id;
-                    splitsRemindersService.update(splitsReminders);
+                    RYCContextService.splitsRemindersService.update(splitsReminders);
                 }
             }
             else

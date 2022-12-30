@@ -10,12 +10,7 @@ using System.Threading.Tasks;
 namespace GastosRYC.BBDDLib.Services
 {
     public class ExpirationsRemindersService
-    {
-        private readonly TransactionsService transactionsService = new TransactionsService();
-        private readonly SplitsService splitsService = new SplitsService();
-        private readonly PeriodsRemindersService periodsRemindersService = new PeriodsRemindersService();
-
-
+    {        
         public List<ExpirationsReminders>? getAll()
         {
             return RYCContextService.getInstance().BBDD.expirationsReminders?.ToList();
@@ -73,7 +68,7 @@ namespace GastosRYC.BBDDLib.Services
                         update(expirationsReminders);
                     }
 
-                    date = periodsRemindersService.getNextDate(date, periodsRemindersService.toEnum(transactionsReminders.periodsReminders));
+                    date = RYCContextService.periodsRemindersService.getNextDate(date, RYCContextService.periodsRemindersService.toEnum(transactionsReminders.periodsReminders));
 
                 }
             }
@@ -97,7 +92,7 @@ namespace GastosRYC.BBDDLib.Services
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    transactionsService.saveChanges(transactions);
+                    RYCContextService.transactionsService.saveChanges(transactions);
 
                     if (expirationsReminders.transactionsReminders.splits != null)
                     {
@@ -110,7 +105,7 @@ namespace GastosRYC.BBDDLib.Services
                             splits.amountIn = splitsReminders.amountIn;
                             splits.amountOut = splitsReminders.amountOut;
                             splits.tagid = splitsReminders.tagid;
-                            splitsService.saveChanges(transactions,splits);
+                            RYCContextService.splitsService.saveChanges(transactions,splits);
                         }
                     }
                                        

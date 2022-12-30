@@ -26,16 +26,6 @@ namespace GastosRYC.Views
         private TransactionsReminders? transaction;
         private readonly int? accountidDefault;
 
-        private readonly AccountsService accountsService = new AccountsService();
-        private readonly CategoriesService categoriesService = new CategoriesService();
-        private readonly PersonsService personService = new PersonsService();
-        private readonly TagsService tagsService = new TagsService();
-        private readonly TransactionsRemindersService transactionsRemindersService = new TransactionsRemindersService();
-        private readonly SplitsRemindersService splitsRemindersService = new SplitsRemindersService();
-        private readonly TransactionsStatusService transactionsRemindersStatusService = new TransactionsStatusService();
-        private readonly PeriodsRemindersService periodsRemindersService = new PeriodsRemindersService();
-
-
         public FrmTransactionReminders(TransactionsReminders transaction, int accountidDefault)
         {
             InitializeComponent();
@@ -116,21 +106,21 @@ namespace GastosRYC.Views
             transaction.date = dtpDate.SelectedDate;
 
             transaction.periodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
-            transaction.periodsReminders = periodsRemindersService.getByID(transaction.periodsRemindersid);
+            transaction.periodsReminders = RYCContextService.periodsRemindersService.getByID(transaction.periodsRemindersid);
             
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = accountsService.getByID(transaction.accountid);
+            transaction.account = RYCContextService.accountsService.getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = personService.getByID(transaction.personid);
+                transaction.person = RYCContextService.personsService.getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
 
             transaction.categoryid = (int)cbCategory.SelectedValue;
-            transaction.category = categoriesService.getByID(transaction.categoryid);
+            transaction.category = RYCContextService.categoriesService.getByID(transaction.categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -146,21 +136,21 @@ namespace GastosRYC.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = tagsService.getByID(transaction.tagid);
+                transaction.tag = RYCContextService.tagsService.getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = transactionsRemindersStatusService.getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = RYCContextService.transactionsStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = accountsService.getAll();
-            cbPerson.ItemsSource = personService.getAll();
-            cbCategory.ItemsSource = categoriesService.getAll();
-            cbTag.ItemsSource = tagsService.getAll();
-            cbTransactionStatus.ItemsSource = transactionsRemindersStatusService.getAll();
-            cbPeriodTransaction.ItemsSource = periodsRemindersService.getAll();
+            cbAccount.ItemsSource = RYCContextService.accountsService.getAll();
+            cbPerson.ItemsSource = RYCContextService.personsService.getAll();
+            cbCategory.ItemsSource = RYCContextService.categoriesService.getAll();
+            cbTag.ItemsSource = RYCContextService.tagsService.getAll();
+            cbTransactionStatus.ItemsSource = RYCContextService.transactionsStatusService.getAll();
+            cbPeriodTransaction.ItemsSource = RYCContextService.periodsRemindersService.getAll();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -231,7 +221,7 @@ namespace GastosRYC.Views
 
             FrmSplitsRemindersList frm = new FrmSplitsRemindersList(transaction);
             frm.ShowDialog();
-            transactionsRemindersService.updateSplitsReminders(transaction);
+            RYCContextService.transactionsRemindersService.updateSplitsReminders(transaction);
             loadTransaction();         
         }
 
@@ -245,7 +235,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        transactionsRemindersService.saveChanges(transaction);
+                        RYCContextService.transactionsRemindersService.saveChanges(transaction);
                     }
                     return true;
                 }

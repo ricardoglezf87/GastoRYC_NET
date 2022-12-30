@@ -10,9 +10,6 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmPersonsList : Window
     {
-
-        private readonly PersonsService personsService = new PersonsService();
-
         public FrmPersonsList()
         {
             InitializeComponent();
@@ -20,7 +17,7 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {           
-            gvPersons.ItemsSource = personsService.getAll();            
+            gvPersons.ItemsSource = RYCContextService.personsService.getAll();            
         }
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -38,13 +35,13 @@ namespace GastosRYC.Views
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Persons persons = (Persons)e.RowData;            
-            personsService.update(persons);
+            RYCContextService.personsService.update(persons);
         }
 
         private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Persons persons in e.Items) {                
-                personsService.delete(persons);
+                RYCContextService.personsService.delete(persons);
             }            
         }
 

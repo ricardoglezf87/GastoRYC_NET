@@ -11,9 +11,6 @@ namespace GastosRYC.BBDDLib.Services
     public class SplitsService
     {
 
-        private readonly CategoriesService categoriesService = new CategoriesService();
-        private readonly TransactionsService transactionsService = new TransactionsService();
-
         public List<Splits>? getAll()
         {
             return RYCContextService.getInstance().BBDD.splits?.ToList();
@@ -65,7 +62,7 @@ namespace GastosRYC.BBDDLib.Services
         {
             if (splits.category == null && splits.categoryid != null)
             {
-                splits.category = categoriesService.getByID(splits.categoryid);
+                splits.category = RYCContextService.categoriesService.getByID(splits.categoryid);
             }
 
             if (splits.amountIn == null)
@@ -84,17 +81,17 @@ namespace GastosRYC.BBDDLib.Services
             if (splits.tranferid != null &&
                 splits.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Transactions? tContraria = transactionsService.getByID(splits.tranferid);
+                Transactions? tContraria = RYCContextService.transactionsService.getByID(splits.tranferid);
                 if (tContraria != null)
                 {
-                    transactionsService.delete(tContraria);
+                    RYCContextService.transactionsService.delete(tContraria);
                 }
                 splits.tranferid = null;
             }
             else if (splits.tranferid == null &&
                 splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                splits.tranferid = transactionsService.getNextID();
+                splits.tranferid = RYCContextService.transactionsService.getNextID();
 
                 Transactions? tContraria = new Transactions();
                 tContraria.date = transactions.date;
@@ -113,13 +110,13 @@ namespace GastosRYC.BBDDLib.Services
 
                 tContraria.transactionStatusid = transactions.transactionStatusid;
 
-                transactionsService.update(tContraria);
+                RYCContextService.transactionsService.update(tContraria);
 
             }
             else if (splits.tranferid != null &&
                 splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Transactions? tContraria = transactionsService.getByID(splits.tranferid);
+                Transactions? tContraria = RYCContextService.transactionsService.getByID(splits.tranferid);
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;
@@ -131,7 +128,7 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.amountIn = splits.amountOut ?? 0;
                     tContraria.amountOut = splits.amountIn ?? 0;
                     tContraria.transactionStatusid = transactions.transactionStatusid;
-                    transactionsService.update(tContraria);
+                    RYCContextService.transactionsService.update(tContraria);
                 }
             }
         }

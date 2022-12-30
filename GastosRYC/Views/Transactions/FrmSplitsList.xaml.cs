@@ -11,10 +11,6 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmSplitsList : Window
     {
-
-        private readonly CategoriesService categoriesService = new CategoriesService();
-        private readonly SplitsService splitsService = new SplitsService();
-        private readonly TransactionsService transactionsService = new TransactionsService();
         private readonly Transactions? transactions;
 
         public FrmSplitsList(Transactions? transactions)
@@ -25,14 +21,14 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = categoriesService.getAll();
+            cbCategories.ItemsSource = RYCContextService.categoriesService.getAll();
             if (transactions != null && transactions.id > 0)
             {
-                gvSplits.ItemsSource = splitsService.getbyTransactionid(transactions.id);
+                gvSplits.ItemsSource = RYCContextService.splitsService.getbyTransactionid(transactions.id);
             }
             else
             {
-                gvSplits.ItemsSource = splitsService.getbyTransactionidNull();
+                gvSplits.ItemsSource = RYCContextService.splitsService.getbyTransactionidNull();
             }
         }
 
@@ -44,7 +40,7 @@ namespace GastosRYC.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.category = categoriesService.getByID(splits.categoryid);
+                        splits.category = RYCContextService.categoriesService.getByID(splits.categoryid);
                         break;                    
                 }
             }
@@ -78,7 +74,7 @@ namespace GastosRYC.Views
         {
             Splits splits = (Splits)e.RowData;
 
-            splitsService.saveChanges(transactions,splits);
+            RYCContextService.splitsService.saveChanges(transactions,splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -86,9 +82,9 @@ namespace GastosRYC.Views
             foreach (Splits splits in e.Items) {
                 if (splits.tranferid != null)
                 {
-                    transactionsService.delete(transactionsService.getByID(splits.tranferid));
+                    RYCContextService.transactionsService.delete(RYCContextService.transactionsService.getByID(splits.tranferid));
                 }
-                splitsService.delete(splits);
+                RYCContextService.splitsService.delete(splits);
             }            
         }
 
