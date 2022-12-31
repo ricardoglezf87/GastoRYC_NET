@@ -1,4 +1,5 @@
 ﻿using BBDDLib.Models;
+using BBDDLib.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,8 +9,15 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class SplitsService
+    public class SplitsService : ISplitsService
     {
+
+        private readonly ICategoriesService categoriesService;
+
+        public SplitsService(ICategoriesService categoriesService)
+        {
+            this.categoriesService = categoriesService;
+        }
 
         public List<Splits>? getAll()
         {
@@ -62,7 +70,7 @@ namespace GastosRYC.BBDDLib.Services
         {
             if (splits.category == null && splits.categoryid != null)
             {
-                splits.category = RYCContextService.categoriesService.getByID(splits.categoryid);
+                splits.category = categoriesService.getByID(splits.categoryid);
             }
 
             if (splits.amountIn == null)
@@ -71,67 +79,8 @@ namespace GastosRYC.BBDDLib.Services
             if (splits.amountOut == null)
                 splits.amountOut = 0;
 
-            updateTranfer(transactions,splits);
-
             update(splits);
-        }
-
-        public void updateTranfer(Transactions? transactions,Splits splits)
-        {
-            if (splits.tranferid != null &&
-                splits.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                Transactions? tContraria = RYCContextService.transactionsService.getByID(splits.tranferid);
-                if (tContraria != null)
-                {
-                    RYCContextService.transactionsService.delete(tContraria);
-                }
-                splits.tranferid = null;
-            }
-            else if (splits.tranferid == null &&
-                splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                splits.tranferid = RYCContextService.transactionsService.getNextID();
-
-                Transactions? tContraria = new Transactions();
-                tContraria.date = transactions.date;
-                tContraria.accountid = splits.category.accounts.id;
-                tContraria.personid = transactions.personid;
-                tContraria.categoryid = transactions.account.categoryid;
-                tContraria.memo = splits.memo;
-                tContraria.tagid = transactions.tagid;
-                tContraria.amountIn = splits.amountOut;
-                tContraria.amountOut = splits.amountIn;
-
-                if (splits.id != 0)
-                    tContraria.tranferSplitid = splits.id;
-                else
-                    tContraria.tranferSplitid = getNextID() + 1;
-
-                tContraria.transactionStatusid = transactions.transactionStatusid;
-
-                RYCContextService.transactionsService.update(tContraria);
-
-            }
-            else if (splits.tranferid != null &&
-                splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            {
-                Transactions? tContraria = RYCContextService.transactionsService.getByID(splits.tranferid);
-                if (tContraria != null)
-                {
-                    tContraria.date = transactions.date;
-                    tContraria.accountid = splits.category.accounts.id;
-                    tContraria.personid = transactions.personid;
-                    tContraria.categoryid = transactions.account.categoryid;
-                    tContraria.memo = splits.memo;
-                    tContraria.tagid = transactions.tagid;
-                    tContraria.amountIn = splits.amountOut ?? 0;
-                    tContraria.amountOut = splits.amountIn ?? 0;
-                    tContraria.transactionStatusid = transactions.transactionStatusid;
-                    RYCContextService.transactionsService.update(tContraria);
-                }
-            }
-        }
+        } 
 
         public int getNextID()
         {

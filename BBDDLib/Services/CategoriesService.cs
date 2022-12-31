@@ -8,13 +8,8 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class CategoriesService
-    {        
-        public enum eSpecialCategories : int
-        {
-            Split = -1,
-            WithoutCategory = 0
-        }
+    public class CategoriesService : ICategoriesService
+    {           
 
         public List<Categories>? getAll()
         {
@@ -24,8 +19,8 @@ namespace GastosRYC.BBDDLib.Services
         public List<Categories>? getAllFilterTransfer()
         {
             return RYCContextService.getInstance().BBDD.categories?
-                .Where(x => !x.id.Equals((int)CategoriesTypesService.eCategoriesTypes.Transfers) &&
-                !x.id.Equals((int)CategoriesTypesService.eCategoriesTypes.Specials)).ToList();
+                .Where(x => !x.id.Equals((int)ICategoriesTypesService.eCategoriesTypes.Transfers) &&
+                !x.id.Equals((int)ICategoriesTypesService.eCategoriesTypes.Specials)).ToList();
         }
 
         public Categories? getByID(int? id)

@@ -12,23 +12,37 @@ namespace GastosRYC.Views
     public partial class FrmSplitsRemindersList : Window
     {
         private readonly TransactionsReminders? transactionsReminders;
+        private readonly ICategoriesService categoriesService;
+        private readonly ISplitsRemindersService splitsRemindersService;
+        private readonly ITransactionsRemindersService transactionsRemindersService;
 
-        public FrmSplitsRemindersList(TransactionsReminders? transactionsReminders)
+        public FrmSplitsRemindersList(ICategoriesService categoriesService, ISplitsRemindersService splitsRemindersService,
+                ITransactionsRemindersService transactionsRemindersService)
         {
+            this.categoriesService = categoriesService;
+            this.splitsRemindersService = splitsRemindersService;
+            this.transactionsRemindersService = transactionsRemindersService;
             InitializeComponent();
+
+        }
+
+        public FrmSplitsRemindersList(TransactionsReminders? transactionsReminders, ICategoriesService categoriesService,
+            ISplitsRemindersService splitsRemindersService, ITransactionsRemindersService transactionsRemindersService)
+            : this(categoriesService, splitsRemindersService, transactionsRemindersService)
+        {
             this.transactionsReminders = transactionsReminders;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = RYCContextService.categoriesService.getAll();
+            cbCategories.ItemsSource = categoriesService.getAll();
             if (transactionsReminders != null && transactionsReminders.id > 0)
             {
-                gvSplitsReminders.ItemsSource = RYCContextService.splitsRemindersService.getbyTransactionid(transactionsReminders.id);
+                gvSplitsReminders.ItemsSource = splitsRemindersService.getbyTransactionid(transactionsReminders.id);
             }
             else
             {
-                gvSplitsReminders.ItemsSource = RYCContextService.splitsRemindersService.getbyTransactionidNull();
+                gvSplitsReminders.ItemsSource = splitsRemindersService.getbyTransactionidNull();
             }
         }
 
@@ -40,8 +54,8 @@ namespace GastosRYC.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.category = RYCContextService.categoriesService.getByID(splitsReminders.categoryid);
-                        break;                    
+                        splitsReminders.category = categoriesService.getByID(splitsReminders.categoryid);
+                        break;
                 }
             }
         }
@@ -49,13 +63,13 @@ namespace GastosRYC.Views
         private void gvSplitsReminders_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             SplitsReminders splitsReminders = (SplitsReminders)e.RowData;
-            
+
             if (splitsReminders.categoryid == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if(splitsReminders.categoryid == (int)CategoriesService.eSpecialCategories.Split)
+            else if (splitsReminders.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
@@ -67,8 +81,8 @@ namespace GastosRYC.Views
                 e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
                 e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
             }
-        }                
-        
+        }
+
         private void gvSplitsReminders_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             SplitsReminders splitsReminders = (SplitsReminders)e.RowData;
@@ -80,7 +94,7 @@ namespace GastosRYC.Views
         {
             if (splitsReminders.category == null && splitsReminders.categoryid != null)
             {
-                splitsReminders.category = RYCContextService.categoriesService.getByID(splitsReminders.categoryid);
+                splitsReminders.category = categoriesService.getByID(splitsReminders.categoryid);
             }
 
             if (splitsReminders.amountIn == null)
@@ -89,23 +103,24 @@ namespace GastosRYC.Views
             if (splitsReminders.amountOut == null)
                 splitsReminders.amountOut = 0;
 
-            RYCContextService.splitsRemindersService.update(splitsReminders);
+            splitsRemindersService.update(splitsReminders);
         }
         private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (SplitsReminders splitsReminders in e.Items) {
+            foreach (SplitsReminders splitsReminders in e.Items)
+            {
                 if (splitsReminders.tranferid != null)
                 {
-                    RYCContextService.transactionsRemindersService.delete(RYCContextService.transactionsRemindersService.getByID(splitsReminders.tranferid));
+                    transactionsRemindersService.delete(transactionsRemindersService.getByID(splitsReminders.tranferid));
                 }
-                RYCContextService.splitsRemindersService.delete(splitsReminders);
-            }            
+                splitsRemindersService.delete(splitsReminders);
+            }
         }
 
         private void gvSplitsReminders_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if(MessageBox.Show("Esta seguro de querer eliminar esta split?","Eliminación split",MessageBoxButton.YesNo,
-                MessageBoxImage.Exclamation,MessageBoxResult.No) == MessageBoxResult.No)
+            if (MessageBox.Show("Esta seguro de querer eliminar esta split?", "Eliminación split", MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
             }

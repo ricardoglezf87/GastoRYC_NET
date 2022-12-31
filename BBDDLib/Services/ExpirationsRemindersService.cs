@@ -1,5 +1,6 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Models.Charts;
+using BBDDLib.Services.Interfaces;
 using GastosRYC.Extensions;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,21 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class ExpirationsRemindersService
-    {        
+    public class ExpirationsRemindersService : IExpirationsRemindersService
+    {
+
+        private readonly IPeriodsRemindersService periodsRemindersService;
+        private readonly ITransactionsService transactionsService;
+        private readonly ISplitsService splitsService;
+
+        public ExpirationsRemindersService(IPeriodsRemindersService periodsRemindersService,
+            ITransactionsService transactionsService, ISplitsService splitsService)
+        {
+            this.transactionsService = transactionsService; 
+            this.periodsRemindersService = periodsRemindersService;
+            this.splitsService = splitsService;
+        }
+
         public List<ExpirationsReminders>? getAll()
         {
             return RYCContextService.getInstance().BBDD.expirationsReminders?.ToList();
@@ -68,7 +82,7 @@ namespace GastosRYC.BBDDLib.Services
                         update(expirationsReminders);
                     }
 
-                    date = RYCContextService.periodsRemindersService.getNextDate(date, RYCContextService.periodsRemindersService.toEnum(transactionsReminders.periodsReminders));
+                    date = periodsRemindersService.getNextDate(date, periodsRemindersService.toEnum(transactionsReminders.periodsReminders));
 
                 }
             }
@@ -91,8 +105,8 @@ namespace GastosRYC.BBDDLib.Services
                     transactions.amountIn = expirationsReminders.transactionsReminders.amountIn;
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    RYCContextService.transactionsService.saveChanges(transactions);
+                    transactions.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
+                    transactionsService.saveChanges(transactions);
 
                     if (expirationsReminders.transactionsReminders.splits != null)
                     {
@@ -105,7 +119,8 @@ namespace GastosRYC.BBDDLib.Services
                             splits.amountIn = splitsReminders.amountIn;
                             splits.amountOut = splitsReminders.amountOut;
                             splits.tagid = splitsReminders.tagid;
-                            RYCContextService.splitsService.saveChanges(transactions,splits);
+                            splitsService.saveChanges(transactions,splits);
+                            transactionsService.updateTranferSplits(transactions, splits);
                         }
                     }
                                        

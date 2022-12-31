@@ -1,4 +1,5 @@
 ﻿using BBDDLib.Models;
+using BBDDLib.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class AccountsService
+    public class AccountsService : IAccountsService
     {
 
         public List<Accounts>? getAll()

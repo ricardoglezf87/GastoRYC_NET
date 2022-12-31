@@ -1,4 +1,5 @@
 ﻿using BBDDLib.Models;
+using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
 using Syncfusion.Windows.Controls.RichTextBoxAdv;
 using System;
@@ -25,31 +26,52 @@ namespace GastosRYC.Views
     {
 
         private Transactions? transaction;
-        private readonly int? accountidDefault;    
+        private readonly int? accountidDefault;
+        private readonly IAccountsService accountsService;
+        private readonly ICategoriesService categoriesService;
+        private readonly IPersonsService personsService;
+        private readonly ITagsService tagsService;
+        private readonly ISplitsService splitsService;
+        private readonly ITransactionsService transactionsService;
+        private readonly ITransactionsStatusService transactionsStatusService;
 
-        public FrmTransaction(Transactions transaction, int accountidDefault)
+        public FrmTransaction(IAccountsService accountsService, ICategoriesService categoriesService,
+            IPersonsService personsService, ITagsService tagsService,ITransactionsService transactionsService,
+            ITransactionsStatusService transactionsStatusService, ISplitsService splitsService)
         {
+            this.accountsService = accountsService;
+            this.categoriesService = categoriesService;
+            this.personsService = personsService;
+            this.tagsService = tagsService;
+            this.transactionsService = transactionsService;
+            this.transactionsStatusService = transactionsStatusService;
             InitializeComponent();
+            this.splitsService = splitsService;
+        }
+
+        public FrmTransaction(Transactions transaction, int accountidDefault, IAccountsService accountsService, ICategoriesService categoriesService,
+            IPersonsService personsService, ITagsService tagsService, ITransactionsService transactionsService,
+            ITransactionsStatusService transactionsStatusService, ISplitsService splitsService) :
+            this(accountsService, categoriesService, personsService, tagsService, transactionsService, transactionsStatusService,splitsService)
+        {
             this.transaction = transaction;
             this.accountidDefault = accountidDefault;
         }
 
-        public FrmTransaction(Transactions transaction)
+        public FrmTransaction(Transactions transaction, IAccountsService accountsService, ICategoriesService categoriesService,
+            IPersonsService personsService, ITagsService tagsService, ITransactionsService transactionsService,
+            ITransactionsStatusService transactionsStatusService, ISplitsService splitsService) :
+            this(accountsService, categoriesService, personsService, tagsService, transactionsService, transactionsStatusService, splitsService)
         {
-            InitializeComponent();
             this.transaction = transaction;
         }
 
-        public FrmTransaction(int accountidDefault)
+        public FrmTransaction(int accountidDefault, IAccountsService accountsService, ICategoriesService categoriesService,
+            IPersonsService personsService, ITagsService tagsService, ITransactionsService transactionsService,
+            ITransactionsStatusService transactionsStatusService, ISplitsService splitsService) :
+            this(accountsService, categoriesService,personsService, tagsService, transactionsService,transactionsStatusService, splitsService)
         {
-            InitializeComponent();
             this.accountidDefault = accountidDefault;
-        }
-
-        public FrmTransaction()
-        {
-            InitializeComponent();
-            this.transaction = null;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -90,7 +112,7 @@ namespace GastosRYC.Views
                 txtMemo.Text = null;
                 txtAmount.Value = null;
                 cbTag.SelectedValue = null;
-                cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                cbTransactionStatus.SelectedValue = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
 
                 dtpDate.Focus();
             }
@@ -105,18 +127,18 @@ namespace GastosRYC.Views
 
             transaction.date = dtpDate.SelectedDate;
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = RYCContextService.accountsService.getByID(transaction.accountid);
+            transaction.account = accountsService.getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = RYCContextService.personsService.getByID(transaction.personid);
+                transaction.person = personsService.getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
 
             transaction.categoryid = (int)cbCategory.SelectedValue;
-            transaction.category = RYCContextService.categoriesService.getByID(transaction.categoryid);
+            transaction.category = categoriesService.getByID(transaction.categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -132,20 +154,20 @@ namespace GastosRYC.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = RYCContextService.tagsService.getByID(transaction.tagid);
+                transaction.tag = tagsService.getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = RYCContextService.transactionsStatusService.getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = transactionsStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = RYCContextService.accountsService.getAll();
-            cbPerson.ItemsSource = RYCContextService.personsService.getAll();
-            cbCategory.ItemsSource = RYCContextService.categoriesService.getAll();
-            cbTag.ItemsSource = RYCContextService.tagsService.getAll();
-            cbTransactionStatus.ItemsSource = RYCContextService.transactionsStatusService.getAll();
+            cbAccount.ItemsSource = accountsService.getAll();
+            cbPerson.ItemsSource = personsService.getAll();
+            cbCategory.ItemsSource = categoriesService.getAll();
+            cbTag.ItemsSource = tagsService.getAll();
+            cbTransactionStatus.ItemsSource = transactionsStatusService.getAll();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -208,9 +230,9 @@ namespace GastosRYC.Views
                 return;                 
             }
 
-            FrmSplitsList frm = new FrmSplitsList(transaction);
+            FrmSplitsList frm = new FrmSplitsList(transaction,categoriesService,splitsService,transactionsService);
             frm.ShowDialog();
-            RYCContextService.transactionsService.updateSplits(transaction);
+            transactionsService.updateTransactionAfterSplits(transaction);
             loadTransaction();         
         }
 
@@ -224,7 +246,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        RYCContextService.transactionsService.saveChanges(transaction);
+                        transactionsService.saveChanges(transaction);
                     }
                     return true;
                 }

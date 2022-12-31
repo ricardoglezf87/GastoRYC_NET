@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class PersonsService
+    public class PersonsService : IPersonsService
     {
         public List<Persons>? getAll()
         {

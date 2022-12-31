@@ -4,18 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GastosRYC.BBDDLib.Services.ICategoriesTypesService;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class CategoriesTypesService
+    public class CategoriesTypesService : ICategoriesTypesService
     {
-        public enum eCategoriesTypes : int
-        {
-            Incomes = 1,
-            Expenses = 2,
-            Transfers = 3,
-            Specials = 4
-        }
 
         public List<CategoriesTypes>? getAll()
         {

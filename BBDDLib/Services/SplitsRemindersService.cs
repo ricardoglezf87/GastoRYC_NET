@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class SplitsRemindersService
+    public class SplitsRemindersService : ISplitsRemindersService
     {
         public List<SplitsReminders>? getAll()
         {

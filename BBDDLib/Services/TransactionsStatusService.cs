@@ -7,15 +7,8 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class TransactionsStatusService
+    public class TransactionsStatusService : ITransactionsStatusService
     {
-        public enum eTransactionsTypes : int
-        {
-            Pending = 1,
-            Provisional = 2,
-            Reconciled = 3
-        }
-
         public List<TransactionsStatus>? getAll()
         {
             return RYCContextService.getInstance().BBDD.transactionsStatus?.ToList();

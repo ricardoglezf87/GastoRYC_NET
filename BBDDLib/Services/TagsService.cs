@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class TagsService
+    public class TagsService : ITagsService
     {
         public List<Tags>? getAll()
         {

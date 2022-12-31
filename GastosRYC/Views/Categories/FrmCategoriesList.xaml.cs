@@ -11,15 +11,20 @@ namespace GastosRYC.Views
     public partial class FrmCategoriesList : Window
     {
 
-        public FrmCategoriesList()
+        private readonly ICategoriesTypesService categoriesTypesService;
+        private readonly ICategoriesService categoriesService;
+
+        public FrmCategoriesList(ICategoriesTypesService categoriesTypesService, ICategoriesService categoriesService)
         {
+            this.categoriesService = categoriesService;
+            this.categoriesTypesService = categoriesTypesService;
             InitializeComponent();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategoriesTypes.ItemsSource = RYCContextService.categoriesTypesService.getAllFilterTransfer();
-            gvCategories.ItemsSource = RYCContextService.categoriesService.getAllFilterTransfer();            
+            cbCategoriesTypes.ItemsSource = categoriesTypesService.getAllFilterTransfer();
+            gvCategories.ItemsSource = categoriesService.getAllFilterTransfer();            
         }
 
         private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -30,7 +35,7 @@ namespace GastosRYC.Views
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoriesTypesid":
-                        categories.categoriesTypes = RYCContextService.categoriesTypesService.getByID(categories.categoriesTypesid);
+                        categories.categoriesTypes = categoriesTypesService.getByID(categories.categoriesTypesid);
                         break;                    
                 }
             }
@@ -60,16 +65,16 @@ namespace GastosRYC.Views
 
             if (categories.categoriesTypes == null && categories.categoriesTypesid != null)
             {
-                categories.categoriesTypes = RYCContextService.categoriesTypesService.getByID(categories.categoriesTypesid);               
+                categories.categoriesTypes = categoriesTypesService.getByID(categories.categoriesTypesid);               
             }
             
-            RYCContextService.categoriesService.update(categories);
+            categoriesService.update(categories);
         }
 
         private void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Categories categories in e.Items) {                
-                RYCContextService.categoriesService.delete(categories);
+                categoriesService.delete(categories);
             }            
         }
 

@@ -24,6 +24,7 @@ using BBDDLib.Models.Charts;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using Syncfusion.Windows.Tools.Controls;
+using BBDDLib.Services.Interfaces;
 
 //TODO: implementar split
 
@@ -35,6 +36,19 @@ namespace GastosRYC
         #region Variables
 
         private ICollectionView? viewAccounts;
+        private readonly IAccountsService accountsService;
+        private readonly IAccountsTypesService accountsTypesService;
+        private readonly ICategoriesService categoriesService;
+        private readonly ICategoriesTypesService categoriesTypesService;
+        private readonly ITransactionsService transactionsService;
+        private readonly ITransactionsRemindersService transactionsRemindersService;
+        private readonly IExpirationsRemindersService expirationsRemindersService;
+        private readonly ISplitsService splitsService;
+        private readonly ISplitsRemindersService splitsRemindersService;
+        private readonly IPeriodsRemindersService periodsRemindersService;
+        private readonly IPersonsService personsService;
+        private readonly ITagsService tagsService;
+        private readonly ITransactionsStatusService transactionsStatusService;
 
         private enum eViews : int
         {
@@ -49,9 +63,28 @@ namespace GastosRYC
 
         #region Constructors
 
-        public MainWindow()
+        public MainWindow(IAccountsService accountsService, ITransactionsService transactionsService,
+            ISplitsService splitsService, IExpirationsRemindersService expirationsRemindersService,
+            ICategoriesService categoriesService,ICategoriesTypesService categoriesTypesService,
+            IAccountsTypesService accountsTypesService,IPersonsService personsService,
+            ITagsService tagsService, ITransactionsRemindersService transactionsRemindersService,
+            ITransactionsStatusService transactionsStatusService, ISplitsRemindersService splitsRemindersService,
+            IPeriodsRemindersService periodsRemindersService)
         {
             InitializeComponent();
+            this.accountsService = accountsService;
+            this.transactionsService = transactionsService; 
+            this.splitsService= splitsService;  
+            this.expirationsRemindersService = expirationsRemindersService;
+            this.categoriesService = categoriesService;
+            this.categoriesTypesService = categoriesTypesService;
+            this.accountsTypesService = accountsTypesService;
+            this.personsService = personsService;
+            this.tagsService = tagsService;
+            this.transactionsRemindersService = transactionsRemindersService;
+            this.transactionsStatusService = transactionsStatusService;
+            this.periodsRemindersService = periodsRemindersService;
+            this.splitsRemindersService = splitsRemindersService;
         }
 
         #endregion
@@ -126,8 +159,8 @@ namespace GastosRYC
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    RYCContextService.transactionsService.update(transactions);
+                    transactions.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
+                    transactionsService.update(transactions);
                 }
                 loadTransactions();
                 refreshBalance();
@@ -144,8 +177,8 @@ namespace GastosRYC
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
-                    RYCContextService.transactionsService.update(transactions);
+                    transactions.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Provisional;
+                    transactionsService.update(transactions);
                 }
                 loadTransactions();
                 refreshBalance();
@@ -162,8 +195,8 @@ namespace GastosRYC
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
-                    RYCContextService.transactionsService.update(transactions);
+                    transactions.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Reconciled;
+                    transactionsService.update(transactions);
                 }
                 loadTransactions();
                 refreshBalance();
@@ -178,7 +211,8 @@ namespace GastosRYC
         {
             if (gvTransactions.CurrentItem != null)
             {
-                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem);
+                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem,accountsService,categoriesService,
+                    personsService,tagsService,transactionsService,transactionsStatusService,splitsService);
                 frm.ShowDialog();
                 loadAccounts();
                 loadTransactions();
@@ -264,9 +298,10 @@ namespace GastosRYC
                     transactionsReminders.amountIn = transactions.amountIn;
                     transactionsReminders.amountOut = transactions.amountOut;
                     transactionsReminders.tagid = transactions.tagid;
-                    transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                    transactionsReminders.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
 
-                    FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders);
+                    FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders,accountsService,categoriesService,
+                        personsService,tagsService,periodsRemindersService,transactionsRemindersService,transactionsStatusService,splitsRemindersService);
                     frm.ShowDialog();
                 }
 
@@ -306,7 +341,7 @@ namespace GastosRYC
 
         private void MenuItem_Accounts_Click(object sender, RoutedEventArgs e)
         {
-            FrmAccountsList frm = new FrmAccountsList();
+            FrmAccountsList frm = new FrmAccountsList(accountsService,accountsTypesService,categoriesService);
             frm.ShowDialog();
             loadAccounts();
             loadTransactions();
@@ -315,7 +350,7 @@ namespace GastosRYC
 
         private void MenuItem_Persons_Click(object sender, RoutedEventArgs e)
         {
-            FrmPersonsList frm = new FrmPersonsList();
+            FrmPersonsList frm = new FrmPersonsList(personsService);
             frm.ShowDialog();
             loadTransactions();
             refreshBalance();
@@ -323,7 +358,7 @@ namespace GastosRYC
 
         private void MenuItem_Categories_Click(object sender, RoutedEventArgs e)
         {
-            FrmCategoriesList frm = new FrmCategoriesList();
+            FrmCategoriesList frm = new FrmCategoriesList(categoriesTypesService, categoriesService);
             frm.ShowDialog();
             loadTransactions();
             refreshBalance();
@@ -336,7 +371,7 @@ namespace GastosRYC
 
         private void MenuItem_Tags_Click(object sender, RoutedEventArgs e)
         {
-            FrmTagsList frm = new FrmTagsList();
+            FrmTagsList frm = new FrmTagsList(tagsService);
             frm.ShowDialog();
             loadTransactions();
             refreshBalance();
@@ -344,7 +379,8 @@ namespace GastosRYC
 
         private void MenuItem_Reminders_Click(object sender, RoutedEventArgs e)
         {
-            FrmTransactionReminderList frm = new FrmTransactionReminderList();
+            FrmTransactionReminderList frm = new FrmTransactionReminderList(accountsService,categoriesService,personsService,
+                tagsService,periodsRemindersService,transactionsRemindersService,transactionsStatusService,splitsRemindersService);
             frm.ShowDialog();
             loadReminders();
         }
@@ -352,9 +388,9 @@ namespace GastosRYC
         private void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
-            FrmSplitsList frm = new FrmSplitsList(transactions);
+            FrmSplitsList frm = new FrmSplitsList(transactions, categoriesService,splitsService,transactionsService);
             frm.ShowDialog();
-            RYCContextService.transactionsService.updateSplits(transactions);
+            transactionsService.updateTransactionAfterSplits(transactions);
             loadTransactions();
             refreshBalance();
         }
@@ -373,7 +409,9 @@ namespace GastosRYC
         {
             if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders != null)
             {
-                FrmTransactionReminders frm = new FrmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders);
+                FrmTransactionReminders frm = new FrmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders,
+                accountsService,categoriesService,personsService,tagsService,periodsRemindersService,transactionsRemindersService,transactionsStatusService,
+                splitsRemindersService);
                 frm.ShowDialog();
                 loadReminders();
             }
@@ -419,7 +457,7 @@ namespace GastosRYC
 
             if (cvReminders.ItemsSource == null)
             {
-                cvReminders.ItemsSource = new ListCollectionView(RYCContextService.expirationsRemindersService.getAllPendingWithoutFutureWithGeneration());
+                cvReminders.ItemsSource = new ListCollectionView(expirationsRemindersService.getAllPendingWithoutFutureWithGeneration());
 
                 cvReminders.CanGroup = true;
                 cvReminders.GroupCards("groupDate");
@@ -435,7 +473,7 @@ namespace GastosRYC
                     ((ListCollectionView)cvReminders.ItemsSource).RemoveAt(0);
                 }
 
-                foreach (ExpirationsReminders expirationsReminders in RYCContextService.expirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
+                foreach (ExpirationsReminders expirationsReminders in expirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
                 {
                     ((ListCollectionView)cvReminders.ItemsSource).AddNewItem(expirationsReminders);
                     ((ListCollectionView)cvReminders.ItemsSource).CommitNew();
@@ -618,7 +656,7 @@ namespace GastosRYC
 
             //Series
 
-            List<ExpensesChart> lExpensesCharts = RYCContextService.transactionsService.getExpenses();
+            List<ExpensesChart> lExpensesCharts = transactionsService.getExpenses();
             chExpenses.Series.Clear();
 
             ColumnSeries series = new ColumnSeries()
@@ -643,7 +681,7 @@ namespace GastosRYC
 
         private void loadAccounts()
         {
-            viewAccounts = CollectionViewSource.GetDefaultView(RYCContextService.accountsService.getAll());
+            viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAll());
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypes.id", ListSortDirection.Ascending));
@@ -651,7 +689,7 @@ namespace GastosRYC
 
         private void loadTransactions()
         {
-            gvTransactions.ItemsSource = RYCContextService.transactionsService.getAll();
+            gvTransactions.ItemsSource = transactionsService.getAll();
             ApplyFilters();
 
         }
@@ -700,19 +738,19 @@ namespace GastosRYC
                         Splits splits = lSplits[i];
                         if (splits.tranferid != null)
                         {
-                            RYCContextService.transactionsService.delete(RYCContextService.transactionsService.getByID(splits.tranferid));
+                            transactionsService.delete(transactionsService.getByID(splits.tranferid));
                         }
 
-                        RYCContextService.splitsService.delete(splits);
+                        splitsService.delete(splits);
                     }
                 }
 
                 if (transactions.tranferid != null)
                 {
-                    RYCContextService.transactionsService.delete(RYCContextService.transactionsService.getByID(transactions.tranferid));
+                    transactionsService.delete(transactionsService.getByID(transactions.tranferid));
                 }
 
-                RYCContextService.transactionsService.delete(transactions);
+                transactionsService.delete(transactions);
             }
         }
         private void openNewTransaction()
@@ -721,11 +759,13 @@ namespace GastosRYC
 
             if (lvAccounts.SelectedItem == null)
             {
-                frm = new FrmTransaction();
+                frm = new FrmTransaction(accountsService,categoriesService,personsService,tagsService,transactionsService,
+                    transactionsStatusService,splitsService);
             }
             else
             {
-                frm = new FrmTransaction(((Accounts)lvAccounts.SelectedItem).id);
+                frm = new FrmTransaction(((Accounts)lvAccounts.SelectedItem).id, accountsService, categoriesService, personsService, tagsService, 
+                    transactionsService,transactionsStatusService, splitsService);
             }
 
             frm.ShowDialog();
@@ -736,7 +776,7 @@ namespace GastosRYC
 
         private void makeTransactionFromReminder(int? id)
         {
-            RYCContextService.expirationsRemindersService.registerTransactionfromReminder(id);
+            expirationsRemindersService.registerTransactionfromReminder(id);
 
             loadTransactions();
             refreshBalance();
@@ -745,11 +785,11 @@ namespace GastosRYC
 
         private void putDoneReminder(int? id)
         {
-            ExpirationsReminders? expirationsReminders = RYCContextService.expirationsRemindersService.getByID(id);
+            ExpirationsReminders? expirationsReminders = expirationsRemindersService.getByID(id);
             if (expirationsReminders != null)
             {
                 expirationsReminders.done = true;
-                RYCContextService.expirationsRemindersService.update(expirationsReminders);
+                expirationsRemindersService.update(expirationsReminders);
             }
 
             loadReminders();

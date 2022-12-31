@@ -1,4 +1,5 @@
 ﻿using BBDDLib.Models;
+using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,15 +11,23 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmAccountsList : Window
     {
-        public FrmAccountsList()
+        private readonly IAccountsService accountsService;
+        private readonly IAccountsTypesService accountsTypesService;
+        private readonly ICategoriesService categoriesService;
+
+        public FrmAccountsList(IAccountsService accountsService,IAccountsTypesService accountsTypesService,
+            ICategoriesService categoriesService)
         {
-            InitializeComponent();
+            this.accountsService = accountsService;
+            this.accountsTypesService = accountsTypesService;
+            this.categoriesService = categoriesService;
+            InitializeComponent();            
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = RYCContextService.accountsTypesService.getAll();
-            gvAccounts.ItemsSource = RYCContextService.accountsService.getAll();            
+            cbAccountsTypes.ItemsSource = accountsTypesService.getAll();
+            gvAccounts.ItemsSource = accountsService.getAll();            
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -29,7 +38,7 @@ namespace GastosRYC.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.accountsTypes = RYCContextService.accountsTypesService.getByID(accounts.accountsTypesid);
+                        accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);
                         break;                    
                 }
             }
@@ -59,24 +68,24 @@ namespace GastosRYC.Views
 
             if (accounts.categoryid != null)
             {
-                categories = RYCContextService.categoriesService.getByID(accounts.categoryid);
+                categories = categoriesService.getByID(accounts.categoryid);
                 if(categories != null)
                 {
                     categories.description = "[" + accounts.description + "]";
-                    RYCContextService.categoriesService.update(categories);
+                    categoriesService.update(categories);
                 }
             }else
             {
                 categories = new Categories();
-                accounts.categoryid = RYCContextService.categoriesService.getNextID(); ;
+                accounts.categoryid = categoriesService.getNextID(); ;
                 categories.description = "[" + accounts.description + "]";
-                categories.categoriesTypesid = (int)CategoriesTypesService.eCategoriesTypes.Transfers;
+                categories.categoriesTypesid = (int)ICategoriesTypesService.eCategoriesTypes.Transfers;
 
             }
 
             if (categories != null)
             {
-                RYCContextService.categoriesService.update(categories);
+                categoriesService.update(categories);
             }
         }
         
@@ -86,23 +95,23 @@ namespace GastosRYC.Views
 
             if (accounts.accountsTypes == null && accounts.accountsTypesid != null)
             {
-                accounts.accountsTypes = RYCContextService.accountsTypesService.getByID(accounts.accountsTypesid);               
+                accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);               
             }
 
             updateCategory(accounts);
-            RYCContextService.accountsService.update(accounts);
+            accountsService.update(accounts);
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items) {
-                Categories? categories = RYCContextService.categoriesService.getByID(accounts.categoryid);
+                Categories? categories = categoriesService.getByID(accounts.categoryid);
                 if(categories!= null)
                 {
-                    RYCContextService.categoriesService.delete(categories);
+                    categoriesService.delete(categories);
                 }
 
-                RYCContextService.accountsService.delete(accounts);
+                accountsService.delete(accounts);
             }            
         }
 

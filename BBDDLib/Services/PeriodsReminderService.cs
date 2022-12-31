@@ -7,22 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using GastosRYC.Extensions;
+using static GastosRYC.BBDDLib.Services.IPeriodsRemindersService;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class PeriodsRemindersService
+    public class PeriodsRemindersService : IPeriodsRemindersService
     {
-        public enum ePeriodsReminders : int
-        {
-            Diary = 1,
-            Weekly = 2,
-            Monthly = 3,
-            Bimonthly = 4,
-            Quarterly = 5,
-            Bianual = 6,
-            Annual = 7
-        }
-
 
         public List<PeriodsReminders>? getAll()
         {
@@ -75,16 +65,16 @@ namespace GastosRYC.BBDDLib.Services
 
         public DateTime? getNextDate(DateTime? date, ePeriodsReminders? periodsReminders)
         {
-            if(date != null)
+            if (date != null)
             {
-                switch(periodsReminders)
+                switch (periodsReminders)
                 {
                     case ePeriodsReminders.Diary:
-                        return date.addDay();                        
+                        return date.addDay();
                     case ePeriodsReminders.Weekly:
-                        return date.addWeek();                        
+                        return date.addWeek();
                     case ePeriodsReminders.Monthly:
-                        return date.addMonth();                        
+                        return date.addMonth();
                     case ePeriodsReminders.Bimonthly:
                         return date.addMonth(2);
                     case ePeriodsReminders.Quarterly:
@@ -94,11 +84,10 @@ namespace GastosRYC.BBDDLib.Services
                     case ePeriodsReminders.Annual:
                         return date.addYear();
                 }
-                
+
             }
 
-            return null;            
+            return null;
         }
-
     }
 }

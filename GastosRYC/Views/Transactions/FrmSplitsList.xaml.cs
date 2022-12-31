@@ -12,23 +12,37 @@ namespace GastosRYC.Views
     public partial class FrmSplitsList : Window
     {
         private readonly Transactions? transactions;
+        private readonly ICategoriesService categoriesService;
+        private readonly ISplitsService splitsService;
+        private readonly ITransactionsService transactionsService;
 
-        public FrmSplitsList(Transactions? transactions)
+        public FrmSplitsList(ICategoriesService categoriesService,ISplitsService splitsService,
+            ITransactionsService transactionsService)
         {
+            this.categoriesService = categoriesService;
+            this.transactionsService = transactionsService;
+            this.splitsService = splitsService;
             InitializeComponent();
+        }
+
+        public FrmSplitsList(Transactions? transactions, ICategoriesService categoriesService,
+            ISplitsService splitsService,ITransactionsService transactionsService) :
+            this(categoriesService,splitsService, transactionsService)
+
+        {
             this.transactions = transactions;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = RYCContextService.categoriesService.getAll();
+            cbCategories.ItemsSource = categoriesService.getAll();
             if (transactions != null && transactions.id > 0)
             {
-                gvSplits.ItemsSource = RYCContextService.splitsService.getbyTransactionid(transactions.id);
+                gvSplits.ItemsSource = splitsService.getbyTransactionid(transactions.id);
             }
             else
             {
-                gvSplits.ItemsSource = RYCContextService.splitsService.getbyTransactionidNull();
+                gvSplits.ItemsSource = splitsService.getbyTransactionidNull();
             }
         }
 
@@ -40,7 +54,7 @@ namespace GastosRYC.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.category = RYCContextService.categoriesService.getByID(splits.categoryid);
+                        splits.category = categoriesService.getByID(splits.categoryid);
                         break;                    
                 }
             }
@@ -56,7 +70,7 @@ namespace GastosRYC.Views
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if(splits.categoryid == (int)CategoriesService.eSpecialCategories.Split)
+            else if(splits.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
@@ -74,7 +88,7 @@ namespace GastosRYC.Views
         {
             Splits splits = (Splits)e.RowData;
 
-            RYCContextService.splitsService.saveChanges(transactions,splits);
+            splitsService.saveChanges(transactions,splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -82,9 +96,9 @@ namespace GastosRYC.Views
             foreach (Splits splits in e.Items) {
                 if (splits.tranferid != null)
                 {
-                    RYCContextService.transactionsService.delete(RYCContextService.transactionsService.getByID(splits.tranferid));
+                    transactionsService.delete(transactionsService.getByID(splits.tranferid));
                 }
-                RYCContextService.splitsService.delete(splits);
+                splitsService.delete(splits);
             }            
         }
 

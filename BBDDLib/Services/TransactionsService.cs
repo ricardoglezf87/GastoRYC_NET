@@ -1,5 +1,6 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Models.Charts;
+using BBDDLib.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,21 @@ using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class TransactionsService
+    public class TransactionsService : ITransactionsService
     {
+        private readonly ISplitsService splitsService;
+        private readonly ICategoriesService categoriesService;
+        private readonly IAccountsService accountsService;
+
+        public TransactionsService(ISplitsService splitsService,ICategoriesService categoriesService,
+            IAccountsService accountsService)
+        {
+            this.splitsService = splitsService;
+            this.accountsService = accountsService;
+            this.categoriesService = categoriesService;
+        }
+
+
         #region TransactionsActions
 
         public List<Transactions>? getAll()
@@ -63,14 +77,14 @@ namespace GastosRYC.BBDDLib.Services
                 transactions.amountOut = 0;
 
             updateTranfer(transactions);
-            updateTranferSplit(transactions);
+            updateTranferFromSplit(transactions);
             update(transactions);
         }
 
         public void updateTranfer(Transactions transactions)
         {
             if (transactions.tranferid != null &&
-                transactions.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid != (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = getByID(transactions.tranferid);
                 if (tContraria != null)
@@ -80,7 +94,7 @@ namespace GastosRYC.BBDDLib.Services
                 transactions.tranferid = null;
             }
             else if (transactions.tranferid == null &&
-                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 transactions.tranferid = getNextID();
 
@@ -88,7 +102,7 @@ namespace GastosRYC.BBDDLib.Services
                 tContraria.date = transactions.date;
                 tContraria.accountid = transactions.category.accounts.id;
                 tContraria.personid = transactions.personid;
-                tContraria.categoryid = RYCContextService.accountsService.getByID(transactions.accountid)?.categoryid;
+                tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
                 tContraria.memo = transactions.memo;
                 tContraria.tagid = transactions.tagid;
                 tContraria.amountIn = transactions.amountOut;
@@ -105,7 +119,7 @@ namespace GastosRYC.BBDDLib.Services
 
             }
             else if (transactions.tranferid != null &&
-                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = getByID(transactions.tranferid);
                 if (tContraria != null)
@@ -113,7 +127,7 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.date = transactions.date;
                     tContraria.accountid = transactions.category.accounts.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = RYCContextService.accountsService.getByID(transactions.accountid)?.categoryid;
+                    tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
                     tContraria.memo = transactions.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;
@@ -128,12 +142,12 @@ namespace GastosRYC.BBDDLib.Services
 
         #region SplitsActions
 
-        public void updateTranferSplit(Transactions transactions)
+        public void updateTranferFromSplit(Transactions transactions)
         {
             if (transactions.tranferSplitid != null &&
-                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Splits? tContraria = RYCContextService.splitsService.getByID(transactions.tranferSplitid);
+                Splits? tContraria = splitsService.getByID(transactions.tranferSplitid);
                 if (tContraria != null)
                 {
                     tContraria.transaction.date = transactions.date;
@@ -144,14 +158,14 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.amountIn = transactions.amountOut;
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
-                    RYCContextService.splitsService.update(tContraria);
+                    splitsService.update(tContraria);
                 }
             }
         }
 
-        public void updateSplits(Transactions? transactions)
+        public void updateTransactionAfterSplits(Transactions? transactions)
         {
-            List<Splits>? lSplits = transactions.splits ?? RYCContextService.splitsService.getbyTransactionid(transactions.id);
+            List<Splits>? lSplits = transactions.splits ?? splitsService.getbyTransactionid(transactions.id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
@@ -164,14 +178,14 @@ namespace GastosRYC.BBDDLib.Services
                     transactions.amountOut += (splits.amountOut == null ? 0 : splits.amountOut);
                 }
 
-                transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactions.category = RYCContextService.categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactions.categoryid = (int)ICategoriesService.eSpecialCategories.Split;
+                transactions.category = categoriesService.getByID((int)ICategoriesService.eSpecialCategories.Split);
             }
             else if (transactions.categoryid != null
-                && transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split)
+                && transactions.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
             {
-                transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactions.category = RYCContextService.categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactions.categoryid = (int)ICategoriesService.eSpecialCategories.WithoutCategory;
+                transactions.category = categoriesService.getByID((int)ICategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactions.id == 0)
@@ -180,12 +194,69 @@ namespace GastosRYC.BBDDLib.Services
                 foreach (Splits splits in lSplits)
                 {
                     splits.transactionid = transactions.id;
-                    RYCContextService.splitsService.update(splits);
+                    splitsService.update(splits);
                 }
             }
             else
             {
                 update(transactions);
+            }
+        }
+
+        public void updateTranferSplits(Transactions? transactions, Splits splits)
+        {
+            if (splits.tranferid != null &&
+                splits.category.categoriesTypesid != (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                Transactions? tContraria = getByID(splits.tranferid);
+                if (tContraria != null)
+                {
+                    delete(tContraria);
+                }
+                splits.tranferid = null;
+            }
+            else if (splits.tranferid == null &&
+                splits.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                splits.tranferid = getNextID();
+
+                Transactions? tContraria = new Transactions();
+                tContraria.date = transactions.date;
+                tContraria.accountid = splits.category.accounts.id;
+                tContraria.personid = transactions.personid;
+                tContraria.categoryid = transactions.account.categoryid;
+                tContraria.memo = splits.memo;
+                tContraria.tagid = transactions.tagid;
+                tContraria.amountIn = splits.amountOut;
+                tContraria.amountOut = splits.amountIn;
+
+                if (splits.id != 0)
+                    tContraria.tranferSplitid = splits.id;
+                else
+                    tContraria.tranferSplitid = getNextID() + 1;
+
+                tContraria.transactionStatusid = transactions.transactionStatusid;
+
+                update(tContraria);
+
+            }
+            else if (splits.tranferid != null &&
+                splits.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                Transactions? tContraria = getByID(splits.tranferid);
+                if (tContraria != null)
+                {
+                    tContraria.date = transactions.date;
+                    tContraria.accountid = splits.category.accounts.id;
+                    tContraria.personid = transactions.personid;
+                    tContraria.categoryid = transactions.account.categoryid;
+                    tContraria.memo = splits.memo;
+                    tContraria.tagid = transactions.tagid;
+                    tContraria.amountIn = splits.amountOut ?? 0;
+                    tContraria.amountOut = splits.amountIn ?? 0;
+                    tContraria.transactionStatusid = transactions.transactionStatusid;
+                    update(tContraria);
+                }
             }
         }
 
@@ -198,7 +269,7 @@ namespace GastosRYC.BBDDLib.Services
             List<ExpensesChart> lChart = new List<ExpensesChart>();
 
             foreach (var g in RYCContextService.getInstance().BBDD.transactions?
-                                .Where(x=> x.category != null && x.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Expenses)
+                                .Where(x=> x.category != null && x.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Expenses)
                                 .GroupBy(g=>g.category))
             {
                 lChart.Add(new ExpensesChart(g.Key.description, -g.Sum(x => x.amount)));
