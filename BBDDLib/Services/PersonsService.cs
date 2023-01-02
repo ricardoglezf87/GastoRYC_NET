@@ -1,13 +1,10 @@
 ﻿using BBDDLib.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class PersonsService
+    public class PersonsService : IPersonsService
     {
         public List<Persons>? getAll()
         {

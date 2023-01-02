@@ -1,0 +1,44 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GastosRYC.Views"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.FrmSplitsList"
+        mc:Ignorable="d"
+        Title="Splits" Height="450" Width="800
+    " WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+    <Grid Margin="0,5,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <syncfusion:SfDataGrid x:Name="gvSplits" HorizontalContentAlignment="Center" 
+                               AllowEditing="True" AllowDeleting="True" 
+                               ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
+                               AddNewRowPosition="Top" AddNewRowText="Inserte nuevo split" 
+                               AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
+                               AutoGenerateColumns="False" EditTrigger="OnTap"
+                               CurrentCellDropDownSelectionChanged="gvSplits_CurrentCellDropDownSelectionChanged"
+                               AddNewRowInitiating="gvSplits_AddNewRowInitiating" ShowRowHeader="True"
+                               RowValidated="gvSplits_RowValidated" 
+                               RowValidating="gvSplits_RowValidating" 
+                               RecordDeleted="gvSplits_RecordDeleted" 
+                               RecordDeleting="gvSplits_RecordDeleting" Grid.Row="1">
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="transactionid" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
+                <syncfusion:GridComboBoxColumn  HeaderText="Categoria"
+                    AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
+                    x:Name="cbCategories" MappingName="categoryid" 
+                                                DisplayMemberPath="description" SelectedValuePath="id"/>
+                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
+                <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
+            </syncfusion:SfDataGrid.Columns>
+        </syncfusion:SfDataGrid>
+
+    </Grid>
+</Window>

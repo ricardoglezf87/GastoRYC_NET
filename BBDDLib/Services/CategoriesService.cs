@@ -3,26 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class CategoriesService
+    public class CategoriesService : ICategoriesService
     {
 
-        public enum eCategoriesTypes : int
-        {
-            Incomes = 1,
-            Expenses = 2,            
-            Transfers = 3,
-            Specials = 4
-        }
+        private readonly SimpleInjector.Container servicesContainer;
 
-        public enum eSpecialCategories : int
+        public CategoriesService(SimpleInjector.Container servicesContainer)
         {
-            Split = -1,
-            WithoutCategory = 0
+            this.servicesContainer = servicesContainer;
         }
 
         public List<Categories>? getAll()
@@ -33,8 +24,8 @@ namespace GastosRYC.BBDDLib.Services
         public List<Categories>? getAllFilterTransfer()
         {
             return RYCContextService.getInstance().BBDD.categories?
-                .Where(x => !x.id.Equals((int)CategoriesService.eCategoriesTypes.Transfers) &&
-                !x.id.Equals((int)CategoriesService.eCategoriesTypes.Specials)).ToList();
+                .Where(x => !x.id.Equals(ICategoriesTypesService.eCategoriesTypes.Transfers) &&
+                !x.id.Equals(ICategoriesTypesService.eCategoriesTypes.Specials)).ToList();
         }
 
         public Categories? getByID(int? id)

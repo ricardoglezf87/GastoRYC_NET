@@ -14,6 +14,9 @@
     <None Remove="Resources\add.png" />
     <None Remove="Resources\home.png" />
     <None Remove="Resources\Logo.png" />
+    <None Remove="Resources\register.png" />
+    <None Remove="Resources\reminders.png" />
+    <None Remove="Resources\skip.png" />
     <None Remove="Resources\Split.png" />
   </ItemGroup>
 
@@ -30,6 +33,15 @@
     <Content Include="Resources\Logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\register.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\reminders.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skip.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Split.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -40,12 +52,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="7.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="20.3.0.61" />
-    <PackageReference Include="syncfusion.ui.wpf.net" Version="20.3.0.61" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+    <PackageReference Include="SimpleInjector" Version="5.4.1" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="20.4.0.38" />
+    <PackageReference Include="syncfusion.ui.wpf.net" Version="20.4.0.38" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,34 +69,55 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\frmSplits.xaml.cs">
+    <Compile Update="Views\FrmSplitsRemindersList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\frmTags.xaml.cs">
+    <Compile Update="Views\Transactions\FrmSplitsListList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\frmPersons.xaml.cs">
+    <Compile Update="Views\Tags\FrmTagsList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\frmCategories.xaml.cs">
+    <Compile Update="Views\Persons\FrmPersonsListFrmPersonsList.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Categories\FrmCategoriesListList.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\FrmTransactionReminders.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\TransactionsReminders\FrmTransactionReminderList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <Page Update="Views\frmSplits.xaml">
+    <Page Update="Views\FrmSplitsRemindersList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\frmTags.xaml">
+    <Page Update="Views\Transactions\FrmSplitsListList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\frmPersons.xaml">
+    <Page Update="Views\Tags\FrmTagsListFrmTagsList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Views\frmCategories.xaml">
+    <Page Update="Views\Persons\FrmPersonsListFrmPersonsList.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Categories\FrmCategoriesListList.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\FrmTransactionReminders.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\TransactionsReminders\FrmTransactionReminderListFrmTransaction.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

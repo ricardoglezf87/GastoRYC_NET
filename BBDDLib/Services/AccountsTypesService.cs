@@ -1,13 +1,10 @@
 ﻿using BBDDLib.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class AccountsTypesService
+    public class AccountsTypesService : IAccountsTypesService
     {
 
         public List<AccountsTypes>? getAll()

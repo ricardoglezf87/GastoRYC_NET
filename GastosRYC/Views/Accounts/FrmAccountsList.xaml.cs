@@ -1,4 +1,5 @@
 ﻿using BBDDLib.Models;
+using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
 using System.Windows;
 using System.Windows.Controls;
@@ -8,22 +9,20 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para Cuentas.xaml
     /// </summary>
-    public partial class frmAccounts : Window
+    public partial class FrmAccountsList : Window
     {
+        private readonly SimpleInjector.Container servicesContainer;
 
-        private readonly AccountsService accountsService = new AccountsService();
-        private readonly AccountsTypesService accountsTypesService = new AccountsTypesService();
-        private readonly CategoriesService categoriesService = new CategoriesService();
-
-        public frmAccounts()
+        public FrmAccountsList(SimpleInjector.Container servicesContainer)
         {
             InitializeComponent();
+            this.servicesContainer = servicesContainer;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = accountsTypesService.getAll();
-            gvAccounts.ItemsSource = accountsService.getAll();            
+            cbAccountsTypes.ItemsSource = servicesContainer.GetInstance<IAccountsTypesService>().getAll();
+            gvAccounts.ItemsSource = servicesContainer.GetInstance<IAccountsService>().getAll();
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -34,13 +33,13 @@ namespace GastosRYC.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);
-                        break;                    
+                        accounts.accountsTypes = servicesContainer.GetInstance<IAccountsTypesService>().getByID(accounts.accountsTypesid);
+                        break;
                 }
             }
         }
 
-       
+
         private void gvAccounts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             Accounts accounts = (Accounts)e.RowData;
@@ -56,7 +55,7 @@ namespace GastosRYC.Views
                 e.IsValid = false;
                 e.ErrorMessages.Add("accountsTypesid", "Tiene que rellenar el tipo de cuenta");
             }
-        } 
+        }
 
         private void updateCategory(Accounts accounts)
         {
@@ -64,57 +63,59 @@ namespace GastosRYC.Views
 
             if (accounts.categoryid != null)
             {
-                categories = categoriesService.getByID(accounts.categoryid);
-                if(categories != null)
+                categories = servicesContainer.GetInstance<ICategoriesService>().getByID(accounts.categoryid);
+                if (categories != null)
                 {
                     categories.description = "[" + accounts.description + "]";
-                    categoriesService.update(categories);
+                    servicesContainer.GetInstance<ICategoriesService>().update(categories);
                 }
-            }else
+            }
+            else
             {
                 categories = new Categories();
-                accounts.categoryid = categoriesService.getNextID(); ;
+                accounts.categoryid = servicesContainer.GetInstance<ICategoriesService>().getNextID(); ;
                 categories.description = "[" + accounts.description + "]";
-                categories.categoriesTypesid = (int) CategoriesService.eCategoriesTypes.Transfers;
+                categories.categoriesTypesid = (int)ICategoriesTypesService.eCategoriesTypes.Transfers;
 
             }
 
             if (categories != null)
             {
-                categoriesService.update(categories);
+                servicesContainer.GetInstance<ICategoriesService>().update(categories);
             }
         }
-        
+
         private void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Accounts accounts = (Accounts)e.RowData;
 
             if (accounts.accountsTypes == null && accounts.accountsTypesid != null)
             {
-                accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);               
+                accounts.accountsTypes = servicesContainer.GetInstance<IAccountsTypesService>().getByID(accounts.accountsTypesid);
             }
 
             updateCategory(accounts);
-            accountsService.update(accounts);
+            servicesContainer.GetInstance<IAccountsService>().update(accounts);
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (Accounts accounts in e.Items) {
-                Categories? categories = categoriesService.getByID(accounts.categoryid);
-                if(categories!= null)
+            foreach (Accounts accounts in e.Items)
+            {
+                Categories? categories = servicesContainer.GetInstance<ICategoriesService>().getByID(accounts.categoryid);
+                if (categories != null)
                 {
-                    categoriesService.delete(categories);
+                    servicesContainer.GetInstance<ICategoriesService>().delete(categories);
                 }
 
-                accountsService.delete(accounts);
-            }            
+                servicesContainer.GetInstance<IAccountsService>().delete(accounts);
+            }
         }
 
         private void gvAccounts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if(MessageBox.Show("Esta seguro de querer eliminar esta cuenta?","Eliminación Cuenta",MessageBoxButton.YesNo,
-                MessageBoxImage.Exclamation,MessageBoxResult.No) == MessageBoxResult.No)
+            if (MessageBox.Show("Esta seguro de querer eliminar esta cuenta?", "Eliminación Cuenta", MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
             }

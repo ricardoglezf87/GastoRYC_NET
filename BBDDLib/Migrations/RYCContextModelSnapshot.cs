@@ -15,7 +15,7 @@ namespace BBDDLib.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.10");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
 
             modelBuilder.Entity("BBDDLib.Models.Accounts", b =>
                 {
@@ -89,6 +89,42 @@ namespace BBDDLib.Migrations
                     b.ToTable("categoriesTypes");
                 });
 
+            modelBuilder.Entity("BBDDLib.Models.ExpirationsReminders", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool?>("done")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("transactionsRemindersid")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("transactionsRemindersid");
+
+                    b.ToTable("expirationsReminders");
+                });
+
+            modelBuilder.Entity("BBDDLib.Models.PeriodsReminders", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("description")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("periodsReminders");
+                });
+
             modelBuilder.Entity("BBDDLib.Models.Persons", b =>
                 {
                     b.Property<int>("id")
@@ -139,6 +175,44 @@ namespace BBDDLib.Migrations
                     b.HasIndex("transactionid");
 
                     b.ToTable("splits");
+                });
+
+            modelBuilder.Entity("BBDDLib.Models.SplitsReminders", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal?>("amountIn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("amountOut")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("categoryid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("memo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("tagid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tranferid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("transactionid")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("categoryid");
+
+                    b.HasIndex("tagid");
+
+                    b.HasIndex("transactionid");
+
+                    b.ToTable("splitsReminders");
                 });
 
             modelBuilder.Entity("BBDDLib.Models.Tags", b =>
@@ -209,6 +283,68 @@ namespace BBDDLib.Migrations
                     b.ToTable("transactions");
                 });
 
+            modelBuilder.Entity("BBDDLib.Models.TransactionsReminders", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("accountid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal?>("amountIn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("amountOut")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("categoryid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("memo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("periodsRemindersid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("periodsRemindersid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("personid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tagid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tranferSplitid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tranferid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("transactionStatusid")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("accountid");
+
+                    b.HasIndex("categoryid");
+
+                    b.HasIndex("periodsRemindersid");
+
+                    b.HasIndex("personid");
+
+                    b.HasIndex("tagid");
+
+                    b.HasIndex("transactionStatusid");
+
+                    b.ToTable("transactionsReminders");
+                });
+
             modelBuilder.Entity("BBDDLib.Models.TransactionsStatus", b =>
                 {
                     b.Property<int>("id")
@@ -247,6 +383,15 @@ namespace BBDDLib.Migrations
                     b.Navigation("categoriesTypes");
                 });
 
+            modelBuilder.Entity("BBDDLib.Models.ExpirationsReminders", b =>
+                {
+                    b.HasOne("BBDDLib.Models.TransactionsReminders", "transactionsReminders")
+                        .WithMany()
+                        .HasForeignKey("transactionsRemindersid");
+
+                    b.Navigation("transactionsReminders");
+                });
+
             modelBuilder.Entity("BBDDLib.Models.Splits", b =>
                 {
                     b.HasOne("BBDDLib.Models.Categories", "category")
@@ -258,6 +403,27 @@ namespace BBDDLib.Migrations
                         .HasForeignKey("tagid");
 
                     b.HasOne("BBDDLib.Models.Transactions", "transaction")
+                        .WithMany("splits")
+                        .HasForeignKey("transactionid");
+
+                    b.Navigation("category");
+
+                    b.Navigation("tag");
+
+                    b.Navigation("transaction");
+                });
+
+            modelBuilder.Entity("BBDDLib.Models.SplitsReminders", b =>
+                {
+                    b.HasOne("BBDDLib.Models.Categories", "category")
+                        .WithMany()
+                        .HasForeignKey("categoryid");
+
+                    b.HasOne("BBDDLib.Models.Tags", "tag")
+                        .WithMany()
+                        .HasForeignKey("tagid");
+
+                    b.HasOne("BBDDLib.Models.TransactionsReminders", "transaction")
                         .WithMany("splits")
                         .HasForeignKey("transactionid");
 
@@ -301,6 +467,45 @@ namespace BBDDLib.Migrations
                     b.Navigation("transactionStatus");
                 });
 
+            modelBuilder.Entity("BBDDLib.Models.TransactionsReminders", b =>
+                {
+                    b.HasOne("BBDDLib.Models.Accounts", "account")
+                        .WithMany()
+                        .HasForeignKey("accountid");
+
+                    b.HasOne("BBDDLib.Models.Categories", "category")
+                        .WithMany()
+                        .HasForeignKey("categoryid");
+
+                    b.HasOne("BBDDLib.Models.PeriodsReminders", "periodsReminders")
+                        .WithMany()
+                        .HasForeignKey("periodsRemindersid");
+
+                    b.HasOne("BBDDLib.Models.Persons", "person")
+                        .WithMany()
+                        .HasForeignKey("personid");
+
+                    b.HasOne("BBDDLib.Models.Tags", "tag")
+                        .WithMany()
+                        .HasForeignKey("tagid");
+
+                    b.HasOne("BBDDLib.Models.TransactionsStatus", "transactionStatus")
+                        .WithMany()
+                        .HasForeignKey("transactionStatusid");
+
+                    b.Navigation("account");
+
+                    b.Navigation("category");
+
+                    b.Navigation("periodsReminders");
+
+                    b.Navigation("person");
+
+                    b.Navigation("tag");
+
+                    b.Navigation("transactionStatus");
+                });
+
             modelBuilder.Entity("BBDDLib.Models.AccountsTypes", b =>
                 {
                     b.Navigation("accounts");
@@ -317,6 +522,11 @@ namespace BBDDLib.Migrations
                 });
 
             modelBuilder.Entity("BBDDLib.Models.Transactions", b =>
+                {
+                    b.Navigation("splits");
+                });
+
+            modelBuilder.Entity("BBDDLib.Models.TransactionsReminders", b =>
                 {
                     b.Navigation("splits");
                 });

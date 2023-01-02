@@ -1,63 +1,45 @@
 ﻿using BBDDLib.Models;
+using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
-using Syncfusion.Windows.Controls.RichTextBoxAdv;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace GastosRYC.Views
 {
     /// <summary>
-    /// Lógica de interacción para frmTransaction.xaml
+    /// Lógica de interacción para FrmTransaction.xaml
     /// </summary>
-    public partial class frmTransaction : Window
+    public partial class FrmTransaction : Window
     {
 
         private Transactions? transaction;
         private readonly int? accountidDefault;
+        private readonly SimpleInjector.Container servicesContainer;
 
-        private readonly AccountsService accountsService = new AccountsService();
-        private readonly CategoriesService categoriesService = new CategoriesService();
-        private readonly PersonsService personService = new PersonsService();
-        private readonly TagsService tagsService = new TagsService();
-        private readonly TransactionsService transactionsService = new TransactionsService();
-        private readonly SplitsService splitsService = new SplitsService();
-        private readonly TransactionsStatusService transactionsStatusService = new TransactionsStatusService();
-
-        public frmTransaction(Transactions transaction, int accountidDefault)
+        public FrmTransaction(SimpleInjector.Container servicesContainer)
         {
             InitializeComponent();
+            this.servicesContainer = servicesContainer;
+        }
+
+        public FrmTransaction(Transactions transaction, int accountidDefault, SimpleInjector.Container servicesContainer) :
+            this(servicesContainer)
+        {
             this.transaction = transaction;
             this.accountidDefault = accountidDefault;
         }
 
-        public frmTransaction(Transactions transaction)
+        public FrmTransaction(Transactions transaction, SimpleInjector.Container servicesContainer) :
+            this(servicesContainer)
         {
-            InitializeComponent();
             this.transaction = transaction;
         }
 
-        public frmTransaction(int accountidDefault)
+        public FrmTransaction(int accountidDefault, SimpleInjector.Container servicesContainer) :
+            this(servicesContainer)
         {
-            InitializeComponent();
             this.accountidDefault = accountidDefault;
-        }
-
-        public frmTransaction()
-        {
-            InitializeComponent();
-            this.transaction = null;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -98,7 +80,7 @@ namespace GastosRYC.Views
                 txtMemo.Text = null;
                 txtAmount.Value = null;
                 cbTag.SelectedValue = null;
-                cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                cbTransactionStatus.SelectedValue = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
 
                 dtpDate.Focus();
             }
@@ -113,18 +95,18 @@ namespace GastosRYC.Views
 
             transaction.date = dtpDate.SelectedDate;
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = accountsService.getByID(transaction.accountid);
+            transaction.account = servicesContainer.GetInstance<IAccountsService>().getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = personService.getByID(transaction.personid);
+                transaction.person = servicesContainer.GetInstance<IPersonsService>().getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
 
             transaction.categoryid = (int)cbCategory.SelectedValue;
-            transaction.category = categoriesService.getByID(transaction.categoryid);
+            transaction.category = servicesContainer.GetInstance<ICategoriesService>().getByID(transaction.categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -140,26 +122,26 @@ namespace GastosRYC.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = tagsService.getByID(transaction.tagid);
+                transaction.tag = servicesContainer.GetInstance<ITagsService>().getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = transactionsStatusService.getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = servicesContainer.GetInstance<ITransactionsStatusService>().getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = accountsService.getAll();
-            cbPerson.ItemsSource = personService.getAll();
-            cbCategory.ItemsSource = categoriesService.getAll();
-            cbTag.ItemsSource = tagsService.getAll();
-            cbTransactionStatus.ItemsSource = transactionsStatusService.getAll();
+            cbAccount.ItemsSource = servicesContainer.GetInstance<IAccountsService>().getAll();
+            cbPerson.ItemsSource = servicesContainer.GetInstance<IPersonsService>().getAll();
+            cbCategory.ItemsSource = servicesContainer.GetInstance<ICategoriesTypesService>().getAll();
+            cbTag.ItemsSource = servicesContainer.GetInstance<ITagsService>().getAll();
+            cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<ITransactionsStatusService>().getAll();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             if (saveTransaction())
-            {                
+            {
                 this.Close();
             }
         }
@@ -211,15 +193,15 @@ namespace GastosRYC.Views
         private void btnSplit_Click(object sender, RoutedEventArgs e)
         {
             if (transaction == null && !saveTransaction())
-            {                    
+            {
                 MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
-                return;                 
+                return;
             }
 
-            frmSplits frm = new frmSplits(transaction);
+            FrmSplitsList frm = new FrmSplitsList(transaction, servicesContainer);
             frm.ShowDialog();
-            transactionsService.updateSplits(transaction);
-            loadTransaction();         
+            servicesContainer.GetInstance<ITransactionsService>().updateTransactionAfterSplits(transaction);
+            loadTransaction();
         }
 
         private bool saveTransaction()
@@ -232,7 +214,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        transactionsService.saveChanges(transaction);
+                        servicesContainer.GetInstance<ITransactionsService>().saveChanges(transaction);
                     }
                     return true;
                 }
@@ -249,13 +231,13 @@ namespace GastosRYC.Views
 
         private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
         {
-            switch(e.Key)
-            { 
-               case Key.F1:           
+            switch (e.Key)
+            {
+                case Key.F1:
                     if (saveTransaction())
                     {
                         transaction = null;
-                        loadTransaction();                        
+                        loadTransaction();
                     }
                     break;
                 case Key.F2:

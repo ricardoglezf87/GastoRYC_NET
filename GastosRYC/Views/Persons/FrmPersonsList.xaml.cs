@@ -8,19 +8,19 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para Persons.xaml
     /// </summary>
-    public partial class frmPersons : Window
+    public partial class FrmPersonsList : Window
     {
+        private readonly SimpleInjector.Container servicesContainer;
 
-        private readonly PersonsService personsService = new PersonsService();
-
-        public frmPersons()
+        public FrmPersonsList(SimpleInjector.Container servicesContainer)
         {
             InitializeComponent();
+            this.servicesContainer = servicesContainer;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
-        {           
-            gvPersons.ItemsSource = personsService.getAll();            
+        {
+            gvPersons.ItemsSource = servicesContainer.GetInstance<IPersonsService>().getAll();
         }
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -33,25 +33,26 @@ namespace GastosRYC.Views
                 e.ErrorMessages.Add("name", "Tiene que rellenar el nombre");
             }
 
-        }                
-        
+        }
+
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            Persons persons = (Persons)e.RowData;            
-            personsService.update(persons);
+            Persons persons = (Persons)e.RowData;
+            servicesContainer.GetInstance<IPersonsService>().update(persons);
         }
 
         private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (Persons persons in e.Items) {                
-                personsService.delete(persons);
-            }            
+            foreach (Persons persons in e.Items)
+            {
+                servicesContainer.GetInstance<IPersonsService>().delete(persons);
+            }
         }
 
         private void gvPersons_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if(MessageBox.Show("Esta seguro de querer eliminar esta persona?","Eliminación persona",MessageBoxButton.YesNo,
-                MessageBoxImage.Exclamation,MessageBoxResult.No) == MessageBoxResult.No)
+            if (MessageBox.Show("Esta seguro de querer eliminar esta persona?", "Eliminación persona", MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
             }

@@ -1,11 +1,5 @@
 ﻿using BBDDLib.Manager;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
@@ -30,12 +24,17 @@ namespace GastosRYC.BBDDLib.Services
             context.tags?.Load();
             context.splits?.Load();
             context.transactions?.Load();
+            context.periodsReminders?.Load();
+            context.splitsReminders?.Load();
+            context.transactionsReminders?.Load();
+            context.expirationsReminders?.Load();
         }
 
         public RYCContext BBDD { get { return context; } }
 
-        public static RYCContextService getInstance() {
-                return _instance;           
+        public static RYCContextService getInstance()
+        {
+            return _instance;
         }
     }
 }
