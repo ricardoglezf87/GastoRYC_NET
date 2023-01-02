@@ -17,8 +17,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 
-//TODO: implementar split
-
 namespace GastosRYC
 {
     public partial class MainWindow : Window
