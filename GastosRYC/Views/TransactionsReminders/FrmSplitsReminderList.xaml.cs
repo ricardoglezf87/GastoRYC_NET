@@ -11,38 +11,31 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmSplitsRemindersList : Window
     {
-        private readonly TransactionsReminders? transactionsReminders;
-        private readonly ICategoriesService categoriesService;
-        private readonly ISplitsRemindersService splitsRemindersService;
-        private readonly ITransactionsRemindersService transactionsRemindersService;
+        private readonly TransactionsReminders? transactionsReminders;      
+        private readonly SimpleInjector.Container servicesContainer;
 
-        public FrmSplitsRemindersList(ICategoriesService categoriesService, ISplitsRemindersService splitsRemindersService,
-                ITransactionsRemindersService transactionsRemindersService)
+        public FrmSplitsRemindersList(SimpleInjector.Container servicesContainer)
         {
-            this.categoriesService = categoriesService;
-            this.splitsRemindersService = splitsRemindersService;
-            this.transactionsRemindersService = transactionsRemindersService;
             InitializeComponent();
-
+            this.servicesContainer = servicesContainer;
         }
 
-        public FrmSplitsRemindersList(TransactionsReminders? transactionsReminders, ICategoriesService categoriesService,
-            ISplitsRemindersService splitsRemindersService, ITransactionsRemindersService transactionsRemindersService)
-            : this(categoriesService, splitsRemindersService, transactionsRemindersService)
+        public FrmSplitsRemindersList(TransactionsReminders? transactionsReminders, SimpleInjector.Container servicesContainer)
+            : this(servicesContainer)
         {
             this.transactionsReminders = transactionsReminders;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = categoriesService.getAll();
+            cbCategories.ItemsSource = servicesContainer.GetInstance<ICategoriesTypesService>().getAll();
             if (transactionsReminders != null && transactionsReminders.id > 0)
             {
-                gvSplitsReminders.ItemsSource = splitsRemindersService.getbyTransactionid(transactionsReminders.id);
+                gvSplitsReminders.ItemsSource = servicesContainer.GetInstance<ISplitsRemindersService>().getbyTransactionid(transactionsReminders.id);
             }
             else
             {
-                gvSplitsReminders.ItemsSource = splitsRemindersService.getbyTransactionidNull();
+                gvSplitsReminders.ItemsSource = servicesContainer.GetInstance<ISplitsRemindersService>().getbyTransactionidNull();
             }
         }
 
@@ -54,7 +47,7 @@ namespace GastosRYC.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.category = categoriesService.getByID(splitsReminders.categoryid);
+                        splitsReminders.category = servicesContainer.GetInstance<ICategoriesService>().getByID(splitsReminders.categoryid);
                         break;
                 }
             }
@@ -94,7 +87,7 @@ namespace GastosRYC.Views
         {
             if (splitsReminders.category == null && splitsReminders.categoryid != null)
             {
-                splitsReminders.category = categoriesService.getByID(splitsReminders.categoryid);
+                splitsReminders.category = servicesContainer.GetInstance<ICategoriesService>().getByID(splitsReminders.categoryid);
             }
 
             if (splitsReminders.amountIn == null)
@@ -103,7 +96,7 @@ namespace GastosRYC.Views
             if (splitsReminders.amountOut == null)
                 splitsReminders.amountOut = 0;
 
-            splitsRemindersService.update(splitsReminders);
+            servicesContainer.GetInstance<ISplitsRemindersService>().update(splitsReminders);
         }
         private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
@@ -111,9 +104,9 @@ namespace GastosRYC.Views
             {
                 if (splitsReminders.tranferid != null)
                 {
-                    transactionsRemindersService.delete(transactionsRemindersService.getByID(splitsReminders.tranferid));
+                    servicesContainer.GetInstance<ITransactionsRemindersService>().delete(servicesContainer.GetInstance<ITransactionsRemindersService>().getByID(splitsReminders.tranferid));
                 }
-                splitsRemindersService.delete(splitsReminders);
+                servicesContainer.GetInstance<ISplitsRemindersService>().delete(splitsReminders);
             }
         }
 

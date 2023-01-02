@@ -12,11 +12,11 @@ namespace GastosRYC.BBDDLib.Services
     public class SplitsService : ISplitsService
     {
 
-        private readonly ICategoriesService categoriesService;
+        private readonly SimpleInjector.Container servicesContainer;
 
-        public SplitsService(ICategoriesService categoriesService)
+        public SplitsService(SimpleInjector.Container servicesContainer)
         {
-            this.categoriesService = categoriesService;
+            this.servicesContainer = servicesContainer;
         }
 
         public List<Splits>? getAll()
@@ -70,7 +70,7 @@ namespace GastosRYC.BBDDLib.Services
         {
             if (splits.category == null && splits.categoryid != null)
             {
-                splits.category = categoriesService.getByID(splits.categoryid);
+                splits.category = servicesContainer.GetInstance<ICategoriesService>().getByID(splits.categoryid);
             }
 
             if (splits.amountIn == null)

@@ -12,16 +12,11 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class TransactionsService : ITransactionsService
     {
-        private readonly ISplitsService splitsService;
-        private readonly ICategoriesService categoriesService;
-        private readonly IAccountsService accountsService;
+        private readonly SimpleInjector.Container servicesContainer;
 
-        public TransactionsService(ISplitsService splitsService,ICategoriesService categoriesService,
-            IAccountsService accountsService)
+        public TransactionsService(SimpleInjector.Container servicesContainer)
         {
-            this.splitsService = splitsService;
-            this.accountsService = accountsService;
-            this.categoriesService = categoriesService;
+            this.servicesContainer = servicesContainer;
         }
 
 
@@ -102,7 +97,7 @@ namespace GastosRYC.BBDDLib.Services
                 tContraria.date = transactions.date;
                 tContraria.accountid = transactions.category.accounts.id;
                 tContraria.personid = transactions.personid;
-                tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
+                tContraria.categoryid = servicesContainer.GetInstance<IAccountsService>().getByID(transactions.accountid)?.categoryid;
                 tContraria.memo = transactions.memo;
                 tContraria.tagid = transactions.tagid;
                 tContraria.amountIn = transactions.amountOut;
@@ -127,7 +122,7 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.date = transactions.date;
                     tContraria.accountid = transactions.category.accounts.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
+                    tContraria.categoryid = servicesContainer.GetInstance<IAccountsService>().getByID(transactions.accountid)?.categoryid;
                     tContraria.memo = transactions.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;
@@ -147,7 +142,7 @@ namespace GastosRYC.BBDDLib.Services
             if (transactions.tranferSplitid != null &&
                 transactions.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Splits? tContraria = splitsService.getByID(transactions.tranferSplitid);
+                Splits? tContraria = servicesContainer.GetInstance<ISplitsService>().getByID(transactions.tranferSplitid);
                 if (tContraria != null)
                 {
                     tContraria.transaction.date = transactions.date;
@@ -158,14 +153,14 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.amountIn = transactions.amountOut;
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
-                    splitsService.update(tContraria);
+                    servicesContainer.GetInstance<ISplitsService>().update(tContraria);
                 }
             }
         }
 
         public void updateTransactionAfterSplits(Transactions? transactions)
         {
-            List<Splits>? lSplits = transactions.splits ?? splitsService.getbyTransactionid(transactions.id);
+            List<Splits>? lSplits = transactions.splits ?? servicesContainer.GetInstance<ISplitsService>().getbyTransactionid(transactions.id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
@@ -179,13 +174,13 @@ namespace GastosRYC.BBDDLib.Services
                 }
 
                 transactions.categoryid = (int)ICategoriesService.eSpecialCategories.Split;
-                transactions.category = categoriesService.getByID((int)ICategoriesService.eSpecialCategories.Split);
+                transactions.category = servicesContainer.GetInstance<ICategoriesService>().getByID((int)ICategoriesService.eSpecialCategories.Split);
             }
             else if (transactions.categoryid != null
                 && transactions.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
             {
                 transactions.categoryid = (int)ICategoriesService.eSpecialCategories.WithoutCategory;
-                transactions.category = categoriesService.getByID((int)ICategoriesService.eSpecialCategories.WithoutCategory);
+                transactions.category = servicesContainer.GetInstance<ICategoriesService>().getByID((int)ICategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactions.id == 0)
@@ -194,7 +189,7 @@ namespace GastosRYC.BBDDLib.Services
                 foreach (Splits splits in lSplits)
                 {
                     splits.transactionid = transactions.id;
-                    splitsService.update(splits);
+                    servicesContainer.GetInstance<ISplitsService>().update(splits);
                 }
             }
             else

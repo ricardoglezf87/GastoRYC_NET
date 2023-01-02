@@ -11,23 +11,18 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmAccountsList : Window
     {
-        private readonly IAccountsService accountsService;
-        private readonly IAccountsTypesService accountsTypesService;
-        private readonly ICategoriesService categoriesService;
+        private readonly SimpleInjector.Container servicesContainer;
 
-        public FrmAccountsList(IAccountsService accountsService,IAccountsTypesService accountsTypesService,
-            ICategoriesService categoriesService)
+        public FrmAccountsList(SimpleInjector.Container servicesContainer)
         {
-            this.accountsService = accountsService;
-            this.accountsTypesService = accountsTypesService;
-            this.categoriesService = categoriesService;
-            InitializeComponent();            
+            InitializeComponent();
+            this.servicesContainer = servicesContainer;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = accountsTypesService.getAll();
-            gvAccounts.ItemsSource = accountsService.getAll();            
+            cbAccountsTypes.ItemsSource = servicesContainer.GetInstance<IAccountsTypesService>().getAll();
+            gvAccounts.ItemsSource = servicesContainer.GetInstance<IAccountsService>().getAll();            
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -38,7 +33,7 @@ namespace GastosRYC.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);
+                        accounts.accountsTypes = servicesContainer.GetInstance<IAccountsTypesService>().getByID(accounts.accountsTypesid);
                         break;                    
                 }
             }
@@ -68,16 +63,16 @@ namespace GastosRYC.Views
 
             if (accounts.categoryid != null)
             {
-                categories = categoriesService.getByID(accounts.categoryid);
+                categories = servicesContainer.GetInstance<ICategoriesService>().getByID(accounts.categoryid);
                 if(categories != null)
                 {
                     categories.description = "[" + accounts.description + "]";
-                    categoriesService.update(categories);
+                    servicesContainer.GetInstance<ICategoriesService>().update(categories);
                 }
             }else
             {
                 categories = new Categories();
-                accounts.categoryid = categoriesService.getNextID(); ;
+                accounts.categoryid = servicesContainer.GetInstance<ICategoriesService>().getNextID(); ;
                 categories.description = "[" + accounts.description + "]";
                 categories.categoriesTypesid = (int)ICategoriesTypesService.eCategoriesTypes.Transfers;
 
@@ -85,7 +80,7 @@ namespace GastosRYC.Views
 
             if (categories != null)
             {
-                categoriesService.update(categories);
+                servicesContainer.GetInstance<ICategoriesService>().update(categories);
             }
         }
         
@@ -95,23 +90,23 @@ namespace GastosRYC.Views
 
             if (accounts.accountsTypes == null && accounts.accountsTypesid != null)
             {
-                accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);               
+                accounts.accountsTypes = servicesContainer.GetInstance<IAccountsTypesService>().getByID(accounts.accountsTypesid);               
             }
 
             updateCategory(accounts);
-            accountsService.update(accounts);
+            servicesContainer.GetInstance<IAccountsService>().update(accounts);
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items) {
-                Categories? categories = categoriesService.getByID(accounts.categoryid);
+                Categories? categories = servicesContainer.GetInstance<ICategoriesService>().getByID(accounts.categoryid);
                 if(categories!= null)
                 {
-                    categoriesService.delete(categories);
+                    servicesContainer.GetInstance<ICategoriesService>().delete(categories);
                 }
 
-                accountsService.delete(accounts);
+                servicesContainer.GetInstance<IAccountsService>().delete(accounts);
             }            
         }
 

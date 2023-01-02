@@ -12,29 +12,12 @@ namespace GastosRYC.Views
     public partial class FrmTransactionReminderList : Window
     {
 
-        private readonly IAccountsService accountsService;
-        private readonly ICategoriesService categoriesService;
-        private readonly IPersonsService personsService;
-        private readonly ITagsService tagsService;
-        private readonly IPeriodsRemindersService periodsRemindersService;
-        private readonly ITransactionsRemindersService transactionsRemindersService;
-        private readonly ITransactionsStatusService transactionsStatusService;
-        private readonly ISplitsRemindersService splitsRemindersService;
+        private readonly SimpleInjector.Container servicesContainer;
 
-        public FrmTransactionReminderList(IAccountsService accountsService, ICategoriesService categoriesService,
-            IPersonsService personsService, ITagsService tagsService,
-            IPeriodsRemindersService periodsRemindersService, ITransactionsRemindersService transactionsRemindersService,
-            ITransactionsStatusService transactionsStatusService, ISplitsRemindersService splitsRemindersService)
+        public FrmTransactionReminderList(SimpleInjector.Container servicesContainer)
         {
-            this.accountsService = accountsService;
-            this.categoriesService = categoriesService;
-            this.personsService = personsService;
-            this.tagsService = tagsService;
-            this.periodsRemindersService = periodsRemindersService;
-            this.transactionsRemindersService = transactionsRemindersService;
-            this.transactionsStatusService = transactionsStatusService;
             InitializeComponent();
-            this.splitsRemindersService = splitsRemindersService;
+            this.servicesContainer = servicesContainer;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -46,7 +29,7 @@ namespace GastosRYC.Views
         {
             foreach (TransactionsReminders transactionsReminders in e.Items)
             {
-                transactionsRemindersService.delete(transactionsReminders);
+                servicesContainer.GetInstance<ITransactionsRemindersService>().delete(transactionsReminders);
             }
         }
 
@@ -68,9 +51,7 @@ namespace GastosRYC.Views
         {
             if (gvTransactionsReminders.CurrentItem != null)
             {
-                FrmTransactionReminders frm = new FrmTransactionReminders((TransactionsReminders)gvTransactionsReminders.CurrentItem,accountsService,
-                    categoriesService,personsService,tagsService,periodsRemindersService,transactionsRemindersService,transactionsStatusService,
-                    splitsRemindersService);
+                FrmTransactionReminders frm = new FrmTransactionReminders((TransactionsReminders)gvTransactionsReminders.CurrentItem,servicesContainer);
                 frm.ShowDialog();
                 loadTransactions();
             }
@@ -78,13 +59,12 @@ namespace GastosRYC.Views
 
         private void loadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = transactionsRemindersService.getAll();
+            gvTransactionsReminders.ItemsSource = servicesContainer.GetInstance<ITransactionsRemindersService>().getAll();
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            FrmTransactionReminders frm = new FrmTransactionReminders(accountsService,categoriesService, personsService, tagsService, 
-                periodsRemindersService, transactionsRemindersService, transactionsStatusService,splitsRemindersService);
+            FrmTransactionReminders frm = new FrmTransactionReminders(servicesContainer);
             frm.ShowDialog();
             loadTransactions();
         }

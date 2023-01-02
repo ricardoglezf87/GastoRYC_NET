@@ -59,6 +59,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
+    <PackageReference Include="SimpleInjector" Version="5.4.1" />
     <PackageReference Include="Syncfusion.SfGrid.WPF" Version="20.4.0.38" />
     <PackageReference Include="syncfusion.ui.wpf.net" Version="20.4.0.38" />
   </ItemGroup>

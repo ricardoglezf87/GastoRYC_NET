@@ -9,7 +9,14 @@ using System.Threading.Tasks;
 namespace GastosRYC.BBDDLib.Services
 {
     public class CategoriesService : ICategoriesService
-    {           
+    {
+
+        private readonly SimpleInjector.Container servicesContainer;
+
+        public CategoriesService(SimpleInjector.Container servicesContainer)
+        {
+            this.servicesContainer = servicesContainer;
+        }
 
         public List<Categories>? getAll()
         {
@@ -19,8 +26,8 @@ namespace GastosRYC.BBDDLib.Services
         public List<Categories>? getAllFilterTransfer()
         {
             return RYCContextService.getInstance().BBDD.categories?
-                .Where(x => !x.id.Equals((int)ICategoriesTypesService.eCategoriesTypes.Transfers) &&
-                !x.id.Equals((int)ICategoriesTypesService.eCategoriesTypes.Specials)).ToList();
+                .Where(x => !x.id.Equals(ICategoriesTypesService.eCategoriesTypes.Transfers) &&
+                !x.id.Equals(ICategoriesTypesService.eCategoriesTypes.Specials)).ToList();
         }
 
         public Categories? getByID(int? id)

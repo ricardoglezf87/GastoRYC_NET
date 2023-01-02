@@ -12,17 +12,11 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class ExpirationsRemindersService : IExpirationsRemindersService
     {
+        private readonly SimpleInjector.Container servicesContainer;
 
-        private readonly IPeriodsRemindersService periodsRemindersService;
-        private readonly ITransactionsService transactionsService;
-        private readonly ISplitsService splitsService;
-
-        public ExpirationsRemindersService(IPeriodsRemindersService periodsRemindersService,
-            ITransactionsService transactionsService, ISplitsService splitsService)
+        public ExpirationsRemindersService(SimpleInjector.Container servicesContainer)
         {
-            this.transactionsService = transactionsService; 
-            this.periodsRemindersService = periodsRemindersService;
-            this.splitsService = splitsService;
+            this.servicesContainer = servicesContainer;
         }
 
         public List<ExpirationsReminders>? getAll()
@@ -82,7 +76,7 @@ namespace GastosRYC.BBDDLib.Services
                         update(expirationsReminders);
                     }
 
-                    date = periodsRemindersService.getNextDate(date, periodsRemindersService.toEnum(transactionsReminders.periodsReminders));
+                    date = servicesContainer.GetInstance<IPeriodsRemindersService>().getNextDate(date, servicesContainer.GetInstance<IPeriodsRemindersService>().toEnum(transactionsReminders.periodsReminders));
 
                 }
             }
@@ -106,7 +100,7 @@ namespace GastosRYC.BBDDLib.Services
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
-                    transactionsService.saveChanges(transactions);
+                    servicesContainer.GetInstance<ITransactionsService>().saveChanges(transactions);
 
                     if (expirationsReminders.transactionsReminders.splits != null)
                     {
@@ -119,8 +113,8 @@ namespace GastosRYC.BBDDLib.Services
                             splits.amountIn = splitsReminders.amountIn;
                             splits.amountOut = splitsReminders.amountOut;
                             splits.tagid = splitsReminders.tagid;
-                            splitsService.saveChanges(transactions,splits);
-                            transactionsService.updateTranferSplits(transactions, splits);
+                            servicesContainer.GetInstance<ISplitsService>().saveChanges(transactions,splits);
+                            servicesContainer.GetInstance<ITransactionsService>().updateTranferSplits(transactions, splits);
                         }
                     }
                                        

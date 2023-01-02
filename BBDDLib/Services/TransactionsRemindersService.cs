@@ -11,17 +11,11 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class TransactionsRemindersService : ITransactionsRemindersService
     {
+        private readonly SimpleInjector.Container servicesContainer;
 
-        private readonly ISplitsRemindersService splitsRemindersService;
-        private readonly ICategoriesService categoriesService;
-        private readonly IExpirationsRemindersService expirationsRemindersService;
-
-        public TransactionsRemindersService(ISplitsRemindersService splitsRemindersService,ICategoriesService categoriesService,
-            IExpirationsRemindersService expirationsRemindersService)
+        public TransactionsRemindersService(SimpleInjector.Container servicesContainer)
         {
-            this.categoriesService = categoriesService;
-            this.splitsRemindersService = splitsRemindersService;
-            this.expirationsRemindersService = expirationsRemindersService;
+            this.servicesContainer = servicesContainer;
         }
 
         #region TransactionsRemindersActions
@@ -38,7 +32,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public void update(TransactionsReminders transactionsReminders)
         {
-            expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
+            servicesContainer.GetInstance<IExpirationsRemindersService>().deleteByTransactionReminderid(transactionsReminders.id);
             RYCContextService.getInstance().BBDD.Update(transactionsReminders);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
@@ -47,7 +41,7 @@ namespace GastosRYC.BBDDLib.Services
         {
             if (transactionsReminders != null)
             {
-                expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
+                servicesContainer.GetInstance<IExpirationsRemindersService>().deleteByTransactionReminderid(transactionsReminders.id);
                 RYCContextService.getInstance().BBDD.Remove(transactionsReminders);
                 RYCContextService.getInstance().BBDD.SaveChanges();
             }
@@ -85,7 +79,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            List<SplitsReminders>? lSplitsReminders = transactionsReminders.splits ?? splitsRemindersService.getbyTransactionid(transactionsReminders.id);
+            List<SplitsReminders>? lSplitsReminders = transactionsReminders.splits ?? servicesContainer.GetInstance<ISplitsRemindersService>().getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
@@ -99,13 +93,13 @@ namespace GastosRYC.BBDDLib.Services
                 }
 
                 transactionsReminders.categoryid = (int)ICategoriesService.eSpecialCategories.Split;
-                transactionsReminders.category = categoriesService.getByID((int)ICategoriesService.eSpecialCategories.Split);
+                transactionsReminders.category = servicesContainer.GetInstance<ICategoriesService>().getByID((int)ICategoriesService.eSpecialCategories.Split);
             }
             else if (transactionsReminders.categoryid != null
                 && transactionsReminders.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
             {
                 transactionsReminders.categoryid = (int)ICategoriesService.eSpecialCategories.WithoutCategory;
-                transactionsReminders.category = categoriesService.getByID((int)ICategoriesService.eSpecialCategories.WithoutCategory);
+                transactionsReminders.category = servicesContainer.GetInstance<ICategoriesService>().getByID((int)ICategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.id == 0)
@@ -114,7 +108,7 @@ namespace GastosRYC.BBDDLib.Services
                 foreach (SplitsReminders splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.transactionid = transactionsReminders.id;
-                    splitsRemindersService.update(splitsReminders);
+                    servicesContainer.GetInstance<ISplitsRemindersService>().update(splitsReminders);
                 }
             }
             else
