@@ -138,7 +138,7 @@ namespace GastosRYC.Views
         {
             cbAccount.ItemsSource = servicesContainer.GetInstance<IAccountsService>().getAll();
             cbPerson.ItemsSource = servicesContainer.GetInstance<IPersonsService>().getAll();
-            cbCategory.ItemsSource = servicesContainer.GetInstance<ICategoriesTypesService>().getAll();
+            cbCategory.ItemsSource = servicesContainer.GetInstance<ICategoriesService>().getAll();
             cbTag.ItemsSource = servicesContainer.GetInstance<ITagsService>().getAll();
             cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<ITransactionsStatusService>().getAll();
             cbPeriodTransaction.ItemsSource = servicesContainer.GetInstance<IPeriodsRemindersService>().getAll();
