@@ -26,7 +26,7 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = servicesContainer.GetInstance<ICategoriesTypesService>().getAll();
+            cbCategories.ItemsSource = servicesContainer.GetInstance<ICategoriesService>().getAll();
             if (transactionsReminders != null && transactionsReminders.id > 0)
             {
                 gvSplitsReminders.ItemsSource = servicesContainer.GetInstance<ISplitsRemindersService>().getbyTransactionid(transactionsReminders.id);
