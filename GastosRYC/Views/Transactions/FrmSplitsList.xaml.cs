@@ -1,8 +1,6 @@
 ﻿using BBDDLib.Models;
 using GastosRYC.BBDDLib.Services;
-using System.Configuration;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace GastosRYC.Views
 {
@@ -49,22 +47,22 @@ namespace GastosRYC.Views
                 {
                     case "categoryid":
                         splits.category = servicesContainer.GetInstance<ICategoriesService>().getByID(splits.categoryid);
-                        break;                    
+                        break;
                 }
             }
         }
 
-       
+
         private void gvSplits_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             Splits splits = (Splits)e.RowData;
-            
+
             if (splits.categoryid == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if(splits.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
+            else if (splits.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
@@ -76,30 +74,31 @@ namespace GastosRYC.Views
                 e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
                 e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
             }
-        }                
-        
+        }
+
         private void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Splits splits = (Splits)e.RowData;
 
-            servicesContainer.GetInstance<ISplitsService>().saveChanges(transactions,splits);
+            servicesContainer.GetInstance<ISplitsService>().saveChanges(transactions, splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (Splits splits in e.Items) {
+            foreach (Splits splits in e.Items)
+            {
                 if (splits.tranferid != null)
                 {
                     servicesContainer.GetInstance<ITransactionsService>().delete(servicesContainer.GetInstance<ITransactionsService>().getByID(splits.tranferid));
                 }
                 servicesContainer.GetInstance<ISplitsService>().delete(splits);
-            }            
+            }
         }
 
         private void gvSplits_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if(MessageBox.Show("Esta seguro de querer eliminar esta split?","Eliminación split",MessageBoxButton.YesNo,
-                MessageBoxImage.Exclamation,MessageBoxResult.No) == MessageBoxResult.No)
+            if (MessageBox.Show("Esta seguro de querer eliminar esta split?", "Eliminación split", MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
             }

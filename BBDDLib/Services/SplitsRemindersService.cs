@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
@@ -22,7 +20,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public List<SplitsReminders>? getbyTransactionid(int transactionid)
         {
-            return RYCContextService.getInstance().BBDD.splitsReminders?.Where(x=>x.transactionid == transactionid).ToList();
+            return RYCContextService.getInstance().BBDD.splitsReminders?.Where(x => x.transactionid == transactionid).ToList();
         }
 
         public SplitsReminders? getByID(int? id)

@@ -1,8 +1,6 @@
 ﻿using BBDDLib.Models;
 using GastosRYC.BBDDLib.Services;
-using System.Configuration;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace GastosRYC.Views
 {
@@ -11,7 +9,7 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmSplitsRemindersList : Window
     {
-        private readonly TransactionsReminders? transactionsReminders;      
+        private readonly TransactionsReminders? transactionsReminders;
         private readonly SimpleInjector.Container servicesContainer;
 
         public FrmSplitsRemindersList(SimpleInjector.Container servicesContainer)

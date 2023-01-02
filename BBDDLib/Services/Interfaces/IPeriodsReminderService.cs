@@ -1,12 +1,6 @@
 ﻿using BBDDLib.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
-using GastosRYC.Extensions;
 
 namespace GastosRYC.BBDDLib.Services
 {
@@ -32,8 +26,8 @@ namespace GastosRYC.BBDDLib.Services
 
         public void delete(PeriodsReminders periodsReminders);
 
-        public ePeriodsReminders? toEnum(PeriodsReminders? periodsReminders);   
-        
+        public ePeriodsReminders? toEnum(PeriodsReminders? periodsReminders);
+
         public DateTime? getNextDate(DateTime? date, ePeriodsReminders? periodsReminders);
 
     }

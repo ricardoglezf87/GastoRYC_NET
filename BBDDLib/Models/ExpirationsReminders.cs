@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BBDDLib.Models
 {
@@ -22,8 +18,9 @@ namespace BBDDLib.Models
         public virtual bool? done { set; get; }
 
         [NotMapped]
-        public virtual String? groupDate 
-        { get 
+        public virtual String? groupDate
+        {
+            get
             {
                 String group = String.Empty;
 
@@ -44,7 +41,7 @@ namespace BBDDLib.Models
                 }
 
                 return group;
-            } 
+            }
         }
 
     }

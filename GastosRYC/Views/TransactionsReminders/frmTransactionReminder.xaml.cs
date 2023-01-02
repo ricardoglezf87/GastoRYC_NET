@@ -1,20 +1,9 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
-using Syncfusion.Windows.Controls.RichTextBoxAdv;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace GastosRYC.Views
 {
@@ -29,7 +18,7 @@ namespace GastosRYC.Views
         private readonly int? accountidDefault;
 
         public FrmTransactionReminders(SimpleInjector.Container servicesContainer)
-        {           
+        {
             InitializeComponent();
             this.servicesContainer = servicesContainer;
         }
@@ -41,7 +30,7 @@ namespace GastosRYC.Views
             this.accountidDefault = accountidDefault;
         }
 
-        public FrmTransactionReminders(TransactionsReminders transaction, SimpleInjector.Container servicesContainer) :
+        public FrmTransactionReminders(TransactionsReminders? transaction, SimpleInjector.Container servicesContainer) :
             this(servicesContainer)
         {
             this.transaction = transaction;
@@ -109,7 +98,7 @@ namespace GastosRYC.Views
 
             transaction.periodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
             transaction.periodsReminders = servicesContainer.GetInstance<IPeriodsRemindersService>().getByID(transaction.periodsRemindersid);
-            
+
             transaction.accountid = (int)cbAccount.SelectedValue;
             transaction.account = servicesContainer.GetInstance<IAccountsService>().getByID(transaction.accountid);
 
@@ -158,7 +147,7 @@ namespace GastosRYC.Views
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             if (saveTransaction())
-            {                
+            {
                 this.Close();
             }
         }
@@ -216,15 +205,15 @@ namespace GastosRYC.Views
         private void btnSplit_Click(object sender, RoutedEventArgs e)
         {
             if (transaction == null && !saveTransaction())
-            {                    
+            {
                 MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
-                return;                 
+                return;
             }
 
-            FrmSplitsRemindersList frm = new FrmSplitsRemindersList(transaction,servicesContainer);
+            FrmSplitsRemindersList frm = new FrmSplitsRemindersList(transaction, servicesContainer);
             frm.ShowDialog();
             servicesContainer.GetInstance<ITransactionsRemindersService>().updateSplitsReminders(transaction);
-            loadTransaction();         
+            loadTransaction();
         }
 
         private bool saveTransaction()
@@ -254,13 +243,13 @@ namespace GastosRYC.Views
 
         private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
         {
-            switch(e.Key)
-            { 
-               case Key.F1:           
+            switch (e.Key)
+            {
+                case Key.F1:
                     if (saveTransaction())
                     {
                         transaction = null;
-                        loadTransaction();                        
+                        loadTransaction();
                     }
                     break;
                 case Key.F2:

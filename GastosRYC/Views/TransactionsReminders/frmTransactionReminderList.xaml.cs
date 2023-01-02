@@ -1,5 +1,4 @@
 ﻿using BBDDLib.Models;
-using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,7 +50,7 @@ namespace GastosRYC.Views
         {
             if (gvTransactionsReminders.CurrentItem != null)
             {
-                FrmTransactionReminders frm = new FrmTransactionReminders((TransactionsReminders)gvTransactionsReminders.CurrentItem,servicesContainer);
+                FrmTransactionReminders frm = new FrmTransactionReminders((TransactionsReminders)gvTransactionsReminders.CurrentItem, servicesContainer);
                 frm.ShowDialog();
                 loadTransactions();
             }

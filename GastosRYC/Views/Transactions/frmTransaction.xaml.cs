@@ -1,21 +1,9 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
-using Syncfusion.Windows.Controls.RichTextBoxAdv;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace GastosRYC.Views
 {
@@ -153,7 +141,7 @@ namespace GastosRYC.Views
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             if (saveTransaction())
-            {                
+            {
                 this.Close();
             }
         }
@@ -205,15 +193,15 @@ namespace GastosRYC.Views
         private void btnSplit_Click(object sender, RoutedEventArgs e)
         {
             if (transaction == null && !saveTransaction())
-            {                    
+            {
                 MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
-                return;                 
+                return;
             }
 
-            FrmSplitsList frm = new FrmSplitsList(transaction,servicesContainer);
+            FrmSplitsList frm = new FrmSplitsList(transaction, servicesContainer);
             frm.ShowDialog();
             servicesContainer.GetInstance<ITransactionsService>().updateTransactionAfterSplits(transaction);
-            loadTransaction();         
+            loadTransaction();
         }
 
         private bool saveTransaction()
@@ -243,13 +231,13 @@ namespace GastosRYC.Views
 
         private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
         {
-            switch(e.Key)
-            { 
-               case Key.F1:           
+            switch (e.Key)
+            {
+                case Key.F1:
                     if (saveTransaction())
                     {
                         transaction = null;
-                        loadTransaction();                        
+                        loadTransaction();
                     }
                     break;
                 case Key.F2:

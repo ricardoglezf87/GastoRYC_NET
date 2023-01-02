@@ -1,30 +1,21 @@
-﻿using GastosRYC.BBDDLib.Services;
-using BBDDLib.Models;
+﻿using BBDDLib.Models;
+using BBDDLib.Models.Charts;
+using BBDDLib.Services.Interfaces;
+using GastosRYC.BBDDLib.Services;
+using GastosRYC.Extensions;
+using GastosRYC.Views;
 using Syncfusion.Data.Extensions;
+using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Threading;
-using GastosRYC.Views;
-using GastosRYC.Extensions;
-using System.Collections;
-using Syncfusion.UI.Xaml.Grid.Helpers;
-using Syncfusion.Data;
 using System.Windows.Input;
-using Syncfusion.UI.Xaml.Charts;
-using Syncfusion.XPS;
-using System.Drawing;
-using System.Runtime.InteropServices;
-using BBDDLib.Models.Charts;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
-using Syncfusion.Windows.Tools.Controls;
-using BBDDLib.Services.Interfaces;
 
 //TODO: implementar split
 
@@ -35,7 +26,7 @@ namespace GastosRYC
 
         #region Variables
 
-        private ICollectionView? viewAccounts;        
+        private ICollectionView? viewAccounts;
         private readonly SimpleInjector.Container servicesContainer;
 
         private enum eViews : int
@@ -56,7 +47,7 @@ namespace GastosRYC
             InitializeComponent();
 
             servicesContainer = new SimpleInjector.Container();
-            registerServices();           
+            registerServices();
         }
 
         #endregion
@@ -183,7 +174,7 @@ namespace GastosRYC
         {
             if (gvTransactions.CurrentItem != null)
             {
-                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem,servicesContainer);
+                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem, servicesContainer);
                 frm.ShowDialog();
                 loadAccounts();
                 loadTransactions();
@@ -410,7 +401,7 @@ namespace GastosRYC
             gridTransactions.Visibility = Visibility.Hidden;
             gridHome.Visibility = Visibility.Hidden;
             gridReminders.Visibility = Visibility.Hidden;
-            
+
             activeView = views;
 
             switch (views)
@@ -432,7 +423,7 @@ namespace GastosRYC
                     break;
             }
 
-            
+
         }
 
         private void loadReminders()

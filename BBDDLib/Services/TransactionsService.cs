@@ -5,13 +5,14 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
     public class TransactionsService : ITransactionsService
     {
+
+        #region Propiedades y Contructor
+
         private readonly SimpleInjector.Container servicesContainer;
 
         public TransactionsService(SimpleInjector.Container servicesContainer)
@@ -19,6 +20,7 @@ namespace GastosRYC.BBDDLib.Services
             this.servicesContainer = servicesContainer;
         }
 
+        #endregion Propiedades y Contructor
 
         #region TransactionsActions
 
@@ -33,7 +35,7 @@ namespace GastosRYC.BBDDLib.Services
         }
 
         public void update(Transactions transactions)
-        {            
+        {
             RYCContextService.getInstance().BBDD.Update(transactions);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
@@ -53,7 +55,7 @@ namespace GastosRYC.BBDDLib.Services
             var cmd = RYCContextService.getInstance().BBDD.Database.
                 GetDbConnection().CreateCommand();
             cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactions';";
-            
+
             RYCContextService.getInstance().BBDD.Database.OpenConnection();
             var result = cmd.ExecuteReader();
             result.Read();
@@ -65,11 +67,9 @@ namespace GastosRYC.BBDDLib.Services
 
         public void saveChanges(Transactions transactions)
         {
-            if (transactions.amountIn == null)
-                transactions.amountIn = 0;
+            transactions.amountIn ??= 0;
 
-            if (transactions.amountOut == null)
-                transactions.amountOut = 0;
+            transactions.amountOut ??= 0;
 
             updateTranfer(transactions);
             updateTranferFromSplit(transactions);
@@ -93,15 +93,17 @@ namespace GastosRYC.BBDDLib.Services
             {
                 transactions.tranferid = getNextID();
 
-                Transactions? tContraria = new Transactions();
-                tContraria.date = transactions.date;
-                tContraria.accountid = transactions.category.accounts.id;
-                tContraria.personid = transactions.personid;
-                tContraria.categoryid = servicesContainer.GetInstance<IAccountsService>().getByID(transactions.accountid)?.categoryid;
-                tContraria.memo = transactions.memo;
-                tContraria.tagid = transactions.tagid;
-                tContraria.amountIn = transactions.amountOut;
-                tContraria.amountOut = transactions.amountIn;
+                Transactions? tContraria = new()
+                {
+                    date = transactions.date,
+                    accountid = transactions.category.accounts.id,
+                    personid = transactions.personid,
+                    categoryid = servicesContainer.GetInstance<IAccountsService>().getByID(transactions.accountid)?.categoryid,
+                    memo = transactions.memo,
+                    tagid = transactions.tagid,
+                    amountIn = transactions.amountOut,
+                    amountOut = transactions.amountIn
+                };
 
                 if (transactions.id != 0)
                     tContraria.tranferid = transactions.id;
@@ -215,22 +217,19 @@ namespace GastosRYC.BBDDLib.Services
             {
                 splits.tranferid = getNextID();
 
-                Transactions? tContraria = new Transactions();
-                tContraria.date = transactions.date;
-                tContraria.accountid = splits.category.accounts.id;
-                tContraria.personid = transactions.personid;
-                tContraria.categoryid = transactions.account.categoryid;
-                tContraria.memo = splits.memo;
-                tContraria.tagid = transactions.tagid;
-                tContraria.amountIn = splits.amountOut;
-                tContraria.amountOut = splits.amountIn;
-
-                if (splits.id != 0)
-                    tContraria.tranferSplitid = splits.id;
-                else
-                    tContraria.tranferSplitid = getNextID() + 1;
-
-                tContraria.transactionStatusid = transactions.transactionStatusid;
+                Transactions? tContraria = new()
+                {
+                    date = transactions.date,
+                    accountid = splits.category.accounts.id,
+                    personid = transactions.personid,
+                    categoryid = transactions.account.categoryid,
+                    memo = splits.memo,
+                    tagid = transactions.tagid,
+                    amountIn = splits.amountOut,
+                    amountOut = splits.amountIn,
+                    tranferSplitid = (splits.id != 0 ? splits.id : getNextID() + 1),
+                    transactionStatusid = transactions.transactionStatusid
+                };
 
                 update(tContraria);
 
@@ -261,11 +260,11 @@ namespace GastosRYC.BBDDLib.Services
 
         public List<ExpensesChart> getExpenses()
         {
-            List<ExpensesChart> lChart = new List<ExpensesChart>();
+            List<ExpensesChart> lChart = new();
 
             foreach (var g in RYCContextService.getInstance().BBDD.transactions?
-                                .Where(x=> x.category != null && x.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Expenses)
-                                .GroupBy(g=>g.category))
+                                .Where(x => x.category != null && x.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Expenses)
+                                .GroupBy(g => g.category))
             {
                 lChart.Add(new ExpensesChart(g.Key.description, -g.Sum(x => x.amount)));
             }

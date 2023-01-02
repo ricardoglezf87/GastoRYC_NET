@@ -1,7 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BBDDLib.Models
 {
@@ -23,7 +20,7 @@ namespace BBDDLib.Models
 
         public virtual Decimal? amountIn { set; get; }
 
-        public virtual Decimal? amountOut { set; get; }        
+        public virtual Decimal? amountOut { set; get; }
 
         public virtual String? memo { set; get; }
 

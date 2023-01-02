@@ -1,9 +1,6 @@
 ﻿using BBDDLib.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static GastosRYC.BBDDLib.Services.ICategoriesTypesService;
 
 namespace GastosRYC.BBDDLib.Services
@@ -19,7 +16,7 @@ namespace GastosRYC.BBDDLib.Services
         public List<CategoriesTypes>? getAllFilterTransfer()
         {
             return RYCContextService.getInstance().BBDD.categoriesTypes?
-                .Where(x=>!x.id.Equals((int)eCategoriesTypes.Transfers) &&
+                .Where(x => !x.id.Equals((int)eCategoriesTypes.Transfers) &&
                 !x.id.Equals((int)eCategoriesTypes.Transfers)).ToList();
         }
 

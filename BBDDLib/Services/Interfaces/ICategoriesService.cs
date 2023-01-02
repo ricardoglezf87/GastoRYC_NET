@@ -1,15 +1,10 @@
 ﻿using BBDDLib.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
     public interface ICategoriesService
-    {        
+    {
         public enum eSpecialCategories : int
         {
             Split = -1,

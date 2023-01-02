@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
-using System.Reflection;
-using System.Windows;
 
 namespace BBDDLib.Manager
 {
@@ -36,7 +34,7 @@ namespace BBDDLib.Manager
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
              => optionsBuilder.UseSqlite("Data Source="
-                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+ "\\GastosRYC\\Data\\rycBBDD.db");
+                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\GastosRYC\\Data\\rycBBDD.db");
 
     }
 }

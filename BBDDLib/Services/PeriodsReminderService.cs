@@ -1,12 +1,8 @@
 ﻿using BBDDLib.Models;
+using GastosRYC.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
-using GastosRYC.Extensions;
 using static GastosRYC.BBDDLib.Services.IPeriodsRemindersService;
 
 namespace GastosRYC.BBDDLib.Services

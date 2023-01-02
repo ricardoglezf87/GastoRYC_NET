@@ -1,11 +1,8 @@
 ﻿using BBDDLib.Models;
-using BBDDLib.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
@@ -31,7 +28,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public List<Splits>? getbyTransactionid(int transactionid)
         {
-            return RYCContextService.getInstance().BBDD.splits?.Where(x=>x.transactionid == transactionid).ToList();
+            return RYCContextService.getInstance().BBDD.splits?.Where(x => x.transactionid == transactionid).ToList();
         }
 
         public Splits? getByID(int? id)
@@ -66,7 +63,7 @@ namespace GastosRYC.BBDDLib.Services
             return total;
         }
 
-        public void saveChanges(Transactions? transactions,Splits splits)
+        public void saveChanges(Transactions? transactions, Splits splits)
         {
             if (splits.category == null && splits.categoryid != null)
             {
@@ -80,7 +77,7 @@ namespace GastosRYC.BBDDLib.Services
                 splits.amountOut = 0;
 
             update(splits);
-        } 
+        }
 
         public int getNextID()
         {

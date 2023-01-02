@@ -52,7 +52,7 @@ namespace GastosRYC.Extensions
             }
         }
 
-        public static DateTime? addMonth(this DateTime? date,int amount)
+        public static DateTime? addMonth(this DateTime? date, int amount)
         {
             if (date != null)
             {

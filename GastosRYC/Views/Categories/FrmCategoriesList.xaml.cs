@@ -21,7 +21,7 @@ namespace GastosRYC.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategoriesTypes.ItemsSource = servicesContainer.GetInstance<ICategoriesTypesService>().getAllFilterTransfer();
-            gvCategories.ItemsSource = servicesContainer.GetInstance<ICategoriesTypesService>().getAllFilterTransfer();            
+            gvCategories.ItemsSource = servicesContainer.GetInstance<ICategoriesService>().getAllFilterTransfer();
         }
 
         private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -29,16 +29,16 @@ namespace GastosRYC.Views
             Categories categories = (Categories)gvCategories.SelectedItem;
             if (categories != null)
             {
-                switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
+                switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
                 {
                     case "categoriesTypesid":
                         categories.categoriesTypes = servicesContainer.GetInstance<ICategoriesTypesService>().getByID(categories.categoriesTypesid);
-                        break;                    
+                        break;
                 }
             }
         }
 
-       
+
         private void gvCategories_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             Categories categories = (Categories)e.RowData;
@@ -54,31 +54,32 @@ namespace GastosRYC.Views
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoriesTypesid", "Tiene que rellenar el tipo de categoría");
             }
-        }                
-        
+        }
+
         private void gvCategories_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Categories categories = (Categories)e.RowData;
 
             if (categories.categoriesTypes == null && categories.categoriesTypesid != null)
             {
-                categories.categoriesTypes = servicesContainer.GetInstance<ICategoriesTypesService>().getByID(categories.categoriesTypesid);               
+                categories.categoriesTypes = servicesContainer.GetInstance<ICategoriesTypesService>().getByID(categories.categoriesTypesid);
             }
-            
+
             servicesContainer.GetInstance<ICategoriesService>().update(categories);
         }
 
         private void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (Categories categories in e.Items) {                
+            foreach (Categories categories in e.Items)
+            {
                 servicesContainer.GetInstance<ICategoriesService>().delete(categories);
-            }            
+            }
         }
 
         private void gvCategories_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if(MessageBox.Show("Esta seguro de querer eliminar esta categoría?","Eliminación categoría",MessageBoxButton.YesNo,
-                MessageBoxImage.Exclamation,MessageBoxResult.No) == MessageBoxResult.No)
+            if (MessageBox.Show("Esta seguro de querer eliminar esta categoría?", "Eliminación categoría", MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
             }

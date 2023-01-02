@@ -1,11 +1,6 @@
 ﻿using BBDDLib.Models;
-using BBDDLib.Models.Charts;
-using GastosRYC.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {

@@ -1,11 +1,8 @@
 ﻿using BBDDLib.Models;
-using BBDDLib.Models.Charts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
@@ -52,7 +49,7 @@ namespace GastosRYC.BBDDLib.Services
             var cmd = RYCContextService.getInstance().BBDD.Database.
                 GetDbConnection().CreateCommand();
             cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactionsReminders';";
-            
+
             RYCContextService.getInstance().BBDD.Database.OpenConnection();
             var result = cmd.ExecuteReader();
             result.Read();

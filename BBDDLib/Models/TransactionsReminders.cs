@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BBDDLib.Models
@@ -48,22 +46,24 @@ namespace BBDDLib.Models
         public virtual List<SplitsReminders>? splits { set; get; }
 
         [NotMapped]
-        public virtual Decimal? amount { get { return amountIn - amountOut; } }        
+        public virtual Decimal? amount { get { return amountIn - amountOut; } }
 
         [NotMapped]
-        public virtual Double? orden { 
-            get {
+        public virtual Double? orden
+        {
+            get
+            {
                 return Double.Parse(
                     date?.Year.ToString("0000")
                     + date?.Month.ToString("00")
                     + date?.Day.ToString("00")
                     + id.ToString("000000")
-                    + (amountIn != 0 ? "1" : "0")); 
-            } 
+                    + (amountIn != 0 ? "1" : "0"));
+            }
         }
 
         [NotMapped]
-        public virtual Decimal? balance { set; get; }   
-        
+        public virtual Decimal? balance { set; get; }
+
     }
 }
