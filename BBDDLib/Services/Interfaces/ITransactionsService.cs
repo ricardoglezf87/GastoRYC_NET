@@ -26,7 +26,5 @@ namespace GastosRYC.BBDDLib.Services
 
         public void updateTranferSplits(Transactions? transactions, Splits splits);
 
-        public List<ExpensesChart> getExpenses();
-
     }
 }
