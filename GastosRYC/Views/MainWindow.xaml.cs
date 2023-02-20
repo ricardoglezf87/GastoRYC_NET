@@ -427,32 +427,14 @@ namespace GastosRYC
 
         private void loadReminders()
         {
-            //TODO: Evitar error al volver al cargar que no agrupa, ahora no esta del todo como me gustaria         
+            cvReminders.ItemsSource = new ListCollectionView(servicesContainer.GetInstance<IExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration());
 
-            if (cvReminders.ItemsSource == null)
-            {
-                cvReminders.ItemsSource = new ListCollectionView(servicesContainer.GetInstance<IExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration());
+            cvReminders.CanGroup = true;
+            cvReminders.GroupCards("groupDate");
 
-                cvReminders.CanGroup = true;
-                cvReminders.GroupCards("groupDate");
-
-                cvReminders.Items.SortDescriptions.Clear();
-                cvReminders.Items.SortDescriptions.Add(
-                    new System.ComponentModel.SortDescription("date", System.ComponentModel.ListSortDirection.Ascending));
-            }
-            else
-            {
-                while (((ListCollectionView)cvReminders.ItemsSource).Count > 0)
-                {
-                    ((ListCollectionView)cvReminders.ItemsSource).RemoveAt(0);
-                }
-
-                foreach (ExpirationsReminders expirationsReminders in servicesContainer.GetInstance<IExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration())
-                {
-                    ((ListCollectionView)cvReminders.ItemsSource).AddNewItem(expirationsReminders);
-                    ((ListCollectionView)cvReminders.ItemsSource).CommitNew();
-                }
-            }
+            cvReminders.Items.SortDescriptions.Clear();
+            cvReminders.Items.SortDescriptions.Add(
+                new System.ComponentModel.SortDescription("date", System.ComponentModel.ListSortDirection.Ascending));            
         }
 
         private void reiniciarSaldosCuentas()
