@@ -3,13 +3,19 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class SplitsService
+    public class SplitsService : ISplitsService
     {
+
+        private readonly SimpleInjector.Container servicesContainer;
+
+        public SplitsService(SimpleInjector.Container servicesContainer)
+        {
+            this.servicesContainer = servicesContainer;
+        }
+
         public List<Splits>? getAll()
         {
             return RYCContextService.getInstance().BBDD.splits?.ToList();
@@ -22,7 +28,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public List<Splits>? getbyTransactionid(int transactionid)
         {
-            return RYCContextService.getInstance().BBDD.splits?.Where(x=>x.transactionid == transactionid).ToList();
+            return RYCContextService.getInstance().BBDD.splits?.Where(x => x.transactionid == transactionid).ToList();
         }
 
         public Splits? getByID(int? id)
@@ -55,6 +61,22 @@ namespace GastosRYC.BBDDLib.Services
             }
 
             return total;
+        }
+
+        public void saveChanges(Transactions? transactions, Splits splits)
+        {
+            if (splits.category == null && splits.categoryid != null)
+            {
+                splits.category = servicesContainer.GetInstance<ICategoriesService>().getByID(splits.categoryid);
+            }
+
+            if (splits.amountIn == null)
+                splits.amountIn = 0;
+
+            if (splits.amountOut == null)
+                splits.amountOut = 0;
+
+            update(splits);
         }
 
         public int getNextID()

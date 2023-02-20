@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GastosRYC.Views"
-        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.frmSplits"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.FrmSplitsRemindersList"
         mc:Ignorable="d"
         Title="Splits" Height="450" Width="800
     " WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
@@ -15,18 +15,18 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <syncfusion:SfDataGrid x:Name="gvSplits" HorizontalContentAlignment="Center" 
+        <syncfusion:SfDataGrid x:Name="gvSplitsReminders" HorizontalContentAlignment="Center" 
                                AllowEditing="True" AllowDeleting="True" 
                                ScrollMode="Async" CanMaintainScrollPosition="True" LiveDataUpdateMode="AllowDataShaping"
                                AddNewRowPosition="Top" AddNewRowText="Inserte nuevo split" 
                                AllowResizingColumns="True" AllowFiltering="True" ColumnSizer="Star" 
                                AutoGenerateColumns="False" EditTrigger="OnTap"
-                               CurrentCellDropDownSelectionChanged="gvSplits_CurrentCellDropDownSelectionChanged"
-                               AddNewRowInitiating="gvSplits_AddNewRowInitiating" ShowRowHeader="True"
-                               RowValidated="gvSplits_RowValidated" 
-                               RowValidating="gvSplits_RowValidating" 
-                               RecordDeleted="gvSplits_RecordDeleted" 
-                               RecordDeleting="gvSplits_RecordDeleting" Grid.Row="1">
+                               CurrentCellDropDownSelectionChanged="gvSplitsReminders_CurrentCellDropDownSelectionChanged"
+                               AddNewRowInitiating="gvSplitsReminders_AddNewRowInitiating" ShowRowHeader="True"
+                               RowValidated="gvSplitsReminders_RowValidated" 
+                               RowValidating="gvSplitsReminders_RowValidating" 
+                               RecordDeleted="gvSplitsReminders_RecordDeleted" 
+                               RecordDeleting="gvSplitsReminders_RecordDeleting" Grid.Row="1">
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
                 <syncfusion:GridTextColumn MappingName="transactionid" IsHidden="True" />

@@ -119,3 +119,6 @@ dotnet_naming_style.pascal_case.capitalization = pascal_case
 dotnet_style_allow_multiple_blank_lines_experimental = true:silent
 dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
 end_of_line = crlf
+
+# CS0649: El campo 'TransactionsService.accountsService' nunca se asigna y siempre tendrá el valor predeterminado null
+dotnet_diagnostic.CS0649.severity = none

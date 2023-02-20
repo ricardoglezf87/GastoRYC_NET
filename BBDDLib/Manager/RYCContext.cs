@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
-using System.Reflection;
-using System.Windows;
 
 namespace BBDDLib.Manager
 {
@@ -18,6 +16,11 @@ namespace BBDDLib.Manager
         public DbSet<Tags>? tags { get; set; }
         public DbSet<TransactionsStatus>? transactionsStatus { get; set; }
         public DbSet<Splits>? splits { get; set; }
+        public DbSet<PeriodsReminders>? periodsReminders { get; set; }
+        public DbSet<TransactionsReminders>? transactionsReminders { get; set; }
+        public DbSet<SplitsReminders>? splitsReminders { get; set; }
+
+        public DbSet<ExpirationsReminders>? expirationsReminders { get; set; }
 
         public RYCContext() : base()
         {
@@ -31,7 +34,7 @@ namespace BBDDLib.Manager
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
              => optionsBuilder.UseSqlite("Data Source="
-                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+ "\\GastosRYC\\Data\\rycBBDD.db");
+                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\GastosRYC\\Data\\rycBBDD.db");
 
     }
 }
