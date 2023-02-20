@@ -586,11 +586,13 @@ namespace GastosRYC
 
             DateTimeAxis primaryAxis = new DateTimeAxis();
             primaryAxis.Header = "Fecha";
-            primaryAxis.Minimum = DateTime.Today.AddDays(-1);
-            primaryAxis.Maximum= DateTime.Today.AddMonths(1).AddDays(1);
+            //primaryAxis.Minimum = DateTime.Today.AddDays(-1);
+            //primaryAxis.Maximum= DateTime.Today.AddMonths(1).AddDays(1);
+            primaryAxis.PlotOffsetStart = 20;
+            primaryAxis.PlotOffsetEnd = 20;
             primaryAxis.IntervalType = DateTimeIntervalType.Days;
-            primaryAxis.Interval = 1;
-            primaryAxis.LabelFormat = "dd/mm";
+            primaryAxis.Interval = 2;
+            primaryAxis.LabelFormat = "dd/MM";
             chForecast.PrimaryAxis = primaryAxis;
 
             NumericalAxis secondaryAxis = new NumericalAxis();
@@ -646,7 +648,7 @@ namespace GastosRYC
                 .Where(x=> servicesContainer.GetInstance<IAccountsTypesService>().accountExpensives(x.accountsTypesid)))
             {
 
-                SplineSeries series = new SplineSeries()
+                LineSeries series = new LineSeries()
                 {
                     ItemsSource = servicesContainer.GetInstance<IChartsService>().getMonthForecast()
                         .Where(x=> x.accountid == accounts.id).OrderByDescending(x => x.date),
