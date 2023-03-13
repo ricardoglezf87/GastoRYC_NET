@@ -5,7 +5,9 @@ using GastosRYC.BBDDLib.Services;
 using GastosRYC.Extensions;
 using GastosRYC.Views;
 using Syncfusion.Data.Extensions;
+using Syncfusion.SfSkinManager;
 using Syncfusion.UI.Xaml.Charts;
+using Syncfusion.Windows.Tools.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +21,7 @@ using System.Windows.Media.Effects;
 
 namespace GastosRYC
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : RibbonWindow
     {
 
         #region Variables
@@ -45,6 +47,7 @@ namespace GastosRYC
             InitializeComponent();
 
             servicesContainer = new SimpleInjector.Container();
+            SfSkinManager.ApplyStylesOnApplication = true;
             registerServices();
         }
 
@@ -92,7 +95,7 @@ namespace GastosRYC
             openNewTransaction();
         }
 
-        private void MenuItem_NewTransaction_Click(object sender, RoutedEventArgs e)
+        private void btnAddTransaction_Click(object sender, RoutedEventArgs e)
         {
             openNewTransaction();
         }
@@ -907,6 +910,6 @@ namespace GastosRYC
         }
 
         #endregion
-
+        
     }
 }
