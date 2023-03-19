@@ -10,8 +10,7 @@
         Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo.png" 
         PreviewKeyUp="frmInicio_PreviewKeyUp"
         xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
-        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"                 
-    >
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}">
 
     <Window.Resources>
         <Style TargetType="ListViewItem">
@@ -41,49 +40,26 @@
         <syncfusion:Ribbon x:Name="rbMenu" 
                            VerticalAlignment="Top" 
                            Grid.ColumnSpan="4" 
-                           BackStageHeader="Archivo">
+                           BackStageHeader="Archivo"
+                           MinimizeButtonVisibility="Hidden">
 
-            <syncfusion:RibbonTab Caption="Inicio"  IsChecked="True">
-                    <syncfusion:RibbonBar  Header="Acciones" IsLauncherButtonVisible="False">
-                        <syncfusion:RibbonButton Name="btnHome" SizeForm="Large" Label="Inicio" Click="btnHome_Click" LargeIcon="/Resources/home.png"/>
-                        <syncfusion:RibbonButton Name="btnReminders" SizeForm="Large" Label="Recordatorios" Click="btnReminders_Click" LargeIcon="/Resources/reminders.png"/>
-                    </syncfusion:RibbonBar>
-                </syncfusion:RibbonTab>
-                <syncfusion:RibbonTab Caption="Trasacción" >
-                    <syncfusion:RibbonBar Header="Acciones" IsLauncherButtonVisible="False">
-                        <syncfusion:RibbonButton Name="btnAddTransaction" SizeForm="Large" Label="Nueva" Click="btnAddTransaction_Click" LargeIcon="/Resources/add.png"/>
-                    </syncfusion:RibbonBar>
-                </syncfusion:RibbonTab>
-                
-            </syncfusion:Ribbon>
-            <!--<Menu DockPanel.Dock="Top">
-                <MenuItem Header="_Acciones">
-                    <MenuItem Header="_Nueva Transacción" Click="MenuItem_NewTransaction_Click" InputGestureText="F1"/>
-                    <Separator />
-                    <MenuItem Header="_Salir" Click="MenuItem_Salir_Click"/>
-                </MenuItem>
-                <MenuItem Header="_Configuración">
-                    <MenuItem Header="_Cuentas" Click="MenuItem_Accounts_Click" />
-                    <MenuItem Header="_Personas" Click="MenuItem_Persons_Click"/>
-                    <MenuItem Header="_Categorias" Click="MenuItem_Categories_Click" />
-                    <MenuItem Header="_Tags" Click="MenuItem_Tags_Click" />
-                    <MenuItem Header="_Recordatorios" Click="MenuItem_Reminders_Click" />
-                </MenuItem>
-            </Menu>-->
-        
-
-        <!--<ToolBar  Margin="0,0,0,10" Grid.Row="1" Grid.ColumnSpan="3" Background="#FFF0F0F0" >
-            <Button Name="btnNewTransaction" Width="32" Height="32" Click="btnNewTransaction_Click">
-                <Image Source="/Resources/add.png"/>
-            </Button>
-            <Separator/>
-            <Button Name="btnHome" Width="32" Height="32" Click="btnHome_Click">
-                <Image Source="/Resources/home.png"/>
-            </Button>
-            <Button Name="btnReminders" Width="32" Height="32" Click="btnReminders_Click">
-                <Image Source="/Resources/reminders.png"/>
-            </Button>
-        </ToolBar>-->
+            <syncfusion:RibbonTab Caption=""  IsChecked="True">
+                <syncfusion:RibbonBar  Header="Menú Principal" IsLauncherButtonVisible="False">
+                    <syncfusion:RibbonButton Name="btnHome" SizeForm="Large" Label="Inicio" Click="btnHome_Click" LargeIcon="/Resources/home.png" />
+                    <syncfusion:RibbonButton Name="btnReminders" SizeForm="Large" Label="Recordatorios" Click="btnReminders_Click" LargeIcon="/Resources/reminders.png" />
+                </syncfusion:RibbonBar>
+                <syncfusion:RibbonBar Header="Transación" IsLauncherButtonVisible="False">
+                    <syncfusion:RibbonButton Name="btnAddTransaction" SizeForm="Large" Label="Nueva" Click="btnAddTransaction_Click" LargeIcon="/Resources/add.png"/>
+                </syncfusion:RibbonBar>
+                <syncfusion:RibbonBar Header="Mantenimientos" IsLauncherButtonVisible="False">
+                    <syncfusion:RibbonButton Name="btnMntAccounts" SizeForm="Large" Label="Cuentas" Click="btnMntAccounts_Click" LargeIcon="/Resources/mntAccounts.png"/>
+                    <syncfusion:RibbonButton Name="btnMntPersons" SizeForm="Large" Label="Personas" Click="btnMntPersons_Click" LargeIcon="/Resources/mntPersons.png"/>
+                    <syncfusion:RibbonButton Name="btnMntCategories" SizeForm="Large" Label="Categorias" Click="btnMntCategories_Click" LargeIcon="/Resources/mntCategories.png"/>
+                    <syncfusion:RibbonButton Name="btnMntTags" SizeForm="Large" Label="Tags" Click="btnMntTags_Click" LargeIcon="/Resources/mntTags.png"/>
+                    <syncfusion:RibbonButton Name="btnMntReminders" SizeForm="Large" Label="Recordatorios" Click="btnMntReminders_Click" LargeIcon="/Resources/mntReminders.png"/>
+                </syncfusion:RibbonBar>
+            </syncfusion:RibbonTab>
+        </syncfusion:Ribbon>
 
         <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="btnAllAccounts_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>

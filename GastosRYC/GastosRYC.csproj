@@ -15,6 +15,11 @@
     <None Remove="Resources\close.png" />
     <None Remove="Resources\home.png" />
     <None Remove="Resources\Logo.png" />
+    <None Remove="Resources\mntAccounts.png" />
+    <None Remove="Resources\mntCategories.png" />
+    <None Remove="Resources\mntPersons.png" />
+    <None Remove="Resources\mntReminders.png" />
+    <None Remove="Resources\mntTags.png" />
     <None Remove="Resources\options.png" />
     <None Remove="Resources\register.png" />
     <None Remove="Resources\reminders.png" />
@@ -37,6 +42,21 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\mntAccounts.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\mntCategories.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\mntPersons.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\mntReminders.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\mntTags.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\register.png">
