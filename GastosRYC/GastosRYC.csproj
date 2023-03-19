@@ -20,6 +20,7 @@
     <None Remove="Resources\reminders.png" />
     <None Remove="Resources\skip.png" />
     <None Remove="Resources\Split.png" />
+    <None Remove="Views\options.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -73,6 +74,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BBDDLib\BBDDLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\options.png" />
   </ItemGroup>
 
   <ItemGroup>

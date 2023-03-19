@@ -47,7 +47,10 @@ namespace GastosRYC
             InitializeComponent();
 
             servicesContainer = new SimpleInjector.Container();
-            SfSkinManager.ApplyStylesOnApplication = true;
+            servicesContainer = new SimpleInjector.Container();
+
+            rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
+
             registerServices();
         }
 
@@ -212,6 +215,7 @@ namespace GastosRYC
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
+            
             loadAccounts();
             loadTransactions();
             refreshBalance();

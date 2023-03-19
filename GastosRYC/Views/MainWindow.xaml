@@ -37,17 +37,11 @@
             <RowDefinition Height="20"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        
- <syncfusion:Ribbon x:Name="rbMenu" VerticalAlignment="Top" Grid.ColumnSpan="4">
-            <!--<syncfusion:Ribbon.ApplicationMenu>
-                <syncfusion:ApplicationMenu Name="_applicationMenu" Width="38" Height="38" syncfusion:Ribbon.KeyTip="F" IsPopupOpen="False" ApplicationButtonImage="/Resources/Logo.png">
-                    <syncfusion:SimpleMenuButton Label="Acerca de..."/>
-                    <syncfusion:ApplicationMenu.ApplicationItems>
-                        <syncfusion:RibbonButton SizeForm = "Small" Label="Options" SmallIcon="/Resources/options.png" />
-                        <syncfusion:RibbonButton SizeForm = "Small" Label="Exit" SmallIcon="/Resources/close.png"  />
-                    </syncfusion:ApplicationMenu.ApplicationItems>
-                </syncfusion:ApplicationMenu>
-            </syncfusion:Ribbon.ApplicationMenu>-->
+
+        <syncfusion:Ribbon x:Name="rbMenu" 
+                           VerticalAlignment="Top" 
+                           Grid.ColumnSpan="4" 
+                           BackStageHeader="Archivo">
 
             <syncfusion:RibbonTab Caption="Inicio"  IsChecked="True">
                     <syncfusion:RibbonBar  Header="Acciones" IsLauncherButtonVisible="False">
