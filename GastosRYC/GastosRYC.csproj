@@ -19,6 +19,8 @@
     <None Remove="Resources\home-32.png" />
     <None Remove="Resources\home-48.png" />
     <None Remove="Resources\home.png" />
+    <None Remove="Resources\logo-16.png" />
+    <None Remove="Resources\logo-66.png" />
     <None Remove="Resources\Logo.png" />
     <None Remove="Resources\mntAccounts-32.png" />
     <None Remove="Resources\mntAccounts.png" />
@@ -68,10 +70,16 @@
     <Content Include="Resources\home-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\logo-16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\logo-66.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Logo.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Logo.png">
+    <Content Include="Resources\Logo-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\mntAccounts-32.png">
