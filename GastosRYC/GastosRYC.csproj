@@ -11,31 +11,61 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\add-16.png" />
+    <None Remove="Resources\add-32.png" />
+    <None Remove="Resources\add-48.png" />
     <None Remove="Resources\add.png" />
     <None Remove="Resources\close.png" />
+    <None Remove="Resources\home-32.png" />
+    <None Remove="Resources\home-48.png" />
     <None Remove="Resources\home.png" />
     <None Remove="Resources\Logo.png" />
+    <None Remove="Resources\mntAccounts-32.png" />
     <None Remove="Resources\mntAccounts.png" />
+    <None Remove="Resources\mntCategories-32.png" />
+    <None Remove="Resources\mntCategories-64.png" />
     <None Remove="Resources\mntCategories.png" />
+    <None Remove="Resources\mntPersons-32.png" />
+    <None Remove="Resources\mntPersons-64.png" />
     <None Remove="Resources\mntPersons.png" />
+    <None Remove="Resources\mntReminders-32.png" />
+    <None Remove="Resources\mntReminders-94.png" />
     <None Remove="Resources\mntReminders.png" />
+    <None Remove="Resources\mntTags-32.png" />
+    <None Remove="Resources\mntTags-94.png" />
     <None Remove="Resources\mntTags.png" />
     <None Remove="Resources\options.png" />
+    <None Remove="Resources\register-16.png" />
+    <None Remove="Resources\register-32.png" />
+    <None Remove="Resources\register-64.png" />
     <None Remove="Resources\register.png" />
+    <None Remove="Resources\reminders-32.png" />
+    <None Remove="Resources\reminders-64.png" />
     <None Remove="Resources\reminders.png" />
+    <None Remove="Resources\skip-16.png" />
+    <None Remove="Resources\skip-32.png" />
+    <None Remove="Resources\skip-48.png" />
     <None Remove="Resources\skip.png" />
+    <None Remove="Resources\split-16.png" />
+    <None Remove="Resources\split-32.png" />
     <None Remove="Resources\Split.png" />
     <None Remove="Views\options.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\add.png">
+    <Content Include="Resources\add-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\close.png">
+    <Content Include="Resources\add-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\home.png">
+    <Content Include="Resources\add-48.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\home-32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\home-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Logo.ico">
@@ -44,31 +74,61 @@
     <Content Include="Resources\Logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\mntAccounts.png">
+    <Content Include="Resources\mntAccounts-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\mntCategories.png">
+    <Content Include="Resources\mntCategories-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\mntPersons.png">
+    <Content Include="Resources\mntCategories-64.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\mntReminders.png">
+    <Content Include="Resources\mntPersons-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\mntTags.png">
+    <Content Include="Resources\mntPersons-64.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\register.png">
+    <Content Include="Resources\mntReminders-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\reminders.png">
+    <Content Include="Resources\mntReminders-94.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\skip.png">
+    <Content Include="Resources\mntTags-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Split.png">
+    <Content Include="Resources\mntTags-94.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\register-16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\register-32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\register-64.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\reminders-32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\reminders-64.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skip-16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skip-32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\skip-48.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\split-16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\split-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -97,7 +157,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\options.png" />
+    <Content Include="Resources\options.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

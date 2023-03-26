@@ -45,18 +45,18 @@
 
             <syncfusion:RibbonTab Caption=""  IsChecked="True">
                 <syncfusion:RibbonBar  Header="Menú Principal" IsLauncherButtonVisible="False">
-                    <syncfusion:RibbonButton Name="btnHome" SizeForm="Large" Label="Inicio" Click="btnHome_Click" LargeIcon="/Resources/home.png" />
-                    <syncfusion:RibbonButton Name="btnReminders" SizeForm="Large" Label="Recordatorios" Click="btnReminders_Click" LargeIcon="/Resources/reminders.png" />
+                    <syncfusion:RibbonButton Name="btnHome" SizeForm="Large" Label="Inicio" Click="btnHome_Click" LargeIcon="/Resources/home-32.png" />
+                    <syncfusion:RibbonButton Name="btnReminders" SizeForm="Large" Label="Recordatorios" Click="btnReminders_Click" LargeIcon="/Resources/reminders-32.png" />
                 </syncfusion:RibbonBar>
                 <syncfusion:RibbonBar Header="Transación" IsLauncherButtonVisible="False">
-                    <syncfusion:RibbonButton Name="btnAddTransaction" SizeForm="Large" Label="Nueva" Click="btnAddTransaction_Click" LargeIcon="/Resources/add.png"/>
+                    <syncfusion:RibbonButton Name="btnAddTransaction" SizeForm="Large" Label="Nueva" Click="btnAddTransaction_Click" LargeIcon="/Resources/add-32.png"/>
                 </syncfusion:RibbonBar>
                 <syncfusion:RibbonBar Header="Mantenimientos" IsLauncherButtonVisible="False">
-                    <syncfusion:RibbonButton Name="btnMntAccounts" SizeForm="Large" Label="Cuentas" Click="btnMntAccounts_Click" LargeIcon="/Resources/mntAccounts.png"/>
-                    <syncfusion:RibbonButton Name="btnMntPersons" SizeForm="Large" Label="Personas" Click="btnMntPersons_Click" LargeIcon="/Resources/mntPersons.png"/>
-                    <syncfusion:RibbonButton Name="btnMntCategories" SizeForm="Large" Label="Categorias" Click="btnMntCategories_Click" LargeIcon="/Resources/mntCategories.png"/>
-                    <syncfusion:RibbonButton Name="btnMntTags" SizeForm="Large" Label="Tags" Click="btnMntTags_Click" LargeIcon="/Resources/mntTags.png"/>
-                    <syncfusion:RibbonButton Name="btnMntReminders" SizeForm="Large" Label="Recordatorios" Click="btnMntReminders_Click" LargeIcon="/Resources/mntReminders.png"/>
+                    <syncfusion:RibbonButton Name="btnMntAccounts" SizeForm="Large" Label="Cuentas" Click="btnMntAccounts_Click" LargeIcon="/Resources/mntAccounts-32.png"/>
+                    <syncfusion:RibbonButton Name="btnMntPersons" SizeForm="Large" Label="Personas" Click="btnMntPersons_Click" LargeIcon="/Resources/mntPersons-32.png" IconStretch="Fill"/>
+                    <syncfusion:RibbonButton Name="btnMntCategories" SizeForm="Large" Label="Categorias" Click="btnMntCategories_Click" LargeIcon="/Resources/mntCategories-32.png"/>
+                    <syncfusion:RibbonButton Name="btnMntTags" SizeForm="Large" Label="Tags" Click="btnMntTags_Click" LargeIcon="/Resources/mntTags-32.png"/>
+                    <syncfusion:RibbonButton Name="btnMntReminders" SizeForm="Large" Label="Recordatorios" Click="btnMntReminders_Click" LargeIcon="/Resources/mntReminders-32.png"/>
                 </syncfusion:RibbonBar>
             </syncfusion:RibbonTab>
         </syncfusion:Ribbon>
@@ -69,7 +69,7 @@
                   SizeChanged="lvAccounts_SizeChanged" 
                   BorderBrush="{x:Null}" Background="{x:Null}" 
                   d:ItemsSource="{d:SampleData ItemCount=5}" 
-                  BorderThickness="1,1,1,0" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                  BorderThickness="1,1,1,0" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" Padding="0,0,-10,0">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -161,7 +161,7 @@
                                 <Button syncfusion:FocusManagerHelper.FocusedElement="True"
                                     Background="Transparent"                                    
                                     Click="ButtonSplit_Click">
-                                    <Image Source="/Resources/Split.png" />
+                                    <Image Source="/Resources/Split-16.png" />
                                 </Button>
                             </DataTemplate>
                         </syncfusion:GridTemplateColumn.CellTemplate>
@@ -249,10 +249,10 @@
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
                                 <Button Name="btnSkip" Click="btnSkip_Click" Width="40" Height="40" Foreground="{x:Null}" Background="White" HorizontalAlignment="Left" BorderBrush="{x:Null}" Margin="5,0,0,0" Tag="{Binding id}">
-                                    <Image Source="/Resources/skip.png" Stretch="Fill" />
+                                    <Image Source="/Resources/skip-32.png" Stretch="Fill" />
                                 </Button>
                                 <Button Name="btnRegister" Click="btnRegister_Click"   Width="40" Height="40" Foreground="{x:Null}" Background="White" Grid.Column="1" BorderBrush="{x:Null}" HorizontalAlignment="Right" Margin="0,0,5,0" Tag="{Binding id}" >
-                                    <Image Source="/Resources/register.png" Stretch="Fill" />
+                                    <Image Source="/Resources/register-32.png" Stretch="Fill" />
                                 </Button>
                             </Grid>
                         </StackPanel>
