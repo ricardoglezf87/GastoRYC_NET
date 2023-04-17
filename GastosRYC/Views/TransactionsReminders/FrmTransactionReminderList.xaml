@@ -17,7 +17,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <syncfusion:ButtonAdv x:Name="btnAdd" Height="20" IconStretch="Fill" SizeMode="Small" SmallIcon="/Resources/add.png" Click="btnAdd_Click"/>
+        <syncfusion:ButtonAdv x:Name="btnAdd" Height="20" IconStretch="Fill" SizeMode="Small" SmallIcon="/Resources/add-16.png" Click="btnAdd_Click"/>
 
         <syncfusion:SfTextBoxExt x:Name="txtSearch" Grid.Column="1"  
                                  TextChanged="txtSearch_TextChanged" Watermark="Escriba texto a buscar..." VerticalAlignment="Top" ShowClearButton="True" Height="20" />

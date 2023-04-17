@@ -5,7 +5,9 @@ using GastosRYC.BBDDLib.Services;
 using GastosRYC.Extensions;
 using GastosRYC.Views;
 using Syncfusion.Data.Extensions;
+using Syncfusion.SfSkinManager;
 using Syncfusion.UI.Xaml.Charts;
+using Syncfusion.Windows.Tools.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +21,7 @@ using System.Windows.Media.Effects;
 
 namespace GastosRYC
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : RibbonWindow
     {
 
         #region Variables
@@ -45,6 +47,10 @@ namespace GastosRYC
             InitializeComponent();
 
             servicesContainer = new SimpleInjector.Container();
+            servicesContainer = new SimpleInjector.Container();
+
+            rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
+
             registerServices();
         }
 
@@ -92,7 +98,7 @@ namespace GastosRYC
             openNewTransaction();
         }
 
-        private void MenuItem_NewTransaction_Click(object sender, RoutedEventArgs e)
+        private void btnAddTransaction_Click(object sender, RoutedEventArgs e)
         {
             openNewTransaction();
         }
@@ -209,6 +215,7 @@ namespace GastosRYC
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
+            
             loadAccounts();
             loadTransactions();
             refreshBalance();
@@ -298,7 +305,7 @@ namespace GastosRYC
             autoResizeListView();
         }
 
-        private void MenuItem_Accounts_Click(object sender, RoutedEventArgs e)
+        private void btnMntAccounts_Click(object sender, RoutedEventArgs e)
         {
             FrmAccountsList frm = new FrmAccountsList(servicesContainer);
             frm.ShowDialog();
@@ -307,7 +314,7 @@ namespace GastosRYC
             refreshBalance();
         }
 
-        private void MenuItem_Persons_Click(object sender, RoutedEventArgs e)
+        private void btnMntPersons_Click(object sender, RoutedEventArgs e)
         {
             FrmPersonsList frm = new FrmPersonsList(servicesContainer);
             frm.ShowDialog();
@@ -315,7 +322,7 @@ namespace GastosRYC
             refreshBalance();
         }
 
-        private void MenuItem_Categories_Click(object sender, RoutedEventArgs e)
+        private void btnMntCategories_Click(object sender, RoutedEventArgs e)
         {
             FrmCategoriesList frm = new FrmCategoriesList(servicesContainer);
             frm.ShowDialog();
@@ -323,12 +330,7 @@ namespace GastosRYC
             refreshBalance();
         }
 
-        private void MenuItem_Salir_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void MenuItem_Tags_Click(object sender, RoutedEventArgs e)
+        private void btnMntTags_Click(object sender, RoutedEventArgs e)
         {
             FrmTagsList frm = new FrmTagsList(servicesContainer);
             frm.ShowDialog();
@@ -336,7 +338,7 @@ namespace GastosRYC
             refreshBalance();
         }
 
-        private void MenuItem_Reminders_Click(object sender, RoutedEventArgs e)
+        private void btnMntReminders_Click(object sender, RoutedEventArgs e)
         {
             FrmTransactionReminderList frm = new FrmTransactionReminderList(servicesContainer);
             frm.ShowDialog();
@@ -907,6 +909,6 @@ namespace GastosRYC
         }
 
         #endregion
-
+        
     }
 }
