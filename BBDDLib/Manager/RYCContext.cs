@@ -1,6 +1,9 @@
 ﻿using BBDDLib.Models;
+using BBDDLib.Properties;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 using System;
+using System.Configuration;
 using System.IO;
 
 namespace BBDDLib.Manager
@@ -24,17 +27,34 @@ namespace BBDDLib.Manager
 
         public RYCContext() : base()
         {
-            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                + "\\GastosRYC\\Data\\"))
-                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                + "\\GastosRYC\\Data\\");
+            if (!Settings.Default.BBDDLocal)
+            {
+                if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                    + "\\GastosRYC\\Data\\"))
+                    Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                    + "\\GastosRYC\\Data\\");
+            }
+            else
+            {
+                if (!Directory.Exists("Data\\"))
+                    Directory.CreateDirectory("Data\\");
+            }
 
             Database.Migrate();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-             => optionsBuilder.UseSqlite("Data Source="
+        {
+            if (!Settings.Default.BBDDLocal)
+            {
+                optionsBuilder.UseSqlite("Data Source="
                 + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\GastosRYC\\Data\\rycBBDD.db");
+            }
+            else
+            {
+                optionsBuilder.UseSqlite("Data Source=Data\\rycBBDD.db");
+            }
+        }
 
     }
 }
