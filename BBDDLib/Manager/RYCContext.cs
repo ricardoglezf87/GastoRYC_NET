@@ -45,14 +45,23 @@ namespace BBDDLib.Manager
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+
+            String nameDDBB = String.Empty;
+
+#if DEBUG
+            nameDDBB = "rycBBDD_PRE.db";
+#else
+            nameDDBB = "rycBBDD.db";
+#endif
+
             if (!Settings.Default.BBDDLocal)
             {
                 optionsBuilder.UseSqlite("Data Source="
-                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\GastosRYC\\Data\\rycBBDD.db");
+                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\GastosRYC\\Data\\" + nameDDBB );
             }
             else
             {
-                optionsBuilder.UseSqlite("Data Source=Data\\rycBBDD.db");
+                optionsBuilder.UseSqlite("Data Source=Data\\" + nameDDBB);
             }
         }
 
