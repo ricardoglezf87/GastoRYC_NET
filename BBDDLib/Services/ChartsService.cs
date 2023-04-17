@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Configuration;
 using System.Linq;
 using static GastosRYC.BBDDLib.Services.IAccountsTypesService;
 
@@ -42,17 +43,14 @@ namespace GastosRYC.BBDDLib.Services
 
         public List<ForecastsChart> getMonthForecast()
         {
-            Dictionary<Tuple<DateTime,int?>,Decimal> dChart = new();
+            Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
+            Dictionary<int, Decimal> saldos = new();
 
             DateTime now = DateTime.Now;
-            
-            for (int i = 0; i < 30; i++)
+
+            foreach (var g in RYCContextService.getInstance().BBDD.accounts)
             {
-                DateTime d = now.AddDays(i);
-                foreach (var g in RYCContextService.getInstance().BBDD.accounts)
-                {
-                    dChart.Add(new Tuple<DateTime, int?>(d, g.id), 0);
-                }
+                saldos.Add(g.id, 0);
             }
 
             for (int i = 0; i < 30; i++)
@@ -65,7 +63,13 @@ namespace GastosRYC.BBDDLib.Services
                                     x.account.accountsTypesid == (int)eAccountsTypes.Cards)))
                                 .GroupBy(g => g.accountid))
                 {
-                    dChart[new Tuple<DateTime, int?>(d, g.Key)] += (decimal)(g.Sum(x => x.amount) ?? 0);
+                    Decimal saldo_act = (decimal)(g.Sum(x => x.amount) ?? 0);
+
+                    if (g.Key != null && (saldos[g.Key.Value] != saldo_act || i == 29))
+                    {
+                        dChart.Add(new Tuple<DateTime, int?>(d, g.Key), saldo_act);
+                        saldos[g.Key.Value] = saldo_act;
+                    }
                 }
             }
 
@@ -110,14 +114,15 @@ namespace GastosRYC.BBDDLib.Services
 
             List<ForecastsChart> lChart = new();
 
-            foreach(Tuple<DateTime,int?> key in dChart.Keys){
+            foreach (Tuple<DateTime, int?> key in dChart.Keys)
+            {
                 lChart.Add(new ForecastsChart(key.Item1,
                     servicesContainer.GetInstance<IAccountsService>().getByID(key.Item2)?.description,
                     key.Item2, dChart[key]));
             }
 
             return lChart;
-        }        
+        }
 
         #endregion Functions
 
