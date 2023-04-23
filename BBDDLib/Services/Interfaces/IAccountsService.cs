@@ -7,6 +7,7 @@ namespace BBDDLib.Services.Interfaces
     {
         public List<Accounts>? getAll();
         public List<Accounts>? getAllOrderByAccountsTypesId();
+        public List<Accounts>? getAllOpened();
         public Accounts? getByID(int? id);
         public void update(Accounts accounts);
         public void delete(Accounts accounts);

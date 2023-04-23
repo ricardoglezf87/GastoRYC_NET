@@ -18,6 +18,11 @@ namespace GastosRYC.BBDDLib.Services
             return RYCContextService.getInstance().BBDD.accounts?.OrderBy(x => x.accountsTypesid).ToList();
         }
 
+        public List<Accounts>? getAllOpened()
+        {
+            return RYCContextService.getInstance().BBDD.accounts?.Where(x => !x.closed.HasValue || !x.closed.Value).ToList();
+        }
+
         public Accounts? getByID(int? id)
         {
             return RYCContextService.getInstance().BBDD.accounts?.FirstOrDefault(x => id.Equals(x.id));

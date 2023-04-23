@@ -19,6 +19,8 @@ namespace BBDDLib.Models
 
         public virtual Categories? category { set; get; }
 
+        public virtual Boolean? closed { set; get; }
+
         [NotMapped]
         public virtual Decimal balance { set; get; }
     }

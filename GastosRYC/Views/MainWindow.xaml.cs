@@ -646,7 +646,7 @@ namespace GastosRYC
 
             chForecast.Series.Clear();
 
-            foreach (Accounts accounts in servicesContainer.GetInstance<IAccountsService>().getAll()?
+            foreach (Accounts accounts in servicesContainer.GetInstance<IAccountsService>().getAllOpened()?
                 .Where(x=> servicesContainer.GetInstance<IAccountsTypesService>().accountExpensives(x.accountsTypesid)))
             {
 
@@ -796,7 +796,7 @@ namespace GastosRYC
 
         private void loadAccounts()
         {
-            viewAccounts = CollectionViewSource.GetDefaultView(servicesContainer.GetInstance<IAccountsService>().getAll());
+            viewAccounts = CollectionViewSource.GetDefaultView(servicesContainer.GetInstance<IAccountsService>().getAllOpened());
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypes.id", ListSortDirection.Ascending));
