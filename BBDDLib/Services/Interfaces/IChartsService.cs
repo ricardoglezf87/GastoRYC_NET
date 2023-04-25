@@ -6,8 +6,6 @@ namespace GastosRYC.BBDDLib.Services
 {
     public interface IChartsService
     {
-        public List<ExpensesChart> getExpenses();
-
         public List<ForecastsChart> getMonthForecast();
 
     }

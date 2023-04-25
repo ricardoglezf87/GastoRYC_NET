@@ -26,21 +26,7 @@ namespace GastosRYC.BBDDLib.Services
         #endregion Propiedades y Contructor
 
         #region Functions
-
-        public List<ExpensesChart> getExpenses()
-        {
-            List<ExpensesChart> lChart = new();
-
-            foreach (var g in RYCContextService.getInstance().BBDD.transactions?
-                                .Where(x => x.category != null && x.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Expenses)
-                                .GroupBy(g => g.category))
-            {
-                lChart.Add(new ExpensesChart(g.Key.description, -g.Sum(x => x.amount)));
-            }
-
-            return lChart;
-        }
-
+        
         public List<ForecastsChart> getMonthForecast()
         {
             Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();

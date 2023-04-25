@@ -187,6 +187,7 @@
                 <syncfusion:SfDataGrid.Columns >
                     <syncfusion:GridTextColumn MappingName="category" HeaderText="Categoría"/>
                     <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>
+                    <syncfusion:GridCurrencyColumn MappingName="neg_amount" HeaderText="Importe"/>
                 </syncfusion:SfDataGrid.Columns>
             </syncfusion:SfDataGrid>
 

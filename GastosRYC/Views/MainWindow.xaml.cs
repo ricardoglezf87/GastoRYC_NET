@@ -1,5 +1,5 @@
 ﻿using BBDDLib.Models;
-using BBDDLib.Models.Charts;
+using BBDDLib.Services;
 using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
 using GastosRYC.Extensions;
@@ -11,6 +11,7 @@ using Syncfusion.Windows.Tools.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -40,6 +41,12 @@ namespace GastosRYC
 
         #endregion
 
+        #region Clases
+
+            private readonly VBalancebyCategoryService vBalancebyCategory;
+
+        #endregion
+
         #region Constructors
 
         public MainWindow()
@@ -52,6 +59,8 @@ namespace GastosRYC
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
 
             registerServices();
+
+            vBalancebyCategory = new VBalancebyCategoryService();
         }
 
         #endregion
@@ -394,7 +403,7 @@ namespace GastosRYC
             servicesContainer.Register<ITransactionsStatusService, TransactionsStatusService>();
             servicesContainer.Register<ICategoriesTypesService, CategoriesTypesService>();
             servicesContainer.Register<IAccountsTypesService, AccountsTypesService>();
-            servicesContainer.Register<IChartsService, ChartsService>();
+            servicesContainer.Register<IChartsService, ChartsService>();            
         }
 
         private void toggleViews(eViews views)
@@ -756,7 +765,7 @@ namespace GastosRYC
 
             FrameworkElementFactory textblock2 = new FrameworkElementFactory(typeof(TextBlock));
             textblock2.SetBinding(TextBlock.TextProperty,
-                new Binding("Item.amount")
+                new Binding("Item.neg_amount")
                 {
                     StringFormat = "C",
                     ConverterCulture = new System.Globalization.CultureInfo("es-ES")
@@ -772,14 +781,14 @@ namespace GastosRYC
 
             //Series
 
-            List<ExpensesChart> lExpensesCharts = servicesContainer.GetInstance<IChartsService>().getExpenses();
+            List<VBalancebyCategory>? lExpensesCharts = vBalancebyCategory.getExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new ColumnSeries()
             {
-                ItemsSource = lExpensesCharts.OrderByDescending(x => x.amount).Take(10),
+                ItemsSource = lExpensesCharts?.OrderByDescending(x => x.neg_amount).Take(10),
                 XBindingPath = "category",
-                YBindingPath = "amount",
+                YBindingPath = "neg_amount",
                 ShowTooltip = true,
                 TooltipTemplate = tooltip,
                 EnableAnimation = true,
@@ -791,7 +800,7 @@ namespace GastosRYC
 
             //Grid
 
-            gvExpenses.ItemsSource = lExpensesCharts.OrderByDescending(x => x.amount);
+            gvExpenses.ItemsSource = lExpensesCharts?.OrderByDescending(x => x.neg_amount);
         }
 
         private void loadAccounts()

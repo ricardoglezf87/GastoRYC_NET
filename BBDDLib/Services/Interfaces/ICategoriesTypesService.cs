@@ -7,8 +7,8 @@ namespace GastosRYC.BBDDLib.Services
     {
         public enum eCategoriesTypes : int
         {
-            Incomes = 1,
-            Expenses = 2,
+            Expenses = 1,
+            Incomes = 2,
             Transfers = 3,
             Specials = 4
         }
