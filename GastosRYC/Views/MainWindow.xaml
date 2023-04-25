@@ -63,50 +63,49 @@
 
         <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="btnAllAccounts_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>
+        <ScrollViewer Grid.Column="0" Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged"                   
+                      SizeChanged="lvAccounts_SizeChanged" 
+                      BorderBrush="{x:Null}" Background="{x:Null}" 
+                      d:ItemsSource="{d:SampleData ItemCount=5}" 
+                      BorderThickness="1,1,1,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" Margin="0,0,-5,0">
+                <ListView.Resources>
+                    <Style TargetType="GridViewColumnHeader">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Style>
+                </ListView.Resources>
 
-        <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged" 
-                  Grid.Column="0" Grid.Row="3" 
-                  SizeChanged="lvAccounts_SizeChanged" 
-                  BorderBrush="{x:Null}" Background="{x:Null}" 
-                  d:ItemsSource="{d:SampleData ItemCount=5}" 
-                  BorderThickness="1,1,1,0" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" Padding="0,0,-10,0">
-            <ListView.Resources>
-                <Style TargetType="GridViewColumnHeader">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                </Style>
-            </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
+                        <GridViewColumn   CellTemplate="{StaticResource BalanceTemplate}"  />
 
-            <ListView.View>
-                <GridView AllowsColumnReorder="False">
-                    <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
-                    <GridViewColumn   CellTemplate="{StaticResource BalanceTemplate}"  />
-
-                </GridView>
-            </ListView.View>
-            <ListView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Expander IsExpanded="True">
-                                            <Expander.Header>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name.description}"/>
-                                                </StackPanel>
-                                            </Expander.Header>
-                                            <ItemsPresenter />
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ListView.GroupStyle>
-        </ListView>
-
+                    </GridView>
+                </ListView.View>
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Expander IsExpanded="True">
+                                                <Expander.Header>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name.description}"/>
+                                                    </StackPanel>
+                                                </Expander.Header>
+                                                <ItemsPresenter />
+                                            </Expander>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+            </ListView>
+        </ScrollViewer>
         <input:SfGridSplitter Name="gridSplitter"
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
                               Width="auto" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"/>
