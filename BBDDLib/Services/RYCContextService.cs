@@ -28,6 +28,7 @@ namespace GastosRYC.BBDDLib.Services
             context.splitsReminders?.Load();
             context.transactionsReminders?.Load();
             context.expirationsReminders?.Load();
+            context.vBalancebyCategory?.Load();
         }
 
         public RYCContext BBDD { get { return context; } }

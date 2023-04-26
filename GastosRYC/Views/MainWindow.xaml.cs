@@ -49,6 +49,7 @@ namespace GastosRYC
 
             servicesContainer = new SimpleInjector.Container();
 
+            SfSkinManager.ApplyStylesOnApplication = true;
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
 
             registerServices();
@@ -809,7 +810,6 @@ namespace GastosRYC
         {
             gvTransactions.ItemsSource = servicesContainer.GetInstance<TransactionsService>().getAll();
             ApplyFilters();
-
         }
 
         public void ApplyFilters()
