@@ -48,7 +48,6 @@ namespace GastosRYC
             InitializeComponent();
 
             servicesContainer = new SimpleInjector.Container();
-            servicesContainer = new SimpleInjector.Container();
 
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
 
