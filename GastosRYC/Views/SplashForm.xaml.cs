@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Printing;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace GastosRYC.Views
         public SpashForm()
         {
             InitializeComponent();
-            lblVersion.Content = "Version: " + Environment.Version.ToString();
+            lblVersion.Content = "Version: " + Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString();
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)
