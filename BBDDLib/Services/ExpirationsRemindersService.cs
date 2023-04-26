@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class ExpirationsRemindersService : IExpirationsRemindersService
+    public class ExpirationsRemindersService
     {
         private readonly SimpleInjector.Container servicesContainer;
 
@@ -71,7 +71,7 @@ namespace GastosRYC.BBDDLib.Services
                         update(expirationsReminders);
                     }
 
-                    date = servicesContainer.GetInstance<IPeriodsRemindersService>().getNextDate(date, servicesContainer.GetInstance<IPeriodsRemindersService>().toEnum(transactionsReminders.periodsReminders));
+                    date = servicesContainer.GetInstance<PeriodsRemindersService>().getNextDate(date, servicesContainer.GetInstance<PeriodsRemindersService>().toEnum(transactionsReminders.periodsReminders));
 
                 }
             }
@@ -94,8 +94,8 @@ namespace GastosRYC.BBDDLib.Services
                     transactions.amountIn = expirationsReminders.transactionsReminders.amountIn;
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
-                    transactions.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
-                    servicesContainer.GetInstance<ITransactionsService>().saveChanges(transactions);
+                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                    servicesContainer.GetInstance<TransactionsService>().saveChanges(transactions);
 
                     if (expirationsReminders.transactionsReminders.splits != null)
                     {
@@ -108,8 +108,8 @@ namespace GastosRYC.BBDDLib.Services
                             splits.amountIn = splitsReminders.amountIn;
                             splits.amountOut = splitsReminders.amountOut;
                             splits.tagid = splitsReminders.tagid;
-                            servicesContainer.GetInstance<ISplitsService>().saveChanges(transactions, splits);
-                            servicesContainer.GetInstance<ITransactionsService>().updateTranferSplits(transactions, splits);
+                            servicesContainer.GetInstance<SplitsService>().saveChanges(transactions, splits);
+                            servicesContainer.GetInstance<TransactionsService>().updateTranferSplits(transactions, splits);
                         }
                     }
 

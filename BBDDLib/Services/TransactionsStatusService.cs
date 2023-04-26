@@ -4,8 +4,15 @@ using System.Linq;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class TransactionsStatusService : ITransactionsStatusService
+    public class TransactionsStatusService
     {
+        public enum eTransactionsTypes : int
+        {
+            Pending = 1,
+            Provisional = 2,
+            Reconciled = 3
+        }
+
         public List<TransactionsStatus>? getAll()
         {
             return RYCContextService.getInstance().BBDD.transactionsStatus?.ToList();

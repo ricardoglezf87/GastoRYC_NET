@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class TagsService : ITagsService
+    public class TagsService
     {
         public List<Tags>? getAll()
         {

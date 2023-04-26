@@ -22,7 +22,7 @@ namespace BBDDLib.Services
 
         public List<VBalancebyCategory>? getExpensesbyYearMonth(int month, int year)
         {
-            return getAll()?.Where(x => x.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToList();
+            return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToList();
         }
     }
 }

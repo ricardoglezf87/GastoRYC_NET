@@ -1,17 +1,16 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Models.Charts;
-using BBDDLib.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Configuration;
 using System.Linq;
-using static GastosRYC.BBDDLib.Services.IAccountsTypesService;
+using static GastosRYC.BBDDLib.Services.AccountsTypesService;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class ChartsService : IChartsService
+    public class ChartsService
     {
 
         #region Propiedades y Contructor
@@ -81,9 +80,9 @@ namespace GastosRYC.BBDDLib.Services
             //                        x.account.accountsTypesid == (int)eAccountsTypes.Cards)))
             //                    .GroupBy(g => g.accountid))
             //{
-            //    //lChart.Add(new ForecastsChart(DateTime.Today.AddDays(-1), servicesContainer.GetInstance<IAccountsService>().getByID(g.Key)?.description,
+            //    //lChart.Add(new ForecastsChart(DateTime.Today.AddDays(-1), servicesContainer.GetInstance<AccountsService>().getByID(g.Key)?.description,
             //    //    g.Key, g.Sum(x => x.amount)));
-            //    lChart.Add(new ForecastsChart(DateTime.Today, servicesContainer.GetInstance<IAccountsService>().getByID(g.Key)?.description,
+            //    lChart.Add(new ForecastsChart(DateTime.Today, servicesContainer.GetInstance<AccountsService>().getByID(g.Key)?.description,
             //        g.Key, g.Sum(x => x.amount)));
             //}           
 
@@ -94,7 +93,7 @@ namespace GastosRYC.BBDDLib.Services
             //                        x.account.accountsTypesid == (int)eAccountsTypes.Cards)))
             //                    .GroupBy(g => new { g.date, g.accountid }))
             //{
-            //    lChart.Add(new ForecastsChart(g.Key.date, servicesContainer.GetInstance<IAccountsService>().getByID(g.Key.accountid)?.description,
+            //    lChart.Add(new ForecastsChart(g.Key.date, servicesContainer.GetInstance<AccountsService>().getByID(g.Key.accountid)?.description,
             //        g.Key.accountid, g.Sum(x => x.amount)));
             //}
 
@@ -103,7 +102,7 @@ namespace GastosRYC.BBDDLib.Services
             foreach (Tuple<DateTime, int?> key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    servicesContainer.GetInstance<IAccountsService>().getByID(key.Item2)?.description,
+                    servicesContainer.GetInstance<AccountsService>().getByID(key.Item2)?.description,
                     key.Item2, dChart[key]));
             }
 

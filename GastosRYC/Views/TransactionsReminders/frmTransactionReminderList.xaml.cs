@@ -28,7 +28,7 @@ namespace GastosRYC.Views
         {
             foreach (TransactionsReminders transactionsReminders in e.Items)
             {
-                servicesContainer.GetInstance<ITransactionsRemindersService>().delete(transactionsReminders);
+                servicesContainer.GetInstance<TransactionsRemindersService>().delete(transactionsReminders);
             }
         }
 
@@ -58,7 +58,7 @@ namespace GastosRYC.Views
 
         private void loadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = servicesContainer.GetInstance<ITransactionsRemindersService>().getAll();
+            gvTransactionsReminders.ItemsSource = servicesContainer.GetInstance<TransactionsRemindersService>().getAll();
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)

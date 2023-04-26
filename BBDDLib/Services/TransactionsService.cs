@@ -1,6 +1,5 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Models.Charts;
-using BBDDLib.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Linq;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class TransactionsService : ITransactionsService
+    public class TransactionsService
     {
 
         #region Propiedades y Contructor
@@ -79,7 +78,7 @@ namespace GastosRYC.BBDDLib.Services
         public void updateTranfer(Transactions transactions)
         {
             if (transactions.tranferid != null &&
-                transactions.category.categoriesTypesid != (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = getByID(transactions.tranferid);
                 if (tContraria != null)
@@ -89,7 +88,7 @@ namespace GastosRYC.BBDDLib.Services
                 transactions.tranferid = null;
             }
             else if (transactions.tranferid == null &&
-                transactions.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 transactions.tranferid = getNextID();
 
@@ -98,7 +97,7 @@ namespace GastosRYC.BBDDLib.Services
                     date = transactions.date,
                     accountid = transactions.category.accounts.id,
                     personid = transactions.personid,
-                    categoryid = servicesContainer.GetInstance<IAccountsService>().getByID(transactions.accountid)?.categoryid,
+                    categoryid = servicesContainer.GetInstance<AccountsService>().getByID(transactions.accountid)?.categoryid,
                     memo = transactions.memo,
                     tagid = transactions.tagid,
                     amountIn = transactions.amountOut,
@@ -116,7 +115,7 @@ namespace GastosRYC.BBDDLib.Services
 
             }
             else if (transactions.tranferid != null &&
-                transactions.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = getByID(transactions.tranferid);
                 if (tContraria != null)
@@ -124,7 +123,7 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.date = transactions.date;
                     tContraria.accountid = transactions.category.accounts.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = servicesContainer.GetInstance<IAccountsService>().getByID(transactions.accountid)?.categoryid;
+                    tContraria.categoryid = servicesContainer.GetInstance<AccountsService>().getByID(transactions.accountid)?.categoryid;
                     tContraria.memo = transactions.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;
@@ -142,9 +141,9 @@ namespace GastosRYC.BBDDLib.Services
         public void updateTranferFromSplit(Transactions transactions)
         {
             if (transactions.tranferSplitid != null &&
-                transactions.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Splits? tContraria = servicesContainer.GetInstance<ISplitsService>().getByID(transactions.tranferSplitid);
+                Splits? tContraria = servicesContainer.GetInstance<SplitsService>().getByID(transactions.tranferSplitid);
                 if (tContraria != null)
                 {
                     tContraria.transaction.date = transactions.date;
@@ -155,14 +154,14 @@ namespace GastosRYC.BBDDLib.Services
                     tContraria.amountIn = transactions.amountOut;
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
-                    servicesContainer.GetInstance<ISplitsService>().update(tContraria);
+                    servicesContainer.GetInstance<SplitsService>().update(tContraria);
                 }
             }
         }
 
         public void updateTransactionAfterSplits(Transactions? transactions)
         {
-            List<Splits>? lSplits = transactions.splits ?? servicesContainer.GetInstance<ISplitsService>().getbyTransactionid(transactions.id);
+            List<Splits>? lSplits = transactions.splits ?? servicesContainer.GetInstance<SplitsService>().getbyTransactionid(transactions.id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
@@ -175,14 +174,14 @@ namespace GastosRYC.BBDDLib.Services
                     transactions.amountOut += (splits.amountOut == null ? 0 : splits.amountOut);
                 }
 
-                transactions.categoryid = (int)ICategoriesService.eSpecialCategories.Split;
-                transactions.category = servicesContainer.GetInstance<ICategoriesService>().getByID((int)ICategoriesService.eSpecialCategories.Split);
+                transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
+                transactions.category = servicesContainer.GetInstance<CategoriesService>().getByID((int)CategoriesService.eSpecialCategories.Split);
             }
             else if (transactions.categoryid != null
-                && transactions.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
+                && transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split)
             {
-                transactions.categoryid = (int)ICategoriesService.eSpecialCategories.WithoutCategory;
-                transactions.category = servicesContainer.GetInstance<ICategoriesService>().getByID((int)ICategoriesService.eSpecialCategories.WithoutCategory);
+                transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
+                transactions.category = servicesContainer.GetInstance<CategoriesService>().getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactions.id == 0)
@@ -191,7 +190,7 @@ namespace GastosRYC.BBDDLib.Services
                 foreach (Splits splits in lSplits)
                 {
                     splits.transactionid = transactions.id;
-                    servicesContainer.GetInstance<ISplitsService>().update(splits);
+                    servicesContainer.GetInstance<SplitsService>().update(splits);
                 }
             }
             else
@@ -203,7 +202,7 @@ namespace GastosRYC.BBDDLib.Services
         public void updateTranferSplits(Transactions? transactions, Splits splits)
         {
             if (splits.tranferid != null &&
-                splits.category.categoriesTypesid != (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+                splits.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = getByID(splits.tranferid);
                 if (tContraria != null)
@@ -213,7 +212,7 @@ namespace GastosRYC.BBDDLib.Services
                 splits.tranferid = null;
             }
             else if (splits.tranferid == null &&
-                splits.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+                splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 splits.tranferid = getNextID();
 
@@ -235,7 +234,7 @@ namespace GastosRYC.BBDDLib.Services
 
             }
             else if (splits.tranferid != null &&
-                splits.category.categoriesTypesid == (int)ICategoriesTypesService.eCategoriesTypes.Transfers)
+                splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
                 Transactions? tContraria = getByID(splits.tranferid);
                 if (tContraria != null)

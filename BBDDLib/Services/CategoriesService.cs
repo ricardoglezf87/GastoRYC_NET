@@ -6,8 +6,13 @@ using System.Linq;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class CategoriesService : ICategoriesService
+    public class CategoriesService
     {
+        public enum eSpecialCategories : int
+        {
+            Split = -1,
+            WithoutCategory = 0
+        }
 
         private readonly SimpleInjector.Container servicesContainer;
 
@@ -24,8 +29,8 @@ namespace GastosRYC.BBDDLib.Services
         public List<Categories>? getAllFilterTransfer()
         {
             return RYCContextService.getInstance().BBDD.categories?
-                .Where(x => !x.id.Equals(ICategoriesTypesService.eCategoriesTypes.Transfers) &&
-                !x.id.Equals(ICategoriesTypesService.eCategoriesTypes.Specials)).ToList();
+                .Where(x => !x.id.Equals(CategoriesTypesService.eCategoriesTypes.Transfers) &&
+                !x.id.Equals(CategoriesTypesService.eCategoriesTypes.Specials)).ToList();
         }
 
         public Categories? getByID(int? id)

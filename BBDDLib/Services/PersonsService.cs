@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class PersonsService : IPersonsService
+    public class PersonsService
     {
         public List<Persons>? getAll()
         {

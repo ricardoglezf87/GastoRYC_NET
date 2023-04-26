@@ -1,9 +1,9 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Services;
-using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
 using GastosRYC.Extensions;
 using GastosRYC.Views;
+using SimpleInjector;
 using Syncfusion.Data.Extensions;
 using Syncfusion.SfSkinManager;
 using Syncfusion.UI.Xaml.Charts;
@@ -41,12 +41,6 @@ namespace GastosRYC
 
         #endregion
 
-        #region Clases
-
-            private readonly VBalancebyCategoryService vBalancebyCategory;
-
-        #endregion
-
         #region Constructors
 
         public MainWindow()
@@ -59,8 +53,6 @@ namespace GastosRYC
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
 
             registerServices();
-
-            vBalancebyCategory = new VBalancebyCategoryService();
         }
 
         #endregion
@@ -135,8 +127,8 @@ namespace GastosRYC
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
-                    servicesContainer.GetInstance<ITransactionsService>().update(transactions);
+                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
                 }
                 loadTransactions();
                 refreshBalance();
@@ -153,8 +145,8 @@ namespace GastosRYC
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Provisional;
-                    servicesContainer.GetInstance<ITransactionsService>().update(transactions);
+                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
+                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
                 }
                 loadTransactions();
                 refreshBalance();
@@ -171,8 +163,8 @@ namespace GastosRYC
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Reconciled;
-                    servicesContainer.GetInstance<ITransactionsService>().update(transactions);
+                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
+                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
                 }
                 loadTransactions();
                 refreshBalance();
@@ -274,7 +266,7 @@ namespace GastosRYC
                     transactionsReminders.amountIn = transactions.amountIn;
                     transactionsReminders.amountOut = transactions.amountOut;
                     transactionsReminders.tagid = transactions.tagid;
-                    transactionsReminders.transactionStatusid = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
+                    transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
                     FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders, servicesContainer);
                     frm.ShowDialog();
@@ -359,7 +351,7 @@ namespace GastosRYC
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new FrmSplitsList(transactions, servicesContainer);
             frm.ShowDialog();
-            servicesContainer.GetInstance<ITransactionsService>().updateTransactionAfterSplits(transactions);
+            servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transactions);
             loadTransactions();
             refreshBalance();
         }
@@ -390,20 +382,22 @@ namespace GastosRYC
 
         private void registerServices()
         {
-            servicesContainer.Register<IAccountsService, AccountsService>();
-            servicesContainer.Register<ICategoriesService, CategoriesService>();
-            servicesContainer.Register<IPersonsService, PersonsService>();
-            servicesContainer.Register<ITransactionsService, TransactionsService>();
-            servicesContainer.Register<ISplitsService, SplitsService>();
-            servicesContainer.Register<ITagsService, TagsService>();
-            servicesContainer.Register<ITransactionsRemindersService, TransactionsRemindersService>();
-            servicesContainer.Register<ISplitsRemindersService, SplitsRemindersService>();
-            servicesContainer.Register<IExpirationsRemindersService, ExpirationsRemindersService>();
-            servicesContainer.Register<IPeriodsRemindersService, PeriodsRemindersService>();
-            servicesContainer.Register<ITransactionsStatusService, TransactionsStatusService>();
-            servicesContainer.Register<ICategoriesTypesService, CategoriesTypesService>();
-            servicesContainer.Register<IAccountsTypesService, AccountsTypesService>();
-            servicesContainer.Register<IChartsService, ChartsService>();            
+            
+            servicesContainer.Register<AccountsService>(Lifestyle.Singleton);
+            servicesContainer.Register<CategoriesService>(Lifestyle.Singleton);
+            servicesContainer.Register<PersonsService>(Lifestyle.Singleton);
+            servicesContainer.Register<TransactionsService>(Lifestyle.Singleton);
+            servicesContainer.Register<SplitsService>(Lifestyle.Singleton);
+            servicesContainer.Register<TagsService>(Lifestyle.Singleton);
+            servicesContainer.Register<TransactionsRemindersService>(Lifestyle.Singleton);
+            servicesContainer.Register<SplitsRemindersService>(Lifestyle.Singleton);
+            servicesContainer.Register<ExpirationsRemindersService>(Lifestyle.Singleton);
+            servicesContainer.Register<PeriodsRemindersService>(Lifestyle.Singleton);
+            servicesContainer.Register<TransactionsStatusService>(Lifestyle.Singleton);
+            servicesContainer.Register<CategoriesTypesService>(Lifestyle.Singleton);
+            servicesContainer.Register<AccountsTypesService>(Lifestyle.Singleton);
+            servicesContainer.Register<ChartsService>(Lifestyle.Singleton);
+            servicesContainer.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
         }
 
         private void toggleViews(eViews views)
@@ -438,7 +432,7 @@ namespace GastosRYC
 
         private void loadReminders()
         {
-            cvReminders.ItemsSource = new ListCollectionView(servicesContainer.GetInstance<IExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration());
+            cvReminders.ItemsSource = new ListCollectionView(servicesContainer.GetInstance<ExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration());
 
             cvReminders.CanGroup = true;
             cvReminders.GroupCards("groupDate");
@@ -531,7 +525,8 @@ namespace GastosRYC
 
         private void loadCharts()
         {
-            loadChartForecast();
+            //TODO: Descomentar esto
+            //loadChartForecast();
             loadChartExpenses();
         }
 
@@ -655,13 +650,13 @@ namespace GastosRYC
 
             chForecast.Series.Clear();
 
-            foreach (Accounts accounts in servicesContainer.GetInstance<IAccountsService>().getAllOpened()?
-                .Where(x=> servicesContainer.GetInstance<IAccountsTypesService>().accountExpensives(x.accountsTypesid)))
+            foreach (Accounts accounts in servicesContainer.GetInstance<AccountsService>().getAllOpened()?
+                .Where(x=> servicesContainer.GetInstance<AccountsTypesService>().accountExpensives(x.accountsTypesid)))
             {
 
                 LineSeries series = new LineSeries()
                 {
-                    ItemsSource = servicesContainer.GetInstance<IChartsService>().getMonthForecast()
+                    ItemsSource = servicesContainer.GetInstance<ChartsService>().getMonthForecast()
                         .Where(x=> x.accountid == accounts.id).OrderByDescending(x => x.date),
                     Label = accounts.description,
                     XBindingPath = "date",
@@ -781,7 +776,7 @@ namespace GastosRYC
 
             //Series
 
-            List<VBalancebyCategory>? lExpensesCharts = vBalancebyCategory.getExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
+            List<VBalancebyCategory>? lExpensesCharts = servicesContainer.GetInstance<VBalancebyCategoryService>().getExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new ColumnSeries()
@@ -805,7 +800,7 @@ namespace GastosRYC
 
         private void loadAccounts()
         {
-            viewAccounts = CollectionViewSource.GetDefaultView(servicesContainer.GetInstance<IAccountsService>().getAllOpened());
+            viewAccounts = CollectionViewSource.GetDefaultView(servicesContainer.GetInstance<AccountsService>().getAllOpened());
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypes.id", ListSortDirection.Ascending));
@@ -813,7 +808,7 @@ namespace GastosRYC
 
         private void loadTransactions()
         {
-            gvTransactions.ItemsSource = servicesContainer.GetInstance<ITransactionsService>().getAll();
+            gvTransactions.ItemsSource = servicesContainer.GetInstance<TransactionsService>().getAll();
             ApplyFilters();
 
         }
@@ -862,19 +857,19 @@ namespace GastosRYC
                         Splits splits = lSplits[i];
                         if (splits.tranferid != null)
                         {
-                            servicesContainer.GetInstance<ITransactionsService>().delete(servicesContainer.GetInstance<ITransactionsService>().getByID(splits.tranferid));
+                            servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(splits.tranferid));
                         }
 
-                        servicesContainer.GetInstance<ISplitsService>().delete(splits);
+                        servicesContainer.GetInstance<SplitsService>().delete(splits);
                     }
                 }
 
                 if (transactions.tranferid != null)
                 {
-                    servicesContainer.GetInstance<ITransactionsService>().delete(servicesContainer.GetInstance<ITransactionsService>().getByID(transactions.tranferid));
+                    servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(transactions.tranferid));
                 }
 
-                servicesContainer.GetInstance<ITransactionsService>().delete(transactions);
+                servicesContainer.GetInstance<TransactionsService>().delete(transactions);
             }
         }
         private void openNewTransaction()
@@ -898,7 +893,7 @@ namespace GastosRYC
 
         private void makeTransactionFromReminder(int? id)
         {
-            servicesContainer.GetInstance<IExpirationsRemindersService>().registerTransactionfromReminder(id);
+            servicesContainer.GetInstance<ExpirationsRemindersService>().registerTransactionfromReminder(id);
 
             loadTransactions();
             refreshBalance();
@@ -907,11 +902,11 @@ namespace GastosRYC
 
         private void putDoneReminder(int? id)
         {
-            ExpirationsReminders? expirationsReminders = servicesContainer.GetInstance<IExpirationsRemindersService>().getByID(id);
+            ExpirationsReminders? expirationsReminders = servicesContainer.GetInstance<ExpirationsRemindersService>().getByID(id);
             if (expirationsReminders != null)
             {
                 expirationsReminders.done = true;
-                servicesContainer.GetInstance<IExpirationsRemindersService>().update(expirationsReminders);
+                servicesContainer.GetInstance<ExpirationsRemindersService>().update(expirationsReminders);
             }
 
             loadReminders();

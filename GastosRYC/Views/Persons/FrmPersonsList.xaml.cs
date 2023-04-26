@@ -20,7 +20,7 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvPersons.ItemsSource = servicesContainer.GetInstance<IPersonsService>().getAll();
+            gvPersons.ItemsSource = servicesContainer.GetInstance<PersonsService>().getAll();
         }
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -38,14 +38,14 @@ namespace GastosRYC.Views
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Persons persons = (Persons)e.RowData;
-            servicesContainer.GetInstance<IPersonsService>().update(persons);
+            servicesContainer.GetInstance<PersonsService>().update(persons);
         }
 
         private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Persons persons in e.Items)
             {
-                servicesContainer.GetInstance<IPersonsService>().delete(persons);
+                servicesContainer.GetInstance<PersonsService>().delete(persons);
             }
         }
 
