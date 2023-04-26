@@ -25,7 +25,13 @@ namespace GastosRYC.Views
     /// Lógica de interacción para SpashForm.xaml
     /// </summary>
     public partial class SpashForm : Window
-    {        
+    {   
+        public SpashForm()
+        {
+            InitializeComponent();
+            lblVersion.Content = "Version: " + Environment.Version.ToString();
+        }
+
         private void Window_ContentRendered(object sender, EventArgs e)
         {
             new MainWindow().Show();
