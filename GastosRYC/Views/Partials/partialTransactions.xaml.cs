@@ -40,7 +40,6 @@ namespace GastosRYC.Views
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             loadTransactions();
-            parentForm.refreshBalance();
         }
 
         private void gvTransactions_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
@@ -60,7 +59,6 @@ namespace GastosRYC.Views
             frm.ShowDialog();
             servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transactions);
             loadTransactions();
-            parentForm.refreshBalance();
         }
 
         private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -70,9 +68,8 @@ namespace GastosRYC.Views
                 removeTransaction(transactions);
             }
 
-            parentForm.loadAccounts();
             loadTransactions();
-            parentForm.refreshBalance();
+            parentForm.loadAccounts();
         }
 
         private void btnCopy_Click(object sender, RoutedEventArgs e)
@@ -129,9 +126,9 @@ namespace GastosRYC.Views
             {
                 FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem, servicesContainer);
                 frm.ShowDialog();
-                parentForm.loadAccounts();
                 loadTransactions();
-                parentForm.refreshBalance();
+                parentForm.loadAccounts();
+                
             }
         }
 
@@ -144,7 +141,7 @@ namespace GastosRYC.Views
                     removeTransaction(transactions);
                 }
                 loadTransactions();
-                parentForm.refreshBalance();
+                parentForm.loadAccounts();
             }
             else
             {
@@ -162,7 +159,6 @@ namespace GastosRYC.Views
                     servicesContainer.GetInstance<TransactionsService>().update(transactions);
                 }
                 loadTransactions();
-                parentForm.refreshBalance();
             }
             else
             {
@@ -180,7 +176,6 @@ namespace GastosRYC.Views
                     servicesContainer.GetInstance<TransactionsService>().update(transactions);
                 }
                 loadTransactions();
-                parentForm.refreshBalance();
             }
             else
             {
@@ -197,8 +192,7 @@ namespace GastosRYC.Views
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
                     servicesContainer.GetInstance<TransactionsService>().update(transactions);
                 }
-                loadTransactions();
-                parentForm.refreshBalance();
+                loadTransactions();                
             }
             else
             {
@@ -282,7 +276,7 @@ namespace GastosRYC.Views
                 }
 
                 gvTransactions.View.RefreshFilter();
-                parentForm.refreshBalance();
+                refreshBalanceTransactions();
             }
         }
 

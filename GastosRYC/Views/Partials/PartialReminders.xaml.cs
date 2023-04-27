@@ -103,9 +103,6 @@ namespace GastosRYC.Views
         private void makeTransactionFromReminder(int? id)
         {
             servicesContainer.GetInstance<ExpirationsRemindersService>().registerTransactionfromReminder(id);
-
-            //loadTransactions();
-            parentForm.refreshBalance();
             parentForm.loadAccounts();
         }
 

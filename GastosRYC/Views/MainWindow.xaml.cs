@@ -84,8 +84,7 @@ namespace GastosRYC
                     else if (actualPrincipalContent is PartialTransactions)
                     {
                         loadAccounts();
-                        ((PartialTransactions)actualPrincipalContent).loadTransactions();
-                        refreshBalance();
+                        ((PartialTransactions)actualPrincipalContent).loadTransactions();                        
                     }
                     else if (actualPrincipalContent is PartialReminders)
                     {
@@ -99,7 +98,6 @@ namespace GastosRYC
         {
             loadCalendar();
             loadAccounts();
-            refreshBalance();
             toggleViews(eViews.Home);
         }
 
@@ -141,8 +139,6 @@ namespace GastosRYC
 
             if (actualPrincipalContent is PartialTransactions)
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
-
-            refreshBalance();
         }
 
         private void btnMntPersons_Click(object sender, RoutedEventArgs e)
@@ -152,8 +148,6 @@ namespace GastosRYC
 
             if (actualPrincipalContent is PartialTransactions)
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
-
-            refreshBalance();
         }
 
         private void btnMntCategories_Click(object sender, RoutedEventArgs e)
@@ -163,8 +157,6 @@ namespace GastosRYC
 
             if (actualPrincipalContent is PartialTransactions)
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
-
-            refreshBalance();
         }
 
         private void btnMntTags_Click(object sender, RoutedEventArgs e)
@@ -174,8 +166,7 @@ namespace GastosRYC
 
             if (actualPrincipalContent is PartialTransactions)
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
-
-            refreshBalance();
+            
         }
 
         private void btnMntReminders_Click(object sender, RoutedEventArgs e)
@@ -197,11 +188,6 @@ namespace GastosRYC
             foreach (Accounts accounts in lvAccounts.ItemsSource)
             {
                 accounts.balance = servicesContainer.GetInstance<TransactionsService>().getBalanceByAccount(accounts);
-            }
-
-            if (actualPrincipalContent is PartialTransactions)
-            {
-                ((PartialTransactions)actualPrincipalContent).refreshBalanceTransactions();
             }
 
             autoResizeListView();
@@ -226,8 +212,6 @@ namespace GastosRYC
 
             if (actualPrincipalContent is PartialTransactions)
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
-
-            refreshBalance();
         }
 
         private void loadCalendar()
@@ -300,6 +284,7 @@ namespace GastosRYC
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypes.id", ListSortDirection.Ascending));
+            refreshBalance();
         }
 
         #endregion
