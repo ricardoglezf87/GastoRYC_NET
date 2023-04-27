@@ -15,6 +15,7 @@ namespace GastosRYC.BBDDLib.Services
 
         private void loadContext()
         {
+            context.dateCalendar?.Load();
             context.categoriesTypes?.Load();
             context.categories?.Load();
             context.persons?.Load();

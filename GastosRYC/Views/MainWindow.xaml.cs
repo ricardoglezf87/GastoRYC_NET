@@ -216,11 +216,11 @@ namespace GastosRYC
 
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            loadCalendar();
             loadAccounts();
             loadTransactions();
             refreshBalance();
-            loadCharts();
+            loadCharts();            
         }
 
         private void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -380,6 +380,11 @@ namespace GastosRYC
 
         #region Functions
 
+        private void loadCalendar()
+        {
+            servicesContainer.GetInstance<DateCalendarService>().fillCalendar();
+        }
+
         private void registerServices()
         {
             
@@ -398,6 +403,7 @@ namespace GastosRYC
             servicesContainer.Register<AccountsTypesService>(Lifestyle.Singleton);
             servicesContainer.Register<ChartsService>(Lifestyle.Singleton);
             servicesContainer.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
+            servicesContainer.Register<DateCalendarService>(Lifestyle.Singleton);
         }
 
         private void toggleViews(eViews views)

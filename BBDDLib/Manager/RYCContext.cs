@@ -13,6 +13,7 @@ namespace BBDDLib.Manager
 
         #region Tablas
 
+        public DbSet<DateCalendar>? dateCalendar { get; set; }
         public DbSet<Accounts>? accounts { get; set; }
         public DbSet<AccountsTypes>? accountsTypes { get; set; }
         public DbSet<Transactions>? transactions { get; set; }
