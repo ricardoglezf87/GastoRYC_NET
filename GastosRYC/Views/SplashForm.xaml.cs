@@ -25,9 +25,9 @@ namespace GastosRYC.Views
     /// <summary>
     /// Lógica de interacción para SpashForm.xaml
     /// </summary>
-    public partial class SpashForm : Window
+    public partial class SplashForm : Window
     {   
-        public SpashForm()
+        public SplashForm()
         {
             InitializeComponent();
             lblVersion.Content = "Version: " + Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString();
