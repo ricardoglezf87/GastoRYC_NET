@@ -1,24 +1,16 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Services;
 using GastosRYC.BBDDLib.Services;
-using GastosRYC.Extensions;
 using GastosRYC.Views;
 using SimpleInjector;
-using Syncfusion.Data.Extensions;
 using Syncfusion.SfSkinManager;
-using Syncfusion.UI.Xaml.Charts;
 using Syncfusion.Windows.Tools.Controls;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Effects;
 
 namespace GastosRYC
 {
@@ -28,6 +20,7 @@ namespace GastosRYC
         #region Variables
 
         private ICollectionView? viewAccounts;
+        private Page? actualPrincipalContent;
         private readonly SimpleInjector.Container servicesContainer;
 
         private enum eViews : int
@@ -37,8 +30,6 @@ namespace GastosRYC
             Reminders = 3
         }
 
-        private eViews activeView = eViews.Home;
-
         #endregion
 
         #region Constructors
@@ -46,12 +37,10 @@ namespace GastosRYC
         public MainWindow()
         {
             InitializeComponent();
+            rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
+            SfSkinManager.ApplyStylesOnApplication = true;
 
             servicesContainer = new SimpleInjector.Container();
-
-            SfSkinManager.ApplyStylesOnApplication = true;
-            rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
-
             registerServices();
         }
 
@@ -59,30 +48,6 @@ namespace GastosRYC
 
         #region Events
 
-        private void btnRegister_Click(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("Esta seguro de querer registrar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
-               MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
-            {
-                if (sender != null && ((Button)sender)?.Tag != null)
-                {
-                    makeTransactionFromReminder((int?)((Button)sender).Tag);
-                    putDoneReminder((int?)((Button)sender).Tag);
-                }
-            }
-        }
-
-        private void btnSkip_Click(object sender, RoutedEventArgs e)
-        {
-            if (MessageBox.Show("Esta seguro de querer saltar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
-                   MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
-            {
-                if (sender != null && ((Button)sender)?.Tag != null)
-                {
-                    putDoneReminder((int?)((Button)sender).Tag);
-                }
-            }
-        }
 
         private void btnReminders_Click(object sender, RoutedEventArgs e)
         {
@@ -104,90 +69,6 @@ namespace GastosRYC
             openNewTransaction();
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
-        {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    removeTransaction(transactions);
-                }
-                loadTransactions();
-                refreshBalance();
-            }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
-            }
-        }
-
-        private void btnPending_Click(object sender, RoutedEventArgs e)
-        {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
-                }
-                loadTransactions();
-                refreshBalance();
-            }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
-            }
-        }
-
-        private void btnProvisional_Click(object sender, RoutedEventArgs e)
-        {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
-                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
-                }
-                loadTransactions();
-                refreshBalance();
-            }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
-            }
-        }
-
-        private void btnReconciled_Click(object sender, RoutedEventArgs e)
-        {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
-                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
-                }
-                loadTransactions();
-                refreshBalance();
-            }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
-            }
-        }
-
-        private void gvTransactions_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (gvTransactions.CurrentItem != null)
-            {
-                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem, servicesContainer);
-                frm.ShowDialog();
-                loadAccounts();
-                loadTransactions();
-                refreshBalance();
-            }
-        }
-
-
         private void frmInicio_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             switch (e.Key)
@@ -196,19 +77,19 @@ namespace GastosRYC
                     openNewTransaction();
                     break;
                 case Key.F5:
-                    switch (activeView)
+                    if (actualPrincipalContent is PartialHome)
                     {
-                        case eViews.Transactions:
-                            loadAccounts();
-                            loadTransactions();
-                            refreshBalance();
-                            break;
-                        case eViews.Reminders:
-                            loadReminders();
-                            break;
-                        case eViews.Home:
-                            loadCharts();
-                            break;
+                        ((PartialHome)actualPrincipalContent).loadCharts();
+                    }
+                    else if (actualPrincipalContent is PartialTransactions)
+                    {
+                        loadAccounts();
+                        ((PartialTransactions)actualPrincipalContent).loadTransactions();
+                        refreshBalance();
+                    }
+                    else if (actualPrincipalContent is PartialReminders)
+                    {
+                        ((PartialReminders)actualPrincipalContent).loadReminders();
                     }
                     break;
             }
@@ -218,87 +99,33 @@ namespace GastosRYC
         {
             loadCalendar();
             loadAccounts();
-            loadTransactions();
             refreshBalance();
-            loadCharts();            
+            toggleViews(eViews.Home);
         }
 
         private void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (lvAccounts.SelectedValue != null)
             {
-                ApplyFilters();
-                gvTransactions.Columns["account.description"].IsHidden = true;
                 toggleViews(eViews.Transactions);
-            }
-        }
 
-        private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
-        {
-            foreach (Transactions transactions in e.Items)
-            {
-                removeTransaction(transactions);
-            }
+                if (actualPrincipalContent is PartialReminders)
+                    ((PartialReminders)actualPrincipalContent).loadReminders();
 
-            loadAccounts();
-            loadTransactions();
-            refreshBalance();
-        }
-
-        private void btnCopy_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO: Implementar funcionalidad
-            MessageBox.Show("Funcionalidad no implementada");
-        }
-
-        private void btnAddReminder_Click(object sender, RoutedEventArgs e)
-        {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    TransactionsReminders transactionsReminders = new TransactionsReminders();
-                    transactionsReminders.date = transactions.date;
-                    transactionsReminders.accountid = transactions.accountid;
-                    transactionsReminders.personid = transactions.personid;
-                    transactionsReminders.categoryid = transactions.categoryid;
-                    transactionsReminders.memo = transactions.memo;
-                    transactionsReminders.amountIn = transactions.amountIn;
-                    transactionsReminders.amountOut = transactions.amountOut;
-                    transactionsReminders.tagid = transactions.tagid;
-                    transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-
-                    FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders, servicesContainer);
-                    frm.ShowDialog();
-                }
-
-                MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
+                if (actualPrincipalContent is PartialTransactions)
+                    ((PartialTransactions)actualPrincipalContent).ApplyFilters((Accounts?)lvAccounts.SelectedValue);
 
             }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Crear Recordatorio");
-            }
         }
-
-        private void btnPaste_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO: Implementar funcionalidad
-            MessageBox.Show("Funcionalidad no implementada");
-        }
-
-        private void btnCut_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO: Implementar funcionalidad
-            MessageBox.Show("Funcionalidad no implementada");
-        }
-
 
         private void btnAllAccounts_Click(object sender, RoutedEventArgs e)
         {
             lvAccounts.SelectedItem = null;
-            gvTransactions.Columns["account.description"].IsHidden = false;
+
             toggleViews(eViews.Transactions);
+
+            if (actualPrincipalContent is PartialTransactions)
+                ((PartialTransactions)actualPrincipalContent).ApplyFilters();
         }
 
         private void lvAccounts_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -311,7 +138,10 @@ namespace GastosRYC
             FrmAccountsList frm = new FrmAccountsList(servicesContainer);
             frm.ShowDialog();
             loadAccounts();
-            loadTransactions();
+
+            if (actualPrincipalContent is PartialTransactions)
+                ((PartialTransactions)actualPrincipalContent).loadTransactions();
+
             refreshBalance();
         }
 
@@ -319,7 +149,10 @@ namespace GastosRYC
         {
             FrmPersonsList frm = new FrmPersonsList(servicesContainer);
             frm.ShowDialog();
-            loadTransactions();
+
+            if (actualPrincipalContent is PartialTransactions)
+                ((PartialTransactions)actualPrincipalContent).loadTransactions();
+
             refreshBalance();
         }
 
@@ -327,7 +160,10 @@ namespace GastosRYC
         {
             FrmCategoriesList frm = new FrmCategoriesList(servicesContainer);
             frm.ShowDialog();
-            loadTransactions();
+
+            if (actualPrincipalContent is PartialTransactions)
+                ((PartialTransactions)actualPrincipalContent).loadTransactions();
+
             refreshBalance();
         }
 
@@ -335,7 +171,10 @@ namespace GastosRYC
         {
             FrmTagsList frm = new FrmTagsList(servicesContainer);
             frm.ShowDialog();
-            loadTransactions();
+
+            if (actualPrincipalContent is PartialTransactions)
+                ((PartialTransactions)actualPrincipalContent).loadTransactions();
+
             refreshBalance();
         }
 
@@ -343,42 +182,53 @@ namespace GastosRYC
         {
             FrmTransactionReminderList frm = new FrmTransactionReminderList(servicesContainer);
             frm.ShowDialog();
-            loadReminders();
+
+            if (actualPrincipalContent is PartialReminders)
+                ((PartialReminders)actualPrincipalContent).loadReminders();
         }
 
-        private void ButtonSplit_Click(object sender, RoutedEventArgs e)
-        {
-            Transactions transactions = (Transactions)gvTransactions.SelectedItem;
-            FrmSplitsList frm = new FrmSplitsList(transactions, servicesContainer);
-            frm.ShowDialog();
-            servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transactions);
-            loadTransactions();
-            refreshBalance();
-        }
-
-        private void gvTransactions_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
-        {
-
-            if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimiento", MessageBoxButton.YesNo,
-                MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
-            {
-                e.Cancel = true;
-            }
-        }
-
-        private void cvReminders_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders != null)
-            {
-                FrmTransactionReminders frm = new FrmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders, servicesContainer);
-                frm.ShowDialog();
-                loadReminders();
-            }
-        }
 
         #endregion
 
         #region Functions
+
+        public void refreshBalance()
+        {
+            foreach (Accounts accounts in lvAccounts.ItemsSource)
+            {
+                accounts.balance = servicesContainer.GetInstance<TransactionsService>().getBalanceByAccount(accounts);
+            }
+
+            if (actualPrincipalContent is PartialTransactions)
+            {
+                ((PartialTransactions)actualPrincipalContent).refreshBalanceTransactions();
+            }
+
+            autoResizeListView();
+        }
+
+
+        private void openNewTransaction()
+        {
+            FrmTransaction frm;
+
+            if (lvAccounts.SelectedItem == null)
+            {
+                frm = new FrmTransaction(servicesContainer);
+            }
+            else
+            {
+                frm = new FrmTransaction(((Accounts)lvAccounts.SelectedItem).id, servicesContainer);
+            }
+
+            frm.ShowDialog();
+            loadAccounts();
+
+            if (actualPrincipalContent is PartialTransactions)
+                ((PartialTransactions)actualPrincipalContent).loadTransactions();
+
+            refreshBalance();
+        }
 
         private void loadCalendar()
         {
@@ -387,7 +237,6 @@ namespace GastosRYC
 
         private void registerServices()
         {
-            
             servicesContainer.Register<AccountsService>(Lifestyle.Singleton);
             servicesContainer.Register<CategoriesService>(Lifestyle.Singleton);
             servicesContainer.Register<PersonsService>(Lifestyle.Singleton);
@@ -408,112 +257,28 @@ namespace GastosRYC
 
         private void toggleViews(eViews views)
         {
-            gridTransactions.Visibility = Visibility.Hidden;
-            gridHome.Visibility = Visibility.Hidden;
-            gridReminders.Visibility = Visibility.Hidden;
-
-            activeView = views;
+            Page? win = null;
+            principalContent.Content = null;
 
             switch (views)
             {
                 case eViews.Home:
-                    gridHome.Visibility = Visibility.Visible;
-                    loadCharts();
                     lvAccounts.SelectedValue = null;
+                    win = new PartialHome(servicesContainer, this);
                     break;
                 case eViews.Transactions:
-                    gridTransactions.Visibility = Visibility.Visible;
-                    loadTransactions();
-                    refreshBalance();
+                    win = new PartialTransactions(servicesContainer, this);
                     break;
                 case eViews.Reminders:
-                    gridReminders.Visibility = Visibility.Visible;
-                    loadReminders();
                     lvAccounts.SelectedValue = null;
+                    win = new PartialReminders(servicesContainer, this);
                     break;
             }
 
-
-        }
-
-        private void loadReminders()
-        {
-            cvReminders.ItemsSource = new ListCollectionView(servicesContainer.GetInstance<ExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration());
-
-            cvReminders.CanGroup = true;
-            cvReminders.GroupCards("groupDate");
-
-            cvReminders.Items.SortDescriptions.Clear();
-            cvReminders.Items.SortDescriptions.Add(
-                new System.ComponentModel.SortDescription("date", System.ComponentModel.ListSortDirection.Ascending));            
-        }
-
-        private void reiniciarSaldosCuentas()
-        {
-            if (lvAccounts.ItemsSource != null)
+            if (win != null)
             {
-                foreach (Accounts accounts in lvAccounts.ItemsSource)
-                {
-                    accounts.balance = 0;
-                }
-            }
-        }
-
-        private void addSaldoCuenta(long? id, Decimal balance)
-        {
-            if (id != null && lvAccounts.ItemsSource != null
-                && viewAccounts != null && viewAccounts.SourceCollection != null)
-            {
-                List<Accounts> lAccounts = (List<Accounts>)viewAccounts.SourceCollection;
-                Accounts? accounts = lAccounts.FirstOrDefault(x => x.id == id);
-
-                if (accounts != null)
-                {
-                    accounts.balance += balance;
-                }
-            }
-        }
-
-        private void refreshBalance()
-        {
-            Decimal? balanceTotal = 0;
-
-            if (gvTransactions.View != null)
-            {
-                reiniciarSaldosCuentas();
-
-                Syncfusion.UI.Xaml.Grid.
-                    GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
-                        GridQueryableCollectionViewWrapper)gvTransactions.View;
-
-                if (lvAccounts.SelectedItem != null)
-                    balanceTotal = (decimal?)col.ViewSource.Where("accountid",
-                        ((Accounts)lvAccounts.SelectedItem).id, Syncfusion.Data.FilterType.Equals, false).Sum("amount");
-                else
-                    balanceTotal = (decimal?)col.ViewSource.Sum("amount");
-
-                foreach (Transactions t in col.ViewSource)
-                {
-                    if (t.amount != null)
-                    {
-                        if (lvAccounts.SelectedItem != null && ((Accounts)lvAccounts.SelectedItem).id == t.account?.id)
-                        {
-                            t.balance = balanceTotal;
-                            balanceTotal -= t.amount;
-                        }
-                        else if (lvAccounts.SelectedItem == null)
-                        {
-                            t.balance = balanceTotal;
-                            balanceTotal -= t.amount;
-                        }
-
-                        addSaldoCuenta(t.account?.id, t.amount.Value);
-                    }
-                }
-
-                viewAccounts?.Refresh();
-                autoResizeListView();
-
+                actualPrincipalContent = win;
+                principalContent.Content = win;
             }
         }
 
@@ -529,282 +294,7 @@ namespace GastosRYC
             }
         }
 
-        private void loadCharts()
-        {
-            //TODO: Descomentar esto
-            //loadChartForecast();
-            loadChartExpenses();
-        }
-
-        private void loadChartForecast()
-        {
-            //Header
-
-            Border border = new Border()
-            {
-
-                BorderThickness = new Thickness(0.5),
-
-                BorderBrush = new System.Windows.Media.SolidColorBrush(Colors.Black),
-
-                Margin = new Thickness(10),                
-
-                CornerRadius = new CornerRadius(5)
-            };
-
-            TextBlock textBlock = new TextBlock()
-            {
-
-                Text = "Prevision de cobros / pagos",
-
-                Margin = new Thickness(5),
-
-                FontSize = 14
-
-            };
-
-            textBlock.Effect = new DropShadowEffect()
-            {
-
-                Color = Colors.Black,
-
-                Opacity = 0.5
-
-            };
-
-            border.Child = textBlock;
-
-            chForecast.Header = border;
-
-            //Legend
-
-            chForecast.Legend = new ChartLegend()
-            {
-                IconHeight = 10,
-                IconWidth = 10,
-                Margin = new Thickness(0, 0, 0, 5),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                DockPosition = ChartDock.Right,
-                IconVisibility = Visibility.Visible,
-                CornerRadius = new CornerRadius(5),
-                ItemMargin = new Thickness(10),
-                BorderThickness = new Thickness(1),
-                BorderBrush = new SolidColorBrush(Colors.Black),
-                CheckBoxVisibility = Visibility.Visible
-            };
-
-            //Axis
-
-            DateTimeAxis primaryAxis = new DateTimeAxis();
-            primaryAxis.Header = "Fecha";
-            //primaryAxis.Minimum = DateTime.Today.AddDays(-1);
-            //primaryAxis.Maximum= DateTime.Today.AddMonths(1).AddDays(1);
-            primaryAxis.PlotOffsetStart = 20;
-            primaryAxis.PlotOffsetEnd = 20;
-            primaryAxis.IntervalType = DateTimeIntervalType.Days;
-            primaryAxis.Interval = 2;
-            primaryAxis.LabelFormat = "dd/MM";
-            chForecast.PrimaryAxis = primaryAxis;
-
-            NumericalAxis secondaryAxis = new NumericalAxis();
-            secondaryAxis.Header = "Importe (€)";
-            chForecast.SecondaryAxis = secondaryAxis;
-
-            //ToolTip
-
-            DataTemplate tooltip = new DataTemplate();
-
-            FrameworkElementFactory stackpanel = new FrameworkElementFactory(typeof(StackPanel));
-            stackpanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
-
-            FrameworkElementFactory textblock = new FrameworkElementFactory(typeof(TextBlock));
-            textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.account"));
-            textblock.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
-
-            stackpanel.AppendChild(textblock);
-
-            FrameworkElementFactory textblock1 = new FrameworkElementFactory(typeof(TextBlock));
-            textblock1.SetValue(TextBlock.TextProperty, " : ");
-            textblock1.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock1.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock1.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock1.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
-
-            stackpanel.AppendChild(textblock1);
-
-            FrameworkElementFactory textblock2 = new FrameworkElementFactory(typeof(TextBlock));
-            textblock2.SetBinding(TextBlock.TextProperty,
-                new Binding("Item.amount")
-                {
-                    StringFormat = "C",
-                    ConverterCulture = new System.Globalization.CultureInfo("es-ES")
-                });
-
-            textblock2.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock2.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock2.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock2.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
-
-            stackpanel.AppendChild(textblock2);
-            tooltip.VisualTree = stackpanel;
-
-            //Series
-
-            chForecast.Series.Clear();
-
-            foreach (Accounts accounts in servicesContainer.GetInstance<AccountsService>().getAllOpened()?
-                .Where(x=> servicesContainer.GetInstance<AccountsTypesService>().accountExpensives(x.accountsTypesid)))
-            {
-
-                LineSeries series = new LineSeries()
-                {
-                    ItemsSource = servicesContainer.GetInstance<ChartsService>().getMonthForecast()
-                        .Where(x=> x.accountid == accounts.id).OrderByDescending(x => x.date),
-                    Label = accounts.description,
-                    XBindingPath = "date",
-                    YBindingPath = "amount",                    
-                    ShowTooltip = true,
-                    TooltipTemplate = tooltip,
-                    EnableAnimation = true,
-                    AnimationDuration = new TimeSpan(0, 0, 3),
-                    AdornmentsInfo = new ChartAdornmentInfo()
-                    {
-                        ShowMarker = true,
-                        SymbolStroke = new SolidColorBrush(Colors.Blue),
-                        SymbolInterior = new SolidColorBrush(Colors.DarkBlue),
-                        SymbolHeight = 10,
-                        SymbolWidth = 10,
-                        Symbol = ChartSymbol.Ellipse
-                    }
-                };
-
-
-                ChartTooltip.SetShowDuration(series, 5000);
-                chForecast.Series.Add(series);
-            }
-        }
-
-        private void loadChartExpenses()
-        {
-            //Header
-
-            Border border = new Border()
-            {
-
-                BorderThickness = new Thickness(0.5),
-
-                BorderBrush = new System.Windows.Media.SolidColorBrush(Colors.Black),
-
-                Margin = new Thickness(10),
-
-                CornerRadius = new CornerRadius(5)
-
-            };
-
-            TextBlock textBlock = new TextBlock()
-            {
-
-                Text = "Clasificación Gastos",
-
-                Margin = new Thickness(5),
-
-                FontSize = 14
-
-            };
-
-            textBlock.Effect = new DropShadowEffect()
-            {
-
-                Color = Colors.Black,
-
-                Opacity = 0.5
-
-            };
-
-            border.Child = textBlock;
-
-            chExpenses.Header = border;
-
-            //Axis
-
-            CategoryAxis primaryAxis = new CategoryAxis();
-            primaryAxis.Header = "Categoría";
-            chExpenses.PrimaryAxis = primaryAxis;
-
-            NumericalAxis secondaryAxis = new NumericalAxis();
-            secondaryAxis.Header = "Importe (€)";
-            chExpenses.SecondaryAxis = secondaryAxis;
-
-            //ToolTip
-
-            DataTemplate tooltip = new DataTemplate();
-
-            FrameworkElementFactory stackpanel = new FrameworkElementFactory(typeof(StackPanel));
-            stackpanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
-
-            FrameworkElementFactory textblock = new FrameworkElementFactory(typeof(TextBlock));
-            textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.category"));
-            textblock.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
-
-            stackpanel.AppendChild(textblock);
-
-            FrameworkElementFactory textblock1 = new FrameworkElementFactory(typeof(TextBlock));
-            textblock1.SetValue(TextBlock.TextProperty, " : ");
-            textblock1.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock1.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock1.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock1.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
-
-            stackpanel.AppendChild(textblock1);
-
-            FrameworkElementFactory textblock2 = new FrameworkElementFactory(typeof(TextBlock));
-            textblock2.SetBinding(TextBlock.TextProperty,
-                new Binding("Item.neg_amount")
-                {
-                    StringFormat = "C",
-                    ConverterCulture = new System.Globalization.CultureInfo("es-ES")
-                });
-
-            textblock2.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock2.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock2.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock2.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
-
-            stackpanel.AppendChild(textblock2);
-            tooltip.VisualTree = stackpanel;
-
-            //Series
-
-            List<VBalancebyCategory>? lExpensesCharts = servicesContainer.GetInstance<VBalancebyCategoryService>().getExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
-            chExpenses.Series.Clear();
-
-            ColumnSeries series = new ColumnSeries()
-            {
-                ItemsSource = lExpensesCharts?.OrderByDescending(x => x.neg_amount).Take(10),
-                XBindingPath = "category",
-                YBindingPath = "neg_amount",
-                ShowTooltip = true,
-                TooltipTemplate = tooltip,
-                EnableAnimation = true,
-                AnimationDuration = new TimeSpan(0, 0, 3)
-            };
-
-            ChartTooltip.SetShowDuration(series, 5000);
-            chExpenses.Series.Add(series);
-
-            //Grid
-
-            gvExpenses.ItemsSource = lExpensesCharts?.OrderByDescending(x => x.neg_amount);
-        }
-
-        private void loadAccounts()
+        public void loadAccounts()
         {
             viewAccounts = CollectionViewSource.GetDefaultView(servicesContainer.GetInstance<AccountsService>().getAllOpened());
             lvAccounts.ItemsSource = viewAccounts;
@@ -812,112 +302,7 @@ namespace GastosRYC
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypes.id", ListSortDirection.Ascending));
         }
 
-        private void loadTransactions()
-        {
-            gvTransactions.ItemsSource = servicesContainer.GetInstance<TransactionsService>().getAll();
-            ApplyFilters();
-        }
-
-        public void ApplyFilters()
-        {
-            if (lvAccounts.SelectedValue != null)
-            {
-                gvTransactions.View.Filter = accountFilter;
-            }
-            else
-            {
-                gvTransactions.View.Filter = null;
-            }
-
-            gvTransactions.View.RefreshFilter();
-            refreshBalance();
-        }
-
-        public bool accountFilter(object? o)
-        {
-            Transactions? p = (o as Transactions);
-            if (p == null)
-                return false;
-            else
-                if (p.account?.id == ((Accounts)lvAccounts.SelectedValue)?.id)
-                return true;
-            else
-                return false;
-        }
-
-        private void removeTransaction(Transactions transactions)
-        {
-            if (transactions.tranferSplitid != null)
-            {
-                MessageBox.Show("El movimiento Id: " + transactions.id.ToString() +
-                    " de fecha: " + transactions.date.toShortDateString() + " viene de una transferencia desde split, para borrar diríjase al split que lo generó.", "Eliminación movimiento");
-            }
-            else
-            {
-                if (transactions.splits != null)
-                {
-                    List<Splits> lSplits = transactions.splits;
-                    for (int i = 0; i < lSplits.Count; i++)
-                    {
-                        Splits splits = lSplits[i];
-                        if (splits.tranferid != null)
-                        {
-                            servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(splits.tranferid));
-                        }
-
-                        servicesContainer.GetInstance<SplitsService>().delete(splits);
-                    }
-                }
-
-                if (transactions.tranferid != null)
-                {
-                    servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(transactions.tranferid));
-                }
-
-                servicesContainer.GetInstance<TransactionsService>().delete(transactions);
-            }
-        }
-        private void openNewTransaction()
-        {
-            FrmTransaction frm;
-
-            if (lvAccounts.SelectedItem == null)
-            {
-                frm = new FrmTransaction(servicesContainer);
-            }
-            else
-            {
-                frm = new FrmTransaction(((Accounts)lvAccounts.SelectedItem).id, servicesContainer);
-            }
-
-            frm.ShowDialog();
-            loadAccounts();
-            loadTransactions();
-            refreshBalance();
-        }
-
-        private void makeTransactionFromReminder(int? id)
-        {
-            servicesContainer.GetInstance<ExpirationsRemindersService>().registerTransactionfromReminder(id);
-
-            loadTransactions();
-            refreshBalance();
-            loadAccounts();
-        }
-
-        private void putDoneReminder(int? id)
-        {
-            ExpirationsReminders? expirationsReminders = servicesContainer.GetInstance<ExpirationsRemindersService>().getByID(id);
-            if (expirationsReminders != null)
-            {
-                expirationsReminders.done = true;
-                servicesContainer.GetInstance<ExpirationsRemindersService>().update(expirationsReminders);
-            }
-
-            loadReminders();
-        }
-
         #endregion
-        
+
     }
 }

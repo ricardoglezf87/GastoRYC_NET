@@ -1,5 +1,4 @@
-﻿using BBDDLib.Migrations;
-using BBDDLib.Models;
+﻿using BBDDLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class DateCalendarService
     {
-        private readonly DateTime initDate = new DateTime(2001,01,01);
+        private readonly DateTime initDate = new DateTime(2001, 01, 01);
 
         public List<DateCalendar>? getAll()
         {
@@ -23,9 +22,9 @@ namespace GastosRYC.BBDDLib.Services
         public void fillCalendar()
         {
             DateTime ini = initDate;
-            while(ini < DateTime.Now.AddYears(1))
+            while (ini < DateTime.Now.AddYears(1))
             {
-                if(getByID(ini) == null)
+                if (getByID(ini) == null)
                 {
                     DateCalendar date = new DateCalendar()
                     {

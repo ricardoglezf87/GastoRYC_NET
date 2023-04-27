@@ -1,10 +1,6 @@
-﻿using BBDDLib.Models;
-using BBDDLib.Models.Charts;
-using Microsoft.EntityFrameworkCore;
+﻿using BBDDLib.Models.Charts;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Configuration;
 using System.Linq;
 using static GastosRYC.BBDDLib.Services.AccountsTypesService;
 
@@ -25,7 +21,7 @@ namespace GastosRYC.BBDDLib.Services
         #endregion Propiedades y Contructor
 
         #region Functions
-        
+
         public List<ForecastsChart> getMonthForecast()
         {
             Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
