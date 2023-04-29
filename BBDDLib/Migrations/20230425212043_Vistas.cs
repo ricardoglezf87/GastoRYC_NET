@@ -14,11 +14,11 @@ namespace BBDDLib.Migrations
                 CREATE VIEW vBalancebyCategory 
                 AS 
                select year,month,categoriesTypesid, categoryid,category,sum(amount) amount
-                from (SELECT SUBSTR(date,7,4) year,SUBSTR(date,1,2) month, c.id categoryid, c.description category, t.amountIn-t.amountOut amount,categoriesTypesid
+                from (SELECT SUBSTR(date,1,4) year,SUBSTR(date,3,2) month, c.id categoryid, c.description category, t.amountIn-t.amountOut amount,categoriesTypesid
 	                FROM transactions t 
 	                    inner join categories c ON t.categoryid  = c.id and c.categoriesTypesid in (1,2)
 	                union 
-	                SELECT SUBSTR(date,7,4) year,SUBSTR(date,1,2) month, c.id categoryid, c.description category, s.amountIn-s.amountOut amount,categoriesTypesid
+	                SELECT SUBSTR(date,1,4) year,SUBSTR(date,3,2) month, c.id categoryid, c.description category, s.amountIn-s.amountOut amount,categoriesTypesid
 	                FROM transactions t 
 	                    inner join splits s on s.transactionid  = t.id 
 	                    inner join categories c ON s.categoryid  = c.id and c.categoriesTypesid in (1,2)
