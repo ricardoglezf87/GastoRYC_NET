@@ -11,6 +11,14 @@ namespace BBDDLib.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+
+            migrationBuilder.Sql(@"
+                update transactions
+                set 
+	                date = SUBSTRING(date,7,4)||'-'|| SUBSTRING(date,1,2) ||'-'|| SUBSTRING(date,4,2)
+                where LENGTH (date)<=10;
+            ");
+
             migrationBuilder.CreateTable(
                 name: "dateCalendar",
                 columns: table => new
