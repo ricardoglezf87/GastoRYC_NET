@@ -15,7 +15,14 @@ namespace BBDDLib.Migrations
             migrationBuilder.Sql(@"
                 update transactions
                 set 
-	                date = SUBSTRING(date,7,4)||'-'|| SUBSTRING(date,1,2) ||'-'|| SUBSTRING(date,4,2)
+	                date = SUBSTRING(date,7,4) || '-' || SUBSTRING(date,1,2) || '-' || SUBSTRING(date,4,2)
+                where LENGTH (date)<=10;
+            ");
+
+            migrationBuilder.Sql(@"
+                update transactions
+                set
+	                date = date || ' 00:00:00' 
                 where LENGTH (date)<=10;
             ");
 
