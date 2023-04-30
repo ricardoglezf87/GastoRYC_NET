@@ -3,10 +3,10 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.3.0.40</AssemblyVersion>
+    <AssemblyVersion>1.3.0.0</AssemblyVersion>
     <FileVersion>1.3.0.0</FileVersion>
-    <InformationalVersion>1.3.0-keepDateBetweenNewTransactions.40+Branch.feature-keepDateBetweenNewTransactions.Sha.b74e2e240081cc6e162eae3128a4e48f32835bb2</InformationalVersion>
-    <Version>1.3.0-keepdatebetweenn0040</Version>
+    <InformationalVersion>1.3.0-beta.0+Branch.release-1.3.Sha.dbe06468b0003fb4d0f4eb18d371c3a9ecd14d78</InformationalVersion>
+    <Version>1.3.0-beta0000</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
