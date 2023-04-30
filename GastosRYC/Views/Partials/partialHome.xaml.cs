@@ -46,7 +46,6 @@ namespace GastosRYC.Views
 
         #endregion
 
-
         #region Functions
 
         private void loadChartForecast()
@@ -95,13 +94,13 @@ namespace GastosRYC.Views
             {
                 IconHeight = 10,
                 IconWidth = 10,
-                Margin = new Thickness(0, 0, 0, 5),
+                Margin = new Thickness(0, 0, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 DockPosition = ChartDock.Right,
                 IconVisibility = Visibility.Visible,
                 CornerRadius = new CornerRadius(5),
-                ItemMargin = new Thickness(10),
+                ItemMargin = new Thickness(5),              
                 BorderThickness = new Thickness(1),
                 BorderBrush = new SolidColorBrush(Colors.Black),
                 CheckBoxVisibility = Visibility.Visible
