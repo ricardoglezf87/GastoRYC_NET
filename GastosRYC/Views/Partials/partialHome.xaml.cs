@@ -175,7 +175,7 @@ namespace GastosRYC.Views
 
                 LineSeries series = new LineSeries()
                 {
-                    ItemsSource = servicesContainer.GetInstance<ChartsService>().getMonthForecast()
+                    ItemsSource = servicesContainer.GetInstance<ForecastsChartService>().getMonthForecast()
                         .Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
                     Label = accounts.description,
                     XBindingPath = "date",
@@ -319,8 +319,7 @@ namespace GastosRYC.Views
 
         public void loadCharts()
         {
-            //TODO: Descomentar esto
-            //loadChartForecast();
+            loadChartForecast();
             loadChartExpenses();
         }
 

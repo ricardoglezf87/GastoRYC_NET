@@ -234,7 +234,7 @@ namespace GastosRYC
             servicesContainer.Register<TransactionsStatusService>(Lifestyle.Singleton);
             servicesContainer.Register<CategoriesTypesService>(Lifestyle.Singleton);
             servicesContainer.Register<AccountsTypesService>(Lifestyle.Singleton);
-            servicesContainer.Register<ChartsService>(Lifestyle.Singleton);
+            servicesContainer.Register<ForecastsChartService>(Lifestyle.Singleton);
             servicesContainer.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
             servicesContainer.Register<DateCalendarService>(Lifestyle.Singleton);
         }
