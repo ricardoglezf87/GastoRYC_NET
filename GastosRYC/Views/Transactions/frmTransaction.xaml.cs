@@ -1,5 +1,4 @@
 ﻿using BBDDLib.Models;
-using BBDDLib.Services.Interfaces;
 using GastosRYC.BBDDLib.Services;
 using System;
 using System.Windows;
@@ -80,7 +79,7 @@ namespace GastosRYC.Views
                 txtMemo.Text = null;
                 txtAmount.Value = null;
                 cbTag.SelectedValue = null;
-                cbTransactionStatus.SelectedValue = (int)ITransactionsStatusService.eTransactionsTypes.Pending;
+                cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
                 dtpDate.Focus();
             }
@@ -95,18 +94,18 @@ namespace GastosRYC.Views
 
             transaction.date = dtpDate.SelectedDate;
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = servicesContainer.GetInstance<IAccountsService>().getByID(transaction.accountid);
+            transaction.account = servicesContainer.GetInstance<AccountsService>().getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = servicesContainer.GetInstance<IPersonsService>().getByID(transaction.personid);
+                transaction.person = servicesContainer.GetInstance<PersonsService>().getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
 
             transaction.categoryid = (int)cbCategory.SelectedValue;
-            transaction.category = servicesContainer.GetInstance<ICategoriesService>().getByID(transaction.categoryid);
+            transaction.category = servicesContainer.GetInstance<CategoriesService>().getByID(transaction.categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -122,20 +121,20 @@ namespace GastosRYC.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = servicesContainer.GetInstance<ITagsService>().getByID(transaction.tagid);
+                transaction.tag = servicesContainer.GetInstance<TagsService>().getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = servicesContainer.GetInstance<ITransactionsStatusService>().getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = servicesContainer.GetInstance<TransactionsStatusService>().getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = servicesContainer.GetInstance<IAccountsService>().getAll();
-            cbPerson.ItemsSource = servicesContainer.GetInstance<IPersonsService>().getAll();
-            cbCategory.ItemsSource = servicesContainer.GetInstance<ICategoriesService>().getAll();
-            cbTag.ItemsSource = servicesContainer.GetInstance<ITagsService>().getAll();
-            cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<ITransactionsStatusService>().getAll();
+            cbAccount.ItemsSource = servicesContainer.GetInstance<AccountsService>().getAll();
+            cbPerson.ItemsSource = servicesContainer.GetInstance<PersonsService>().getAll();
+            cbCategory.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAll();
+            cbTag.ItemsSource = servicesContainer.GetInstance<TagsService>().getAll();
+            cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<TransactionsStatusService>().getAll();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
@@ -200,7 +199,7 @@ namespace GastosRYC.Views
 
             FrmSplitsList frm = new FrmSplitsList(transaction, servicesContainer);
             frm.ShowDialog();
-            servicesContainer.GetInstance<ITransactionsService>().updateTransactionAfterSplits(transaction);
+            servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transaction);
             loadTransaction();
         }
 
@@ -214,7 +213,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        servicesContainer.GetInstance<ITransactionsService>().saveChanges(transaction);
+                        servicesContainer.GetInstance<TransactionsService>().saveChanges(transaction);
                     }
                     return true;
                 }

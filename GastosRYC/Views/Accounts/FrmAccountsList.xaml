@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:GastosRYC.Views"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.FrmAccountsList"
         mc:Ignorable="d"
-        Title="Cuentas" Height="450" Width="400
+        Title="Cuentas" Height="450" Width="500
     " WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid Margin="0,5,0,0">
         <Grid.ColumnDefinitions>
@@ -37,6 +37,7 @@
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbAccountsTypes" MappingName="accountsTypesid" 
                                                 DisplayMemberPath="description" SelectedValuePath="id"/>
+                <syncfusion:GridCheckBoxColumn MappingName="closed" HeaderText="Cerrada" />
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 

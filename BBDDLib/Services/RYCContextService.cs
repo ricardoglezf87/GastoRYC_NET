@@ -15,6 +15,7 @@ namespace GastosRYC.BBDDLib.Services
 
         private void loadContext()
         {
+            context.dateCalendar?.Load();
             context.categoriesTypes?.Load();
             context.categories?.Load();
             context.persons?.Load();
@@ -28,6 +29,7 @@ namespace GastosRYC.BBDDLib.Services
             context.splitsReminders?.Load();
             context.transactionsReminders?.Load();
             context.expirationsReminders?.Load();
+            context.vBalancebyCategory?.Load();
         }
 
         public RYCContext BBDD { get { return context; } }

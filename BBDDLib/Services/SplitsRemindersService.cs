@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class SplitsRemindersService : ISplitsRemindersService
+    public class SplitsRemindersService
     {
         public List<SplitsReminders>? getAll()
         {

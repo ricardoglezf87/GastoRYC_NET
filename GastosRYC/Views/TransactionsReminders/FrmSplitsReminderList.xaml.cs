@@ -26,14 +26,14 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = servicesContainer.GetInstance<ICategoriesService>().getAll();
+            cbCategories.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAll();
             if (transactionsReminders != null && transactionsReminders.id > 0)
             {
-                gvSplitsReminders.ItemsSource = servicesContainer.GetInstance<ISplitsRemindersService>().getbyTransactionid(transactionsReminders.id);
+                gvSplitsReminders.ItemsSource = servicesContainer.GetInstance<SplitsRemindersService>().getbyTransactionid(transactionsReminders.id);
             }
             else
             {
-                gvSplitsReminders.ItemsSource = servicesContainer.GetInstance<ISplitsRemindersService>().getbyTransactionidNull();
+                gvSplitsReminders.ItemsSource = servicesContainer.GetInstance<SplitsRemindersService>().getbyTransactionidNull();
             }
         }
 
@@ -45,7 +45,7 @@ namespace GastosRYC.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.category = servicesContainer.GetInstance<ICategoriesService>().getByID(splitsReminders.categoryid);
+                        splitsReminders.category = servicesContainer.GetInstance<CategoriesService>().getByID(splitsReminders.categoryid);
                         break;
                 }
             }
@@ -60,7 +60,7 @@ namespace GastosRYC.Views
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if (splitsReminders.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
+            else if (splitsReminders.categoryid == (int)CategoriesService.eSpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
@@ -85,7 +85,7 @@ namespace GastosRYC.Views
         {
             if (splitsReminders.category == null && splitsReminders.categoryid != null)
             {
-                splitsReminders.category = servicesContainer.GetInstance<ICategoriesService>().getByID(splitsReminders.categoryid);
+                splitsReminders.category = servicesContainer.GetInstance<CategoriesService>().getByID(splitsReminders.categoryid);
             }
 
             if (splitsReminders.amountIn == null)
@@ -94,7 +94,7 @@ namespace GastosRYC.Views
             if (splitsReminders.amountOut == null)
                 splitsReminders.amountOut = 0;
 
-            servicesContainer.GetInstance<ISplitsRemindersService>().update(splitsReminders);
+            servicesContainer.GetInstance<SplitsRemindersService>().update(splitsReminders);
         }
         private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
@@ -102,9 +102,9 @@ namespace GastosRYC.Views
             {
                 if (splitsReminders.tranferid != null)
                 {
-                    servicesContainer.GetInstance<ITransactionsRemindersService>().delete(servicesContainer.GetInstance<ITransactionsRemindersService>().getByID(splitsReminders.tranferid));
+                    servicesContainer.GetInstance<TransactionsRemindersService>().delete(servicesContainer.GetInstance<TransactionsRemindersService>().getByID(splitsReminders.tranferid));
                 }
-                servicesContainer.GetInstance<ISplitsRemindersService>().delete(splitsReminders);
+                servicesContainer.GetInstance<SplitsRemindersService>().delete(splitsReminders);
             }
         }
 

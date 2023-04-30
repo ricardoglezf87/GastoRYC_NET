@@ -1,15 +1,17 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Properties;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using System;
-using System.Configuration;
 using System.IO;
 
 namespace BBDDLib.Manager
 {
     public class RYCContext : DbContext
     {
+
+        #region Tablas
+
+        public DbSet<DateCalendar>? dateCalendar { get; set; }
         public DbSet<Accounts>? accounts { get; set; }
         public DbSet<AccountsTypes>? accountsTypes { get; set; }
         public DbSet<Transactions>? transactions { get; set; }
@@ -22,8 +24,16 @@ namespace BBDDLib.Manager
         public DbSet<PeriodsReminders>? periodsReminders { get; set; }
         public DbSet<TransactionsReminders>? transactionsReminders { get; set; }
         public DbSet<SplitsReminders>? splitsReminders { get; set; }
-
         public DbSet<ExpirationsReminders>? expirationsReminders { get; set; }
+
+        #endregion
+
+        #region Vistas
+
+        public DbSet<VBalancebyCategory>? vBalancebyCategory { get; set; }
+
+        #endregion
+
 
         public RYCContext() : base()
         {
@@ -57,12 +67,20 @@ namespace BBDDLib.Manager
             if (!Settings.Default.BBDDLocal)
             {
                 optionsBuilder.UseSqlite("Data Source="
-                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\GastosRYC\\Data\\" + nameDDBB );
+                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\GastosRYC\\Data\\" + nameDDBB);
             }
             else
             {
                 optionsBuilder.UseSqlite("Data Source=Data\\" + nameDDBB);
             }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<VBalancebyCategory>()
+                .ToView(nameof(VBalancebyCategory))
+                .HasKey(t => new { t.year, t.month, t.categoryid });
         }
 
     }

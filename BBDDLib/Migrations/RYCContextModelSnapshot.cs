@@ -15,7 +15,7 @@ namespace BBDDLib.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
 
             modelBuilder.Entity("BBDDLib.Models.Accounts", b =>
                 {
@@ -27,6 +27,9 @@ namespace BBDDLib.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("categoryid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("closed")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
@@ -87,6 +90,25 @@ namespace BBDDLib.Migrations
                     b.HasKey("id");
 
                     b.ToTable("categoriesTypes");
+                });
+
+            modelBuilder.Entity("BBDDLib.Models.DateCalendar", b =>
+                {
+                    b.Property<DateTime>("date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("day")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("month")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("year")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("date");
+
+                    b.ToTable("dateCalendar");
                 });
 
             modelBuilder.Entity("BBDDLib.Models.ExpirationsReminders", b =>
@@ -310,9 +332,6 @@ namespace BBDDLib.Migrations
                     b.Property<int?>("periodsRemindersid")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("periodsRemindersid")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("personid")
                         .HasColumnType("INTEGER");
 
@@ -357,6 +376,33 @@ namespace BBDDLib.Migrations
                     b.HasKey("id");
 
                     b.ToTable("transactionsStatus");
+                });
+
+            modelBuilder.Entity("BBDDLib.Models.VBalancebyCategory", b =>
+                {
+                    b.Property<int?>("year")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("month")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("categoryid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal?>("amount")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("categoriesTypesid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("category")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("year", "month", "categoryid");
+
+                    b.ToTable((string)null);
+
+                    b.ToView("VBalancebyCategory", (string)null);
                 });
 
             modelBuilder.Entity("BBDDLib.Models.Accounts", b =>

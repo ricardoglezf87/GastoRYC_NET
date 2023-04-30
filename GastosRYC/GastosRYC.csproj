@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
@@ -8,8 +7,12 @@
     <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
     <Authors>Ricardo González Fabelo</Authors>
     <NeutralLanguage>es-ES</NeutralLanguage>
+    <PackageIcon>Logo-100.png</PackageIcon>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
+    <InformationalVersion>1.2.0-beta.0+Branch.release-1.2.0.29.Sha.f8c59cda3cb4653b06be7c5e61f04e6e41730fe9</InformationalVersion>
+    <Version>1.2.0-beta0000</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Resources\add-16.png" />
     <None Remove="Resources\add-32.png" />
@@ -19,8 +22,12 @@
     <None Remove="Resources\home-32.png" />
     <None Remove="Resources\home-48.png" />
     <None Remove="Resources\home.png" />
+    <None Remove="Resources\load.gif" />
     <None Remove="Resources\logo-16.png" />
+    <None Remove="Resources\Logo-30.png" />
+    <None Remove="Resources\Logo-60.png" />
     <None Remove="Resources\logo-66.png" />
+    <None Remove="Resources\Logo-70.png" />
     <None Remove="Resources\Logo.png" />
     <None Remove="Resources\mntAccounts-32.png" />
     <None Remove="Resources\mntAccounts.png" />
@@ -53,7 +60,6 @@
     <None Remove="Resources\Split.png" />
     <None Remove="Views\options.png" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="Resources\add-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -70,16 +76,22 @@
     <Content Include="Resources\home-48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Logo-100.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\logo-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\logo-66.png">
+    <Content Include="Resources\Logo-30.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Logo-60.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Logo-70.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Logo.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Logo-32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\mntAccounts-32.png">
@@ -140,11 +152,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="7.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
@@ -154,24 +164,27 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="SimpleInjector" Version="5.4.1" />
-    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="21.1.39" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="21.1.39" />
-    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="21.1.39" />
-    <PackageReference Include="syncfusion.ui.wpf.net" Version="21.1.39" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="21.1.41" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="21.1.41" />
+    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="21.1.41" />
+    <PackageReference Include="syncfusion.ui.wpf.net" Version="21.1.41" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\BBDDLib\BBDDLib.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="Resources\options.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Views\FrmSplitsRemindersList.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Partials\PartialReminders.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Partials\partialHome.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Transactions\FrmSplitsListList.xaml.cs">
@@ -193,7 +206,12 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
-
+  <ItemGroup>
+    <None Update="Resources\Logo-100.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <Page Update="Views\FrmSplitsRemindersList.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
@@ -224,5 +242,4 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-
 </Project>

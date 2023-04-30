@@ -27,14 +27,14 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = servicesContainer.GetInstance<ICategoriesService>().getAll();
+            cbCategories.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAll();
             if (transactions != null && transactions.id > 0)
             {
-                gvSplits.ItemsSource = servicesContainer.GetInstance<ISplitsService>().getbyTransactionid(transactions.id);
+                gvSplits.ItemsSource = servicesContainer.GetInstance<SplitsService>().getbyTransactionid(transactions.id);
             }
             else
             {
-                gvSplits.ItemsSource = servicesContainer.GetInstance<ISplitsService>().getbyTransactionidNull();
+                gvSplits.ItemsSource = servicesContainer.GetInstance<SplitsService>().getbyTransactionidNull();
             }
         }
 
@@ -46,7 +46,7 @@ namespace GastosRYC.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.category = servicesContainer.GetInstance<ICategoriesService>().getByID(splits.categoryid);
+                        splits.category = servicesContainer.GetInstance<CategoriesService>().getByID(splits.categoryid);
                         break;
                 }
             }
@@ -62,7 +62,7 @@ namespace GastosRYC.Views
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if (splits.categoryid == (int)ICategoriesService.eSpecialCategories.Split)
+            else if (splits.categoryid == (int)CategoriesService.eSpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
@@ -80,7 +80,7 @@ namespace GastosRYC.Views
         {
             Splits splits = (Splits)e.RowData;
 
-            servicesContainer.GetInstance<ISplitsService>().saveChanges(transactions, splits);
+            servicesContainer.GetInstance<SplitsService>().saveChanges(transactions, splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -89,9 +89,9 @@ namespace GastosRYC.Views
             {
                 if (splits.tranferid != null)
                 {
-                    servicesContainer.GetInstance<ITransactionsService>().delete(servicesContainer.GetInstance<ITransactionsService>().getByID(splits.tranferid));
+                    servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(splits.tranferid));
                 }
-                servicesContainer.GetInstance<ISplitsService>().delete(splits);
+                servicesContainer.GetInstance<SplitsService>().delete(splits);
             }
         }
 

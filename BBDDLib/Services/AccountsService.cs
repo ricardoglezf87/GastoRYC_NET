@@ -1,11 +1,10 @@
 ﻿using BBDDLib.Models;
-using BBDDLib.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class AccountsService : IAccountsService
+    public class AccountsService
     {
 
         public List<Accounts>? getAll()
@@ -16,6 +15,11 @@ namespace GastosRYC.BBDDLib.Services
         public List<Accounts>? getAllOrderByAccountsTypesId()
         {
             return RYCContextService.getInstance().BBDD.accounts?.OrderBy(x => x.accountsTypesid).ToList();
+        }
+
+        public List<Accounts>? getAllOpened()
+        {
+            return RYCContextService.getInstance().BBDD.accounts?.Where(x => !x.closed.HasValue || !x.closed.Value).ToList();
         }
 
         public Accounts? getByID(int? id)

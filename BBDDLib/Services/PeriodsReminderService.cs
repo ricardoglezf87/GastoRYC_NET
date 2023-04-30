@@ -3,12 +3,21 @@ using GastosRYC.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static GastosRYC.BBDDLib.Services.IPeriodsRemindersService;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class PeriodsRemindersService : IPeriodsRemindersService
+    public class PeriodsRemindersService
     {
+        public enum ePeriodsReminders : int
+        {
+            Diary = 1,
+            Weekly = 2,
+            Monthly = 3,
+            Bimonthly = 4,
+            Quarterly = 5,
+            Bianual = 6,
+            Annual = 7
+        }
 
         public List<PeriodsReminders>? getAll()
         {

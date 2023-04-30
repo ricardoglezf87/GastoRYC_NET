@@ -7,7 +7,7 @@
         xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"                          
         xmlns:chart="clr-namespace:Syncfusion.UI.Xaml.Charts;assembly=Syncfusion.SfChart.WPF"
         mc:Ignorable="d"
-        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo-32.png" 
+        Title="GastosRYC" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo-30.png" 
         PreviewKeyUp="frmInicio_PreviewKeyUp"
         xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}">
@@ -63,202 +63,56 @@
 
         <syncfusion:ButtonAdv x:Name="btnAllAccounts" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" 
                                  Background="{x:Null}" BorderBrush="{x:Null}" Click="btnAllAccounts_Click" Label="Todas las cuentas" IconWidth="0" IconHeight="0" VerticalContentAlignment="Top" Padding="0,-2,0,0" Margin="0,0,5,0" HorizontalContentAlignment="Left"/>
+        <ScrollViewer Grid.Column="0" Grid.Row="3" VerticalScrollBarVisibility="Auto">
+            <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged"                   
+                      SizeChanged="lvAccounts_SizeChanged" 
+                      BorderBrush="{x:Null}" Background="{x:Null}" 
+                      d:ItemsSource="{d:SampleData ItemCount=5}" 
+                      BorderThickness="1,1,1,0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" Margin="0,0,10,0" Padding="0,0,-5,0">
+                <ListView.Resources>
+                    <Style TargetType="GridViewColumnHeader">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Style>
+                </ListView.Resources>
 
-        <ListView x:Name="lvAccounts" SelectionChanged="lvAccounts_SelectionChanged" 
-                  Grid.Column="0" Grid.Row="3" 
-                  SizeChanged="lvAccounts_SizeChanged" 
-                  BorderBrush="{x:Null}" Background="{x:Null}" 
-                  d:ItemsSource="{d:SampleData ItemCount=5}" 
-                  BorderThickness="1,1,1,0" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" Padding="0,0,-10,0">
-            <ListView.Resources>
-                <Style TargetType="GridViewColumnHeader">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                </Style>
-            </ListView.Resources>
+                <ListView.View>
+                    <GridView AllowsColumnReorder="False">
+                        <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
+                        <GridViewColumn   CellTemplate="{StaticResource BalanceTemplate}"  />
 
-            <ListView.View>
-                <GridView AllowsColumnReorder="False">
-                    <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
-                    <GridViewColumn   CellTemplate="{StaticResource BalanceTemplate}"  />
-
-                </GridView>
-            </ListView.View>
-            <ListView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Expander IsExpanded="True">
-                                            <Expander.Header>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name.description}"/>
-                                                </StackPanel>
-                                            </Expander.Header>
-                                            <ItemsPresenter />
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ListView.GroupStyle>
-        </ListView>
+                    </GridView>
+                </ListView.View>
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Expander IsExpanded="True">
+                                                <Expander.Header>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name.description}"/>
+                                                    </StackPanel>
+                                                </Expander.Header>
+                                                <ItemsPresenter />
+                                            </Expander>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+            </ListView>
+        </ScrollViewer>
 
         <input:SfGridSplitter Name="gridSplitter"
                               HorizontalAlignment="Stretch" ResizeBehavior="PreviousAndNext"                                    
                               Width="auto" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"/>
 
-        <Grid x:Name="gridTransactions" Visibility="Hidden"  Grid.Column="2"  Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2">
 
-            <syncfusion:SfDataGrid  x:Name="gvTransactions"
-                               AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
-                               CanMaintainScrollPosition="True"
-                               AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
-                               LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True"
-                               MouseDoubleClick="gvTransactions_MouseDoubleClick"
-                               RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
-                               ShowRowHeader="True" SelectionMode="Extended">
-                <syncfusion:SfDataGrid.SortColumnDescriptions>
-                    <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
-                </syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SfDataGrid.RecordContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Estado Movimiento">
-                            <MenuItem x:Name="btnPending" Header="Pendiente" Click="btnPending_Click"/>
-                            <MenuItem x:Name="btnProvisional" Header="Provisional" Click="btnProvisional_Click"/>
-                            <MenuItem x:Name="btnReconciled" Header="Conciliado" Click="btnReconciled_Click"/>
-                        </MenuItem>
-                        <MenuItem x:Name="btnAddReminder" Header="Crear Recordatorio" Click="btnAddReminder_Click" />
-                        <MenuItem x:Name="btnCut" Header="Cortar" Click="btnCut_Click" />
-                        <MenuItem x:Name="btnCopy" Header="Copiar" Click="btnCopy_Click" />
-                        <MenuItem x:Name="btnPaste" Header="Pegar" Click="btnPaste_Click" />
-                        <MenuItem x:Name="btnDelete" Header="Borrar" Click="btnDelete_Click" />
-                    </ContextMenu>
-                </syncfusion:SfDataGrid.RecordContextMenu>
-                <syncfusion:SfDataGrid.Columns>
-                    <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                    <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
-                    <syncfusion:GridTextColumn MappingName="account.description" HeaderText="Cuenta"/>
-                    <syncfusion:GridTextColumn MappingName="person.name" HeaderText="Persona"/>
-                    <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
-                    <syncfusion:GridTextColumn MappingName="category.description" HeaderText="Categoría"/>
-                    <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado"/>
-                    <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag"/>
-                    <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
-                    <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
-                    <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad"/>
-                    <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo"/>
-                    <syncfusion:GridTemplateColumn Width="25"
-                                               MappingName="id"
-                                               HeaderText=""
-                                               AllowFiltering="False"
-                                               AllowSorting="False">
-                        <syncfusion:GridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button syncfusion:FocusManagerHelper.FocusedElement="True"
-                                    Background="Transparent"                                    
-                                    Click="ButtonSplit_Click">
-                                    <Image Source="/Resources/Split-16.png" />
-                                </Button>
-                            </DataTemplate>
-                        </syncfusion:GridTemplateColumn.CellTemplate>
-                    </syncfusion:GridTemplateColumn>
-                </syncfusion:SfDataGrid.Columns>
-            </syncfusion:SfDataGrid>
+        <Frame x:Name="principalContent" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2" NavigationUIVisibility="Hidden" />
 
-        </Grid>
-
-        <Grid x:Name="gridHome" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="7*" />
-                <ColumnDefinition Width="3*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <syncfusion:SfChart x:Name="chForecast" Grid.Row="0" Grid.ColumnSpan="2"/>
-            <syncfusion:SfChart  x:Name="chExpenses" Margin="0,0,0,0" Grid.Row="1" Grid.Column="0" />
-            <syncfusion:SfDataGrid x:Name="gvExpenses"  Margin="0,0,0,0" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1" ColumnSizer="Star" 
-                                   >
-                <syncfusion:SfDataGrid.Columns >
-                    <syncfusion:GridTextColumn MappingName="category" HeaderText="Categoría"/>
-                    <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>
-                </syncfusion:SfDataGrid.Columns>
-            </syncfusion:SfDataGrid>
-
-
-        </Grid>
-
-        <Grid x:Name="gridReminders" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2" Visibility="Hidden">
-
-            <syncfusion:CardView x:Name="cvReminders" ShowHeader="false" Orientation="Horizontal" MouseDoubleClick="cvReminders_MouseDoubleClick">
-                <syncfusion:CardView.HeaderTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding transactionsReminders.person.name}"/>
-                            <TextBlock Text="{Binding transactionsReminders.memo}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </syncfusion:CardView.HeaderTemplate>
-                <syncfusion:CardView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="{x:Null}">
-                                <ListBoxItem Padding="1" >
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="75" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Fecha:" />
-                                        <TextBlock Grid.Column="1" 
-                                    Text="{Binding date, StringFormat='{}{0:dd/MM/yyyy}'}" />
-                                    </Grid>
-                                </ListBoxItem>
-                                <ListBoxItem Padding="1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="75" />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Categoría:" />
-                                        <TextBlock Grid.Column="1"
-                                    Text="{Binding transactionsReminders.category.description}" />
-                                    </Grid>
-                                </ListBoxItem>
-
-                                <ListBoxItem Padding="1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="75" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Text="Importe:" />
-                                        <TextBlock Grid.Column="1"
-                                   Text="{Binding transactionsReminders.amount,ConverterCulture='es-ES', StringFormat='{}{0:C}'}" />
-                                    </Grid>
-                                </ListBoxItem>
-                            </ListBox>
-                            <Grid Margin="0,10,0,5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Button Name="btnSkip" Click="btnSkip_Click" Width="40" Height="40" Foreground="{x:Null}" Background="White" HorizontalAlignment="Left" BorderBrush="{x:Null}" Margin="5,0,0,0" Tag="{Binding id}">
-                                    <Image Source="/Resources/skip-32.png" Stretch="Fill" />
-                                </Button>
-                                <Button Name="btnRegister" Click="btnRegister_Click"   Width="40" Height="40" Foreground="{x:Null}" Background="White" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,5,0" Tag="{Binding id}" >
-                                    <Image Source="/Resources/register-32.png" Stretch="Fill" />
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-                    </DataTemplate>
-                </syncfusion:CardView.ItemTemplate>
-            </syncfusion:CardView>
-        </Grid>
     </Grid>
 </syncfusion:RibbonWindow>

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace GastosRYC.BBDDLib.Services
 {
-    public class SplitsService : ISplitsService
+    public class SplitsService
     {
 
         private readonly SimpleInjector.Container servicesContainer;
@@ -67,7 +67,7 @@ namespace GastosRYC.BBDDLib.Services
         {
             if (splits.category == null && splits.categoryid != null)
             {
-                splits.category = servicesContainer.GetInstance<ICategoriesService>().getByID(splits.categoryid);
+                splits.category = servicesContainer.GetInstance<CategoriesService>().getByID(splits.categoryid);
             }
 
             if (splits.amountIn == null)
