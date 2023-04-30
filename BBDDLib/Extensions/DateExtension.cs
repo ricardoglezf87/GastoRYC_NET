@@ -76,5 +76,17 @@ namespace GastosRYC.Extensions
             }
         }
 
+        public static DateTime? removeTime(this DateTime? date)
+        {
+            if (date != null)
+            { 
+                return new DateTime(date.Value.Year,date.Value.Month,date.Value.Day);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
     }
 }

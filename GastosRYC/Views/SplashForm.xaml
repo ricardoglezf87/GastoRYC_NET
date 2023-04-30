@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GastosRYC.Views"
-        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.SpashForm"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GastosRYC.Views.SplashForm"
         mc:Ignorable="d"
         Title="SpashForm" Height="450" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" ContentRendered="Window_ContentRendered" >
     <Grid>
@@ -13,6 +13,6 @@
         <Label x:Name="lblTitulo" Content="Gastos RYC" HorizontalAlignment="Left" Margin="30,59,0,0" VerticalAlignment="Top" Height="112" Width="399" FontSize="72" FontStyle="Italic" FontFamily="Times New Roman"/>
         <Label x:Name="lblVersion" Content="Version: 1.0.0" HorizontalAlignment="Right" Margin="0,364,30,0" Width="168" FontSize="20" Height="37" VerticalAlignment="Top" HorizontalContentAlignment="Right"/>
         <Image x:Name="pbLogo" HorizontalAlignment="Right" Height="336" Margin="0,30,30,0" VerticalAlignment="Top" Width="336" Source="/Resources/logo-100.png"/>
-   
+
     </Grid>
 </Window>

@@ -1,10 +1,7 @@
 ﻿using BBDDLib.Models;
 using GastosRYC.BBDDLib.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BBDDLib.Services
 {
@@ -17,7 +14,7 @@ namespace BBDDLib.Services
 
         public List<VBalancebyCategory>? getbyYearMonth(int month, int year)
         {
-            return getAll()?.Where(x=>x.year == year && x.month == month).ToList();
+            return getAll()?.Where(x => x.year == year && x.month == month).ToList();
         }
 
         public List<VBalancebyCategory>? getExpensesbyYearMonth(int month, int year)

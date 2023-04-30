@@ -1,5 +1,5 @@
 ﻿using BBDDLib.Models;
-using BBDDLib.Models.Charts;
+using GastosRYC.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -35,6 +35,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public void update(Transactions transactions)
         {
+            transactions.date = transactions.date.removeTime();
             RYCContextService.getInstance().BBDD.Update(transactions);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
@@ -48,6 +49,15 @@ namespace GastosRYC.BBDDLib.Services
             }
         }
 
+        public Decimal getBalanceByAccount(Accounts? accounts)
+        {
+            return getBalanceByAccount(accounts.id);
+        }
+
+        public Decimal getBalanceByAccount(int accountId)
+        {
+            return RYCContextService.getInstance()?.BBDD?.transactions?.Where(x => x.accountid == accountId)?.ToList().Sum(x => x.amount) ?? 0;
+        }
 
         public int getNextID()
         {

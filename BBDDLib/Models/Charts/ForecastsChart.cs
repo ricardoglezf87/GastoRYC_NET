@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BBDDLib.Models.Charts
 {
@@ -13,7 +9,7 @@ namespace BBDDLib.Models.Charts
         public virtual String? account { set; get; }
         public virtual Decimal? amount { set; get; }
 
-        public ForecastsChart(DateTime? date,String? account, decimal? amount)
+        public ForecastsChart(DateTime? date, String? account, decimal? amount)
         {
             this.date = date;
             this.account = account;

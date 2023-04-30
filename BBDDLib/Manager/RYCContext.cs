@@ -1,9 +1,7 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Properties;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using System;
-using System.Configuration;
 using System.IO;
 
 namespace BBDDLib.Manager
@@ -13,6 +11,7 @@ namespace BBDDLib.Manager
 
         #region Tablas
 
+        public DbSet<DateCalendar>? dateCalendar { get; set; }
         public DbSet<Accounts>? accounts { get; set; }
         public DbSet<AccountsTypes>? accountsTypes { get; set; }
         public DbSet<Transactions>? transactions { get; set; }
@@ -68,7 +67,7 @@ namespace BBDDLib.Manager
             if (!Settings.Default.BBDDLocal)
             {
                 optionsBuilder.UseSqlite("Data Source="
-                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\GastosRYC\\Data\\" + nameDDBB );
+                + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\GastosRYC\\Data\\" + nameDDBB);
             }
             else
             {
@@ -81,7 +80,7 @@ namespace BBDDLib.Manager
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<VBalancebyCategory>()
                 .ToView(nameof(VBalancebyCategory))
-                .HasKey(t => new { t.year, t.month, t.categoryid});
+                .HasKey(t => new { t.year, t.month, t.categoryid });
         }
 
     }

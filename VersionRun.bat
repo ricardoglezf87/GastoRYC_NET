@@ -1,0 +1,2 @@
+gitversion.exe /updateprojectfiles
+pause
