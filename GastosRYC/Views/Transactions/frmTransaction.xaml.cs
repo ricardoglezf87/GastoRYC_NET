@@ -12,9 +12,15 @@ namespace GastosRYC.Views
     public partial class FrmTransaction : Window
     {
 
+        #region Variables
+
         private Transactions? transaction;
         private readonly int? accountidDefault;
         private readonly SimpleInjector.Container servicesContainer;
+
+        #endregion
+
+        #region Constructor
 
         public FrmTransaction(SimpleInjector.Container servicesContainer)
         {
@@ -41,11 +47,75 @@ namespace GastosRYC.Views
             this.accountidDefault = accountidDefault;
         }
 
+        #endregion
+
+        #region Eventos
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             loadComboBox();
             loadTransaction();
         }
+
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (saveTransaction())
+            {
+                this.Close();
+            }
+        }
+
+        private void btnSplit_Click(object sender, RoutedEventArgs e)
+        {
+            if ((cbCategory.SelectedValue == null) && (txtAmount.Value == null))
+            {
+                if(MessageBox.Show("Para hacer una división se tiene que asignar una categoría especial, ¿Esta de acuerdo?", "inserción movimiento", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    cbCategory.SelectedValue = (int)CategoriesService.eSpecialCategories.Split;
+                    txtAmount.Value = 0;
+                }
+                else
+                {
+                    MessageBox.Show("Sin esta modificación no se puede modificar", "inserción movimiento");
+                    return;
+                }
+            }
+
+            if (transaction == null && !saveTransaction())
+            {
+                MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
+                return;
+            }
+
+            FrmSplitsList frm = new FrmSplitsList(transaction, servicesContainer);
+            frm.ShowDialog();
+            servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transaction);
+            loadTransaction();
+        }
+
+        private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.F1:
+                    if (saveTransaction())
+                    {
+                        transaction = null;
+                        loadTransaction();
+                    }
+                    break;
+                case Key.F2:
+                    saveTransaction();
+                    break;
+                case Key.Escape:
+                    this.Close();
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region Funtions
 
         private void loadTransaction()
         {
@@ -103,7 +173,7 @@ namespace GastosRYC.Views
             }
 
             transaction.memo = txtMemo.Text;
-
+            
             transaction.categoryid = (int)cbCategory.SelectedValue;
             transaction.category = servicesContainer.GetInstance<CategoriesService>().getByID(transaction.categoryid);
 
@@ -137,13 +207,6 @@ namespace GastosRYC.Views
             cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<TransactionsStatusService>().getAll();
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
-        {
-            if (saveTransaction())
-            {
-                this.Close();
-            }
-        }
 
         private bool isTransactionValid()
         {
@@ -189,19 +252,7 @@ namespace GastosRYC.Views
             return valid;
         }
 
-        private void btnSplit_Click(object sender, RoutedEventArgs e)
-        {
-            if (transaction == null && !saveTransaction())
-            {
-                MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
-                return;
-            }
 
-            FrmSplitsList frm = new FrmSplitsList(transaction, servicesContainer);
-            frm.ShowDialog();
-            servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transaction);
-            loadTransaction();
-        }
 
         private bool saveTransaction()
         {
@@ -228,24 +279,7 @@ namespace GastosRYC.Views
             }
         }
 
-        private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.F1:
-                    if (saveTransaction())
-                    {
-                        transaction = null;
-                        loadTransaction();
-                    }
-                    break;
-                case Key.F2:
-                    saveTransaction();
-                    break;
-                case Key.Escape:
-                    this.Close();
-                    break;
-            }
-        }
+        #endregion
+
     }
 }
