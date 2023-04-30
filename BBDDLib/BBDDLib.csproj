@@ -3,10 +3,10 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.2.0.29</AssemblyVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
     <FileVersion>1.2.0.0</FileVersion>
-    <InformationalVersion>1.2.0-alpha.29+Branch.develop.Sha.003004a0093e684e23d03a7768cd5feec0d15d14</InformationalVersion>
-    <Version>1.2.0-alpha0029</Version>
+    <InformationalVersion>1.2.0-beta.0+Branch.release-1.2.0.29.Sha.f8c59cda3cb4653b06be7c5e61f04e6e41730fe9</InformationalVersion>
+    <Version>1.2.0-beta0000</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
