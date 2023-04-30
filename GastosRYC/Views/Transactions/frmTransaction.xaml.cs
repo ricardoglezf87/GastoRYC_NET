@@ -3,7 +3,10 @@ using GastosRYC.BBDDLib.Services;
 using Microsoft.VisualBasic;
 using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GastosRYC.Views
 {
@@ -117,6 +120,21 @@ namespace GastosRYC.Views
                 case Key.Escape:
                     this.Close();
                     break;
+            }
+        }
+
+        private void dtpDate_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Tab)
+            {
+                if (dtpDate.Text.Length == 4)
+                {
+                    dtpDate.Text = dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2);
+                }
+                else if (dtpDate.Text.Length == 6)
+                {
+                    dtpDate.Text = dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2) + "/" + dtpDate.Text.Substring(4, 2);
+                }
             }
         }
 
@@ -287,6 +305,6 @@ namespace GastosRYC.Views
         }
 
         #endregion
-
+        
     }
 }
