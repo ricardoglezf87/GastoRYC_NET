@@ -1,5 +1,6 @@
 ﻿using BBDDLib.Models;
 using GastosRYC.BBDDLib.Services;
+using Microsoft.VisualBasic;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -100,8 +101,14 @@ namespace GastosRYC.Views
                 case Key.F1:
                     if (saveTransaction())
                     {
+                        DateTime previousDate = DateTime.Now;
+                        if (dtpDate.SelectedDate != null)
+                             previousDate = (DateTime)dtpDate.SelectedDate;
+                        
                         transaction = null;
                         loadTransaction();
+
+                        dtpDate.SelectedDate = previousDate;
                     }
                     break;
                 case Key.F2:
