@@ -50,7 +50,41 @@ namespace BBDDLib.Manager
                     Directory.CreateDirectory("Data\\");
             }
 
+            makeBackup();
+
             Database.Migrate();
+        }
+
+        private void makeBackup()
+        {
+            String path = String.Empty;
+            String nameDDBB = String.Empty;
+
+            if (!Settings.Default.BBDDLocal)
+            {
+                path =Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                    + "\\GastosRYC\\Data\\";
+            }
+            else
+            {
+                path = "Data\\";
+            }
+
+            if (!Directory.Exists(path + "Backup\\"))
+                Directory.CreateDirectory(path + "Backup\\");
+
+#if DEBUG
+            nameDDBB = "rycBBDD_PRE.db";
+#else
+            nameDDBB = "rycBBDD.db";
+#endif
+
+            if(File.Exists(path + nameDDBB)) {
+                
+                File.Copy(path + nameDDBB, path + "Backup\\" + 
+                    nameDDBB + "." + DateTime.Now.Ticks.ToString()+".bk",true);
+            }
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
