@@ -3,10 +3,10 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.5.0.16</AssemblyVersion>
+    <AssemblyVersion>1.5.0.18</AssemblyVersion>
     <FileVersion>1.5.0.0</FileVersion>
-    <InformationalVersion>1.5.0-V1-5-altaMejoraFecha.16+Branch.feature-V1.5-altaMejoraFecha.Sha.1ec72ed4c92a1290a6b732c8afdf3775224166bb</InformationalVersion>
-    <Version>1.5.0-v1-5-altamejoraf0016</Version>
+    <InformationalVersion>1.5.0-V1-5-controlRecreationReminder.18+Branch.feature-V1.5-controlRecreationReminder.Sha.2f8ce88339b72c4e851f9a270536ed598571f1f7</InformationalVersion>
+    <Version>1.5.0-v1-5-controlrecr0018</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
