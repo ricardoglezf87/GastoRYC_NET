@@ -81,6 +81,7 @@ namespace GastosRYC.Views
             Splits splits = (Splits)e.RowData;
 
             servicesContainer.GetInstance<SplitsService>().saveChanges(transactions, splits);
+            servicesContainer.GetInstance<TransactionsService>().updateTranferSplits(transactions, splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
