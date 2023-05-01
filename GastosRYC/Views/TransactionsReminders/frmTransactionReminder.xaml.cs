@@ -3,6 +3,7 @@ using GastosRYC.BBDDLib.Services;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using static BBDDLib.Extensions.WindowsExtension;
 
 namespace GastosRYC.Views
 {
@@ -11,10 +12,16 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmTransactionReminders : Window
     {
-
+        #region Variables
+        
         private TransactionsReminders? transaction;
         private readonly SimpleInjector.Container servicesContainer;
         private readonly int? accountidDefault;
+        public eWindowsResult windowsResult { set; get; }
+
+        #endregion
+
+        #region Constructors
 
         public FrmTransactionReminders(SimpleInjector.Container servicesContainer)
         {
@@ -41,17 +48,83 @@ namespace GastosRYC.Views
             this.accountidDefault = accountidDefault;
         }
 
+        #endregion
+
+        #region Events
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             loadComboBox();
             loadTransaction();
         }
 
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (saveTransaction())
+            {
+                windowsResult = eWindowsResult.Sucess;
+                this.Close();
+            }
+        }
+
+        private void btnSplit_Click(object sender, RoutedEventArgs e)
+        {
+            if (transaction == null && !saveTransaction())
+            {
+                MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
+                return;
+            }
+
+            FrmSplitsRemindersList frm = new FrmSplitsRemindersList(transaction, servicesContainer);
+            frm.ShowDialog();
+            servicesContainer.GetInstance<TransactionsRemindersService>().updateSplitsReminders(transaction);
+            loadTransaction();
+        }
+
+        private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.F1:
+                    if (saveTransaction())
+                    {
+                        transaction = null;
+                        loadTransaction();
+                    }
+                    break;
+                case Key.F2:
+                    saveTransaction();
+                    break;
+                case Key.Escape:
+                    this.Close();
+                    break;
+            }
+        }
+
+        private void dtpDate_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Tab)
+            {
+                if (dtpDate.Text.Length == 4)
+                {
+                    dtpDate.Text = dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2);
+                }
+                else if (dtpDate.Text.Length == 6)
+                {
+                    dtpDate.Text = dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2) + "/" + dtpDate.Text.Substring(4, 2);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Functions
+
         private void loadTransaction()
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = transaction.date;
+                dtpDate.SelectedDate = servicesContainer.GetInstance<ExpirationsRemindersService>().getNextReminder(transaction.id) ?? transaction.date;
                 cbPeriodTransaction.SelectedValue = transaction.periodsRemindersid;
                 cbAccount.SelectedValue = transaction.accountid;
                 cbPerson.SelectedValue = transaction.personid;
@@ -143,11 +216,28 @@ namespace GastosRYC.Views
             cbPeriodTransaction.ItemsSource = servicesContainer.GetInstance<PeriodsRemindersService>().getAll();
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private bool saveTransaction()
         {
-            if (saveTransaction())
+            if (isTransactionValid())
             {
-                this.Close();
+                if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    updateTransaction();
+                    if (transaction != null)
+                    {
+                        servicesContainer.GetInstance<TransactionsRemindersService>().saveChanges(transaction);
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -201,63 +291,7 @@ namespace GastosRYC.Views
             return valid;
         }
 
-        private void btnSplit_Click(object sender, RoutedEventArgs e)
-        {
-            if (transaction == null && !saveTransaction())
-            {
-                MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
-                return;
-            }
+        #endregion
 
-            FrmSplitsRemindersList frm = new FrmSplitsRemindersList(transaction, servicesContainer);
-            frm.ShowDialog();
-            servicesContainer.GetInstance<TransactionsRemindersService>().updateSplitsReminders(transaction);
-            loadTransaction();
-        }
-
-        private bool saveTransaction()
-        {
-            if (isTransactionValid())
-            {
-                if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
-                MessageBoxImage.Question) == MessageBoxResult.Yes)
-                {
-                    updateTransaction();
-                    if (transaction != null)
-                    {
-                        servicesContainer.GetInstance<TransactionsRemindersService>().saveChanges(transaction);
-                    }
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case Key.F1:
-                    if (saveTransaction())
-                    {
-                        transaction = null;
-                        loadTransaction();
-                    }
-                    break;
-                case Key.F2:
-                    saveTransaction();
-                    break;
-                case Key.Escape:
-                    this.Close();
-                    break;
-            }
-        }
     }
 }
