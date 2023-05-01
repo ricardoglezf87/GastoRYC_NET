@@ -280,6 +280,12 @@ namespace GastosRYC.Views
                 valid = false;
             }
 
+            if(transaction.tranferSplitid != null)
+            {
+                errorMessage += "- No se puede editar una transferencia proveniente de un split\n";
+                valid = false;
+            }
+
             if (errorMessage != "")
             {
                 errorMessage = "Tiene que rellenar los siguiente campos para continuar:\n" + errorMessage.TrimEnd('\n');
