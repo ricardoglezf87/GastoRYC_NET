@@ -59,6 +59,7 @@ namespace GastosRYC.Views
             frm.ShowDialog();
             servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transactions);
             loadTransactions();
+            parentForm.loadAccounts();
         }
 
         private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
