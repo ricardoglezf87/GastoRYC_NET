@@ -3,6 +3,7 @@ using GastosRYC.BBDDLib.Services;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using static BBDDLib.Extensions.WindowsExtension;
 
 namespace GastosRYC.Views
 {
@@ -16,6 +17,7 @@ namespace GastosRYC.Views
         private TransactionsReminders? transaction;
         private readonly SimpleInjector.Container servicesContainer;
         private readonly int? accountidDefault;
+        public eWindowsResult windowsResult { set; get; }
 
         #endregion
 
@@ -60,6 +62,7 @@ namespace GastosRYC.Views
         {
             if (saveTransaction())
             {
+                windowsResult = eWindowsResult.Sucess;
                 this.Close();
             }
         }
