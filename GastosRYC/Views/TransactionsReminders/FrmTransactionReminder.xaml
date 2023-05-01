@@ -31,7 +31,7 @@
             <ColumnDefinition Width="235*"/>
             <ColumnDefinition Width="50*"/>
         </Grid.ColumnDefinitions>
-        <DatePicker x:Name="dtpDate" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" Height="24" IsTabStop="True"/>
+        <DatePicker x:Name="dtpDate" Grid.Column="3" Grid.Row="1" VerticalAlignment="Center" Height="24" IsTabStop="True" KeyDown="dtpDate_KeyDown"/>
         <Label x:Name="lblDate" Grid.Column="2" Content="Fecha:" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" Height="26" Width="43"/>
         <syncfusion:ComboBoxAdv x:Name="cbPeriodTransaction" Grid.Column="3" DefaultText="Seleccione Periodicidad..." DisplayMemberPath="description" SelectedValuePath="id" Grid.Row="2" VerticalAlignment="Center" IsEditable="True" AutoCompleteMode="Suggest"  />
         <Label x:Name="lblAccount" Grid.Column="2" Content="Cuenta:" HorizontalAlignment="Left" Grid.Row="3" VerticalAlignment="Center" Height="26" Width="50"/>
