@@ -3,10 +3,10 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.5.0.8</AssemblyVersion>
+    <AssemblyVersion>1.5.0.16</AssemblyVersion>
     <FileVersion>1.5.0.0</FileVersion>
-    <InformationalVersion>1.5.0-improveReminders.8+Branch.feature-improveReminders.Sha.8986c3303a5855bfe39e04530b02536d9e736a56</InformationalVersion>
-    <Version>1.5.0-improvereminders0008</Version>
+    <InformationalVersion>1.5.0-V1-5-editeBeforeDone.16+Branch.feature-V1.5-editeBeforeDone.Sha.bf5a4d57f778dd6a8b2fcad5367885388ed6a3c7</InformationalVersion>
+    <Version>1.5.0-v1-5-editebefore0016</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
