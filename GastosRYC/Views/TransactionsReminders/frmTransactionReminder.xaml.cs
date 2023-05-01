@@ -121,7 +121,7 @@ namespace GastosRYC.Views
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = transaction.date;
+                dtpDate.SelectedDate = servicesContainer.GetInstance<ExpirationsRemindersService>().getNextReminder(transaction.id) ?? transaction.date;
                 cbPeriodTransaction.SelectedValue = transaction.periodsRemindersid;
                 cbAccount.SelectedValue = transaction.accountid;
                 cbPerson.SelectedValue = transaction.personid;

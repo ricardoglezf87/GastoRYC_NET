@@ -238,5 +238,10 @@ namespace GastosRYC.BBDDLib.Services
                 delete(expirationsReminder);
             }
         }
+
+        public DateTime? getNextReminder(int id)
+        {
+            return getByTransactionReminderid(id)?.Where(x => !x.done.HasValue || !x.done.Value).Min(y => y.date);
+        }
     }
 }
