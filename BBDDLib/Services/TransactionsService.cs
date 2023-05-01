@@ -83,6 +83,7 @@ namespace GastosRYC.BBDDLib.Services
             updateTranfer(transactions);
             updateTranferFromSplit(transactions);
             update(transactions);
+            servicesContainer.GetInstance<PersonsService>().setCategoryDefault(transactions.person);
         }
 
         public void updateTranfer(Transactions transactions)

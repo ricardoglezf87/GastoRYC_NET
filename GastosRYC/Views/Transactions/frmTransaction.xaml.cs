@@ -123,6 +123,18 @@ namespace GastosRYC.Views
             }
         }
 
+        private void cbPerson_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbPerson.SelectedItem != null)
+            {
+                Persons p = ((Persons)cbPerson.SelectedItem);
+                if (p?.categoryid != null)
+                {
+                    cbCategory.SelectedValue = p.categoryid;
+                }
+            }
+        }
+
         private void dtpDate_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Tab)
@@ -305,6 +317,5 @@ namespace GastosRYC.Views
         }
 
         #endregion
-        
     }
 }
