@@ -40,9 +40,9 @@ namespace BBDDLib.Models
 
         public virtual TransactionsStatus? transactionStatus { set; get; }
 
-        public virtual int? investmentProductid { set; get; }
+        public virtual int? investmentProductsid { set; get; }
 
-        public virtual InvestmentProducts? investmentProduct { set; get; }
+        public virtual InvestmentProducts? investmentProducts { set; get; }
 
         public virtual List<Splits>? splits { set; get; }
 
