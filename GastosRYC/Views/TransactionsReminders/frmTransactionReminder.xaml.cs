@@ -133,6 +133,7 @@ namespace GastosRYC.Views
                 txtAmount.Value = transaction.amount;
                 cbTag.SelectedValue = transaction.tagid;
                 cbTransactionStatus.SelectedValue = transaction.transactionStatusid;
+                chkAutoregister.IsChecked = transaction.autoRegister ?? false;
             }
             else
             {
@@ -203,6 +204,9 @@ namespace GastosRYC.Views
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
+
+            transaction.autoRegister = chkAutoregister.IsChecked ?? false;
+
             transaction.transactionStatus = servicesContainer.GetInstance<TransactionsStatusService>().getByID(transaction.transactionStatusid);
         }
 

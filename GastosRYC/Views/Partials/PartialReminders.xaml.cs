@@ -78,6 +78,9 @@ namespace GastosRYC.Views
 
         public void loadReminders()
         {
+            servicesContainer.GetInstance<ExpirationsRemindersService>().generateAutoregister();
+            parentForm.loadAccounts();
+
             cvReminders.ItemsSource = new ListCollectionView(servicesContainer.GetInstance<ExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration());
 
             cvReminders.CanGroup = true;

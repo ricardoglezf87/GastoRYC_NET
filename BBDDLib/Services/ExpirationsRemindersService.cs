@@ -51,11 +51,21 @@ namespace GastosRYC.BBDDLib.Services
         {
             foreach (TransactionsReminders transactionsReminders in RYCContextService.getInstance().BBDD.transactionsReminders)
             {
-                GenerationExpirations(transactionsReminders);
+                generationExpirations(transactionsReminders);
             }
         }
 
-        public void GenerationExpirations(TransactionsReminders? transactionsReminders)
+        public void generateAutoregister()
+        {
+            foreach(ExpirationsReminders exp in getAllPendingWithGeneration()?.Where(x=>x.date<=DateTime.Now))
+            {
+                registerTransactionfromReminder(exp.id);
+                exp.done = true;
+                update(exp);
+            }
+        }
+
+        public void generationExpirations(TransactionsReminders? transactionsReminders)
         {
             if (transactionsReminders != null)
             {
