@@ -78,6 +78,9 @@ namespace GastosRYC.Views
 
         public void loadReminders()
         {
+            servicesContainer.GetInstance<ExpirationsRemindersService>().generateAutoregister();
+            parentForm.loadAccounts();
+
             cvReminders.ItemsSource = new ListCollectionView(servicesContainer.GetInstance<ExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration());
 
             cvReminders.CanGroup = true;
@@ -102,7 +105,12 @@ namespace GastosRYC.Views
 
         private void makeTransactionFromReminder(int? id)
         {
-            servicesContainer.GetInstance<ExpirationsRemindersService>().registerTransactionfromReminder(id);
+            Transactions? transaction =  servicesContainer.GetInstance<ExpirationsRemindersService>().registerTransactionfromReminder(id);
+            if(transaction != null)
+            {
+                FrmTransaction frm = new FrmTransaction(transaction, servicesContainer);
+            }
+
             parentForm.loadAccounts();
         }
 

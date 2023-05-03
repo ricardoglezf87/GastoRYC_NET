@@ -8,10 +8,10 @@
     <Authors>Ricardo González Fabelo</Authors>
     <NeutralLanguage>es-ES</NeutralLanguage>
     <PackageIcon>Logo-100.png</PackageIcon>
-    <AssemblyVersion>1.4.0.0</AssemblyVersion>
-    <FileVersion>1.4.0.0</FileVersion>
-    <InformationalVersion>1.4.0-beta.0+Branch.release-1.4.Sha.0a6f771f74a3fad2ce38feb4672c21981699d79b</InformationalVersion>
-    <Version>1.4.0-beta0000</Version>
+    <AssemblyVersion>1.5.0.0</AssemblyVersion>
+    <FileVersion>1.5.0.0</FileVersion>
+    <InformationalVersion>1.5.0-beta.0+Branch.release-1.5.Sha.4ebcdd8c1005675cee0e0278a2b4e341917ac4e7</InformationalVersion>
+    <Version>1.5.0-beta0000</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\add-16.png" />
@@ -164,10 +164,12 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="SimpleInjector" Version="5.4.1" />
+    <PackageReference Include="Syncfusion.SfChart.WPF" Version="21.1.41" />
     <PackageReference Include="Syncfusion.SfGrid.WPF" Version="21.1.41" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="21.1.35" />
     <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="21.1.41" />
     <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="21.1.41" />
-    <PackageReference Include="syncfusion.ui.wpf.net" Version="21.1.41" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="21.1.41" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BBDDLib\BBDDLib.csproj" />

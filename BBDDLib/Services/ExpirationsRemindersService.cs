@@ -51,11 +51,21 @@ namespace GastosRYC.BBDDLib.Services
         {
             foreach (TransactionsReminders transactionsReminders in RYCContextService.getInstance().BBDD.transactionsReminders)
             {
-                GenerationExpirations(transactionsReminders);
+                generationExpirations(transactionsReminders);
             }
         }
 
-        public void GenerationExpirations(TransactionsReminders? transactionsReminders)
+        public void generateAutoregister()
+        {
+            foreach(ExpirationsReminders exp in getAllPendingWithGeneration()?.Where(x=>x.date<=DateTime.Now))
+            {
+                registerTransactionfromReminder(exp.id);
+                exp.done = true;
+                update(exp);
+            }
+        }
+
+        public void generationExpirations(TransactionsReminders? transactionsReminders)
         {
             if (transactionsReminders != null)
             {
@@ -78,7 +88,7 @@ namespace GastosRYC.BBDDLib.Services
             }
         }
 
-        public void registerTransactionfromReminder(int? id)
+        public Transactions? registerTransactionfromReminder(int? id)
         {
             if (id != null)
             {
@@ -114,8 +124,12 @@ namespace GastosRYC.BBDDLib.Services
                         }
                     }
 
+                    return transactions;
+
                 }
             }
+
+            return null;
         }
 
         public List<Transactions> registerTransactionfromReminderSimulation(int id)
@@ -237,6 +251,11 @@ namespace GastosRYC.BBDDLib.Services
             {
                 delete(expirationsReminder);
             }
+        }
+
+        public DateTime? getNextReminder(int id)
+        {
+            return getByTransactionReminderid(id)?.Where(x => !x.done.HasValue || !x.done.Value).Min(y => y.date);
         }
     }
 }

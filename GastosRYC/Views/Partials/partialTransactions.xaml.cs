@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using static BBDDLib.Extensions.WindowsExtension;
 
 namespace GastosRYC.Views
 {
@@ -98,10 +99,9 @@ namespace GastosRYC.Views
 
                     FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders, servicesContainer);
                     frm.ShowDialog();
-                }
-
-                MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
-
+                    if (frm.windowsResult == eWindowsResult.Sucess)
+                        MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
+                }                
             }
             else
             {

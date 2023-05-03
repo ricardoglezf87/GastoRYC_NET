@@ -11,6 +11,8 @@ namespace BBDDLib.Models
         public virtual int? periodsRemindersid { set; get; }
         public virtual PeriodsReminders? periodsReminders { set; get; }
 
+        public virtual bool? autoRegister { set; get; }
+
         public virtual DateTime? date { set; get; }
 
         public virtual int? accountid { set; get; }

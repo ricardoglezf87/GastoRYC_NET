@@ -97,6 +97,7 @@ namespace GastosRYC
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             loadCalendar();
+            servicesContainer.GetInstance<ExpirationsRemindersService>().generateAutoregister();
             loadAccounts();
             toggleViews(eViews.Home);
         }
