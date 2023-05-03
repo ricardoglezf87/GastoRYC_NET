@@ -40,6 +40,10 @@ namespace BBDDLib.Models
 
         public virtual TransactionsStatus? transactionStatus { set; get; }
 
+        public virtual int? investProductid { set; get; }
+
+        public virtual InvestmentProducts? investmentProduct { set; get; }
+
         public virtual List<Splits>? splits { set; get; }
 
         [NotMapped]

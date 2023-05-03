@@ -25,6 +25,8 @@ namespace BBDDLib.Manager
         public DbSet<TransactionsReminders>? transactionsReminders { get; set; }
         public DbSet<SplitsReminders>? splitsReminders { get; set; }
         public DbSet<ExpirationsReminders>? expirationsReminders { get; set; }
+        public DbSet<InvestmentProducts>? investmentProducts { get; set; }
+        public DbSet<InvestmentProductsPrices>? investmentProductsPrices { get; set; }
 
         #endregion
 

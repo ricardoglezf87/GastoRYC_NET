@@ -23,6 +23,8 @@ namespace GastosRYC.BBDDLib.Services
             context.accounts?.Load();
             context.transactionsStatus?.Load();
             context.tags?.Load();
+            context.investmentProducts?.Load();
+            context.investmentProductsPrices?.Load();
             context.splits?.Load();
             context.transactions?.Load();
             context.periodsReminders?.Load();
