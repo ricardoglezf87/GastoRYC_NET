@@ -78,7 +78,7 @@ namespace GastosRYC.BBDDLib.Services
             }
         }
 
-        public void registerTransactionfromReminder(int? id)
+        public Transactions? registerTransactionfromReminder(int? id)
         {
             if (id != null)
             {
@@ -114,8 +114,12 @@ namespace GastosRYC.BBDDLib.Services
                         }
                     }
 
+                    return transactions;
+
                 }
             }
+
+            return null;
         }
 
         public List<Transactions> registerTransactionfromReminderSimulation(int id)
