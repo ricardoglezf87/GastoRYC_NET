@@ -164,10 +164,12 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="SimpleInjector" Version="5.4.1" />
+    <PackageReference Include="Syncfusion.SfChart.WPF" Version="21.1.41" />
     <PackageReference Include="Syncfusion.SfGrid.WPF" Version="21.1.41" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="21.1.35" />
     <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="21.1.41" />
     <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="21.1.41" />
-    <PackageReference Include="syncfusion.ui.wpf.net" Version="21.1.41" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="21.1.41" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BBDDLib\BBDDLib.csproj" />
