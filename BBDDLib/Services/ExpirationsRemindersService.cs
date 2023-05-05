@@ -57,7 +57,9 @@ namespace GastosRYC.BBDDLib.Services
 
         public void generateAutoregister()
         {
-            foreach(ExpirationsReminders exp in getAllPendingWithGeneration()?.Where(x=>x.date<=DateTime.Now))
+            foreach(ExpirationsReminders exp in getAllPendingWithGeneration()?
+                .Where(x=>x.date<=DateTime.Now && 
+                    (x.transactionsReminders.autoRegister.HasValue && x.transactionsReminders.autoRegister.Value)))
             {
                 registerTransactionfromReminder(exp.id);
                 exp.done = true;
