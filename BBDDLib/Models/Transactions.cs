@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.InteropServices;
 
 namespace BBDDLib.Models
 {
@@ -26,9 +27,16 @@ namespace BBDDLib.Models
         public virtual int? investmentProductsid { set; get; }
         public virtual InvestmentProducts? investmentProducts { set; get; }
         public virtual List<Splits>? splits { set; get; }
+        public virtual Decimal? numShares { set; get; }
+        public virtual Decimal? pricesShares { set; get; }
+        public virtual Decimal? commission { set; get; }
 
         [NotMapped]
-        public virtual Decimal? amount { get { return amountIn - amountOut; } }
+        public virtual Decimal? amount { 
+            get { 
+                return (numShares.HasValue? (numShares * pricesShares) - commission                          :amountIn - amountOut); 
+            } 
+        }
 
         [NotMapped]
         public virtual Double? orden
