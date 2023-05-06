@@ -9,13 +9,7 @@ namespace BBDDLib.Migrations
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<decimal>(
-                name: "commission",
-                table: "transactions",
-                type: "TEXT",
-                nullable: true);
-
+        {          
             migrationBuilder.AddColumn<decimal>(
                 name: "numShares",
                 table: "transactions",
@@ -32,10 +26,6 @@ namespace BBDDLib.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "commission",
-                table: "transactions");
-
             migrationBuilder.DropColumn(
                 name: "numShares",
                 table: "transactions");

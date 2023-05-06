@@ -29,12 +29,11 @@ namespace BBDDLib.Models
         public virtual List<Splits>? splits { set; get; }
         public virtual Decimal? numShares { set; get; }
         public virtual Decimal? pricesShares { set; get; }
-        public virtual Decimal? commission { set; get; }
 
         [NotMapped]
         public virtual Decimal? amount { 
             get { 
-                return (numShares.HasValue? (numShares * pricesShares) - commission                          :amountIn - amountOut); 
+                return (numShares.HasValue? (numShares * pricesShares):amountIn - amountOut); 
             } 
         }
 
