@@ -290,7 +290,7 @@ namespace GastosRYC.Views
             if (cbInvestmentProduct.SelectedValue != null)
             {
                 transaction.investmentProductsid = (int)cbInvestmentProduct.SelectedValue;
-                transaction.investmentProducts = servicesContainer.GetInstance<InvestementProductsService>().getByID(transaction.investmentProductsid);
+                transaction.investmentProducts = servicesContainer.GetInstance<InvestmentProductsService>().getByID(transaction.investmentProductsid);
             }
 
             if(((Accounts)cbAccount.SelectedItem).accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
@@ -330,7 +330,7 @@ namespace GastosRYC.Views
             cbAccount.ItemsSource = servicesContainer.GetInstance<AccountsService>().getAll();
             cbPerson.ItemsSource = servicesContainer.GetInstance<PersonsService>().getAll();
             cbCategory.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAll();
-            cbInvestmentProduct.ItemsSource = servicesContainer.GetInstance<InvestementProductsService>().getAll();
+            cbInvestmentProduct.ItemsSource = servicesContainer.GetInstance<InvestmentProductsService>().getAll();
             cbTag.ItemsSource = servicesContainer.GetInstance<TagsService>().getAll();
             cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<TransactionsStatusService>().getAll();
         }

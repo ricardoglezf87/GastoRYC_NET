@@ -183,6 +183,9 @@
     <Compile Update="Views\FrmSplitsRemindersList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\InvestmentProducts\FrmInvestmentProductsList.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\Partials\PartialReminders.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

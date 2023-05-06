@@ -57,6 +57,7 @@
                     <syncfusion:RibbonButton Name="btnMntCategories" SizeForm="Large" Label="Categorias" Click="btnMntCategories_Click" LargeIcon="/Resources/mntCategories-32.png"/>
                     <syncfusion:RibbonButton Name="btnMntTags" SizeForm="Large" Label="Tags" Click="btnMntTags_Click" LargeIcon="/Resources/mntTags-32.png"/>
                     <syncfusion:RibbonButton Name="btnMntReminders" SizeForm="Large" Label="Recordatorios" Click="btnMntReminders_Click" LargeIcon="/Resources/mntReminders-32.png"/>
+                    <syncfusion:RibbonButton Name="btnMntInvestmentProducts" SizeForm="Large" Label="Productos de Inversión" LargeIcon="/Resources/mntReminders-32.png" Click="btnMntInvestmentProducts_Click"/>
                 </syncfusion:RibbonBar>
             </syncfusion:RibbonTab>
         </syncfusion:Ribbon>
