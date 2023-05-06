@@ -42,14 +42,14 @@
                 <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
                 <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
                 <syncfusion:GridTextColumn MappingName="account.description" HeaderText="Cuenta"/>
-                <syncfusion:GridTextColumn MappingName="investmentProducts.description" HeaderText="Producto" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="numShares" HeaderText="Num. Participaciones" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="pricesShares" HeaderText="Precio Part." IsHidden="True" />
                 <syncfusion:GridTextColumn MappingName="person.name" HeaderText="Persona"/>
                 <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
                 <syncfusion:GridTextColumn MappingName="category.description" HeaderText="Categoría"/>
                 <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado"/>
                 <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag"/>
+                <syncfusion:GridTextColumn MappingName="investmentProducts.description" HeaderText="Producto" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="numShares" HeaderText="Num. Participaciones" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="pricesShares" HeaderText="Precio Part." IsHidden="True" />
                 <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
                 <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
                 <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>

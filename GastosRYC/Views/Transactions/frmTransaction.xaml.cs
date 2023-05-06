@@ -58,11 +58,22 @@ namespace GastosRYC.Views
         #region Eventos
         private void cbAccount_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cbAccount?.SelectedItem != null)
+            if (cbAccount?.SelectedItem != null && !transaction.investmentCategory.HasValue)
             {
-                toggleViews(((Accounts)cbAccount.SelectedItem).accountsTypes);
+                if (((Accounts)cbAccount.SelectedItem).accountsTypesid == 
+                    (int)AccountsTypesService.eAccountsTypes.Invests)
+                 
+                {
+                    transaction.investmentCategory = false;
+                }
+                else
+                {
+                    transaction.investmentCategory = true;
+                }
             }
+            toggleViews();
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             loadComboBox();
@@ -81,7 +92,7 @@ namespace GastosRYC.Views
         {
             if ((cbCategory.SelectedValue == null) && (txtAmount.Value == null))
             {
-                if(MessageBox.Show("Para hacer una división se tiene que asignar una categoría especial, ¿Esta de acuerdo?", "inserción movimiento", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if (MessageBox.Show("Para hacer una división se tiene que asignar una categoría especial, ¿Esta de acuerdo?", "inserción movimiento", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     cbCategory.SelectedValue = (int)CategoriesService.eSpecialCategories.Split;
                     txtAmount.Value = 0;
@@ -114,8 +125,8 @@ namespace GastosRYC.Views
                     {
                         DateTime previousDate = DateTime.Now;
                         if (dtpDate.SelectedDate != null)
-                             previousDate = (DateTime)dtpDate.SelectedDate;
-                        
+                            previousDate = (DateTime)dtpDate.SelectedDate;
+
                         transaction = null;
                         loadTransaction();
 
@@ -124,6 +135,10 @@ namespace GastosRYC.Views
                     break;
                 case Key.F2:
                     saveTransaction();
+                    break;
+                case Key.F3:
+                    transaction.investmentCategory = !transaction.investmentCategory;
+                    toggleViews();
                     break;
                 case Key.Escape:
                     this.Close();
@@ -171,45 +186,41 @@ namespace GastosRYC.Views
 
         #region Funtions
 
-        private void toggleViews(AccountsTypes? accountsTypes)
+        private void toggleViews()
         {
-            if (accountsTypes != null)
+            if (transaction.investmentCategory == false)
             {
-                switch (accountsTypes.id)
-                {
-                    case (int)AccountsTypesService.eAccountsTypes.Invests:
-                        lblInvestmentProduct.Visibility = Visibility.Visible;
-                        cbInvestmentProduct.Visibility = Visibility.Visible;
-                        lblNumShares.Visibility = Visibility.Visible;
-                        txtNumShares.Visibility = Visibility.Visible;
-                        lblPriceShares.Visibility = Visibility.Visible;
-                        txtPriceShares.Visibility = Visibility.Visible;
-                        lblPerson.Visibility = Visibility.Hidden;
-                        cbPerson.Visibility = Visibility.Hidden;
-                        lblCategory.Visibility = Visibility.Hidden;
-                        cbCategory.Visibility = Visibility.Hidden;
-                        lblTag.Visibility = Visibility.Hidden;
-                        cbTag.Visibility = Visibility.Hidden;
-                        Grid.SetRow(lblMemo, 6);
-                        Grid.SetRow(txtMemo, 6);     
-                        break;
-                    default:
-                        lblInvestmentProduct.Visibility = Visibility.Hidden;
-                        cbInvestmentProduct.Visibility = Visibility.Hidden;
-                        lblNumShares.Visibility = Visibility.Hidden;
-                        txtNumShares.Visibility = Visibility.Hidden;
-                        lblPriceShares.Visibility = Visibility.Hidden;
-                        txtPriceShares.Visibility = Visibility.Hidden;
-                        lblPerson.Visibility = Visibility.Visible;
-                        cbPerson.Visibility = Visibility.Visible;
-                        lblCategory.Visibility = Visibility.Visible;
-                        cbCategory.Visibility = Visibility.Visible;
-                        lblTag.Visibility = Visibility.Visible;
-                        cbTag.Visibility = Visibility.Visible;
-                        Grid.SetRow(lblMemo, 4);
-                        Grid.SetRow(txtMemo, 4);
-                        break;
-                }
+                lblInvestmentProduct.Visibility = Visibility.Visible;
+                cbInvestmentProduct.Visibility = Visibility.Visible;
+                lblNumShares.Visibility = Visibility.Visible;
+                txtNumShares.Visibility = Visibility.Visible;
+                lblPriceShares.Visibility = Visibility.Visible;
+                txtPriceShares.Visibility = Visibility.Visible;
+                lblPerson.Visibility = Visibility.Hidden;
+                cbPerson.Visibility = Visibility.Hidden;
+                lblCategory.Visibility = Visibility.Hidden;
+                cbCategory.Visibility = Visibility.Hidden;
+                lblTag.Visibility = Visibility.Hidden;
+                cbTag.Visibility = Visibility.Hidden;
+                Grid.SetRow(lblMemo, 6);
+                Grid.SetRow(txtMemo, 6);
+            }
+            else
+            {
+                lblInvestmentProduct.Visibility = Visibility.Hidden;
+                cbInvestmentProduct.Visibility = Visibility.Hidden;
+                lblNumShares.Visibility = Visibility.Hidden;
+                txtNumShares.Visibility = Visibility.Hidden;
+                lblPriceShares.Visibility = Visibility.Hidden;
+                txtPriceShares.Visibility = Visibility.Hidden;
+                lblPerson.Visibility = Visibility.Visible;
+                cbPerson.Visibility = Visibility.Visible;
+                lblCategory.Visibility = Visibility.Visible;
+                cbCategory.Visibility = Visibility.Visible;
+                lblTag.Visibility = Visibility.Visible;
+                cbTag.Visibility = Visibility.Visible;
+                Grid.SetRow(lblMemo, 4);
+                Grid.SetRow(txtMemo, 4);
             }
         }
 
@@ -231,7 +242,7 @@ namespace GastosRYC.Views
             }
             else
             {
-
+                transaction = new Transactions();
                 dtpDate.SelectedDate = DateTime.Now;
 
                 if (accountidDefault != null)
@@ -293,16 +304,8 @@ namespace GastosRYC.Views
                 transaction.investmentProducts = servicesContainer.GetInstance<InvestmentProductsService>().getByID(transaction.investmentProductsid);
             }
 
-            if(((Accounts)cbAccount.SelectedItem).accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
-            {
-                transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value ?? 0);
-                transaction.pricesShares = txtPriceShares.Value ?? 0;
-            }
-            else
-            {
-                transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value);
-                transaction.pricesShares = txtPriceShares.Value;
-            }
+            transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value) ?? 0;
+            transaction.pricesShares = txtPriceShares.Value ?? 0;
 
             if (txtAmount.Value > 0)
             {
@@ -335,7 +338,6 @@ namespace GastosRYC.Views
             cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<TransactionsStatusService>().getAll();
         }
 
-
         private bool isTransactionValid()
         {
             String errorMessage = "";
@@ -353,7 +355,7 @@ namespace GastosRYC.Views
                 valid = false;
             }
 
-            if (cbCategory.SelectedValue == null && cbAccount?.SelectedItem != null && 
+            if (cbCategory.SelectedValue == null && cbAccount?.SelectedItem != null &&
                 ((Accounts)cbAccount.SelectedItem).accountsTypesid != (int)AccountsTypesService.eAccountsTypes.Invests)
             {
                 errorMessage += "- Categoría\n";
@@ -372,7 +374,7 @@ namespace GastosRYC.Views
                 valid = false;
             }
 
-            if(transaction?.tranferSplitid != null)
+            if (transaction?.tranferSplitid != null)
             {
                 errorMessage += "- No se puede editar una transferencia proveniente de un split\n";
                 valid = false;
@@ -386,8 +388,6 @@ namespace GastosRYC.Views
 
             return valid;
         }
-
-
 
         private bool saveTransaction()
         {
@@ -416,7 +416,9 @@ namespace GastosRYC.Views
 
         private void calculateValueShares()
         {
-            if (txtNumShares.Value != null && txtPriceShares.Value != null)
+            if (txtNumShares.Value != null && txtPriceShares.Value != null 
+                && transaction!= null && transaction.investmentCategory.HasValue
+                && transaction.investmentCategory.Value == false)
             {
                 txtAmount.Value = (Decimal?)Convert.ToDouble(txtNumShares.Value) * txtPriceShares.Value;
             }

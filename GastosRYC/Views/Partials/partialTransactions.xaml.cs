@@ -275,18 +275,18 @@ namespace GastosRYC.Views
                         gvTransactions.Columns["investmentProducts.description"].IsHidden = false;
                         gvTransactions.Columns["numShares"].IsHidden = false;
                         gvTransactions.Columns["pricesShares"].IsHidden = false;   
-                        gvTransactions.Columns["person.name"].IsHidden = true;
-                        gvTransactions.Columns["category.description"].IsHidden = true;
-                        gvTransactions.Columns["tag.description"].IsHidden = true;
+                        //gvTransactions.Columns["person.name"].IsHidden = true;
+                        //gvTransactions.Columns["category.description"].IsHidden = true;
+                        //gvTransactions.Columns["tag.description"].IsHidden = true;
                     }
                     else
                     {
                         gvTransactions.Columns["investmentProducts.description"].IsHidden = true;
                         gvTransactions.Columns["numShares"].IsHidden = true;
                         gvTransactions.Columns["pricesShares"].IsHidden = true;
-                        gvTransactions.Columns["person.name"].IsHidden = false;
-                        gvTransactions.Columns["category.description"].IsHidden = false;
-                        gvTransactions.Columns["tag.description"].IsHidden = false;
+                        //gvTransactions.Columns["person.name"].IsHidden = false;
+                        //gvTransactions.Columns["category.description"].IsHidden = false;
+                        //gvTransactions.Columns["tag.description"].IsHidden = false;
                     }
                 }
                 else
