@@ -288,7 +288,6 @@ namespace GastosRYC.Views
                         gvTransactions.Columns["category.description"].IsHidden = false;
                         gvTransactions.Columns["tag.description"].IsHidden = false;
                     }
-
                 }
                 else
                 {
