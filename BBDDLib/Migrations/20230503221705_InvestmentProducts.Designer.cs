@@ -3,6 +3,7 @@ using System;
 using BBDDLib.Manager;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BBDDLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    partial class RYCContextModelSnapshot : ModelSnapshot
+    [Migration("20230503221705_InvestmentProducts")]
+    partial class InvestmentProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
@@ -140,9 +143,6 @@ namespace BBDDLib.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("symbol")
                         .HasColumnType("TEXT");
 
                     b.HasKey("id");
@@ -316,23 +316,11 @@ namespace BBDDLib.Migrations
                     b.Property<DateTime?>("date")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool?>("investmentCategory")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("investmentProductsid")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("memo")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal?>("numShares")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("personid")
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal?>("pricesShares")
-                        .HasColumnType("TEXT");
 
                     b.Property<int?>("tagid")
                         .HasColumnType("INTEGER");
@@ -351,8 +339,6 @@ namespace BBDDLib.Migrations
                     b.HasIndex("accountid");
 
                     b.HasIndex("categoryid");
-
-                    b.HasIndex("investmentProductsid");
 
                     b.HasIndex("personid");
 
@@ -569,10 +555,6 @@ namespace BBDDLib.Migrations
                         .WithMany()
                         .HasForeignKey("categoryid");
 
-                    b.HasOne("BBDDLib.Models.InvestmentProducts", "investmentProducts")
-                        .WithMany()
-                        .HasForeignKey("investmentProductsid");
-
                     b.HasOne("BBDDLib.Models.Persons", "person")
                         .WithMany()
                         .HasForeignKey("personid");
@@ -588,8 +570,6 @@ namespace BBDDLib.Migrations
                     b.Navigation("account");
 
                     b.Navigation("category");
-
-                    b.Navigation("investmentProducts");
 
                     b.Navigation("person");
 

@@ -3,6 +3,7 @@ using System;
 using BBDDLib.Manager;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BBDDLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    partial class RYCContextModelSnapshot : ModelSnapshot
+    [Migration("20230505063056_TransactionInvestment")]
+    partial class TransactionInvestment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
@@ -140,9 +143,6 @@ namespace BBDDLib.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("symbol")
                         .HasColumnType("TEXT");
 
                     b.HasKey("id");
@@ -313,11 +313,11 @@ namespace BBDDLib.Migrations
                     b.Property<int?>("categoryid")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("date")
+                    b.Property<decimal?>("commission")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool?>("investmentCategory")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTime?>("date")
+                        .HasColumnType("TEXT");
 
                     b.Property<int?>("investmentProductsid")
                         .HasColumnType("INTEGER");

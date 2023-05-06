@@ -47,9 +47,12 @@
                 <syncfusion:GridTextColumn MappingName="category.description" HeaderText="Categoría"/>
                 <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado"/>
                 <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag"/>
+                <syncfusion:GridTextColumn MappingName="investmentProducts.description" HeaderText="Producto" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="numShares" HeaderText="Num. Participaciones" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="pricesShares" HeaderText="Precio Part." IsHidden="True" />
                 <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
                 <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
-                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad"/>
+                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo"/>
                 <syncfusion:GridTemplateColumn Width="25"
                                                MappingName="id"

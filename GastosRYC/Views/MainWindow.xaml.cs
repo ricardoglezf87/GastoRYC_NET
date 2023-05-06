@@ -151,6 +151,15 @@ namespace GastosRYC
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
         }
 
+        private void btnMntInvestmentProducts_Click(object sender, RoutedEventArgs e)
+        {
+            FrmInvestmentProductsList frm = new FrmInvestmentProductsList(servicesContainer);
+            frm.ShowDialog();
+
+            if (actualPrincipalContent is PartialTransactions)
+                ((PartialTransactions)actualPrincipalContent).loadTransactions();
+        }
+
         private void btnMntCategories_Click(object sender, RoutedEventArgs e)
         {
             FrmCategoriesList frm = new FrmCategoriesList(servicesContainer);
@@ -238,6 +247,8 @@ namespace GastosRYC
             servicesContainer.Register<ForecastsChartService>(Lifestyle.Singleton);
             servicesContainer.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
             servicesContainer.Register<DateCalendarService>(Lifestyle.Singleton);
+            servicesContainer.Register<InvestmentProductsService>(Lifestyle.Singleton);
+            servicesContainer.Register<InvestementProductsPricesService>(Lifestyle.Singleton);
         }
 
         private void toggleViews(eViews views)
@@ -288,7 +299,6 @@ namespace GastosRYC
             refreshBalance();
         }
 
-        #endregion
-
+        #endregion      
     }
 }

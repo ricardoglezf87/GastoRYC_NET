@@ -3,6 +3,7 @@ using System;
 using BBDDLib.Manager;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BBDDLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    partial class RYCContextModelSnapshot : ModelSnapshot
+    [Migration("20230503224012_RecreateViewsInvestmentProducts")]
+    partial class RecreateViewsInvestmentProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
@@ -140,9 +143,6 @@ namespace BBDDLib.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("symbol")
                         .HasColumnType("TEXT");
 
                     b.HasKey("id");
@@ -316,23 +316,14 @@ namespace BBDDLib.Migrations
                     b.Property<DateTime?>("date")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool?>("investmentCategory")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("investmentProductsid")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("memo")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("numShares")
-                        .HasColumnType("TEXT");
-
                     b.Property<int?>("personid")
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal?>("pricesShares")
-                        .HasColumnType("TEXT");
 
                     b.Property<int?>("tagid")
                         .HasColumnType("INTEGER");

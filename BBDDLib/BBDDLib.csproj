@@ -3,10 +3,10 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.5.0.0</AssemblyVersion>
-    <FileVersion>1.5.0.0</FileVersion>
-    <InformationalVersion>1.5.0+Branch.hotfix-errorDoSplit.Sha.7e839115e7e006123085a55fec6d442d1b8e76fc</InformationalVersion>
-    <Version>1.5.0</Version>
+    <AssemblyVersion>1.6.0.0</AssemblyVersion>
+    <FileVersion>1.6.0.0</FileVersion>
+    <InformationalVersion>1.6.0-beta.0+Branch.release-1.6.Sha.575a9a9459aed79fb64af3cd53f937929331d377</InformationalVersion>
+    <Version>1.6.0-beta0000</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
