@@ -52,7 +52,7 @@
                 <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag"/>
                 <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
                 <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
-                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Cantidad"/>
+                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>
                 <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo"/>
                 <syncfusion:GridTemplateColumn Width="25"
                                                MappingName="id"
