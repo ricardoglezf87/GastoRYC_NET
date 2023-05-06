@@ -238,6 +238,8 @@ namespace GastosRYC
             servicesContainer.Register<ForecastsChartService>(Lifestyle.Singleton);
             servicesContainer.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
             servicesContainer.Register<DateCalendarService>(Lifestyle.Singleton);
+            servicesContainer.Register<InvestementProductsService>(Lifestyle.Singleton);
+            servicesContainer.Register<InvestementProductsPricesService>(Lifestyle.Singleton);
         }
 
         private void toggleViews(eViews views)

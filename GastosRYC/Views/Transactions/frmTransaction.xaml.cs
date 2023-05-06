@@ -2,6 +2,8 @@
 using GastosRYC.BBDDLib.Services;
 using Microsoft.VisualBasic;
 using System;
+using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -54,7 +56,13 @@ namespace GastosRYC.Views
         #endregion
 
         #region Eventos
-
+        private void cbAccount_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbAccount?.SelectedItem != null)
+            {
+                toggleViews(((Accounts)cbAccount.SelectedItem).accountsTypes);
+            }
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             loadComboBox();
@@ -149,10 +157,61 @@ namespace GastosRYC.Views
                 }
             }
         }
+        private void txtNumShares_ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            calculateValueShares();
+        }
+
+        private void txtPriceShares_ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            calculateValueShares();
+        }
 
         #endregion
 
         #region Funtions
+
+        private void toggleViews(AccountsTypes? accountsTypes)
+        {
+            if (accountsTypes != null)
+            {
+                switch (accountsTypes.id)
+                {
+                    case (int)AccountsTypesService.eAccountsTypes.Invests:
+                        lblInvestmentProduct.Visibility = Visibility.Visible;
+                        cbInvestmentProduct.Visibility = Visibility.Visible;
+                        lblNumShares.Visibility = Visibility.Visible;
+                        txtNumShares.Visibility = Visibility.Visible;
+                        lblPriceShares.Visibility = Visibility.Visible;
+                        txtPriceShares.Visibility = Visibility.Visible;
+                        lblPerson.Visibility = Visibility.Hidden;
+                        cbPerson.Visibility = Visibility.Hidden;
+                        lblCategory.Visibility = Visibility.Hidden;
+                        cbCategory.Visibility = Visibility.Hidden;
+                        lblTag.Visibility = Visibility.Hidden;
+                        cbTag.Visibility = Visibility.Hidden;
+                        Grid.SetRow(lblMemo, 6);
+                        Grid.SetRow(txtMemo, 6);     
+                        break;
+                    default:
+                        lblInvestmentProduct.Visibility = Visibility.Hidden;
+                        cbInvestmentProduct.Visibility = Visibility.Hidden;
+                        lblNumShares.Visibility = Visibility.Hidden;
+                        txtNumShares.Visibility = Visibility.Hidden;
+                        lblPriceShares.Visibility = Visibility.Hidden;
+                        txtPriceShares.Visibility = Visibility.Hidden;
+                        lblPerson.Visibility = Visibility.Visible;
+                        cbPerson.Visibility = Visibility.Visible;
+                        lblCategory.Visibility = Visibility.Visible;
+                        cbCategory.Visibility = Visibility.Visible;
+                        lblTag.Visibility = Visibility.Visible;
+                        cbTag.Visibility = Visibility.Visible;
+                        Grid.SetRow(lblMemo, 4);
+                        Grid.SetRow(txtMemo, 4);
+                        break;
+                }
+            }
+        }
 
         private void loadTransaction()
         {
@@ -166,6 +225,9 @@ namespace GastosRYC.Views
                 txtAmount.Value = transaction.amount;
                 cbTag.SelectedValue = transaction.tagid;
                 cbTransactionStatus.SelectedValue = transaction.transactionStatusid;
+                cbInvestmentProduct.SelectedValue = transaction.investmentProductsid;
+                txtNumShares.Value = Convert.ToDouble(transaction.numShares);
+                txtPriceShares.Value = transaction.pricesShares;
             }
             else
             {
@@ -186,6 +248,9 @@ namespace GastosRYC.Views
                 txtMemo.Text = null;
                 txtAmount.Value = null;
                 cbTag.SelectedValue = null;
+                cbInvestmentProduct.SelectedValue = null;
+                txtNumShares.Value = null;
+                txtPriceShares.Value = null;
                 cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
                 dtpDate.Focus();
@@ -210,9 +275,34 @@ namespace GastosRYC.Views
             }
 
             transaction.memo = txtMemo.Text;
-            
-            transaction.categoryid = (int)cbCategory.SelectedValue;
-            transaction.category = servicesContainer.GetInstance<CategoriesService>().getByID(transaction.categoryid);
+            if (cbCategory.SelectedValue == null && cbAccount?.SelectedItem != null &&
+                ((Accounts)cbAccount.SelectedItem).accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
+            {
+                cbCategory.SelectedValue = 0;
+            }
+
+            if (cbCategory.SelectedValue != null)
+            {
+                transaction.categoryid = (int)cbCategory.SelectedValue;
+                transaction.category = servicesContainer.GetInstance<CategoriesService>().getByID(transaction.categoryid);
+            }
+
+            if (cbInvestmentProduct.SelectedValue != null)
+            {
+                transaction.investmentProductsid = (int)cbInvestmentProduct.SelectedValue;
+                transaction.investmentProducts = servicesContainer.GetInstance<InvestementProductsService>().getByID(transaction.investmentProductsid);
+            }
+
+            if(((Accounts)cbAccount.SelectedItem).accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
+            {
+                transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value ?? 0);
+                transaction.pricesShares = txtPriceShares.Value ?? 0;
+            }
+            else
+            {
+                transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value);
+                transaction.pricesShares = txtPriceShares.Value;
+            }
 
             if (txtAmount.Value > 0)
             {
@@ -240,6 +330,7 @@ namespace GastosRYC.Views
             cbAccount.ItemsSource = servicesContainer.GetInstance<AccountsService>().getAll();
             cbPerson.ItemsSource = servicesContainer.GetInstance<PersonsService>().getAll();
             cbCategory.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAll();
+            cbInvestmentProduct.ItemsSource = servicesContainer.GetInstance<InvestementProductsService>().getAll();
             cbTag.ItemsSource = servicesContainer.GetInstance<TagsService>().getAll();
             cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<TransactionsStatusService>().getAll();
         }
@@ -262,7 +353,8 @@ namespace GastosRYC.Views
                 valid = false;
             }
 
-            if (cbCategory.SelectedValue == null)
+            if (cbCategory.SelectedValue == null && cbAccount?.SelectedItem != null && 
+                ((Accounts)cbAccount.SelectedItem).accountsTypesid != (int)AccountsTypesService.eAccountsTypes.Invests)
             {
                 errorMessage += "- Categoría\n";
                 valid = false;
@@ -322,6 +414,15 @@ namespace GastosRYC.Views
             }
         }
 
+        private void calculateValueShares()
+        {
+            if (txtNumShares.Value != null && txtPriceShares.Value != null)
+            {
+                txtAmount.Value = (Decimal?)Convert.ToDouble(txtNumShares.Value) * txtPriceShares.Value;
+            }
+        }
+
         #endregion
+
     }
 }
