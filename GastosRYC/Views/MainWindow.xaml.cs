@@ -7,6 +7,7 @@ using Syncfusion.SfSkinManager;
 using Syncfusion.Windows.Tools.Controls;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -48,6 +49,10 @@ namespace GastosRYC
 
         #region Events
 
+        private void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
+        {
+            updatePrices();
+        }
 
         private void btnReminders_Click(object sender, RoutedEventArgs e)
         {
@@ -248,7 +253,7 @@ namespace GastosRYC
             servicesContainer.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
             servicesContainer.Register<DateCalendarService>(Lifestyle.Singleton);
             servicesContainer.Register<InvestmentProductsService>(Lifestyle.Singleton);
-            servicesContainer.Register<InvestementProductsPricesService>(Lifestyle.Singleton);
+            servicesContainer.Register<InvestmentProductsPricesService>(Lifestyle.Singleton);
         }
 
         private void toggleViews(eViews views)
@@ -299,6 +304,24 @@ namespace GastosRYC
             refreshBalance();
         }
 
-        #endregion      
+        private async void updatePrices()
+        {
+            try
+            {
+                foreach (InvestmentProducts investmentProducts in servicesContainer.GetInstance<InvestmentProductsService>()
+                    .getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)))
+                {
+                    await servicesContainer.GetInstance<InvestmentProductsPricesService>().getPricesOnlineAsync(investmentProducts);
+                }
+
+                MessageBox.Show("Actualizado con exito!", "Actualización de precios");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de precios");
+            }
+        }
+
+        #endregion
     }
 }
