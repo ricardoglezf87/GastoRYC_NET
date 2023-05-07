@@ -137,7 +137,7 @@ namespace GastosRYC.Views
                     saveTransaction();
                     break;
                 case Key.F3:
-                    transaction.investmentCategory = !transaction.investmentCategory;
+                    transaction.investmentCategory = !transaction.investmentCategory ?? false;
                     toggleViews();
                     break;
                 case Key.Escape:
@@ -352,13 +352,32 @@ namespace GastosRYC.Views
             if (cbAccount.SelectedValue == null)
             {
                 errorMessage += "- Cuenta\n";
+                valid = false;            
+            }
+            else if ((((Accounts)cbAccount.SelectedItem).accountsTypesid != (int)AccountsTypesService.eAccountsTypes.Invests) &&
+                    transaction.investmentCategory == false)
+            {
+                errorMessage += "- No se puede realizar una transacción de inversión en una cuenta que no sea de inversión\n";
                 valid = false;
             }
 
-            if (cbCategory.SelectedValue == null && cbAccount?.SelectedItem != null &&
-                ((Accounts)cbAccount.SelectedItem).accountsTypesid != (int)AccountsTypesService.eAccountsTypes.Invests)
+
+            
+            if (cbCategory.SelectedValue == null && (!transaction.investmentCategory.HasValue || transaction.investmentCategory == true))
             {
                 errorMessage += "- Categoría\n";
+                valid = false;
+            }
+
+            if (cbInvestmentProduct.SelectedValue == null && transaction.investmentCategory == false)
+            {
+                errorMessage += "- Producto de inversión\n";
+                valid = false;
+            }
+
+            if (txtPriceShares.Value < 0)
+            {
+                errorMessage += "- El precio de las participaciones no puede ser negativo, valore poner las participaciones en negativo\n";
                 valid = false;
             }
 
