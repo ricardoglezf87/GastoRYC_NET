@@ -9,5 +9,6 @@ namespace BBDDLib.Models
         public virtual int id { set; get; }
         public virtual String? description { set; get; }
         public virtual String? symbol { set; get; }
+        public virtual String? url { set; get; }
     }
 }
