@@ -64,7 +64,7 @@ namespace BBDDLib.Manager
 
             if (!Settings.Default.BBDDLocal)
             {
-                path =Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                     + "\\GastosRYC\\Data\\";
             }
             else
@@ -81,10 +81,11 @@ namespace BBDDLib.Manager
             nameDDBB = "rycBBDD.db";
 #endif
 
-            if(File.Exists(path + nameDDBB)) {
-                
-                File.Copy(path + nameDDBB, path + "Backup\\" + 
-                    nameDDBB + "." + DateTime.Now.Ticks.ToString()+".bk",true);
+            if (File.Exists(path + nameDDBB))
+            {
+
+                File.Copy(path + nameDDBB, path + "Backup\\" +
+                    nameDDBB + "." + DateTime.Now.Ticks.ToString() + ".bk", true);
             }
 
         }

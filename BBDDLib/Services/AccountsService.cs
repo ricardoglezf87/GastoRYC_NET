@@ -38,6 +38,5 @@ namespace GastosRYC.BBDDLib.Services
             RYCContextService.getInstance().BBDD.Remove(accounts);
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
-
     }
 }

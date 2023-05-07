@@ -1,8 +1,6 @@
 ﻿using BBDDLib.Models;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Windows.Controls;
 
 namespace GastosRYC.BBDDLib.Services
 {
@@ -36,20 +34,21 @@ namespace GastosRYC.BBDDLib.Services
                 return;
 
             var result = (from x in RYCContextService.getInstance().BBDD?.transactions
-                               where x.personid.Equals(persons.id)
-                               group x by x.categoryid into g
-                               select new {
-                                   categoryid = g.Key,
-                                        count = g.Count()
-                                    }).ToList();
+                          where x.personid.Equals(persons.id)
+                          group x by x.categoryid into g
+                          select new
+                          {
+                              categoryid = g.Key,
+                              count = g.Count()
+                          }).ToList();
 
-            if(result != null)
+            if (result != null)
             {
                 int maxCount = result.Max(c => c.count);
                 int? maxCounts = (from c in result
-                                where c.count == maxCount
-                                select c.categoryid).FirstOrDefault();
-            
+                                  where c.count == maxCount
+                                  select c.categoryid).FirstOrDefault();
+
                 persons.categoryid = maxCounts;
                 update(persons);
             }

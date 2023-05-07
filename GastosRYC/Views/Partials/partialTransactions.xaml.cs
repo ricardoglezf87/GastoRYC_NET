@@ -101,7 +101,7 @@ namespace GastosRYC.Views
                     frm.ShowDialog();
                     if (frm.windowsResult == eWindowsResult.Sucess)
                         MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
-                }                
+                }
             }
             else
             {
@@ -129,7 +129,7 @@ namespace GastosRYC.Views
                 frm.ShowDialog();
                 loadTransactions();
                 parentForm.loadAccounts();
-                
+
             }
         }
 
@@ -193,7 +193,7 @@ namespace GastosRYC.Views
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
                     servicesContainer.GetInstance<TransactionsService>().update(transactions);
                 }
-                loadTransactions();                
+                loadTransactions();
             }
             else
             {
@@ -270,7 +270,7 @@ namespace GastosRYC.Views
                     gvTransactions.View.Filter = accountFilter;
                     gvTransactions.Columns["account.description"].IsHidden = true;
 
-                    if(accountSelected.accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
+                    if (accountSelected.accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
                     {
                         gvTransactions.Columns["numShares"].IsHidden = false;
                         gvTransactions.Columns["pricesShares"].IsHidden = false;

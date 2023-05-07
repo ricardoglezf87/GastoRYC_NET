@@ -84,7 +84,7 @@ namespace GastosRYC
                     else if (actualPrincipalContent is PartialTransactions)
                     {
                         loadAccounts();
-                        ((PartialTransactions)actualPrincipalContent).loadTransactions();                        
+                        ((PartialTransactions)actualPrincipalContent).loadTransactions();
                     }
                     else if (actualPrincipalContent is PartialReminders)
                     {
@@ -176,7 +176,7 @@ namespace GastosRYC
 
             if (actualPrincipalContent is PartialTransactions)
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
-            
+
         }
 
         private void btnMntReminders_Click(object sender, RoutedEventArgs e)

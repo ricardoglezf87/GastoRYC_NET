@@ -1,14 +1,9 @@
 ﻿using BBDDLib.Models;
 using GastosRYC.BBDDLib.Services;
-using Microsoft.VisualBasic;
 using System;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GastosRYC.Views
 {
@@ -60,9 +55,9 @@ namespace GastosRYC.Views
         {
             if (cbAccount?.SelectedItem != null && !transaction.investmentCategory.HasValue)
             {
-                if (((Accounts)cbAccount.SelectedItem).accountsTypesid == 
+                if (((Accounts)cbAccount.SelectedItem).accountsTypesid ==
                     (int)AccountsTypesService.eAccountsTypes.Invests)
-                 
+
                 {
                     transaction.investmentCategory = false;
                 }
@@ -352,7 +347,7 @@ namespace GastosRYC.Views
             if (cbAccount.SelectedValue == null)
             {
                 errorMessage += "- Cuenta\n";
-                valid = false;            
+                valid = false;
             }
             else if ((((Accounts)cbAccount.SelectedItem).accountsTypesid != (int)AccountsTypesService.eAccountsTypes.Invests) &&
                     transaction.investmentCategory == false)
@@ -362,7 +357,7 @@ namespace GastosRYC.Views
             }
 
 
-            
+
             if (cbCategory.SelectedValue == null && (!transaction.investmentCategory.HasValue || transaction.investmentCategory == true))
             {
                 errorMessage += "- Categoría\n";
@@ -435,8 +430,8 @@ namespace GastosRYC.Views
 
         private void calculateValueShares()
         {
-            if (txtNumShares.Value != null && txtPriceShares.Value != null 
-                && transaction!= null && transaction.investmentCategory.HasValue
+            if (txtNumShares.Value != null && txtPriceShares.Value != null
+                && transaction != null && transaction.investmentCategory.HasValue
                 && transaction.investmentCategory.Value == false)
             {
                 txtAmount.Value = (Decimal?)Convert.ToDouble(txtNumShares.Value) * txtPriceShares.Value;

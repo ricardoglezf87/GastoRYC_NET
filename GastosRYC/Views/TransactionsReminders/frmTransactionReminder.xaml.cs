@@ -13,7 +13,7 @@ namespace GastosRYC.Views
     public partial class FrmTransactionReminders : Window
     {
         #region Variables
-        
+
         private TransactionsReminders? transaction;
         private readonly SimpleInjector.Container servicesContainer;
         private readonly int? accountidDefault;
