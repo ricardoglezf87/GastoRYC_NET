@@ -2,10 +2,12 @@
 using BBDDLib.Services;
 using GastosRYC.BBDDLib.Services;
 using GastosRYC.Views;
+using GastosRYC.Views.Common;
 using SimpleInjector;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Windows.Tools.Controls;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -308,13 +310,27 @@ namespace GastosRYC
         {
             try
             {
-                foreach (InvestmentProducts investmentProducts in servicesContainer.GetInstance<InvestmentProductsService>()
-                    .getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)))
-                {
-                    await servicesContainer.GetInstance<InvestmentProductsPricesService>().getPricesOnlineAsync(investmentProducts);
-                }
+                List<InvestmentProducts>? lInvestmentProducts = servicesContainer.GetInstance<InvestmentProductsService>()
+                    .getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
 
-                MessageBox.Show("Actualizado con exito!", "Actualización de precios");
+                if (lInvestmentProducts != null)
+                {
+                    LoadDialog loadDialog = new(lInvestmentProducts.Count);
+                    loadDialog.Show();
+
+                    foreach (InvestmentProducts investmentProducts in lInvestmentProducts)
+                    {
+                        await servicesContainer.GetInstance<InvestmentProductsPricesService>().getPricesOnlineAsync(investmentProducts);
+                        loadDialog.performeStep();
+                    }
+
+                    loadDialog.Close();
+                    MessageBox.Show("Actualizado con exito!", "Actualización de precios");
+                }
+                else
+                {
+                    MessageBox.Show("No hay productos financieros a actualizar", "Actualización de precios");
+                }
             }
             catch (Exception ex)
             {

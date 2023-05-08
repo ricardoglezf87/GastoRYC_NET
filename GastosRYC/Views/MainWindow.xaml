@@ -58,7 +58,7 @@
                 </syncfusion:RibbonBar>
                 <syncfusion:RibbonBar Header="Acciones" IsLauncherButtonVisible="False">
                     <syncfusion:RibbonButton Name="btnAddTransaction" SizeForm="Large" Label="Nueva" Click="btnAddTransaction_Click" LargeIcon="/Resources/add-32.png"/>
-                    <syncfusion:RibbonButton Name="btnUpdatePrices" SizeForm="Large" Label="Actualizar Precios" LargeIcon="/Resources/mntInvestmentProducts-32.png" Click="btnUpdatePrices_Click" />
+                    <syncfusion:RibbonButton Name="btnUpdatePrices" SizeForm="Large" Label="Actualizar Precios" LargeIcon="/Resources/syncPrices-32.png" Click="btnUpdatePrices_Click" />
                 </syncfusion:RibbonBar>
             </syncfusion:RibbonTab>
         </syncfusion:Ribbon>

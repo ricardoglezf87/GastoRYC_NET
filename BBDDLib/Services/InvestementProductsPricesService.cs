@@ -2,12 +2,10 @@
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace GastosRYC.BBDDLib.Services
 {
@@ -56,10 +54,10 @@ namespace GastosRYC.BBDDLib.Services
                 }
 
                 //TODO: insertar las compras y ventas hechas
-                
+
                 foreach (InvestmentProductsPrices productsPrices in lproductsPrices)
                 {
-                    if(!exists(productsPrices.investmentProductsid,productsPrices.date))
+                    if (!exists(productsPrices.investmentProductsid, productsPrices.date))
                     {
                         RYCContextService.getInstance().BBDD.Update(productsPrices);
                     }
@@ -71,10 +69,10 @@ namespace GastosRYC.BBDDLib.Services
             {
                 throw;
             }
-        }       
+        }
 
         private async Task<List<InvestmentProductsPrices>> getPricesOnlineInvesting(InvestmentProducts investmentProducts)
-        {            
+        {
             List<InvestmentProductsPrices> lproductsPrices = new();
 
             var httpClient = new HttpClient();
