@@ -11,6 +11,13 @@ namespace GastosRYC.BBDDLib.Services
 {
     public class InvestmentProductsPricesService
     {
+        private readonly SimpleInjector.Container servicesContainer;
+
+        public InvestmentProductsPricesService(SimpleInjector.Container servicesContainer)
+        {
+            this.servicesContainer = servicesContainer;
+        }
+
         public List<InvestmentProductsPrices>? getAll()
         {
             return RYCContextService.getInstance().BBDD.investmentProductsPrices?.ToList();
@@ -53,7 +60,19 @@ namespace GastosRYC.BBDDLib.Services
                     lproductsPrices = await getPricesOnlineInvesting(investmentProducts);
                 }
 
-                //TODO: insertar las compras y ventas hechas
+                foreach (var transactions in servicesContainer.GetInstance<TransactionsService>()?.getByInvestmentProduct(investmentProducts)?
+                        .GroupBy(g => g.date)?.Select(x => new { date = x.Key, price = x.Average(y => y.pricesShares)}))
+                {
+                    if (!exists(investmentProducts.id, transactions.date))
+                    {
+                        InvestmentProductsPrices productsPrices = new();
+                        productsPrices.date = transactions.date;
+                        productsPrices.investmentProductsid = investmentProducts.id;
+                        productsPrices.investmentProducts = investmentProducts;
+                        productsPrices.prices = transactions.price;
+                        RYCContextService.getInstance().BBDD.Update(productsPrices);
+                    }
+                }
 
                 foreach (InvestmentProductsPrices productsPrices in lproductsPrices)
                 {
