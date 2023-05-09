@@ -3,10 +3,10 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.7.0.29</AssemblyVersion>
+    <AssemblyVersion>1.7.0.0</AssemblyVersion>
     <FileVersion>1.7.0.0</FileVersion>
-    <InformationalVersion>1.7.0-alpha.29+Branch.develop.Sha.3c10a023c927acabaf61f218d45b0989a5d08657</InformationalVersion>
-    <Version>1.7.0-alpha0029</Version>
+    <InformationalVersion>1.7.0-beta.0+Branch.release-V1.7.Sha.c42c0207942c7034755930199d2beb8e58ec0f33</InformationalVersion>
+    <Version>1.7.0-beta0000</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
