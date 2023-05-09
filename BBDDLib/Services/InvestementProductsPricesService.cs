@@ -46,12 +46,22 @@ namespace GastosRYC.BBDDLib.Services
             RYCContextService.getInstance().BBDD.SaveChanges();
         }
 
+        public Decimal? getActualPrice(InvestmentProducts investmentProducts)
+        {
+            var query = RYCContextService.getInstance()?.BBDD?.investmentProductsPrices?.Where(x => x.investmentProductsid.Equals(investmentProducts.id));
+            return query?.Where(x => x.investmentProductsid.Equals(investmentProducts.id) 
+                && x.date.Equals(query.Max(y=>y.date))).Select(z=> z.prices).FirstOrDefault();
+        }
+
         public async Task getPricesOnlineAsync(InvestmentProducts investmentProducts)
         {
             try
             {
-                if (investmentProducts == null || String.IsNullOrWhiteSpace(investmentProducts.url))
+                if (investmentProducts == null || String.IsNullOrWhiteSpace(investmentProducts.url)
+                    || !investmentProducts.active.HasValue || !investmentProducts.active.Value)
+                {
                     return;
+                }
 
                 List<InvestmentProductsPrices> lproductsPrices = new();
 
