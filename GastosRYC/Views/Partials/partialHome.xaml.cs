@@ -100,7 +100,7 @@ namespace GastosRYC.Views
                 DockPosition = ChartDock.Right,
                 IconVisibility = Visibility.Visible,
                 CornerRadius = new CornerRadius(5),
-                ItemMargin = new Thickness(5),              
+                ItemMargin = new Thickness(5),
                 BorderThickness = new Thickness(1),
                 BorderBrush = new SolidColorBrush(Colors.Black),
                 CheckBoxVisibility = Visibility.Visible

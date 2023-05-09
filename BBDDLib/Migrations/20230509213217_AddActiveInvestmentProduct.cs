@@ -5,15 +5,15 @@
 namespace BBDDLib.Migrations
 {
     /// <inheritdoc />
-    public partial class AddSymbolInvestmentProducts : Migration
+    public partial class AddActiveInvestmentProduct : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "symbol",
+            migrationBuilder.AddColumn<bool>(
+                name: "active",
                 table: "investmentProducts",
-                type: "TEXT",
+                type: "INTEGER",
                 nullable: true);
         }
 
@@ -21,7 +21,7 @@ namespace BBDDLib.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "symbol",
+                name: "active",
                 table: "investmentProducts");
         }
     }

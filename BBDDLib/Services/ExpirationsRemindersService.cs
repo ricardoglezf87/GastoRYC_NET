@@ -57,8 +57,8 @@ namespace GastosRYC.BBDDLib.Services
 
         public void generateAutoregister()
         {
-            foreach(ExpirationsReminders exp in getAllPendingWithGeneration()?
-                .Where(x=>x.date<=DateTime.Now && 
+            foreach (ExpirationsReminders exp in getAllPendingWithGeneration()?
+                .Where(x => x.date <= DateTime.Now &&
                     (x.transactionsReminders.autoRegister.HasValue && x.transactionsReminders.autoRegister.Value)))
             {
                 registerTransactionfromReminder(exp.id);
@@ -153,7 +153,7 @@ namespace GastosRYC.BBDDLib.Services
                 transactions.amountOut = expirationsReminders.transactionsReminders.amountOut ?? 0;
                 transactions.tag = expirationsReminders.transactionsReminders.tag;
                 transactions.tagid = expirationsReminders.transactionsReminders.tagid;
-                
+
                 if (transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
                 {
                     lTransactions.Add(updateTranferSimulation(transactions));

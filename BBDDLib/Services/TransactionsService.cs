@@ -33,6 +33,16 @@ namespace GastosRYC.BBDDLib.Services
             return RYCContextService.getInstance().BBDD.transactions?.FirstOrDefault(x => id.Equals(x.id));
         }
 
+        public List<Transactions>? getByInvestmentProduct(int? id)
+        {
+            return RYCContextService.getInstance().BBDD.transactions?.Where(x => id.Equals(x.investmentProductsid)).ToList();
+        }
+
+        public List<Transactions>? getByInvestmentProduct(InvestmentProducts? investment)
+        {
+            return RYCContextService.getInstance().BBDD.transactions?.Where(x => investment.id.Equals(x.investmentProductsid)).ToList();
+        }
+
         public void update(Transactions transactions)
         {
             transactions.date = transactions.date.removeTime();
@@ -56,6 +66,7 @@ namespace GastosRYC.BBDDLib.Services
 
         public Decimal getBalanceByAccount(int accountId)
         {
+            //TODO: Se tiene que asignar el valor actual de la acción.
             return RYCContextService.getInstance()?.BBDD?.transactions?.Where(x => x.accountid == accountId)?.ToList().Sum(x => x.amount) ?? 0;
         }
 

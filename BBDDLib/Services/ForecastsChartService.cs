@@ -1,9 +1,7 @@
 ﻿using BBDDLib.Models;
 using BBDDLib.Models.Charts;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using static GastosRYC.BBDDLib.Services.AccountsTypesService;
 
@@ -32,7 +30,7 @@ namespace GastosRYC.BBDDLib.Services
 
             DateTime now = DateTime.Now;
 
-            foreach (var g in RYCContextService.getInstance().BBDD.accounts?.Where(x=> (x.closed == false || x.closed == null)
+            foreach (var g in RYCContextService.getInstance().BBDD.accounts?.Where(x => (x.closed == false || x.closed == null)
                                                                                    && ((x.accountsTypesid == (int)eAccountsTypes.Cash ||
                                                                                     x.accountsTypesid == (int)eAccountsTypes.Banks ||
                                                                                     x.accountsTypesid == (int)eAccountsTypes.Cards))))
@@ -42,10 +40,10 @@ namespace GastosRYC.BBDDLib.Services
 
             List<Transactions> remTransactions = new();
 
-            foreach(ExpirationsReminders exp in servicesContainer.
+            foreach (ExpirationsReminders exp in servicesContainer.
                     GetInstance<ExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration())
             {
-                
+
                 remTransactions.AddRange(servicesContainer.
                     GetInstance<ExpirationsRemindersService>().
                     registerTransactionfromReminderSimulation(exp.id));

@@ -9,7 +9,7 @@ namespace BBDDLib.Migrations
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
-        {          
+        {
             migrationBuilder.AddColumn<decimal>(
                 name: "numShares",
                 table: "transactions",

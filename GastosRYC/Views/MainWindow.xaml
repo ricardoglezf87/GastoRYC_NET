@@ -48,9 +48,6 @@
                     <syncfusion:RibbonButton Name="btnHome" SizeForm="Large" Label="Inicio" Click="btnHome_Click" LargeIcon="/Resources/home-32.png" />
                     <syncfusion:RibbonButton Name="btnReminders" SizeForm="Large" Label="Recordatorios" Click="btnReminders_Click" LargeIcon="/Resources/reminders-32.png" />
                 </syncfusion:RibbonBar>
-                <syncfusion:RibbonBar Header="Transación" IsLauncherButtonVisible="False">
-                    <syncfusion:RibbonButton Name="btnAddTransaction" SizeForm="Large" Label="Nueva" Click="btnAddTransaction_Click" LargeIcon="/Resources/add-32.png"/>
-                </syncfusion:RibbonBar>
                 <syncfusion:RibbonBar Header="Mantenimientos" IsLauncherButtonVisible="False">
                     <syncfusion:RibbonButton Name="btnMntAccounts" SizeForm="Large" Label="Cuentas" Click="btnMntAccounts_Click" LargeIcon="/Resources/mntAccounts-32.png"/>
                     <syncfusion:RibbonButton Name="btnMntPersons" SizeForm="Large" Label="Personas" Click="btnMntPersons_Click" LargeIcon="/Resources/mntPersons-32.png" IconStretch="Fill"/>
@@ -58,6 +55,10 @@
                     <syncfusion:RibbonButton Name="btnMntTags" SizeForm="Large" Label="Tags" Click="btnMntTags_Click" LargeIcon="/Resources/mntTags-32.png"/>
                     <syncfusion:RibbonButton Name="btnMntReminders" SizeForm="Large" Label="Recordatorios" Click="btnMntReminders_Click" LargeIcon="/Resources/mntReminders-32.png"/>
                     <syncfusion:RibbonButton Name="btnMntInvestmentProducts" SizeForm="Large" Label="Productos de Inversión" LargeIcon="/Resources/mntInvestmentProducts-32.png" Click="btnMntInvestmentProducts_Click"/>
+                </syncfusion:RibbonBar>
+                <syncfusion:RibbonBar Header="Acciones" IsLauncherButtonVisible="False">
+                    <syncfusion:RibbonButton Name="btnAddTransaction" SizeForm="Large" Label="Nueva" Click="btnAddTransaction_Click" LargeIcon="/Resources/add-32.png"/>
+                    <syncfusion:RibbonButton Name="btnUpdatePrices" SizeForm="Large" Label="Actualizar Precios" LargeIcon="/Resources/syncPrices-32.png" Click="btnUpdatePrices_Click" />
                 </syncfusion:RibbonBar>
             </syncfusion:RibbonTab>
         </syncfusion:Ribbon>

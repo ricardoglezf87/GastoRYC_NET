@@ -105,8 +105,8 @@ namespace GastosRYC.Views
 
         private void makeTransactionFromReminder(int? id)
         {
-            Transactions? transaction =  servicesContainer.GetInstance<ExpirationsRemindersService>().registerTransactionfromReminder(id);
-            if(transaction != null)
+            Transactions? transaction = servicesContainer.GetInstance<ExpirationsRemindersService>().registerTransactionfromReminder(id);
+            if (transaction != null)
             {
                 FrmTransaction frm = new FrmTransaction(transaction, servicesContainer);
             }

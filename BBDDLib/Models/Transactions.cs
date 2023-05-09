@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.InteropServices;
 
 namespace BBDDLib.Models
 {
@@ -32,10 +31,12 @@ namespace BBDDLib.Models
         public virtual bool? investmentCategory { set; get; }
 
         [NotMapped]
-        public virtual Decimal? amount { 
-            get { 
-                return ((investmentCategory.HasValue && investmentCategory.Value == false) ? (numShares * pricesShares):amountIn - amountOut); 
-            } 
+        public virtual Decimal? amount
+        {
+            get
+            {
+                return ((investmentCategory.HasValue && investmentCategory.Value == false) ? (numShares * pricesShares) : amountIn - amountOut);
+            }
         }
 
         [NotMapped]

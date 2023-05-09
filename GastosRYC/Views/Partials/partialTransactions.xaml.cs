@@ -101,7 +101,7 @@ namespace GastosRYC.Views
                     frm.ShowDialog();
                     if (frm.windowsResult == eWindowsResult.Sucess)
                         MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
-                }                
+                }
             }
             else
             {
@@ -129,7 +129,7 @@ namespace GastosRYC.Views
                 frm.ShowDialog();
                 loadTransactions();
                 parentForm.loadAccounts();
-                
+
             }
         }
 
@@ -193,7 +193,7 @@ namespace GastosRYC.Views
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
                     servicesContainer.GetInstance<TransactionsService>().update(transactions);
                 }
-                loadTransactions();                
+                loadTransactions();
             }
             else
             {
@@ -270,23 +270,19 @@ namespace GastosRYC.Views
                     gvTransactions.View.Filter = accountFilter;
                     gvTransactions.Columns["account.description"].IsHidden = true;
 
-                    if(accountSelected.accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
+                    if (accountSelected.accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
                     {
-                        gvTransactions.Columns["investmentProducts.description"].IsHidden = false;
                         gvTransactions.Columns["numShares"].IsHidden = false;
-                        gvTransactions.Columns["pricesShares"].IsHidden = false;   
-                        //gvTransactions.Columns["person.name"].IsHidden = true;
-                        //gvTransactions.Columns["category.description"].IsHidden = true;
-                        //gvTransactions.Columns["tag.description"].IsHidden = true;
+                        gvTransactions.Columns["pricesShares"].IsHidden = false;
+                        gvTransactions.Columns["amountIn"].IsHidden = true;
+                        gvTransactions.Columns["amountOut"].IsHidden = true;
                     }
                     else
                     {
-                        gvTransactions.Columns["investmentProducts.description"].IsHidden = true;
                         gvTransactions.Columns["numShares"].IsHidden = true;
                         gvTransactions.Columns["pricesShares"].IsHidden = true;
-                        //gvTransactions.Columns["person.name"].IsHidden = false;
-                        //gvTransactions.Columns["category.description"].IsHidden = false;
-                        //gvTransactions.Columns["tag.description"].IsHidden = false;
+                        gvTransactions.Columns["amountIn"].IsHidden = false;
+                        gvTransactions.Columns["amountOut"].IsHidden = false;
                     }
                 }
                 else

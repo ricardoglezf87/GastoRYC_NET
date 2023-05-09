@@ -2,11 +2,14 @@
 using BBDDLib.Services;
 using GastosRYC.BBDDLib.Services;
 using GastosRYC.Views;
+using GastosRYC.Views.Common;
 using SimpleInjector;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Windows.Tools.Controls;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -48,6 +51,10 @@ namespace GastosRYC
 
         #region Events
 
+        private void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
+        {
+            updatePrices();
+        }
 
         private void btnReminders_Click(object sender, RoutedEventArgs e)
         {
@@ -84,7 +91,7 @@ namespace GastosRYC
                     else if (actualPrincipalContent is PartialTransactions)
                     {
                         loadAccounts();
-                        ((PartialTransactions)actualPrincipalContent).loadTransactions();                        
+                        ((PartialTransactions)actualPrincipalContent).loadTransactions();
                     }
                     else if (actualPrincipalContent is PartialReminders)
                     {
@@ -176,7 +183,7 @@ namespace GastosRYC
 
             if (actualPrincipalContent is PartialTransactions)
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
-            
+
         }
 
         private void btnMntReminders_Click(object sender, RoutedEventArgs e)
@@ -248,7 +255,7 @@ namespace GastosRYC
             servicesContainer.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
             servicesContainer.Register<DateCalendarService>(Lifestyle.Singleton);
             servicesContainer.Register<InvestmentProductsService>(Lifestyle.Singleton);
-            servicesContainer.Register<InvestementProductsPricesService>(Lifestyle.Singleton);
+            servicesContainer.Register<InvestmentProductsPricesService>(Lifestyle.Singleton);
         }
 
         private void toggleViews(eViews views)
@@ -299,6 +306,38 @@ namespace GastosRYC
             refreshBalance();
         }
 
-        #endregion      
+        private async void updatePrices()
+        {
+            try
+            {
+                List<InvestmentProducts>? lInvestmentProducts = servicesContainer.GetInstance<InvestmentProductsService>()
+                    .getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
+
+                if (lInvestmentProducts != null)
+                {
+                    LoadDialog loadDialog = new(lInvestmentProducts.Count);
+                    loadDialog.Show();
+
+                    foreach (InvestmentProducts investmentProducts in lInvestmentProducts)
+                    {
+                        await servicesContainer.GetInstance<InvestmentProductsPricesService>().getPricesOnlineAsync(investmentProducts);
+                        loadDialog.performeStep();
+                    }
+
+                    loadDialog.Close();
+                    MessageBox.Show("Actualizado con exito!", "Actualización de precios");
+                }
+                else
+                {
+                    MessageBox.Show("No hay productos financieros a actualizar", "Actualización de precios");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de precios");
+            }
+        }
+
+        #endregion
     }
 }
