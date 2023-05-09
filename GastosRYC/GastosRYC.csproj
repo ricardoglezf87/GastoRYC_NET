@@ -188,7 +188,8 @@
     <PackageReference Include="Syncfusion.Tools.WPF" Version="21.1.41" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BBDDLib\BBDDLib.csproj" />
+    <ProjectReference Include="..\BOLib\BOLib.csproj" />
+    <ProjectReference Include="..\DAOLib\DAOLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\options.png">
