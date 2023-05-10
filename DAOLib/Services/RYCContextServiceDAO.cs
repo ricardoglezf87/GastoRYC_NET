@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DAOLib.Managers;
+using Microsoft.EntityFrameworkCore;
 
-namespace DAOLib.Managers
+namespace DAOLib.Services
 {
     public sealed class RYCContextServiceDAO
     {
