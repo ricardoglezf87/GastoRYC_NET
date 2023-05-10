@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class TransactionsManagerDAO : IServiceDAO<TransactionsDAO>
+    public class TransactionsManagerDAO : IManagerDAO<TransactionsDAO>
     {
         public List<TransactionsDAO>? getByInvestmentProduct(int? id)
         {

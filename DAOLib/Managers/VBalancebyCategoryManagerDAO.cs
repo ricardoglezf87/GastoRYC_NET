@@ -19,7 +19,7 @@ namespace DAOLib.Managers
 
         public List<VBalancebyCategoryDAO>? getExpensesbyYearMonth(int month, int year)
         {
-            return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesServiceDAO.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToList();
+            return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesManagerDAO.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToList();
         }
     }
 }

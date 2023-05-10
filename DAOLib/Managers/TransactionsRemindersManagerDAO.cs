@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class TransactionsRemindersServiceDAO : IServiceDAO<TransactionsRemindersDAO>
+    public class TransactionsRemindersManagerDAO : IManagerDAO<TransactionsRemindersDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 
-        public TransactionsRemindersServiceDAO(SimpleInjector.Container servicesContainer)
+        public TransactionsRemindersManagerDAO(SimpleInjector.Container servicesContainer)
         {
             this.servicesContainer = servicesContainer;
         }
@@ -62,14 +62,14 @@ namespace DAOLib.Managers
                     transactionsReminders.amountOut += (splitsReminders.amountOut == null ? 0 : splitsReminders.amountOut);
                 }
 
-                transactionsReminders.categoryid = (int)CategoriesServiceDAO.eSpecialCategories.Split;
-                transactionsReminders.category = servicesContainer.GetInstance<CategoriesServiceDAO>().getByID((int)CategoriesServiceDAO.eSpecialCategories.Split);
+                transactionsReminders.categoryid = (int)CategoriesManagerDAO.eSpecialCategories.Split;
+                transactionsReminders.category = servicesContainer.GetInstance<CategoriesManagerDAO>().getByID((int)CategoriesManagerDAO.eSpecialCategories.Split);
             }
             else if (transactionsReminders.categoryid != null
-                && transactionsReminders.categoryid == (int)CategoriesServiceDAO.eSpecialCategories.Split)
+                && transactionsReminders.categoryid == (int)CategoriesManagerDAO.eSpecialCategories.Split)
             {
-                transactionsReminders.categoryid = (int)CategoriesServiceDAO.eSpecialCategories.WithoutCategory;
-                transactionsReminders.category = servicesContainer.GetInstance<CategoriesServiceDAO>().getByID((int)CategoriesServiceDAO.eSpecialCategories.WithoutCategory);
+                transactionsReminders.categoryid = (int)CategoriesManagerDAO.eSpecialCategories.WithoutCategory;
+                transactionsReminders.category = servicesContainer.GetInstance<CategoriesManagerDAO>().getByID((int)CategoriesManagerDAO.eSpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.id == 0)

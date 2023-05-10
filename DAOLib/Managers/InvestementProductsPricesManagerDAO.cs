@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace DAOLib.Managers
 {
-    public class InvestmentProductsPricesServiceDAO : IServiceDAO<InvestmentProductsPricesDAO>
+    public class InvestmentProductsPricesManagerDAO : IManagerDAO<InvestmentProductsPricesDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 
-        public InvestmentProductsPricesServiceDAO(SimpleInjector.Container servicesContainer)
+        public InvestmentProductsPricesManagerDAO(SimpleInjector.Container servicesContainer)
         {
             this.servicesContainer = servicesContainer;
         }
@@ -72,7 +72,7 @@ namespace DAOLib.Managers
 
                 await RYCContextServiceDAO.getInstance().BBDD.SaveChangesAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }

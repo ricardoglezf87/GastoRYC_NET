@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class PeriodsRemindersServiceDAO : IServiceDAO<PeriodsRemindersDAO>
+    public class PeriodsRemindersManagerDAO : IManagerDAO<PeriodsRemindersDAO>
     {
         public enum ePeriodsReminders : int
         {

@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class ExpirationsRemindersServiceDAO : IServiceDAO<ExpirationsRemindersDAO>
+    public class ExpirationsRemindersManagerDAO : IManagerDAO<ExpirationsRemindersDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 
-        public ExpirationsRemindersServiceDAO(SimpleInjector.Container servicesContainer)
+        public ExpirationsRemindersManagerDAO(SimpleInjector.Container servicesContainer)
         {
             this.servicesContainer = servicesContainer;
         }

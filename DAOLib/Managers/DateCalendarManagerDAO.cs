@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class DateCalendarServiceDAO
+    public class DateCalendarManagerDAO
     {
         private readonly DateTime initDate = new DateTime(2001, 01, 01);
 

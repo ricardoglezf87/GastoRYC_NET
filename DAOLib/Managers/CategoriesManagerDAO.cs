@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class CategoriesServiceDAO : IServiceDAO<CategoriesDAO>
+    public class CategoriesManagerDAO : IManagerDAO<CategoriesDAO>
     {
         public enum eSpecialCategories : int
         {
@@ -16,7 +16,7 @@ namespace DAOLib.Managers
 
         private readonly SimpleInjector.Container servicesContainer;
 
-        public CategoriesServiceDAO(SimpleInjector.Container servicesContainer)
+        public CategoriesManagerDAO(SimpleInjector.Container servicesContainer)
         {
             this.servicesContainer = servicesContainer;
         }
@@ -24,8 +24,8 @@ namespace DAOLib.Managers
         public List<CategoriesDAO>? getAllFilterTransfer()
         {
             return RYCContextServiceDAO.getInstance().BBDD.categories?
-                .Where(x => !x.id.Equals(CategoriesTypesServiceDAO.eCategoriesTypes.Transfers) &&
-                !x.id.Equals(CategoriesTypesServiceDAO.eCategoriesTypes.Specials)).ToList();
+                .Where(x => !x.id.Equals(CategoriesTypesManagerDAO.eCategoriesTypes.Transfers) &&
+                !x.id.Equals(CategoriesTypesManagerDAO.eCategoriesTypes.Specials)).ToList();
         }
 
         public int getNextID()

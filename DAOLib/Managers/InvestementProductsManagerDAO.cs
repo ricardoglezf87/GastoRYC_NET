@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class InvestmentProductsServiceDAO : IServiceDAO<InvestmentProductsDAO>
+    public class InvestmentProductsManagerDAO : IManagerDAO<InvestmentProductsDAO>
     {
     }
 }
