@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
-namespace DAOLib.Services
+namespace DAOLib.Managers
 {
     public class AccountsServiceDAO : IServiceDAO<AccountsDAO>
     {        

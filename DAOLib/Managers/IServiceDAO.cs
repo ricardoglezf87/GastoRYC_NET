@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAOLib.Services
+namespace DAOLib.Managers
 {
     public class IServiceDAO<T> where T : IModelDAO
     {

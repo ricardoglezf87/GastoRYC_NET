@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 
-namespace DAOLib.Manager
+namespace DAOLib.Managers
 {
     public class RYCContext : DbContext
     {
@@ -59,8 +59,8 @@ namespace DAOLib.Manager
 
         private void makeBackup()
         {
-            String path = String.Empty;
-            String nameDDBB = String.Empty;
+            string path = string.Empty;
+            string nameDDBB = string.Empty;
 
             if (!Settings.Default.BBDDLocal)
             {
@@ -93,7 +93,7 @@ namespace DAOLib.Manager
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            String nameDDBB = String.Empty;
+            string nameDDBB = string.Empty;
 
 #if DEBUG
             nameDDBB = "rycBBDD_PRE.db";

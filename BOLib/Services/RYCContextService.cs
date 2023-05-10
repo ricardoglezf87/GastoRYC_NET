@@ -1,4 +1,4 @@
-﻿using DAOLib.Manager;
+﻿using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore;
 
 namespace BOLib.Services

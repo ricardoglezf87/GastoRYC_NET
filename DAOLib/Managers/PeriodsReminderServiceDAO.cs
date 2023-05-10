@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DAOLib.Services
+namespace DAOLib.Managers
 {
     public class PeriodsRemindersServiceDAO : IServiceDAO<PeriodsRemindersDAO>
     {

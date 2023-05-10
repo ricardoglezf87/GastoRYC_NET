@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace DAOLib.Services
+namespace DAOLib.Managers
 {
     public class InvestmentProductsPricesServiceDAO : IServiceDAO<InvestmentProductsPricesDAO>
     {

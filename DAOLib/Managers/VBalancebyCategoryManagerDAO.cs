@@ -1,9 +1,9 @@
 ﻿using DAOLib.Models;
-using DAOLib.Services;
+using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DAOLib.Services
+namespace DAOLib.Managers
 {
     public class VBalancebyCategoryManagerDAO
     {
