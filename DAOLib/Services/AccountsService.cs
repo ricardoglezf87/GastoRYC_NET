@@ -1,12 +1,12 @@
-﻿using BBDDLib.Models;
+﻿using DAOLib.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
-namespace GastosRYC.BBDDLib.Services
+namespace DAOLib.Services
 {
     public class AccountsService
-    {
-
+    {        
         public List<Accounts>? getAll()
         {
             return RYCContextService.getInstance().BBDD.accounts?.ToList();

@@ -1,4 +1,4 @@
-﻿using BBDDLib.Models;
+﻿using DAOLib.Models;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace GastosRYC.BBDDLib.Services
+namespace DAOLib.Services
 {
     public class InvestmentProductsPricesService
     {

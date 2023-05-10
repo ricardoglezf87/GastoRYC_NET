@@ -1,6 +1,5 @@
-﻿using BBDDLib.Models;
-using BBDDLib.Services;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Services;
+using BOLib.Models;
 using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Collections.Generic;

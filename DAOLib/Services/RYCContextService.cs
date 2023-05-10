@@ -1,7 +1,7 @@
-﻿using BBDDLib.Manager;
+﻿using DAOLib.Manager;
 using Microsoft.EntityFrameworkCore;
 
-namespace GastosRYC.BBDDLib.Services
+namespace DAOLib.Services
 {
     public sealed class RYCContextService
     {

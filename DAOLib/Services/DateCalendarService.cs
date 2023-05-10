@@ -1,9 +1,9 @@
-﻿using BBDDLib.Models;
+﻿using DAOLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GastosRYC.BBDDLib.Services
+namespace DAOLib.Services
 {
     public class DateCalendarService
     {

@@ -172,6 +172,7 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="7.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
       <PrivateAssets>all</PrivateAssets>
@@ -189,7 +190,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BOLib\BOLib.csproj" />
-    <ProjectReference Include="..\DAOLib\DAOLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\options.png">

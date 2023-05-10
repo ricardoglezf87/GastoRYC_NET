@@ -1,5 +1,5 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Services;
+using BOLib.Models;
 using System;
 using System.Windows;
 using System.Windows.Controls;

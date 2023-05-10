@@ -1,10 +1,9 @@
-﻿using BBDDLib.Models;
-using GastosRYC.Extensions;
+﻿using DAOLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GastosRYC.BBDDLib.Services
+namespace DAOLib.Services
 {
     public class PeriodsRemindersService
     {
@@ -61,38 +60,10 @@ namespace GastosRYC.BBDDLib.Services
                         return ePeriodsReminders.Bianual;
                     case 7:
                         return ePeriodsReminders.Annual;
-
                 }
             }
 
             return null;
-        }
-
-        public DateTime? getNextDate(DateTime? date, ePeriodsReminders? periodsReminders)
-        {
-            if (date != null)
-            {
-                switch (periodsReminders)
-                {
-                    case ePeriodsReminders.Diary:
-                        return date.addDay();
-                    case ePeriodsReminders.Weekly:
-                        return date.addWeek();
-                    case ePeriodsReminders.Monthly:
-                        return date.addMonth();
-                    case ePeriodsReminders.Bimonthly:
-                        return date.addMonth(2);
-                    case ePeriodsReminders.Quarterly:
-                        return date.addMonth(3);
-                    case ePeriodsReminders.Bianual:
-                        return date.addMonth(6);
-                    case ePeriodsReminders.Annual:
-                        return date.addYear();
-                }
-
-            }
-
-            return null;
-        }
+        }      
     }
 }

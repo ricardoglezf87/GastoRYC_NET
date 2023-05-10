@@ -1,9 +1,9 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using DAOLib.Models;
+using DAOLib.Services;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BBDDLib.Services
+namespace DAOLib.Services
 {
     public class VBalancebyCategoryService
     {

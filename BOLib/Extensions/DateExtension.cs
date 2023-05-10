@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GastosRYC.Extensions
+namespace BOLib.Extensions
 {
     public static class DateExtension
     {

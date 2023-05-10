@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BBDDLib.Models
+namespace DAOLib.Models
 {
     public class ExpirationsReminders
     {

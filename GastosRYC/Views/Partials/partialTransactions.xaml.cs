@@ -1,13 +1,13 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
-using GastosRYC.Extensions;
+﻿using BOLib.Services;
+using BOLib.Models;
+using BOLib.Extensions;
 using Syncfusion.Data.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using static BBDDLib.Extensions.WindowsExtension;
+using static BOLib.Extensions.WindowsExtension;
 
 namespace GastosRYC.Views
 {

@@ -3,7 +3,7 @@ using System;
 
 #nullable disable
 
-namespace BBDDLib.Migrations
+namespace DAOLib.Migrations
 {
     public partial class Init : Migration
     {

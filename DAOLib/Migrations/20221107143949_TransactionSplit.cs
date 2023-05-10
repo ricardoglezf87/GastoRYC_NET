@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BBDDLib.Migrations
+namespace DAOLib.Migrations
 {
     public partial class TransactionSplit : Migration
     {

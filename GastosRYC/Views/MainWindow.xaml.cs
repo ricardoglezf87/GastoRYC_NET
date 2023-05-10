@@ -1,6 +1,5 @@
-﻿using BBDDLib.Models;
-using BBDDLib.Services;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Services;
+using BOLib.Models;
 using GastosRYC.Views;
 using GastosRYC.Views.Common;
 using SimpleInjector;

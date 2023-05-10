@@ -1,11 +1,11 @@
-﻿using BBDDLib.Models;
-using BBDDLib.Models.Charts;
+﻿using BOLib.Helpers;
+using BOLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static GastosRYC.BBDDLib.Services.AccountsTypesService;
+using static BOLib.Services.AccountsTypesService;
 
-namespace GastosRYC.BBDDLib.Services
+namespace BOLib.Services
 {
     public class ForecastsChartService
     {
@@ -49,7 +49,7 @@ namespace GastosRYC.BBDDLib.Services
                     registerTransactionfromReminderSimulation(exp.id));
             }
 
-            List<Transactions>? transactions = RYCContextService.getInstance().BBDD.transactions?.ToList();
+            List<Transactions>? transactions = MapperConfig.InitializeAutomapper().Map<List<Transactions>>(RYCContextService.getInstance().BBDD.transactions?.ToList());
 
             if (transactions != null)
             {

@@ -1,10 +1,10 @@
-﻿using BBDDLib.Models;
-using BBDDLib.Properties;
+﻿using DAOLib.Models;
+using DAOLib.Properties;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 
-namespace BBDDLib.Manager
+namespace DAOLib.Manager
 {
     public class RYCContext : DbContext
     {

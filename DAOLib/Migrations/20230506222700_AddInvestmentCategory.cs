@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BBDDLib.Migrations
+namespace DAOLib.Migrations
 {
     /// <inheritdoc />
     public partial class AddInvestmentCategory : Migration

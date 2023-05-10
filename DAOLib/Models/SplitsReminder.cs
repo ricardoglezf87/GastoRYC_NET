@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BBDDLib.Models
+namespace DAOLib.Models
 {
     public class SplitsReminders
     {

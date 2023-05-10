@@ -1,4 +1,4 @@
-﻿namespace BBDDLib.Extensions
+﻿namespace BOLib.Extensions
 {
     public static class WindowsExtension
     {

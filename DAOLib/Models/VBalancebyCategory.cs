@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BBDDLib.Models
+namespace DAOLib.Models
 {
     public class VBalancebyCategory
     {
