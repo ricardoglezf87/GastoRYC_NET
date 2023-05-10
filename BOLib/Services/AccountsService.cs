@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using BOLib.Extensions;
 using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -8,37 +10,48 @@ using System.Windows;
 namespace BOLib.Services
 {
     public class AccountsService
-    {        
+    {
+        private readonly AccountsManager accountsManager;
+
+        public AccountsService()
+        {
+            accountsManager = new();
+        }
+
+
         public List<Accounts>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map <List<Accounts>>(RYCContextService.getInstance().BBDD.accounts?.ToList());
+            return accountsManager.getAll()?.toListAccounts();
         }
 
         public List<Accounts>? getAllOrderByAccountsTypesId()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<Accounts>>(RYCContextService.getInstance().BBDD.accounts?.OrderBy(x => x.accountsTypesid).ToList());
+            return accountsManager.getAllOrderByAccountsTypesId()?.toListAccounts();
         }
 
         public List<Accounts>? getAllOpened()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<Accounts>>(RYCContextService.getInstance().BBDD.accounts?.Where(x => !x.closed.HasValue || !x.closed.Value).ToList());
+            return accountsManager.getAllOpened()?.toListAccounts();
+        }
+
+        public List<Accounts>? getAllOpenedOrderbyAccountTypeId()
+        {
+            return (List<Accounts>?) (getAllOpened()?.OrderBy(x=>x.accountsTypesid))?.ToList();
         }
 
         public Accounts? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<Accounts>(RYCContextService.getInstance().BBDD.accounts?.FirstOrDefault(x => id.Equals(x.id)));
+            return (Accounts) accountsManager.getByID(id);
         }
 
         public void update(Accounts accounts)
         {
-            RYCContextService.getInstance().BBDD.Update(accounts);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            accountsManager.update(accounts.toDAO());
         }
 
         public void delete(Accounts accounts)
         {
-            RYCContextService.getInstance().BBDD.Remove(accounts);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            accountsManager.delete(accounts.toDAO());
         }
     }
 }

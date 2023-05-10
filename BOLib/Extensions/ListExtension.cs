@@ -18,6 +18,32 @@ namespace BOLib.Extensions
                 }
             }
             return list;
-        }       
+        }
+
+        public static List<Accounts> toListAccounts(this List<AccountsDAO> source)
+        {
+            List<Accounts> list = new();
+            if (source != null)
+            {
+                foreach (AccountsDAO obj in source)
+                {
+                    list.Add((Accounts)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<AccountsTypes> toListAccountsTypes(this List<AccountsTypesDAO> source)
+        {
+            List<AccountsTypes> list = new();
+            if (source != null)
+            {
+                foreach (AccountsTypesDAO obj in source)
+                {
+                    list.Add((AccountsTypes)obj);
+                }
+            }
+            return list;
+        }
     }
 }

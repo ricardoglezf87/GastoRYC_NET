@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
@@ -10,5 +11,13 @@ namespace BOLib.Models
 
         public virtual String? description { set; get; }
 
+        public static explicit operator Tags(TagsDAO? v)
+        {
+            return new Tags()
+            {
+                id = v.id,
+                description = v.description
+            };
+        }
     }
 }

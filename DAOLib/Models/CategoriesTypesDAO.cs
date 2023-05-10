@@ -11,9 +11,5 @@ namespace DAOLib.Models
     public class CategoriesTypesDAO : IModelDAO
     {
         public virtual String? description { set; get; }
-
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public virtual List<CategoriesDAO>? categories { set; get; }
     }
 }

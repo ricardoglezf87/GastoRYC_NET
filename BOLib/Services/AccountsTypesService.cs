@@ -1,5 +1,7 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +9,13 @@ namespace BOLib.Services
 {
     public class AccountsTypesService
     {
+        private readonly AccountsTypesManager accountsTypesManager;
+
+        public AccountsTypesService()
+        {
+            accountsTypesManager = new();
+        }
+
         public enum eAccountsTypes : int
         {
             Cash = 1,
@@ -20,12 +29,12 @@ namespace BOLib.Services
 
         public List<AccountsTypes>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<AccountsTypes>>(RYCContextService.getInstance().BBDD.accountsTypes?.ToList());
+            return accountsTypesManager.getAll()?.toListAccountsTypes();
         }
 
         public AccountsTypes? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<AccountsTypes>(RYCContextService.getInstance().BBDD.accountsTypes?.FirstOrDefault(x => id.Equals(x.id)));
+            return (AccountsTypes)accountsTypesManager.getByID(id);
         }
 
         public bool accountExpensives(int? types)

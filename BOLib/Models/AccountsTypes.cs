@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BOLib.Extensions;
+using DAOLib.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
@@ -13,8 +15,22 @@ namespace BOLib.Models
 
         public virtual String? description { set; get; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public virtual List<Accounts>? accounts { set; get; }
+        public AccountsTypesDAO toDAO()
+        {
+            return new AccountsTypesDAO()
+            {
+                id = this.id,
+                description = this.description
+            };
+        }
+
+        public static explicit operator AccountsTypes(AccountsTypesDAO? v)
+        {
+            return new AccountsTypes()
+            {
+                id = v.id,
+                description = v.description
+            };
+        }
     }
 }

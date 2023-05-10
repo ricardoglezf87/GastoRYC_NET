@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
@@ -20,5 +21,26 @@ namespace BOLib.Models
         [IgnoreDataMember]
         public virtual Accounts? accounts { set; get; }
 
+        public CategoriesDAO toDAO()
+        {
+            return new CategoriesDAO()
+            {
+                id = this.id,
+                description = this.description,
+                categoriesTypesid = this.categoriesTypesid,
+                categoriesTypes = this.categoriesTypes.toDAO()
+            };
+        }
+
+        public static explicit operator Categories(CategoriesDAO? v)
+        {
+            return new Categories()
+            {
+                id = v.id,
+                description = v.description,
+                categoriesTypesid = v.categoriesTypesid,
+                categoriesTypes = (CategoriesTypes)v.categoriesTypes
+            };
+        }
     }
 }

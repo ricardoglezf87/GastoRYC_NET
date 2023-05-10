@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -25,5 +26,31 @@ namespace BOLib.Models
 
         [NotMapped]
         public virtual Decimal balance { set; get; }
+
+        public AccountsDAO toDAO()
+        {
+            return new AccountsDAO()
+            {
+                id = this.id,
+                description = this.description,
+                categoryid = this.categoryid,
+                category = this.category.toDAO(),
+                accountsTypesid = this.accountsTypesid,
+                accountsTypes = this.accountsTypes.toDAO()
+            };
+        }        
+        
+        public static explicit operator Accounts(AccountsDAO? v)
+        {
+            return new Accounts()
+            {
+                id = v.id,
+                description = v.description,
+                categoryid = v.categoryid,
+                category = (Categories) v.category,
+                accountsTypesid = v.accountsTypesid,
+                accountsTypes = (AccountsTypes) v.accountsTypes
+            };
+        }
     }
 }

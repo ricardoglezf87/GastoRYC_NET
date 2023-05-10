@@ -1,5 +1,8 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Managers;
+using DAOLib.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +10,13 @@ namespace BOLib.Services
 {
     public class TransactionsStatusService
     {
+        private readonly TransactionsStatusManager transactionsStatusManager;
+
+        public TransactionsStatusService()
+        {
+            transactionsStatusManager = new();
+        }
+
         public enum eTransactionsTypes : int
         {
             Pending = 1,
@@ -16,7 +26,7 @@ namespace BOLib.Services
 
         public List<TransactionsStatus>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<TransactionsStatus>>(RYCContextService.getInstance().BBDD.transactionsStatus?.ToList());
+            return transactionsStatusManager.getAll()?.toListTransactionsStatus();
         }
 
         public TransactionsStatus? getFirst()
@@ -26,7 +36,7 @@ namespace BOLib.Services
 
         public TransactionsStatus? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<TransactionsStatus>(RYCContextService.getInstance().BBDD.transactionsStatus?.FirstOrDefault(x => id.Equals(x.id)));
+            return (TransactionsStatus)transactionsStatusManager.getByID(id);
         }
     }
 }

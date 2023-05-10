@@ -9,7 +9,7 @@ namespace BOLib.Services
 {
     public class ExpirationsRemindersService
     {
-        private readonly SimpleInjector.Container servicesContainer;
+        private readonly SimpleInjector.Container servicesContainer;        
 
         public ExpirationsRemindersService(SimpleInjector.Container servicesContainer)
         {
@@ -238,8 +238,9 @@ namespace BOLib.Services
 
         public void update(ExpirationsReminders expirationsReminders)
         {
-            RYCContextService.getInstance().BBDD.Update(expirationsReminders);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            //TODO:Revisar esto
+            //RYCContextService.getInstance().BBDD.Update(expirationsReminders);
+            //RYCContextService.getInstance().BBDD.SaveChanges();
         }
 
         public void delete(ExpirationsReminders expirationsReminders)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
@@ -9,5 +10,14 @@ namespace BOLib.Models
         public virtual int id { set; get; }
 
         public virtual String? description { set; get; }
+
+        public static explicit operator TransactionsStatus(TransactionsStatusDAO? v)
+        {
+            return new TransactionsStatus()
+            {
+                id = v.id,
+                description = v.description
+            };
+        }
     }
 }

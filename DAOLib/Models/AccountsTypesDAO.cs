@@ -11,9 +11,5 @@ namespace DAOLib.Models
     public class AccountsTypesDAO : IModelDAO
     {
         public virtual String? description { set; get; }
-
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public virtual List<AccountsDAO>? accounts { set; get; }
     }
 }
