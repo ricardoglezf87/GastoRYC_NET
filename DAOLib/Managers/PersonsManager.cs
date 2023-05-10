@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class PersonsManagerDAO : IManagerDAO<PersonsDAO>
+    public class PersonsManager : IManager<PersonsDAO>
     { 
         public void setCategoryDefault(PersonsDAO? persons)
         {

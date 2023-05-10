@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class DateCalendarManagerDAO
+    public class DateCalendarManager
     {
         private readonly DateTime initDate = new DateTime(2001, 01, 01);
 

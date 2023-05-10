@@ -5,7 +5,7 @@ using DAOLib.Services;
 
 namespace DAOLib.Managers
 {
-    public class VBalancebyCategoryManagerDAO
+    public class VBalancebyCategoryManager
     {
         public List<VBalancebyCategoryDAO>? getAll()
         {
@@ -19,7 +19,7 @@ namespace DAOLib.Managers
 
         public List<VBalancebyCategoryDAO>? getExpensesbyYearMonth(int month, int year)
         {
-            return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesManagerDAO.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToList();
+            return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesManager.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToList();
         }
     }
 }

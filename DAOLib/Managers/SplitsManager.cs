@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class SplitsManagerDAO : IManagerDAO<SplitsDAO>
+    public class SplitsManager : IManager<SplitsDAO>
     {
 
         private readonly SimpleInjector.Container servicesContainer;
 
-        public SplitsManagerDAO(SimpleInjector.Container servicesContainer)
+        public SplitsManager(SimpleInjector.Container servicesContainer)
         {
             this.servicesContainer = servicesContainer;
         }
@@ -46,7 +46,7 @@ namespace DAOLib.Managers
         {
             if (splits.category == null && splits.categoryid != null)
             {
-                splits.category = servicesContainer.GetInstance<CategoriesManagerDAO>().getByID(splits.categoryid);
+                splits.category = servicesContainer.GetInstance<CategoriesManager>().getByID(splits.categoryid);
             }
 
             if (splits.amountIn == null)

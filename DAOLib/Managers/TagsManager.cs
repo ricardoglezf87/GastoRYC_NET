@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class TagsManagerDAO : IManagerDAO<TagsDAO>
+    public class TagsManager : IManager<TagsDAO>
     {       
     }
 }

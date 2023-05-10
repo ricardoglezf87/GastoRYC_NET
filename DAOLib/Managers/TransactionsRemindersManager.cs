@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class TransactionsRemindersManagerDAO : IManagerDAO<TransactionsRemindersDAO>
+    public class TransactionsRemindersManager : IManager<TransactionsRemindersDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 
-        public TransactionsRemindersManagerDAO(SimpleInjector.Container servicesContainer)
+        public TransactionsRemindersManager(SimpleInjector.Container servicesContainer)
         {
             this.servicesContainer = servicesContainer;
         }
@@ -50,7 +50,7 @@ namespace DAOLib.Managers
 
         public void updateSplitsReminders(TransactionsRemindersDAO? transactionsReminders)
         {
-            List<SplitsRemindersDAO>? lSplitsReminders = transactionsReminders.splits ?? servicesContainer.GetInstance<SplitsRemindersManagerDAO>().getbyTransactionid(transactionsReminders.id);
+            List<SplitsRemindersDAO>? lSplitsReminders = transactionsReminders.splits ?? servicesContainer.GetInstance<SplitsRemindersManager>().getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
@@ -63,14 +63,14 @@ namespace DAOLib.Managers
                     transactionsReminders.amountOut += (splitsReminders.amountOut == null ? 0 : splitsReminders.amountOut);
                 }
 
-                transactionsReminders.categoryid = (int)CategoriesManagerDAO.eSpecialCategories.Split;
-                transactionsReminders.category = servicesContainer.GetInstance<CategoriesManagerDAO>().getByID((int)CategoriesManagerDAO.eSpecialCategories.Split);
+                transactionsReminders.categoryid = (int)CategoriesManager.eSpecialCategories.Split;
+                transactionsReminders.category = servicesContainer.GetInstance<CategoriesManager>().getByID((int)CategoriesManager.eSpecialCategories.Split);
             }
             else if (transactionsReminders.categoryid != null
-                && transactionsReminders.categoryid == (int)CategoriesManagerDAO.eSpecialCategories.Split)
+                && transactionsReminders.categoryid == (int)CategoriesManager.eSpecialCategories.Split)
             {
-                transactionsReminders.categoryid = (int)CategoriesManagerDAO.eSpecialCategories.WithoutCategory;
-                transactionsReminders.category = servicesContainer.GetInstance<CategoriesManagerDAO>().getByID((int)CategoriesManagerDAO.eSpecialCategories.WithoutCategory);
+                transactionsReminders.categoryid = (int)CategoriesManager.eSpecialCategories.WithoutCategory;
+                transactionsReminders.category = servicesContainer.GetInstance<CategoriesManager>().getByID((int)CategoriesManager.eSpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.id == 0)
@@ -79,7 +79,7 @@ namespace DAOLib.Managers
                 foreach (SplitsRemindersDAO splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.transactionid = transactionsReminders.id;
-                    servicesContainer.GetInstance<SplitsRemindersManagerDAO>().update(splitsReminders);
+                    servicesContainer.GetInstance<SplitsRemindersManager>().update(splitsReminders);
                 }
             }
             else

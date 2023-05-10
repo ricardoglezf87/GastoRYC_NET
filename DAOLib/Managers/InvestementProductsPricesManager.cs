@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace DAOLib.Managers
 {
-    public class InvestmentProductsPricesManagerDAO : IManagerDAO<InvestmentProductsPricesDAO>
+    public class InvestmentProductsPricesManager : IManager<InvestmentProductsPricesDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 
-        public InvestmentProductsPricesManagerDAO(SimpleInjector.Container servicesContainer)
+        public InvestmentProductsPricesManager(SimpleInjector.Container servicesContainer)
         {
             this.servicesContainer = servicesContainer;
         }
@@ -49,7 +49,7 @@ namespace DAOLib.Managers
                     lproductsPrices = await getPricesOnlineInvesting(investmentProducts);
                 }
 
-                foreach (var transactions in servicesContainer.GetInstance<TransactionsManagerDAO>()?.getByInvestmentProduct(investmentProducts)?
+                foreach (var transactions in servicesContainer.GetInstance<TransactionsManager>()?.getByInvestmentProduct(investmentProducts)?
                         .GroupBy(g => g.date)?.Select(x => new { date = x.Key, price = x.Average(y => y.pricesShares)}))
                 {
                     if (!exists(investmentProducts.id, transactions.date))

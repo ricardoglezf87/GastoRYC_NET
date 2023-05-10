@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DAOLib.Managers
 {
-    public class IManagerDAO<T> where T : IModelDAO
+    public class IManager<T> where T : IModelDAO
     {
         public List<T>? getAll()
         {
