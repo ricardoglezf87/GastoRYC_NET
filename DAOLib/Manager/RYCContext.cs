@@ -11,28 +11,28 @@ namespace DAOLib.Manager
 
         #region Tablas
 
-        public DbSet<DateCalendar>? dateCalendar { get; set; }
-        public DbSet<Accounts>? accounts { get; set; }
-        public DbSet<AccountsTypes>? accountsTypes { get; set; }
-        public DbSet<Transactions>? transactions { get; set; }
-        public DbSet<Persons>? persons { get; set; }
-        public DbSet<Categories>? categories { get; set; }
-        public DbSet<CategoriesTypes>? categoriesTypes { get; set; }
-        public DbSet<Tags>? tags { get; set; }
-        public DbSet<TransactionsStatus>? transactionsStatus { get; set; }
-        public DbSet<Splits>? splits { get; set; }
-        public DbSet<PeriodsReminders>? periodsReminders { get; set; }
-        public DbSet<TransactionsReminders>? transactionsReminders { get; set; }
-        public DbSet<SplitsReminders>? splitsReminders { get; set; }
-        public DbSet<ExpirationsReminders>? expirationsReminders { get; set; }
-        public DbSet<InvestmentProducts>? investmentProducts { get; set; }
-        public DbSet<InvestmentProductsPrices>? investmentProductsPrices { get; set; }
+        public DbSet<DateCalendarDAO>? dateCalendar { get; set; }
+        public DbSet<AccountsDAO>? accounts { get; set; }
+        public DbSet<AccountsTypesDAO>? accountsTypes { get; set; }
+        public DbSet<TransactionsDAO>? transactions { get; set; }
+        public DbSet<PersonsDAO>? persons { get; set; }
+        public DbSet<CategoriesDAO>? categories { get; set; }
+        public DbSet<CategoriesTypesDAO>? categoriesTypes { get; set; }
+        public DbSet<TagsDAO>? tags { get; set; }
+        public DbSet<TransactionsStatusDAO>? transactionsStatus { get; set; }
+        public DbSet<SplitsDAO>? splits { get; set; }
+        public DbSet<PeriodsRemindersDAO>? periodsReminders { get; set; }
+        public DbSet<TransactionsRemindersDAO>? transactionsReminders { get; set; }
+        public DbSet<SplitsRemindersDAO>? splitsReminders { get; set; }
+        public DbSet<ExpirationsRemindersDAO>? expirationsReminders { get; set; }
+        public DbSet<InvestmentProductsDAO>? investmentProducts { get; set; }
+        public DbSet<InvestmentProductsPricesDAO>? investmentProductsPrices { get; set; }
 
         #endregion
 
         #region Vistas
 
-        public DbSet<VBalancebyCategory>? vBalancebyCategory { get; set; }
+        public DbSet<VBalancebyCategoryDAO>? vBalancebyCategory { get; set; }
 
         #endregion
 
@@ -115,8 +115,8 @@ namespace DAOLib.Manager
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<VBalancebyCategory>()
-                .ToView(nameof(VBalancebyCategory))
+            modelBuilder.Entity<VBalancebyCategoryDAO>()
+                .ToView("VBalancebyCategory")
                 .HasKey(t => new { t.year, t.month, t.categoryid });
         }
 

@@ -1,5 +1,6 @@
 ﻿using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,7 @@ namespace BOLib.Services
                 if (getByID(ini) == null)
                 {
                     //TODO:Revisar esto que no es correcto
-                    DAOLib.Models.DateCalendar date = new DAOLib.Models.DateCalendar()
+                    DateCalendarDAO date = new DateCalendarDAO()
                     {
                         date = ini,
                         day = ini.Day,

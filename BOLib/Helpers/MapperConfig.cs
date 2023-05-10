@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DAOLib.Models;
+using BOLib.Models;
 
 namespace BOLib.Helpers
 {
@@ -13,23 +15,23 @@ namespace BOLib.Helpers
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<BOLib.Models.Accounts, DAOLib.Models.Accounts>().ReverseMap();                
-                cfg.CreateMap<BOLib.Models.AccountsTypes, DAOLib.Models.AccountsTypes>().ReverseMap();                
-                cfg.CreateMap<BOLib.Models.Categories, DAOLib.Models.Categories>().ReverseMap();                
-                cfg.CreateMap<BOLib.Models.CategoriesTypes, DAOLib.Models.CategoriesTypes>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.DateCalendar, DAOLib.Models.DateCalendar>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.ExpirationsReminders, DAOLib.Models.ExpirationsReminders>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.InvestmentProducts, DAOLib.Models.InvestmentProducts>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.InvestmentProductsPrices, DAOLib.Models.InvestmentProductsPrices>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.PeriodsReminders, DAOLib.Models.PeriodsReminders>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.Persons, DAOLib.Models.Persons>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.Splits, DAOLib.Models.Splits>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.SplitsReminders, DAOLib.Models.SplitsReminders>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.Tags, DAOLib.Models.Tags>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.Transactions, DAOLib.Models.Transactions>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.TransactionsReminders, DAOLib.Models.TransactionsReminders>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.TransactionsStatus, DAOLib.Models.TransactionsStatus>().ReverseMap();
-                cfg.CreateMap<BOLib.Models.VBalancebyCategory, DAOLib.Models.VBalancebyCategory>().ReverseMap();
+                cfg.CreateMap<Accounts, AccountsDAO>().ReverseMap();                
+                cfg.CreateMap<AccountsTypes, AccountsTypesDAO>().ReverseMap();                
+                cfg.CreateMap<Categories, CategoriesDAO>().ReverseMap();                
+                cfg.CreateMap<CategoriesTypes, CategoriesTypesDAO>().ReverseMap();
+                cfg.CreateMap<DateCalendar, DateCalendarDAO>().ReverseMap();
+                cfg.CreateMap<ExpirationsReminders, ExpirationsRemindersDAO>().ReverseMap();
+                cfg.CreateMap<InvestmentProducts, InvestmentProductsDAO>().ReverseMap();
+                cfg.CreateMap<InvestmentProductsPrices, InvestmentProductsPricesDAO>().ReverseMap();
+                cfg.CreateMap<PeriodsReminders, PeriodsRemindersDAO>().ReverseMap();
+                cfg.CreateMap<Persons, PersonsDAO>().ReverseMap();
+                cfg.CreateMap<Splits, SplitsDAO>().ReverseMap();
+                cfg.CreateMap<SplitsReminders, SplitsRemindersDAO>().ReverseMap();
+                cfg.CreateMap<Tags, TagsDAO>().ReverseMap();
+                cfg.CreateMap<Transactions, TransactionsDAO>().ReverseMap();
+                cfg.CreateMap<TransactionsReminders, TransactionsRemindersDAO>().ReverseMap();
+                cfg.CreateMap<TransactionsStatus, TransactionsStatusDAO>().ReverseMap();
+                cfg.CreateMap<VBalancebyCategory, VBalancebyCategoryDAO>().ReverseMap();
             });
             var mapper = new Mapper(config);
             return mapper;
