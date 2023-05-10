@@ -4,30 +4,8 @@ using System.Linq;
 
 namespace DAOLib.Services
 {
-    public class PersonsServiceDAO
-    {
-        public List<PersonsDAO>? getAll()
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.persons?.ToList();
-        }
-
-        public PersonsDAO? getByID(int? id)
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.persons?.FirstOrDefault(x => id.Equals(x.id));
-        }
-
-        public void update(PersonsDAO persons)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Update(persons);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
-
-        public void delete(PersonsDAO persons)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Remove(persons);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
-
+    public class PersonsServiceDAO : IServiceDAO<PersonsDAO>
+    { 
         public void setCategoryDefault(PersonsDAO? persons)
         {
             if (persons == null)

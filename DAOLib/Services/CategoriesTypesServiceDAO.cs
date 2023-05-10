@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DAOLib.Services
 {
-    public class CategoriesTypesServiceDAO
+    public class CategoriesTypesServiceDAO : IServiceDAO<CategoriesTypesDAO>
     {
         public enum eCategoriesTypes : int
         {
@@ -14,22 +14,11 @@ namespace DAOLib.Services
             Specials = 4
         }
 
-        public List<CategoriesTypesDAO>? getAll()
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.categoriesTypes?.ToList();
-        }
-
         public List<CategoriesTypesDAO>? getAllFilterTransfer()
         {
             return RYCContextServiceDAO.getInstance().BBDD.categoriesTypes?
                 .Where(x => !x.id.Equals((int)eCategoriesTypes.Transfers) &&
                 !x.id.Equals((int)eCategoriesTypes.Transfers)).ToList();
         }
-
-        public CategoriesTypesDAO? getByID(int? id)
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.categoriesTypes?.FirstOrDefault(x => id.Equals(x.id));
-        }
-
     }
 }

@@ -5,11 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DAOLib.Models
 {
     [Table("TransactionsStatus")]
-    public class TransactionsStatusDAO
+    public class TransactionsStatusDAO : IModelDAO
     {
-        [Key]
-        public virtual int id { set; get; }
-
         public virtual String? description { set; get; }
     }
 }

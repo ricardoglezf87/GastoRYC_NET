@@ -6,11 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DAOLib.Models
 {
     [Table("Accounts")]
-    public class AccountsDAO
+    public class AccountsDAO : IModelDAO
     {
-        [Key]
-        public virtual int id { set; get; }
-
         public virtual String? description { set; get; }
 
         public virtual int? accountsTypesid { set; get; }
@@ -23,8 +20,5 @@ namespace DAOLib.Models
 
         [DefaultValue(false)]
         public virtual Boolean? closed { set; get; }
-
-        [NotMapped]
-        public virtual Decimal balance { set; get; }
     }
 }

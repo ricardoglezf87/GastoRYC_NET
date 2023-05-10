@@ -12,9 +12,5 @@ namespace DAOLib.Models
         public virtual int? categoryid { set; get; }
         public virtual string? category { set; get; }
         public virtual Decimal? amount { set; get; }
-
-        [NotMapped]
-        public virtual Decimal? neg_amount { get { return -amount; } }
-
     }
 }

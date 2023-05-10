@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DAOLib.Services
 {
-    public class PeriodsRemindersServiceDAO
+    public class PeriodsRemindersServiceDAO : IServiceDAO<PeriodsRemindersDAO>
     {
         public enum ePeriodsReminders : int
         {
@@ -16,29 +16,7 @@ namespace DAOLib.Services
             Quarterly = 5,
             Bianual = 6,
             Annual = 7
-        }
-
-        public List<PeriodsRemindersDAO>? getAll()
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.periodsReminders?.ToList();
-        }
-
-        public PeriodsRemindersDAO? getByID(int? id)
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.periodsReminders?.FirstOrDefault(x => id.Equals(x.id));
-        }
-
-        public void update(PeriodsRemindersDAO periodsReminders)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Update(periodsReminders);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
-
-        public void delete(PeriodsRemindersDAO periodsReminders)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Remove(periodsReminders);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
+        } 
 
         public ePeriodsReminders? toEnum(PeriodsRemindersDAO? periodsReminders)
         {

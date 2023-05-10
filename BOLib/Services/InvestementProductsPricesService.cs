@@ -95,7 +95,7 @@ namespace BOLib.Services
 
                 await RYCContextService.getInstance().BBDD.SaveChangesAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }

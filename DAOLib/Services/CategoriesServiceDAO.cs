@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DAOLib.Services
 {
-    public class CategoriesServiceDAO
+    public class CategoriesServiceDAO : IServiceDAO<CategoriesDAO>
     {
         public enum eSpecialCategories : int
         {
@@ -21,33 +21,11 @@ namespace DAOLib.Services
             this.servicesContainer = servicesContainer;
         }
 
-        public List<CategoriesDAO>? getAll()
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.categories?.ToList();
-        }
-
         public List<CategoriesDAO>? getAllFilterTransfer()
         {
             return RYCContextServiceDAO.getInstance().BBDD.categories?
                 .Where(x => !x.id.Equals(CategoriesTypesServiceDAO.eCategoriesTypes.Transfers) &&
                 !x.id.Equals(CategoriesTypesServiceDAO.eCategoriesTypes.Specials)).ToList();
-        }
-
-        public CategoriesDAO? getByID(int? id)
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.categories?.FirstOrDefault(x => id.Equals(x.id));
-        }
-
-        public void update(CategoriesDAO categories)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Update(categories);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
-
-        public void delete(CategoriesDAO categories)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Remove(categories);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
         }
 
         public int getNextID()

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DAOLib.Services
 {
-    public class TransactionsRemindersServiceDAO
+    public class TransactionsRemindersServiceDAO : IServiceDAO<TransactionsRemindersDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 
@@ -16,33 +16,6 @@ namespace DAOLib.Services
         }
 
         #region TransactionsRemindersActions
-
-        public List<TransactionsRemindersDAO>? getAll()
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.transactionsReminders?.ToList();
-        }
-
-        public TransactionsRemindersDAO? getByID(int? id)
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.transactionsReminders?.FirstOrDefault(x => id.Equals(x.id));
-        }
-
-        public void update(TransactionsRemindersDAO transactionsReminders)
-        {
-            servicesContainer.GetInstance<ExpirationsRemindersServiceDAO>().deleteByTransactionReminderid(transactionsReminders.id);
-            RYCContextServiceDAO.getInstance().BBDD.Update(transactionsReminders);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
-
-        public void delete(TransactionsRemindersDAO? transactionsReminders)
-        {
-            if (transactionsReminders != null)
-            {
-                servicesContainer.GetInstance<ExpirationsRemindersServiceDAO>().deleteByTransactionReminderid(transactionsReminders.id);
-                RYCContextServiceDAO.getInstance().BBDD.Remove(transactionsReminders);
-                RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-            }
-        }
 
         public int getNextID()
         {
@@ -76,7 +49,7 @@ namespace DAOLib.Services
 
         public void updateSplitsReminders(TransactionsRemindersDAO? transactionsReminders)
         {
-            List<SplitsRemindersDAO>? lSplitsReminders = transactionsReminders.splits ?? servicesContainer.GetInstance<SplitsRemindersServiceDAO>().getbyTransactionid(transactionsReminders.id);
+            List<SplitsRemindersDAO>? lSplitsReminders = transactionsReminders.splits ?? servicesContainer.GetInstance<SplitsRemindersManagerDAO>().getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
@@ -105,7 +78,7 @@ namespace DAOLib.Services
                 foreach (SplitsRemindersDAO splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.transactionid = transactionsReminders.id;
-                    servicesContainer.GetInstance<SplitsRemindersServiceDAO>().update(splitsReminders);
+                    servicesContainer.GetInstance<SplitsRemindersManagerDAO>().update(splitsReminders);
                 }
             }
             else

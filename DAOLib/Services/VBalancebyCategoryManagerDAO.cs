@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DAOLib.Services
 {
-    public class VBalancebyCategoryServiceDAO
+    public class VBalancebyCategoryManagerDAO
     {
         public List<VBalancebyCategoryDAO>? getAll()
         {

@@ -6,21 +6,16 @@ using System.Linq;
 
 namespace DAOLib.Services
 {
-    public class SplitsServiceDAO
+    public class SplitsManagerDAO : IServiceDAO<SplitsDAO>
     {
 
         private readonly SimpleInjector.Container servicesContainer;
 
-        public SplitsServiceDAO(SimpleInjector.Container servicesContainer)
+        public SplitsManagerDAO(SimpleInjector.Container servicesContainer)
         {
             this.servicesContainer = servicesContainer;
         }
-
-        public List<SplitsDAO>? getAll()
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.splits?.ToList();
-        }
-
+  
         public List<SplitsDAO>? getbyTransactionidNull()
         {
             return RYCContextServiceDAO.getInstance().BBDD.splits?.Where(x => x.transactionid == null).ToList();
@@ -29,23 +24,6 @@ namespace DAOLib.Services
         public List<SplitsDAO>? getbyTransactionid(int transactionid)
         {
             return RYCContextServiceDAO.getInstance().BBDD.splits?.Where(x => x.transactionid == transactionid).ToList();
-        }
-
-        public SplitsDAO? getByID(int? id)
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.splits?.FirstOrDefault(x => id.Equals(x.id));
-        }
-
-        public void update(SplitsDAO splits)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Update(splits);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
-
-        public void delete(SplitsDAO splits)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Remove(splits);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
         }
 
         public Decimal? getAmountTotal(TransactionsDAO transactions)

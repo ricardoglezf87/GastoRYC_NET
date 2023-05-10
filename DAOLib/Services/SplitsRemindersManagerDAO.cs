@@ -6,12 +6,8 @@ using System.Linq;
 
 namespace DAOLib.Services
 {
-    public class SplitsRemindersServiceDAO
+    public class SplitsRemindersManagerDAO : IServiceDAO<SplitsRemindersDAO>
     {
-        public List<SplitsRemindersDAO>? getAll()
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.splitsReminders?.ToList();
-        }
 
         public List<SplitsRemindersDAO>? getbyTransactionidNull()
         {
@@ -21,23 +17,6 @@ namespace DAOLib.Services
         public List<SplitsRemindersDAO>? getbyTransactionid(int transactionid)
         {
             return RYCContextServiceDAO.getInstance().BBDD.splitsReminders?.Where(x => x.transactionid == transactionid).ToList();
-        }
-
-        public SplitsRemindersDAO? getByID(int? id)
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.splitsReminders?.FirstOrDefault(x => id.Equals(x.id));
-        }
-
-        public void update(SplitsRemindersDAO splitsReminders)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Update(splitsReminders);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
-
-        public void delete(SplitsRemindersDAO splitsReminders)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Remove(splitsReminders);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
         }
 
         public Decimal? getAmountTotal(TransactionsRemindersDAO transactions)

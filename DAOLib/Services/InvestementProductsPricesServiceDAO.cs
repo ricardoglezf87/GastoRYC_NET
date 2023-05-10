@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DAOLib.Services
 {
-    public class InvestmentProductsPricesServiceDAO
+    public class InvestmentProductsPricesServiceDAO : IServiceDAO<InvestmentProductsPricesDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 
@@ -17,34 +17,12 @@ namespace DAOLib.Services
         {
             this.servicesContainer = servicesContainer;
         }
-
-        public List<InvestmentProductsPricesDAO>? getAll()
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.investmentProductsPrices?.ToList();
-        }
-
-        public InvestmentProductsPricesDAO? getByID(int? id)
-        {
-            return RYCContextServiceDAO.getInstance().BBDD.investmentProductsPrices?.FirstOrDefault(x => id.Equals(x.id));
-        }
-
         public bool exists(int? investmentProductId, DateTime? date)
         {
             return RYCContextServiceDAO.getInstance().BBDD.investmentProductsPrices?
                 .Any(x => investmentProductId.Equals(x.investmentProductsid) && date.Equals(x.date)) ?? false;
         }
 
-        public void update(InvestmentProductsPricesDAO investmentProducts)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Update(investmentProducts);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
-
-        public void delete(InvestmentProductsPricesDAO investmentProductsPrices)
-        {
-            RYCContextServiceDAO.getInstance().BBDD.Remove(investmentProductsPrices);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
-        }
 
         public Decimal? getActualPrice(InvestmentProductsDAO investmentProducts)
         {
@@ -70,7 +48,7 @@ namespace DAOLib.Services
                     lproductsPrices = await getPricesOnlineInvesting(investmentProducts);
                 }
 
-                foreach (var transactions in servicesContainer.GetInstance<TransactionsServiceDAO>()?.getByInvestmentProduct(investmentProducts)?
+                foreach (var transactions in servicesContainer.GetInstance<TransactionsManagerDAO>()?.getByInvestmentProduct(investmentProducts)?
                         .GroupBy(g => g.date)?.Select(x => new { date = x.Key, price = x.Average(y => y.pricesShares)}))
                 {
                     if (!exists(investmentProducts.id, transactions.date))

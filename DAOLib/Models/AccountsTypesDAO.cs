@@ -8,11 +8,8 @@ using System.Text.Json.Serialization;
 namespace DAOLib.Models
 {
     [Table("AccountsTypes")]
-    public class AccountsTypesDAO
+    public class AccountsTypesDAO : IModelDAO
     {
-        [Key]
-        public virtual int id { set; get; }
-
         public virtual String? description { set; get; }
 
         [JsonIgnore]

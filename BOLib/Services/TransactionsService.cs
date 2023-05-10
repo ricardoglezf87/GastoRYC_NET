@@ -68,7 +68,8 @@ namespace BOLib.Services
         public Decimal getBalanceByAccount(int accountId)
         {
             //TODO: Se tiene que asignar el valor actual de la acción.
-            return RYCContextService.getInstance()?.BBDD?.transactions?.Where(x => x.accountid == accountId)?.ToList().Sum(x => x.amount) ?? 0;
+            return 0;
+            //return RYCContextService.getInstance()?.BBDD?.transactions?.Where(x => x.accountid == accountId)?.ToList().Sum(x => x.amount) ?? 0;
         }
 
         public int getNextID()

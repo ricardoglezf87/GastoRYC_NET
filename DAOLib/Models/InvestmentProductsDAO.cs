@@ -6,11 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DAOLib.Models
 {
     [Table("InvestmentProducts")]
-    public class InvestmentProductsDAO
+    public class InvestmentProductsDAO : IModelDAO
     {
-        [Key]
-        public virtual int id { set; get; }
-
         public virtual String? description { set; get; }
 
         public virtual String? symbol { set; get; }

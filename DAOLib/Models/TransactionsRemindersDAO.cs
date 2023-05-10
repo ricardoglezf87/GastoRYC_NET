@@ -5,10 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DAOLib.Models
 {
     [Table("TransactionsReminders")]
-    public class TransactionsRemindersDAO
+    public class TransactionsRemindersDAO : IModelDAO
     {
-        public virtual int id { set; get; }
-
         public virtual int? periodsRemindersid { set; get; }
         public virtual PeriodsRemindersDAO? periodsReminders { set; get; }
 
@@ -46,27 +44,6 @@ namespace DAOLib.Models
 
         public virtual TransactionsStatusDAO? transactionStatus { set; get; }
 
-        public virtual List<SplitsRemindersDAO>? splits { set; get; }
-
-        [NotMapped]
-        public virtual Decimal? amount { get { return amountIn - amountOut; } }
-
-        [NotMapped]
-        public virtual Double? orden
-        {
-            get
-            {
-                return Double.Parse(
-                    date?.Year.ToString("0000")
-                    + date?.Month.ToString("00")
-                    + date?.Day.ToString("00")
-                    + id.ToString("000000")
-                    + (amountIn != 0 ? "1" : "0"));
-            }
-        }
-
-        [NotMapped]
-        public virtual Decimal? balance { set; get; }
-
+        public virtual List<SplitsRemindersDAO>? splits { set; get; }        
     }
 }
