@@ -15,13 +15,6 @@ namespace DAOLib.Managers
             WithoutCategory = 0
         }
 
-        private readonly SimpleInjector.Container servicesContainer;
-
-        public CategoriesManager(SimpleInjector.Container servicesContainer)
-        {
-            this.servicesContainer = servicesContainer;
-        }
-
         public List<CategoriesDAO>? getAllFilterTransfer()
         {
             return RYCContextServiceDAO.getInstance().BBDD.categories?

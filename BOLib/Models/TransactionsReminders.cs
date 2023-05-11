@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -67,5 +68,9 @@ namespace BOLib.Models
         [NotMapped]
         public virtual Decimal? balance { set; get; }
 
+        public static explicit operator TransactionsReminders(TransactionsRemindersDAO v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

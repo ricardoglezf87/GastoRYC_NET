@@ -11,6 +11,15 @@ namespace BOLib.Models
 
         public virtual String? description { set; get; }
 
+        internal TransactionsStatusDAO toDAO() 
+        {
+            return new TransactionsStatusDAO()
+            {
+                id = this.id,
+                description = this.description
+            };
+        }
+
         public static explicit operator TransactionsStatus(TransactionsStatusDAO? v)
         {
             return new TransactionsStatus()

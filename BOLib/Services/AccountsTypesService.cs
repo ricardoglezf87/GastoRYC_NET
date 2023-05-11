@@ -29,7 +29,7 @@ namespace BOLib.Services
 
         public List<AccountsTypes>? getAll()
         {
-            return accountsTypesManager.getAll()?.toListAccountsTypes();
+            return accountsTypesManager.getAll()?.toListBO();
         }
 
         public AccountsTypes? getByID(int? id)

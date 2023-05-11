@@ -21,22 +21,22 @@ namespace BOLib.Services
 
         public List<Accounts>? getAll()
         {
-            return accountsManager.getAll()?.toListAccounts();
+            return accountsManager.getAll()?.toListBO();
         }
 
         public List<Accounts>? getAllOrderByAccountsTypesId()
         {
-            return accountsManager.getAllOrderByAccountsTypesId()?.toListAccounts();
+            return accountsManager.getAllOrderByAccountsTypesId()?.toListBO();
         }
 
         public List<Accounts>? getAllOpened()
         {
-            return accountsManager.getAllOpened()?.toListAccounts();
+            return accountsManager.getAllOpened()?.toListBO();
         }
 
         public List<AccountsView>? getAllOpenedListView()
         {
-            return accountsManager.getAllOpened()?.toListAccountsView();
+            return accountsManager.getAllOpened()?.toListViewBO();
         }
 
         public Accounts? getByID(int? id)

@@ -187,43 +187,47 @@ namespace BOLib.Services
 
         public Transactions updateTranferSplitsSimulation(Transactions? transactions, Splits splits)
         {
-            Transactions? tContraria = new()
-            {
-                date = transactions.date,
-                accountid = splits.category.accounts.id,
-                account = splits.category.accounts,
-                personid = transactions.personid,
-                person = transactions.person,
-                categoryid = transactions.account.categoryid,
-                category = servicesContainer.GetInstance<CategoriesService>().getByID(transactions.account.categoryid),
-                memo = splits.memo,
-                tagid = transactions.tagid,
-                amountIn = splits.amountOut,
-                amountOut = splits.amountIn
-            };
+            //TODO:Revisar
+            //Transactions? tContraria = new()
+            //{
+            //    date = transactions.date,
+            //    accountid = splits.category.accounts.id,
+            //    account = splits.category.accounts,
+            //    personid = transactions.personid,
+            //    person = transactions.person,
+            //    categoryid = transactions.account.categoryid,
+            //    category = servicesContainer.GetInstance<CategoriesService>().getByID(transactions.account.categoryid),
+            //    memo = splits.memo,
+            //    tagid = transactions.tagid,
+            //    amountIn = splits.amountOut,
+            //    amountOut = splits.amountIn
+            //};
 
-            return tContraria;
+            //return tContraria;
+            return null;
         }
 
 
         public Transactions updateTranferSimulation(Transactions transactions)
         {
-            Transactions? tContraria = new()
-            {
-                date = transactions.date.removeTime(),
-                accountid = transactions.category.accounts.id,
-                account = transactions.category.accounts,
-                personid = transactions.personid,
-                person = transactions.person,
-                categoryid = transactions.account.categoryid,
-                category = servicesContainer.GetInstance<CategoriesService>().getByID(transactions.account.categoryid),
-                memo = transactions.memo,
-                tagid = transactions.tagid,
-                tag = transactions.tag,
-                amountIn = transactions.amountOut,
-                amountOut = transactions.amountIn
-            };
-            return tContraria;
+            //TODO: revisar
+            //Transactions? tContraria = new()
+            //{
+            //    date = transactions.date.removeTime(),
+            //    accountid = transactions.category.accounts.id,
+            //    account = transactions.category.accounts,
+            //    personid = transactions.personid,
+            //    person = transactions.person,
+            //    categoryid = transactions.account.categoryid,
+            //    category = servicesContainer.GetInstance<CategoriesService>().getByID(transactions.account.categoryid),
+            //    memo = transactions.memo,
+            //    tagid = transactions.tagid,
+            //    tag = transactions.tag,
+            //    amountIn = transactions.amountOut,
+            //    amountOut = transactions.amountIn
+            //};
+            //return tContraria;
+            return null;
         }
 
         public ExpirationsReminders? getByID(int? id)

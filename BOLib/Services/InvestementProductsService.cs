@@ -1,5 +1,7 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,26 +9,31 @@ namespace BOLib.Services
 {
     public class InvestmentProductsService
     {
+        private readonly InvestmentProductsManager investmentProductsManager;
+
+        public InvestmentProductsService()
+        {
+            investmentProductsManager = new();
+        }
+
         public List<InvestmentProducts>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<InvestmentProducts>>(RYCContextService.getInstance().BBDD.investmentProducts?.ToList());
+            return investmentProductsManager.getAll()?.toListBO();
         }
 
         public InvestmentProducts? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<InvestmentProducts>(RYCContextService.getInstance().BBDD.investmentProducts?.FirstOrDefault(x => id.Equals(x.id)));
+            return (InvestmentProducts)investmentProductsManager.getByID(id);
         }
 
-        public void update(InvestmentProducts investmentProductstags)
+        public void update(InvestmentProducts investmentProducts)
         {
-            RYCContextService.getInstance().BBDD.Update(investmentProductstags);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            investmentProductsManager.update(investmentProducts.toDAO());
         }
 
         public void delete(InvestmentProducts investmentProducts)
         {
-            RYCContextService.getInstance().BBDD.Remove(investmentProducts);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            investmentProductsManager.delete(investmentProducts.toDAO());
         }
     }
 }

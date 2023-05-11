@@ -11,12 +11,27 @@ namespace BOLib.Models
         public virtual int? categoryid { set; get; }
         public virtual Categories? category { set; get; }
 
+        internal PersonsDAO toDAO()
+        {
+            return new PersonsDAO()
+            {
+                id = this.id,
+                name = this.name,
+                categoryid = this.categoryid,
+                category = this.category.toDAO()
+            };
+        }
+
         public static explicit operator Persons(PersonsDAO? v)
         {
+            if (v == null) return null;
+
             return new Persons()
             {
                 id = v.id,
-                name = v.name
+                name = v.name,
+                categoryid = v.categoryid,
+                category = (Categories) v.category
             };
         }
     }

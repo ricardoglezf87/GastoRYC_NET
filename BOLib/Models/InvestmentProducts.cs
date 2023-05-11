@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DAOLib.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,5 +19,29 @@ namespace BOLib.Models
         
         [DefaultValue(true)]
         public virtual bool? active { set; get; }
+
+        internal InvestmentProductsDAO toDAO()
+        {
+            return new InvestmentProductsDAO()
+            {
+                id = this.id,
+                description = this.description,
+                symbol = this.symbol,
+                url = this.url
+            };
+        }
+
+        public static explicit operator InvestmentProducts(InvestmentProductsDAO? v)
+        {
+            if (v == null) return null;
+
+            return new InvestmentProducts()
+            {
+                id = v.id,
+                description = v.description,
+                symbol = v.symbol,
+                url = v.url
+            };
+        }
     }
 }

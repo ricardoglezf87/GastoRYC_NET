@@ -26,7 +26,7 @@ namespace BOLib.Services
 
         public List<TransactionsStatus>? getAll()
         {
-            return transactionsStatusManager.getAll()?.toListTransactionsStatus();
+            return transactionsStatusManager.getAll()?.toListBO();
         }
 
         public TransactionsStatus? getFirst()

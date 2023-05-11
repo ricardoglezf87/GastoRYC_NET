@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -79,5 +80,63 @@ namespace BOLib.Models
         [NotMapped]
         public virtual Decimal? balance { set; get; }
 
+        internal TransactionsDAO toDAO()
+        {
+            return new TransactionsDAO()
+            {
+                id = this.id,
+                date = this.date,
+                accountid = this.accountid,
+                account = this.account.toDAO(),
+                personid = this.personid,
+                person = this.person.toDAO(),
+                categoryid = this.categoryid,
+                category = this.category.toDAO(),
+                amountIn = this.amountIn,
+                amountOut = this.amountOut,
+                memo = this.memo,
+                investmentCategory = this.investmentCategory,
+                investmentProducts = this.investmentProducts.toDAO(),
+                investmentProductsid = this.investmentProductsid,
+                tranferid = this.tranferid,
+                tranferSplitid = this.tranferSplitid,
+                transactionStatus = this.transactionStatus.toDAO(),
+                transactionStatusid = this.transactionStatusid,
+                numShares = this.numShares,
+                pricesShares = this.pricesShares,
+                tagid = this.tagid,
+                tag = this.tag.toDAO()
+            };
+        }
+
+
+        public static explicit operator Transactions(TransactionsDAO v)
+        {
+            return new Transactions()
+            {
+                id = v.id,
+                date = v.date,
+                accountid = v.accountid,
+                account = (Accounts)v.account,
+                personid = v.personid,
+                person = (Persons)v.person,
+                categoryid = v.categoryid,
+                category = (Categories)v.category,
+                amountIn = v.amountIn,
+                amountOut = v.amountOut,
+                memo = v.memo,
+                investmentCategory = v.investmentCategory,
+                investmentProducts = (InvestmentProducts)v.investmentProducts,
+                investmentProductsid = v.investmentProductsid,
+                tranferid = v.tranferid,
+                tranferSplitid = v.tranferSplitid,
+                transactionStatus = (TransactionsStatus)v.transactionStatus,
+                transactionStatusid = v.transactionStatusid,
+                numShares = v.numShares,
+                pricesShares = v.pricesShares,
+                tagid = v.tagid,
+                tag = (Tags)v.tag
+            };
+        }
     }
 }

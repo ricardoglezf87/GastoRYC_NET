@@ -25,68 +25,69 @@ namespace BOLib.Services
 
         public List<ForecastsChart> getMonthForecast()
         {
-            Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
-            Dictionary<int, Decimal> saldos = new();
+            //Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
+            //TODO:Revisar
+            //Dictionary<int, Decimal> saldos = new();
 
-            DateTime now = DateTime.Now;
+            //DateTime now = DateTime.Now;
 
-            foreach (var g in RYCContextService.getInstance().BBDD.accounts?.Where(x => (x.closed == false || x.closed == null)
-                                                                                   && ((x.accountsTypesid == (int)eAccountsTypes.Cash ||
-                                                                                    x.accountsTypesid == (int)eAccountsTypes.Banks ||
-                                                                                    x.accountsTypesid == (int)eAccountsTypes.Cards))))
-            {
-                saldos.Add(g.id, 0);
-            }
+            //foreach (var g in RYCContextService.getInstance().BBDD.accounts?.Where(x => (x.closed == false || x.closed == null)
+            //                                                                       && ((x.accountsTypesid == (int)eAccountsTypes.Cash ||
+            //                                                                        x.accountsTypesid == (int)eAccountsTypes.Banks ||
+            //                                                                        x.accountsTypesid == (int)eAccountsTypes.Cards))))
+            //{
+            //    saldos.Add(g.id, 0);
+            //}
 
-            List<Transactions> remTransactions = new();
+            //List<Transactions> remTransactions = new();
 
-            foreach (ExpirationsReminders exp in servicesContainer.
-                    GetInstance<ExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration())
-            {
+            //foreach (ExpirationsReminders exp in servicesContainer.
+            //        GetInstance<ExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration())
+            //{
 
-                remTransactions.AddRange(servicesContainer.
-                    GetInstance<ExpirationsRemindersService>().
-                    registerTransactionfromReminderSimulation(exp.id));
-            }
+            //    remTransactions.AddRange(servicesContainer.
+            //        GetInstance<ExpirationsRemindersService>().
+            //        registerTransactionfromReminderSimulation(exp.id));
+            //}
 
-            List<Transactions>? transactions = MapperConfig.InitializeAutomapper().Map<List<Transactions>>(RYCContextService.getInstance().BBDD.transactions?.ToList());
+            //List<Transactions>? transactions = MapperConfig.InitializeAutomapper().Map<List<Transactions>>(RYCContextService.getInstance().BBDD.transactions?.ToList());
 
-            if (transactions != null)
-            {
-                if (remTransactions != null && remTransactions.Count > 0)
-                {
-                    transactions.AddRange(remTransactions);
-                }
+            //if (transactions != null)
+            //{
+            //    if (remTransactions != null && remTransactions.Count > 0)
+            //    {
+            //        transactions.AddRange(remTransactions);
+            //    }
 
-                for (int i = 0; i < 30; i++)
-                {
-                    DateTime d = now.AddDays(i);
-                    foreach (var g in transactions
-                                    .Where(x => x.category != null && x.date <= d
-                                       && (x.account.closed == false || x.account.closed == null)
-                                       && ((x.account.accountsTypesid == (int)eAccountsTypes.Cash ||
-                                        x.account.accountsTypesid == (int)eAccountsTypes.Banks ||
-                                        x.account.accountsTypesid == (int)eAccountsTypes.Cards)))
-                                    .GroupBy(g => g.accountid))
-                    {
-                        Decimal saldo_act = (decimal)(g.Sum(x => x.amount) ?? 0);
+            //    for (int i = 0; i < 30; i++)
+            //    {
+            //        DateTime d = now.AddDays(i);
+            //        foreach (var g in transactions
+            //                        .Where(x => x.category != null && x.date <= d
+            //                           && (x.account.closed == false || x.account.closed == null)
+            //                           && ((x.account.accountsTypesid == (int)eAccountsTypes.Cash ||
+            //                            x.account.accountsTypesid == (int)eAccountsTypes.Banks ||
+            //                            x.account.accountsTypesid == (int)eAccountsTypes.Cards)))
+            //                        .GroupBy(g => g.accountid))
+            //        {
+            //            Decimal saldo_act = (decimal)(g.Sum(x => x.amount) ?? 0);
 
-                        if (g.Key != null && (saldos[g.Key.Value] != saldo_act || i == 29))
-                        {
-                            dChart.Add(new Tuple<DateTime, int?>(d, g.Key), saldo_act);
-                            saldos[g.Key.Value] = saldo_act;
-                        }
-                    }
-                }
-            }
+            //            if (g.Key != null && (saldos[g.Key.Value] != saldo_act || i == 29))
+            //            {
+            //                dChart.Add(new Tuple<DateTime, int?>(d, g.Key), saldo_act);
+            //                saldos[g.Key.Value] = saldo_act;
+            //            }
+            //        }
+            //    }
+            //}
             List<ForecastsChart> lChart = new();
 
-            foreach (Tuple<DateTime, int?> key in dChart.Keys)
-            {
-                lChart.Add(new ForecastsChart(key.Item1,
-                    servicesContainer.GetInstance<AccountsService>().getByID(key.Item2)?.description,
-                    key.Item2, dChart[key]));
-            }
+            //foreach (Tuple<DateTime, int?> key in dChart.Keys)
+            //{
+            //    lChart.Add(new ForecastsChart(key.Item1,
+            //        servicesContainer.GetInstance<AccountsService>().getByID(key.Item2)?.description,
+            //        key.Item2, dChart[key]));
+            //}
 
             return lChart;
         }

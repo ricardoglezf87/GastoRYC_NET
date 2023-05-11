@@ -15,7 +15,7 @@ namespace BOLib.Models
 
         public virtual String? description { set; get; }
 
-        public AccountsTypesDAO toDAO()
+        internal AccountsTypesDAO toDAO()
         {
             return new AccountsTypesDAO()
             {

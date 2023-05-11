@@ -1,5 +1,6 @@
 ﻿using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +8,14 @@ namespace BOLib.Services
 {
     public class TagsService
     {
+        private readonly TagsManager tagsManager;
+
+        public TagsService()
+        {
+            tagsManager = new ();
+        }
+
+
         public List<Tags>? getAll()
         {
             return MapperConfig.InitializeAutomapper().Map<List<Tags>>(RYCContextService.getInstance().BBDD.tags?.ToList());

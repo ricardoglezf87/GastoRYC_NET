@@ -1,5 +1,7 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,61 +11,50 @@ namespace BOLib.Services
 {
     public class CategoriesService
     {
+
+        private readonly CategoriesManager categoriesManager;
+
+        //TDOO:Revisar enums
         public enum eSpecialCategories : int
         {
             Split = -1,
             WithoutCategory = 0
         }
 
-        private readonly SimpleInjector.Container servicesContainer;
-
-        public CategoriesService(SimpleInjector.Container servicesContainer)
+        public CategoriesService()
         {
-            this.servicesContainer = servicesContainer;
+            categoriesManager = new();
         }
 
         public List<Categories>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<Categories>>(RYCContextService.getInstance().BBDD.categories?.ToList());
+            return categoriesManager.getAll()?.toListBO();
         }
 
         public List<Categories>? getAllFilterTransfer()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<Categories>>(RYCContextService.getInstance().BBDD.categories?
-                .Where(x => !x.id.Equals(CategoriesTypesService.eCategoriesTypes.Transfers) &&
-                !x.id.Equals(CategoriesTypesService.eCategoriesTypes.Specials)).ToList());
+            return categoriesManager.getAllFilterTransfer()?.toListBO();
         }
 
         public Categories? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<Categories>(RYCContextService.getInstance().BBDD.categories?.FirstOrDefault(x => id.Equals(x.id)));
+            return (Categories)categoriesManager.getByID(id);
         }
 
         public void update(Categories categories)
         {
-            RYCContextService.getInstance().BBDD.Update(categories);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            categoriesManager.delete(categories.toDAO());
         }
 
         public void delete(Categories categories)
         {
-            RYCContextService.getInstance().BBDD.Remove(categories);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            categoriesManager.delete(categories.toDAO());
         }
 
+        //TODO: revisar este
         public int getNextID()
         {
-            var cmd = RYCContextService.getInstance().BBDD.Database.
-                GetDbConnection().CreateCommand();
-            cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';";
-
-            RYCContextService.getInstance().BBDD.Database.OpenConnection();
-            var result = cmd.ExecuteReader();
-            result.Read();
-            int id = Convert.ToInt32(result[0]);
-            result.Close();
-
-            return id;
+            return categoriesManager.getNextID();
         }
     }
 }

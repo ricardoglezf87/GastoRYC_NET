@@ -1,5 +1,7 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +9,8 @@ namespace BOLib.Services
 {
     public class CategoriesTypesService
     {
+        private readonly CategoriesTypesManager categoriesTypesManager;
+
         public enum eCategoriesTypes : int
         {
             Expenses = 1,
@@ -15,21 +19,24 @@ namespace BOLib.Services
             Specials = 4
         }
 
+        public CategoriesTypesService()
+        {
+            categoriesTypesManager = new();
+        }
+
         public List<CategoriesTypes>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<CategoriesTypes>>(RYCContextService.getInstance().BBDD.categoriesTypes?.ToList());
+            return categoriesTypesManager.getAll()?.toListBO();
         }
 
         public List<CategoriesTypes>? getAllFilterTransfer()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<CategoriesTypes>>(RYCContextService.getInstance().BBDD.categoriesTypes?
-                .Where(x => !x.id.Equals((int)eCategoriesTypes.Transfers) &&
-                !x.id.Equals((int)eCategoriesTypes.Transfers)).ToList());
+            return categoriesTypesManager.getAllFilterTransfer()?.toListBO();
         }
 
         public CategoriesTypes? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<CategoriesTypes>(RYCContextService.getInstance().BBDD.categoriesTypes?.FirstOrDefault(x => id.Equals(x.id)));
+            return (CategoriesTypes)categoriesTypesManager.getByID(id);
         }
 
     }

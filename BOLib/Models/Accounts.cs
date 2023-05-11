@@ -24,7 +24,7 @@ namespace BOLib.Models
         [DefaultValue(false)]
         public virtual Boolean? closed { set; get; }
 
-        public AccountsDAO toDAO()
+        internal AccountsDAO toDAO()
         {
             return new AccountsDAO()
             {

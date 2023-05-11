@@ -8,7 +8,137 @@ namespace BOLib.Extensions
 {
     public static class ListExtension
     {
-        public static List<TransactionsStatus> toListTransactionsStatus(this List<TransactionsStatusDAO> source)
+        public static List<SplitsReminders> toListBO(this List<SplitsRemindersDAO> source)
+        {
+            List<SplitsReminders> list = new();
+            if (source != null)
+            {
+                foreach (SplitsRemindersDAO obj in source)
+                {
+                    list.Add((SplitsReminders)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<Splits> toListBO(this List<SplitsDAO> source)
+        {
+            List<Splits> list = new();
+            if (source != null)
+            {
+                foreach (SplitsDAO obj in source)
+                {
+                    list.Add((Splits)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<TransactionsReminders> toListBO(this List<TransactionsRemindersDAO> source)
+        {
+            List<TransactionsReminders> list = new();
+            if (source != null)
+            {
+                foreach (TransactionsRemindersDAO obj in source)
+                {
+                    list.Add((TransactionsReminders)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<Transactions> toListBO(this List<TransactionsDAO> source)
+        {
+            List<Transactions> list = new();
+            if (source != null)
+            {
+                foreach (TransactionsDAO obj in source)
+                {
+                    list.Add((Transactions)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<InvestmentProductsPrices> toListBO(this List<InvestmentProductsPricesDAO> source)
+        {
+            List<InvestmentProductsPrices> list = new();
+            if (source != null)
+            {
+                foreach (InvestmentProductsPricesDAO obj in source)
+                {
+                    list.Add((InvestmentProductsPrices)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<InvestmentProducts> toListBO(this List<InvestmentProductsDAO> source)
+        {
+            List<InvestmentProducts> list = new();
+            if (source != null)
+            {
+                foreach (InvestmentProductsDAO obj in source)
+                {
+                    list.Add((InvestmentProducts)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<Categories> toListBO(this List<CategoriesDAO> source)
+        {
+            List<Categories> list = new();
+            if (source != null)
+            {
+                foreach (CategoriesDAO obj in source)
+                {
+                    list.Add((Categories)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<CategoriesTypes> toListBO(this List<CategoriesTypesDAO> source)
+        {
+            List<CategoriesTypes> list = new();
+            if (source != null)
+            {
+                foreach (CategoriesTypesDAO obj in source)
+                {
+                    list.Add((CategoriesTypes)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<Persons> toListBO(this List<PersonsDAO> source)
+        {
+            List<Persons> list = new();
+            if (source != null)
+            {
+                foreach (PersonsDAO obj in source)
+                {
+                    list.Add((Persons)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<Tags> toListBO(this List<TagsDAO> source)
+        {
+            List<Tags> list = new();
+            if (source != null)
+            {
+                foreach (TagsDAO obj in source)
+                {
+                    list.Add((Tags)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<TransactionsStatus> toListBO(this List<TransactionsStatusDAO> source)
         {
             List<TransactionsStatus> list = new();
             if (source != null)
@@ -21,7 +151,7 @@ namespace BOLib.Extensions
             return list;
         }
 
-        public static List<Accounts> toListAccounts(this List<AccountsDAO> source)
+        public static List<Accounts> toListBO(this List<AccountsDAO> source)
         {
             List<Accounts> list = new();
             if (source != null)
@@ -34,7 +164,7 @@ namespace BOLib.Extensions
             return list;
         }
 
-        public static List<AccountsView> toListAccountsView(this List<AccountsDAO> source)
+        public static List<AccountsView> toListViewBO(this List<AccountsDAO> source)
         {
             List<AccountsView> list = new();
             if (source != null)
@@ -47,7 +177,7 @@ namespace BOLib.Extensions
             return list;
         }
 
-        public static List<AccountsTypes> toListAccountsTypes(this List<AccountsTypesDAO> source)
+        public static List<AccountsTypes> toListBO(this List<AccountsTypesDAO> source)
         {
             List<AccountsTypes> list = new();
             if (source != null)

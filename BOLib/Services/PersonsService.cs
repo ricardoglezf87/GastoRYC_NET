@@ -1,5 +1,7 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,28 +9,35 @@ namespace BOLib.Services
 {
     public class PersonsService
     {
+        private readonly PersonsManager personsManager;
+
+        public PersonsService()
+        {
+            personsManager = new();
+        }
+
+
         public List<Persons>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<Persons>>(RYCContextService.getInstance().BBDD.persons?.ToList());
+            return personsManager.getAll()?.toListBO();
         }
 
         public Persons? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<Persons>(RYCContextService.getInstance().BBDD.persons?.FirstOrDefault(x => id.Equals(x.id)));
+            return (Persons)personsManager.getByID(id);
         }
 
         public void update(Persons persons)
         {
-            RYCContextService.getInstance().BBDD.Update(persons);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            personsManager.update(persons.toDAO());
         }
 
         public void delete(Persons persons)
         {
-            RYCContextService.getInstance().BBDD.Remove(persons);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            personsManager.delete(persons.toDAO());
         }
 
+        //TODO:Revisar
         public void setCategoryDefault(Persons? persons)
         {
             if (persons == null)

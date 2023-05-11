@@ -21,7 +21,7 @@ namespace BOLib.Models
         [IgnoreDataMember]
         public virtual Accounts? accounts { set; get; }
 
-        public CategoriesDAO toDAO()
+        internal CategoriesDAO toDAO()
         {
             return new CategoriesDAO()
             {
@@ -34,6 +34,8 @@ namespace BOLib.Models
 
         public static explicit operator Categories(CategoriesDAO? v)
         {
+            if (v == null) return null;
+
             return new Categories()
             {
                 id = v.id,

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 
 namespace BOLib.Models
 {
@@ -26,5 +27,9 @@ namespace BOLib.Models
 
         public virtual int? tranferid { set; get; }
 
+        public static explicit operator Splits(SplitsDAO v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
