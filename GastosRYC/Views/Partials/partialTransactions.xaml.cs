@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static BOLib.Extensions.WindowsExtension;
+using BOLib.ModelsView;
 
 namespace GastosRYC.Views
 {
@@ -20,7 +21,7 @@ namespace GastosRYC.Views
         #region Variables
 
         private readonly SimpleInjector.Container servicesContainer;
-        private Accounts? accountSelected;
+        private AccountsView? accountSelected;
         private readonly MainWindow parentForm;
 
         #endregion
@@ -260,7 +261,7 @@ namespace GastosRYC.Views
                 return false;
         }
 
-        public void ApplyFilters(Accounts? _accountSelected = null)
+        public void ApplyFilters(AccountsView? _accountSelected = null)
         {
             accountSelected = _accountSelected;
             if (gvTransactions.View != null)

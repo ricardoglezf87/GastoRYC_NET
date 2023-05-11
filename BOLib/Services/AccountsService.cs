@@ -2,6 +2,7 @@
 using BOLib.Extensions;
 using BOLib.Helpers;
 using BOLib.Models;
+using BOLib.ModelsView;
 using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,6 @@ namespace BOLib.Services
             accountsManager = new();
         }
 
-
         public List<Accounts>? getAll()
         {
             return accountsManager.getAll()?.toListAccounts();
@@ -34,9 +34,9 @@ namespace BOLib.Services
             return accountsManager.getAllOpened()?.toListAccounts();
         }
 
-        public List<Accounts>? getAllOpenedOrderbyAccountTypeId()
+        public List<AccountsView>? getAllOpenedListView()
         {
-            return (List<Accounts>?) (getAllOpened()?.OrderBy(x=>x.accountsTypesid))?.ToList();
+            return accountsManager.getAllOpened()?.toListAccountsView();
         }
 
         public Accounts? getByID(int? id)

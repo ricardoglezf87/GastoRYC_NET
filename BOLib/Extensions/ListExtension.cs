@@ -1,4 +1,5 @@
 ﻿using BOLib.Models;
+using BOLib.ModelsView;
 using DAOLib.Models;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,19 @@ namespace BOLib.Extensions
                 foreach (AccountsDAO obj in source)
                 {
                     list.Add((Accounts)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<AccountsView> toListAccountsView(this List<AccountsDAO> source)
+        {
+            List<AccountsView> list = new();
+            if (source != null)
+            {
+                foreach (AccountsDAO obj in source)
+                {
+                    list.Add((AccountsView)obj);
                 }
             }
             return list;

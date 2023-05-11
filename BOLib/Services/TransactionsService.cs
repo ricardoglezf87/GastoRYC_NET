@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BOLib.Helpers;
+using BOLib.ModelsView;
 
 namespace BOLib.Services
 {
@@ -60,7 +61,7 @@ namespace BOLib.Services
             }
         }
 
-        public Decimal getBalanceByAccount(Accounts? accounts)
+        public Decimal getBalanceByAccount(AccountsView? accounts)
         {
             return getBalanceByAccount(accounts.id);
         }

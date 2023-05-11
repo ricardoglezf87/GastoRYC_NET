@@ -94,7 +94,7 @@
                                             <Expander IsExpanded="True">
                                                 <Expander.Header>
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name.description}"/>
+                                                        <TextBlock FontWeight="Bold" FontSize="14" Text="{Binding Name}"/>
                                                     </StackPanel>
                                                 </Expander.Header>
                                                 <ItemsPresenter />

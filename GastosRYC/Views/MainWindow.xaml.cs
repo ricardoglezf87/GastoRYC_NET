@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using BOLib.ModelsView;
 
 namespace GastosRYC
 {
@@ -118,8 +119,7 @@ namespace GastosRYC
                     ((PartialReminders)actualPrincipalContent).loadReminders();
 
                 if (actualPrincipalContent is PartialTransactions)
-                    ((PartialTransactions)actualPrincipalContent).ApplyFilters((Accounts?)lvAccounts.SelectedValue);
-
+                    ((PartialTransactions)actualPrincipalContent).ApplyFilters((AccountsView?)lvAccounts.SelectedValue);
             }
         }
 
@@ -201,7 +201,7 @@ namespace GastosRYC
 
         public void refreshBalance()
         {
-            foreach (Accounts accounts in lvAccounts.ItemsSource)
+            foreach (AccountsView accounts in lvAccounts.ItemsSource)
             {
                 accounts.balance = servicesContainer.GetInstance<TransactionsService>().getBalanceByAccount(accounts);
             }
@@ -220,7 +220,7 @@ namespace GastosRYC
             }
             else
             {
-                frm = new FrmTransaction(((Accounts)lvAccounts.SelectedItem).id, servicesContainer);
+                frm = new FrmTransaction(((AccountsView)lvAccounts.SelectedItem).id, servicesContainer);
             }
 
             frm.ShowDialog();
@@ -298,10 +298,10 @@ namespace GastosRYC
 
         public void loadAccounts()
         {
-            viewAccounts = CollectionViewSource.GetDefaultView(servicesContainer.GetInstance<AccountsService>().getAllOpened());
+            viewAccounts = CollectionViewSource.GetDefaultView(servicesContainer.GetInstance<AccountsService>().getAllOpenedListView());
             lvAccounts.ItemsSource = viewAccounts;
-            viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypes"));
-            viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypes.id", ListSortDirection.Ascending));
+            viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypesdescription"));
+            viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypesid", ListSortDirection.Ascending));
             refreshBalance();
         }
 

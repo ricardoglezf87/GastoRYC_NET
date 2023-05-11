@@ -24,9 +24,6 @@ namespace BOLib.Models
         [DefaultValue(false)]
         public virtual Boolean? closed { set; get; }
 
-        [NotMapped]
-        public virtual Decimal balance { set; get; }
-
         public AccountsDAO toDAO()
         {
             return new AccountsDAO()
