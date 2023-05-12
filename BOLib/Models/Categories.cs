@@ -8,7 +8,6 @@ namespace BOLib.Models
 {
     public class Categories : ModelBase
     {
-
         public virtual String? description { set; get; }
 
         public virtual int? categoriesTypesid { set; get; }

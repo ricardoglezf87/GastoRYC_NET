@@ -7,7 +7,6 @@ namespace BOLib.Models
 {
     public class ExpirationsReminders : ModelBase
     {
-
         public virtual DateTime? date { set; get; }
 
         public virtual int? transactionsRemindersid { set; get; }

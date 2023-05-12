@@ -10,10 +10,9 @@ namespace BOLib.Models
 {
     public class AccountsTypes : ModelBase
     {
-
         public virtual String? description { set; get; }
 
-        internal AccountsTypesDAO toDAO()
+        public override AccountsTypesDAO toDAO()
         {
             return new AccountsTypesDAO()
             {

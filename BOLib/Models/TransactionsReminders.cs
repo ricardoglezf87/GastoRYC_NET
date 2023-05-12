@@ -7,7 +7,6 @@ namespace BOLib.Models
 {
     public class TransactionsReminders : ModelBase
     {
-
         public virtual int? periodsRemindersid { set; get; }
         public virtual PeriodsReminders? periodsReminders { set; get; }
 

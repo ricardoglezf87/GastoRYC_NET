@@ -1,21 +1,16 @@
 ﻿using BOLib.Extensions;
 using BOLib.Helpers;
+using BOLib.Managers;
 using BOLib.Models;
 using DAOLib.Managers;
+using DAOLib.Models;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace BOLib.Services
 {
-    public class AccountsTypesService
+    public class AccountsTypesService : ServiceBase<AccountsTypes,AccountsTypesDAO,AccountsTypesManager>
     {
-        private readonly AccountsTypesManager accountsTypesManager;
-
-        public AccountsTypesService()
-        {
-            accountsTypesManager = new();
-        }
-
         public enum eAccountsTypes : int
         {
             Cash = 1,
@@ -25,22 +20,11 @@ namespace BOLib.Services
             Loans = 5,
             bounds = 6,
             Savings = 7
-        }
-
-        public List<AccountsTypes>? getAll()
-        {
-            return accountsTypesManager.getAll()?.toListBO();
-        }
-
-        public AccountsTypes? getByID(int? id)
-        {
-            return (AccountsTypes)accountsTypesManager.getByID(id);
-        }
+        }       
 
         public bool accountExpensives(int? types)
         {
             return (types == (int)eAccountsTypes.Cash || types == (int)eAccountsTypes.Banks || types == (int)eAccountsTypes.Cards);
         }
-
     }
 }

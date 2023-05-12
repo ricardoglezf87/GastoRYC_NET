@@ -9,7 +9,6 @@ namespace BOLib.Models
 {
     public class CategoriesTypes : ModelBase
     {
-
         public virtual String? description { set; get; }
 
         internal CategoriesTypesDAO toDAO()

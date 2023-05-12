@@ -7,7 +7,6 @@ namespace BOLib.Models
 {
     public class Transactions : ModelBase
     {
-
         public virtual DateTime? date { set; get; }
 
         public virtual int? accountid { set; get; }

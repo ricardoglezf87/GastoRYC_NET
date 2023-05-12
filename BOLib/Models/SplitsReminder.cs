@@ -5,7 +5,6 @@ namespace BOLib.Models
 {
     public class SplitsReminders : ModelBase
     {
-
         public virtual int? transactionid { set; get; }
 
         public virtual TransactionsReminders? transaction { set; get; }

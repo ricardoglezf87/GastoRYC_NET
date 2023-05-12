@@ -6,7 +6,6 @@ namespace BOLib.Models
 {
     public class TransactionsStatus : ModelBase
     {
-
         public virtual String? description { set; get; }
 
         internal TransactionsStatusDAO toDAO() 

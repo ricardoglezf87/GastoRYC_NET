@@ -6,7 +6,6 @@ namespace BOLib.Models
 {
     public class Splits : ModelBase
     {
-
         public virtual int? transactionid { set; get; }
 
         public virtual Transactions? transaction { set; get; }
@@ -27,7 +26,7 @@ namespace BOLib.Models
 
         public virtual int? tranferid { set; get; }
 
-        public SplitsDAO toDAO()
+        internal SplitsDAO toDAO()
         {
             return new SplitsDAO()
             {

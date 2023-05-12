@@ -8,7 +8,6 @@ namespace BOLib.Models
 {
     public class InvestmentProducts : ModelBase
     {
-
         public virtual String? description { set; get; }
 
         public virtual String? symbol { set; get; }

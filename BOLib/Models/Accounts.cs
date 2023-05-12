@@ -8,7 +8,6 @@ namespace BOLib.Models
 {
     public class Accounts : ModelBase
     {
-
         public virtual String? description { set; get; }
 
         public virtual int? accountsTypesid { set; get; }

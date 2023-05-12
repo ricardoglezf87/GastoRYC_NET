@@ -6,7 +6,6 @@ namespace BOLib.Models
 {
     public class Tags : ModelBase
     {
-
         public virtual String? description { set; get; }
 
         internal TagsDAO toDAO()
