@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 namespace DAOLib.Models
 {
     [Table("Categories")]
-    public class CategoriesDAO : IModelDAO
+    public class CategoriesDAO : ModelBaseDAO
     {
         public virtual String? description { set; get; }
 

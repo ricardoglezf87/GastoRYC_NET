@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class ExpirationsRemindersManager : IManager<ExpirationsRemindersDAO>
+    public class ExpirationsRemindersManager : ManagerBase<ExpirationsRemindersDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class SplitsManager : IManager<SplitsDAO>
+    public class SplitsManager : ManagerBase<SplitsDAO>
     {
 
         private readonly SimpleInjector.Container servicesContainer;

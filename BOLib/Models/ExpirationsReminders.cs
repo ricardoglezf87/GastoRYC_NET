@@ -1,13 +1,12 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BOLib.Models
 {
-    public class ExpirationsReminders
+    public class ExpirationsReminders : ModelBase
     {
-        [Key]
-        public virtual int id { set; get; }
 
         public virtual DateTime? date { set; get; }
 

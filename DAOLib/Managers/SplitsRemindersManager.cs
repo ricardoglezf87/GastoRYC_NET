@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class SplitsRemindersManager : IManager<SplitsRemindersDAO>
+    public class SplitsRemindersManager : ManagerBase<SplitsRemindersDAO>
     {
 
         public List<SplitsRemindersDAO>? getbyTransactionidNull()

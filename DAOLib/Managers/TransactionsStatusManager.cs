@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class TransactionsStatusManager : IManager<TransactionsStatusDAO>
+    public class TransactionsStatusManager : ManagerBase<TransactionsStatusDAO>
     {
         public enum eTransactionsTypes : int
         {

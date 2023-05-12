@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DAOLib.Models
 {
     [Table("TransactionsReminders")]
-    public class TransactionsRemindersDAO : IModelDAO
+    public class TransactionsRemindersDAO : ModelBaseDAO
     {
         public virtual int? periodsRemindersid { set; get; }
         public virtual PeriodsRemindersDAO? periodsReminders { set; get; }

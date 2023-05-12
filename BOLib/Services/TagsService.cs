@@ -1,4 +1,5 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+using BOLib.Helpers;
 using BOLib.Models;
 using DAOLib.Managers;
 using System.Collections.Generic;
@@ -18,24 +19,22 @@ namespace BOLib.Services
 
         public List<Tags>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<Tags>>(RYCContextService.getInstance().BBDD.tags?.ToList());
+            return tagsManager.getAll()?.toListBO();
         }
 
         public Tags? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<Tags>(RYCContextService.getInstance().BBDD.tags?.FirstOrDefault(x => id.Equals(x.id)));
+            return (Tags)tagsManager.getByID(id);
         }
 
         public void update(Tags tags)
         {
-            RYCContextService.getInstance().BBDD.Update(tags);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            tagsManager.update(tags.toDAO());
         }
 
         public void delete(Tags tags)
         {
-            RYCContextService.getInstance().BBDD.Remove(tags);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            tagsManager.delete(tags.toDAO());
         }
     }
 }

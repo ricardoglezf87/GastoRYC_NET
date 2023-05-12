@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DAOLib.Models
 {
     [Table("ExpirationsReminders")]
-    public class ExpirationsRemindersDAO : IModelDAO
+    public class ExpirationsRemindersDAO : ModelBaseDAO
     {
         public virtual DateTime? date { set; get; }
 

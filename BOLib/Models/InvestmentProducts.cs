@@ -6,10 +6,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
 {
-    public class InvestmentProducts
+    public class InvestmentProducts : ModelBase
     {
-        [Key]
-        public virtual int id { set; get; }
 
         public virtual String? description { set; get; }
 

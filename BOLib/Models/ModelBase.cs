@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DAOLib.Models
 {
-    public class IModelDAO
+    public class ModelBase
     {
         [Key]
         public virtual int id { set; get; }

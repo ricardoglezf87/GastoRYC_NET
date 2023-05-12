@@ -7,10 +7,8 @@ using System.Text.Json.Serialization;
 
 namespace BOLib.Models
 {
-    public class CategoriesTypes
+    public class CategoriesTypes : ModelBase
     {
-        [Key]
-        public virtual int id { set; get; }
 
         public virtual String? description { set; get; }
 

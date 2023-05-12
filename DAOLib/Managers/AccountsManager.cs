@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace DAOLib.Managers
 {
-    public class AccountsManager : IManager<AccountsDAO>
+    public class AccountsManager : ManagerBase<AccountsDAO>
     {        
         public List<AccountsDAO>? getAllOrderByAccountsTypesId()
         {

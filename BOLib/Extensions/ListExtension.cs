@@ -8,6 +8,19 @@ namespace BOLib.Extensions
 {
     public static class ListExtension
     {
+        public static List<VBalancebyCategory> toListBO(this List<VBalancebyCategoryDAO> source)
+        {
+            List<VBalancebyCategory> list = new();
+            if (source != null)
+            {
+                foreach (VBalancebyCategoryDAO obj in source)
+                {
+                    list.Add((VBalancebyCategory)obj);
+                }
+            }
+            return list;
+        }
+
         public static List<SplitsReminders> toListBO(this List<SplitsRemindersDAO> source)
         {
             List<SplitsReminders> list = new();

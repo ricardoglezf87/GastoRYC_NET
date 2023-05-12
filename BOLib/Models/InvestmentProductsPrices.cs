@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
 {
-    public class InvestmentProductsPrices
+    public class InvestmentProductsPrices : ModelBase
     {
-        [Key]
-        public virtual int id { set; get; }
         public virtual DateTime? date { set; get; }
         public virtual int? investmentProductsid { set; get; }
         public virtual InvestmentProducts? investmentProducts { set; get; }

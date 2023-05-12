@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DAOLib.Models
 {
     [Table("Accounts")]
-    public class AccountsDAO : IModelDAO
+    public class AccountsDAO : ModelBaseDAO
     {
         public virtual String? description { set; get; }
 

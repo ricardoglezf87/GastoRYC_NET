@@ -5,9 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BOLib.Models
 {
-    public class Transactions
+    public class Transactions : ModelBase
     {
-        public virtual int id { set; get; }
 
         public virtual DateTime? date { set; get; }
 

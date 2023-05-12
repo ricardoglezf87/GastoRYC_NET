@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class TransactionsRemindersManager : IManager<TransactionsRemindersDAO>
+    public class TransactionsRemindersManager : ManagerBase<TransactionsRemindersDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 

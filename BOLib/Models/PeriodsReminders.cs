@@ -4,11 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
 {
-    public class PeriodsReminders
-    {
-        [Key]
-        public virtual int id { set; get; }
-
+    public class PeriodsReminders : ModelBase
+    { 
         public virtual String? description { set; get; }
 
         public static explicit operator PeriodsReminders(PeriodsRemindersDAO? v)

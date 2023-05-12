@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
 {
-    public class TransactionsStatus
+    public class TransactionsStatus : ModelBase
     {
-        [Key]
-        public virtual int id { set; get; }
 
         public virtual String? description { set; get; }
 

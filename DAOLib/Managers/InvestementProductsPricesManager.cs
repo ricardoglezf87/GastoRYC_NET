@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DAOLib.Managers
 {
-    public class InvestmentProductsPricesManager : IManager<InvestmentProductsPricesDAO>
+    public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPricesDAO>
     {
         private readonly SimpleInjector.Container servicesContainer;
 

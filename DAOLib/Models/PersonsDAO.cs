@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DAOLib.Models
 {
     [Table("Persons")]
-    public class PersonsDAO : IModelDAO
+    public class PersonsDAO : ModelBaseDAO
     {
         public virtual String? name { set; get; }
         public virtual int? categoryid { set; get; }

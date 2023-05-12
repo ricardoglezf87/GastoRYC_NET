@@ -3,9 +3,8 @@ using System;
 
 namespace BOLib.Models
 {
-    public class SplitsReminders
+    public class SplitsReminders : ModelBase
     {
-        public virtual int id { set; get; }
 
         public virtual int? transactionid { set; get; }
 
@@ -27,9 +26,40 @@ namespace BOLib.Models
 
         public virtual int? tranferid { set; get; }
 
+        public SplitsRemindersDAO toDAO()
+        {
+            return new SplitsRemindersDAO()
+            {
+                id = this.id,
+                transactionid = this.transactionid,
+                transaction = this.transaction.toDAO(),
+                categoryid = this.categoryid,
+                category = this.category.toDAO(),
+                amountOut = this.amountOut,
+                amountIn = this.amountIn,
+                memo = this.memo,
+                tranferid = this.tranferid,
+                tagid = this.tagid,
+                tag = this.tag.toDAO()
+            };
+        }
+
         public static explicit operator SplitsReminders(SplitsRemindersDAO v)
         {
-            throw new NotImplementedException();
+            return new SplitsReminders()
+            {
+                id = v.id,
+                transactionid = v.transactionid,
+                transaction = (TransactionsReminders)v.transaction,
+                categoryid = v.categoryid,
+                category = (Categories)v.category,
+                amountOut = v.amountOut,
+                amountIn = v.amountIn,
+                memo = v.memo,
+                tranferid = v.tranferid,
+                tagid = v.tagid,
+                tag = (Tags)v.tag
+            };
         }
     }
 }

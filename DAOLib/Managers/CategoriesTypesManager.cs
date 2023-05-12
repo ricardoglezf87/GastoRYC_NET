@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class CategoriesTypesManager : IManager<CategoriesTypesDAO>
+    public class CategoriesTypesManager : ManagerBase<CategoriesTypesDAO>
     {
         public enum eCategoriesTypes : int
         {

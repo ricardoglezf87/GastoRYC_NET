@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BOLib.Models
@@ -15,5 +16,30 @@ namespace BOLib.Models
         [NotMapped]
         public virtual Decimal? neg_amount { get { return -amount; } }
 
+        internal VBalancebyCategoryDAO toDAO()
+        {
+            return new VBalancebyCategoryDAO()
+            {
+                year = this.year,
+                month = this.month,
+                categoriesTypesid = this.categoriesTypesid,
+                categoryid = this.categoryid,
+                category = this.category,
+                amount = this.amount
+            };
+        }
+
+        public static explicit operator VBalancebyCategory(VBalancebyCategoryDAO v)
+        {
+           return new VBalancebyCategory() 
+           { 
+               year = v.year, 
+               month = v.month, 
+               categoriesTypesid = v.categoriesTypesid, 
+               categoryid = v.categoryid,
+               category = v.category,
+               amount = v.amount
+           };
+        }
     }
 }

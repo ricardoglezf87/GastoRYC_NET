@@ -31,7 +31,7 @@ namespace BOLib.Services
 
         public TransactionsStatus? getFirst()
         {
-            return MapperConfig.InitializeAutomapper().Map<TransactionsStatus>(RYCContextService.getInstance().BBDD.transactionsStatus?.FirstOrDefault());
+            return (TransactionsStatus)transactionsStatusManager.getFirst();
         }
 
         public TransactionsStatus? getByID(int? id)

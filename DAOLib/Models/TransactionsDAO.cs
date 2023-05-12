@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DAOLib.Models
 {
     [Table("Transactions")]
-    public class TransactionsDAO : IModelDAO
+    public class TransactionsDAO : ModelBaseDAO
     {
         public virtual DateTime? date { set; get; }
         public virtual int? accountid { set; get; }
