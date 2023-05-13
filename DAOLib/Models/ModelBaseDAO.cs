@@ -11,9 +11,5 @@ namespace DAOLib.Models
     {
         [Key]
         public virtual int id { set; get; }
-
-
-        public ModelBaseDAO()
-        { }
     }
 }

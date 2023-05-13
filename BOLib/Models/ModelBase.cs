@@ -12,21 +12,6 @@ namespace BOLib.Models
     public class ModelBase
     {
         [Key]
-        public virtual int id { set; get; }
-
-        public virtual ModelBaseDAO toDAO()
-        {
-            return new ModelBaseDAO();
-        }
-
-        public static explicit operator ModelBase(ModelBaseDAO? v)
-        {
-            if (v == null) return null;
-
-            return new ModelBase()
-            {
-                id = v.id
-            };
-        }
+        public virtual int id { set; get; }       
     }
 }

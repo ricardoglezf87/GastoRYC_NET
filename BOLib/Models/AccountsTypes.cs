@@ -12,7 +12,7 @@ namespace BOLib.Models
     {
         public virtual String? description { set; get; }
 
-        public override AccountsTypesDAO toDAO()
+        public AccountsTypesDAO toDAO()
         {
             return new AccountsTypesDAO()
             {
