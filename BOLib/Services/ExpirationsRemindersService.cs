@@ -14,12 +14,14 @@ namespace BOLib.Services
         private readonly PeriodsRemindersService periodsRemindersService;
         private readonly TransactionsService transactionsService;
         private readonly TransactionsRemindersService transactionsRemindersService;
+        private readonly CategoriesService categoriesService;
         private readonly SplitsService splitsService;
 
         public ExpirationsRemindersService()
         {
             expirationsRemindersManager = InstanceBase<ExpirationsRemindersManager>.Instance;
             periodsRemindersService = InstanceBase<PeriodsRemindersService>.Instance;
+            categoriesService = InstanceBase<CategoriesService>.Instance;
             transactionsService = InstanceBase<TransactionsService>.Instance;
             splitsService = InstanceBase<SplitsService>.Instance;
             transactionsService = InstanceBase<TransactionsService>.Instance;
@@ -192,46 +194,44 @@ namespace BOLib.Services
 
         public Transactions updateTranferSplitsSimulation(Transactions? transactions, Splits splits)
         {
-            //TODO:Revisar
-            //Transactions? tContraria = new()
-            //{
-            //    date = transactions.date,
-            //    accountid = splits.category.accounts.id,
-            //    account = splits.category.accounts,
-            //    personid = transactions.personid,
-            //    person = transactions.person,
-            //    categoryid = transactions.account.categoryid,
-            //    category = servicesContainer.GetInstance<CategoriesService>().getByID(transactions.account.categoryid),
-            //    memo = splits.memo,
-            //    tagid = transactions.tagid,
-            //    amountIn = splits.amountOut,
-            //    amountOut = splits.amountIn
-            //};
+            Transactions? tContraria = new()
+            {
+                date = transactions.date,
+                accountid = splits.category.accounts.id,
+                account = splits.category.accounts,
+                personid = transactions.personid,
+                person = transactions.person,
+                categoryid = transactions.account.categoryid,
+                category = categoriesService.getByID(transactions.account.categoryid),
+                memo = splits.memo,
+                tagid = transactions.tagid,
+                amountIn = splits.amountOut,
+                amountOut = splits.amountIn
+            };
 
-            //return tContraria;
+            return tContraria;
             return null;
         }
 
 
         public Transactions updateTranferSimulation(Transactions transactions)
         {
-            //TODO: revisar
-            //Transactions? tContraria = new()
-            //{
-            //    date = transactions.date.removeTime(),
-            //    accountid = transactions.category.accounts.id,
-            //    account = transactions.category.accounts,
-            //    personid = transactions.personid,
-            //    person = transactions.person,
-            //    categoryid = transactions.account.categoryid,
-            //    category = servicesContainer.GetInstance<CategoriesService>().getByID(transactions.account.categoryid),
-            //    memo = transactions.memo,
-            //    tagid = transactions.tagid,
-            //    tag = transactions.tag,
-            //    amountIn = transactions.amountOut,
-            //    amountOut = transactions.amountIn
-            //};
-            //return tContraria;
+            Transactions? tContraria = new()
+            {
+                date = transactions.date.removeTime(),
+                accountid = transactions.category.accounts.id,
+                account = transactions.category.accounts,
+                personid = transactions.personid,
+                person = transactions.person,
+                categoryid = transactions.account.categoryid,
+                category = categoriesService.getByID(transactions.account.categoryid),
+                memo = transactions.memo,
+                tagid = transactions.tagid,
+                tag = transactions.tag,
+                amountIn = transactions.amountOut,
+                amountOut = transactions.amountIn
+            };
+            return tContraria;
             return null;
         }
 

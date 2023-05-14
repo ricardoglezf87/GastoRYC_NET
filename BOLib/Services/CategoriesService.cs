@@ -51,7 +51,6 @@ namespace BOLib.Services
             categoriesManager.delete(categories?.toDAO());
         }
 
-        //TODO: revisar este
         public int getNextID()
         {
             return categoriesManager.getNextID();
