@@ -28,12 +28,12 @@ namespace BOLib.Services
 
         public void update(InvestmentProducts investmentProducts)
         {
-            investmentProductsManager.update(investmentProducts.toDAO());
+            investmentProductsManager.update(investmentProducts?.toDAO());
         }
 
         public void delete(InvestmentProducts investmentProducts)
         {
-            investmentProductsManager.delete(investmentProducts.toDAO());
+            investmentProductsManager.delete(investmentProducts?.toDAO());
         }
     }
 }

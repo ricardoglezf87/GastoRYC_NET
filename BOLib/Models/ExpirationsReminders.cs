@@ -42,5 +42,26 @@ namespace BOLib.Models
             }
         }
 
+        internal ExpirationsRemindersDAO toDAO()
+        {
+            return new ExpirationsRemindersDAO()
+            {
+                date = this.date,
+                transactionsReminders = this.transactionsReminders?.toDAO(),
+                transactionsRemindersid = this.transactionsRemindersid,
+                done = this.done
+            };
+        }
+
+        public static explicit operator ExpirationsReminders(ExpirationsRemindersDAO v)
+        {
+            return new ExpirationsReminders()
+            {
+                date = v.date,
+                transactionsReminders = (TransactionsReminders) v.transactionsReminders,
+                transactionsRemindersid = v.transactionsRemindersid,
+                done = v.done
+            };
+        }
     }
 }

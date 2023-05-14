@@ -4,21 +4,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BOLib.Helpers;
+using DAOLib.Managers;
 
 namespace BOLib.Services
 {
     public class ExpirationsRemindersService
     {
-        private readonly SimpleInjector.Container servicesContainer;        
+        private readonly ExpirationsRemindersManager expirationsRemindersManager;      
+        private readonly PeriodsRemindersService periodsRemindersService;
+        private readonly TransactionsService transactionsService;
+        private readonly SplitsService splitsService;
 
-        public ExpirationsRemindersService(SimpleInjector.Container servicesContainer)
+        public ExpirationsRemindersService()
         {
-            this.servicesContainer = servicesContainer;
+            expirationsRemindersManager = new();
+            periodsRemindersService = new();
+            transactionsService = new();
+            splitsService = new();
         }
 
         public List<ExpirationsReminders>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<ExpirationsReminders>>(RYCContextService.getInstance().BBDD.expirationsReminders?.ToList());
+            return expirationsRemindersManager.getAll()?.toListBO();
         }
 
         public List<ExpirationsReminders>? getAllWithGeneration()
@@ -85,7 +92,7 @@ namespace BOLib.Services
                         update(expirationsReminders);
                     }
 
-                    date = servicesContainer.GetInstance<PeriodsRemindersService>().getNextDate(date, servicesContainer.GetInstance<PeriodsRemindersService>().toEnum(transactionsReminders.periodsReminders));
+                    date = periodsRemindersService.getNextDate(date, periodsRemindersService.toEnum(transactionsReminders.periodsReminders));
 
                 }
             }
@@ -109,7 +116,7 @@ namespace BOLib.Services
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    servicesContainer.GetInstance<TransactionsService>().saveChanges(transactions);
+                    transactionsService.saveChanges(transactions);
 
                     if (expirationsReminders.transactionsReminders.splits != null)
                     {
@@ -122,8 +129,8 @@ namespace BOLib.Services
                             splits.amountIn = splitsReminders.amountIn;
                             splits.amountOut = splitsReminders.amountOut;
                             splits.tagid = splitsReminders.tagid;
-                            servicesContainer.GetInstance<SplitsService>().saveChanges(transactions, splits);
-                            servicesContainer.GetInstance<TransactionsService>().updateTranferSplits(transactions, splits);
+                            splitsService.saveChanges(transactions, splits);
+                            transactionsService.updateTranferSplits(transactions, splits);
                         }
                     }
 
@@ -232,25 +239,22 @@ namespace BOLib.Services
 
         public ExpirationsReminders? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<ExpirationsReminders>(RYCContextService.getInstance().BBDD.expirationsReminders?.FirstOrDefault(x => id.Equals(x.id)));
+            return (ExpirationsReminders) expirationsRemindersManager.getByID(id);            
         }
 
         public List<ExpirationsReminders>? getByTransactionReminderid(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<List<ExpirationsReminders>>(RYCContextService.getInstance().BBDD.expirationsReminders?.Where(x => id.Equals(x.transactionsRemindersid)).ToList());
+            return expirationsRemindersManager.getByTransactionReminderid(id)?.toListBO();            
         }
 
         public void update(ExpirationsReminders expirationsReminders)
         {
-            //TODO:Revisar esto
-            //RYCContextService.getInstance().BBDD.Update(expirationsReminders);
-            //RYCContextService.getInstance().BBDD.SaveChanges();
+            expirationsRemindersManager.update(expirationsReminders?.toDAO());
         }
 
         public void delete(ExpirationsReminders expirationsReminders)
         {
-            RYCContextService.getInstance().BBDD.Remove(expirationsReminders);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            expirationsRemindersManager.delete(expirationsReminders?.toDAO());
         }
 
         public void deleteByTransactionReminderid(int id)

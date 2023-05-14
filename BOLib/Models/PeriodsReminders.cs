@@ -8,6 +8,15 @@ namespace BOLib.Models
     { 
         public virtual String? description { set; get; }
 
+        internal PeriodsRemindersDAO toDAO()
+        {
+            return new PeriodsRemindersDAO()
+            {
+                id = this.id,
+                description = this.description
+            };
+        }
+
         public static explicit operator PeriodsReminders(PeriodsRemindersDAO? v)
         {
             return new PeriodsReminders()

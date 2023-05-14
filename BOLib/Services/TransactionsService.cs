@@ -51,25 +51,23 @@ namespace BOLib.Services
         public void update(Transactions transactions)
         {
             transactions.date = transactions.date.removeTime();
-            transactionsService.update(transactions.toDAO());
+            transactionsService.update(transactions?.toDAO());
         }
 
         public void delete(Transactions? transactions)
         {
-            transactionsService.delete(transactions.toDAO());
+            transactionsService.delete(transactions?.toDAO());
         }
 
-        public Decimal getBalanceByAccount(AccountsView? accounts)
+        public List<Transactions>? getByAccount(int? id)
         {
-            return getBalanceByAccount(accounts.id);
+            return transactionsService.getByAccount(id)?.toListBO();
         }
 
-        public Decimal getBalanceByAccount(int accountId)
+        public List<Transactions>? getByAccount(AccountsView? accounts)
         {
-            //TODO: Se tiene que asignar el valor actual de la acción.
-            return 0;
-            //return RYCContextService.getInstance()?.BBDD?.transactions?.Where(x => x.accountid == accountId)?.ToList().Sum(x => x.amount) ?? 0;
-        }
+            return getByAccount(accounts?.id);
+        }        
 
         public int getNextID()
         {

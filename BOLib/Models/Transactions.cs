@@ -85,25 +85,25 @@ namespace BOLib.Models
                 id = this.id,
                 date = this.date,
                 accountid = this.accountid,
-                account = this.account.toDAO(),
+                account = this.account?.toDAO(),
                 personid = this.personid,
-                person = this.person.toDAO(),
+                person = this.person?.toDAO(),
                 categoryid = this.categoryid,
-                category = this.category.toDAO(),
+                category = this.category?.toDAO(),
                 amountIn = this.amountIn,
                 amountOut = this.amountOut,
                 memo = this.memo,
                 investmentCategory = this.investmentCategory,
-                investmentProducts = this.investmentProducts.toDAO(),
+                investmentProducts = this.investmentProducts?.toDAO(),
                 investmentProductsid = this.investmentProductsid,
                 tranferid = this.tranferid,
                 tranferSplitid = this.tranferSplitid,
-                transactionStatus = this.transactionStatus.toDAO(),
+                transactionStatus = this.transactionStatus?.toDAO(),
                 transactionStatusid = this.transactionStatusid,
                 numShares = this.numShares,
                 pricesShares = this.pricesShares,
                 tagid = this.tagid,
-                tag = this.tag.toDAO()
+                tag = this.tag?.toDAO()
             };
         }
 

@@ -9,15 +9,25 @@ namespace DAOLib.Managers
 {
     public class TransactionsManager : ManagerBase<TransactionsDAO>
     {
-        public List<TransactionsDAO>? getByInvestmentProduct(int? id)
+        public List<TransactionsDAO>? getByAccount(AccountsDAO? accounts)
         {
-            return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => id.Equals(x.investmentProductsid)).ToList();
+            return getByAccount(accounts?.id);
+        }
+
+        public List<TransactionsDAO>? getByAccount(int? id)
+        {
+            return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => id.Equals(x.accountid))?.ToList();
         }
 
         public List<TransactionsDAO>? getByInvestmentProduct(InvestmentProductsDAO? investment)
         {
-            return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => investment.id.Equals(x.investmentProductsid)).ToList();
+            return getByInvestmentProduct(investment?.id);
         }
+
+        public List<TransactionsDAO>? getByInvestmentProduct(int? id)
+        {
+            return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => id.Equals(x.investmentProductsid))?.ToList();
+        }       
 
         public int getNextID()
         {

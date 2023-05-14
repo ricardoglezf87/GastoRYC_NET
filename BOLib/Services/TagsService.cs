@@ -29,12 +29,12 @@ namespace BOLib.Services
 
         public void update(Tags tags)
         {
-            tagsManager.update(tags.toDAO());
+            tagsManager.update(tags?.toDAO());
         }
 
         public void delete(Tags tags)
         {
-            tagsManager.delete(tags.toDAO());
+            tagsManager.delete(tags?.toDAO());
         }
     }
 }

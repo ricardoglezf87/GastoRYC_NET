@@ -29,12 +29,12 @@ namespace BOLib.Services
 
         public void update(Persons persons)
         {
-            personsManager.update(persons.toDAO());
+            personsManager.update(persons?.toDAO());
         }
 
         public void delete(Persons persons)
         {
-            personsManager.delete(persons.toDAO());
+            personsManager.delete(persons?.toDAO());
         }
 
         //TODO:Revisar

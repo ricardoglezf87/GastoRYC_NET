@@ -1,5 +1,7 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+using BOLib.Helpers;
 using BOLib.Models;
+using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,43 +12,46 @@ namespace BOLib.Services
     public class SplitsService
     {
 
-        private readonly SimpleInjector.Container servicesContainer;
+        private readonly SplitsManager splitsManager;
+        private readonly TransactionsService transactionsService;
+        private readonly CategoriesService categoriesService;
 
-        public SplitsService(SimpleInjector.Container servicesContainer)
+
+        public SplitsService()
         {
-            this.servicesContainer = servicesContainer;
+            splitsManager = new();
+            transactionsService = new();
+            categoriesService = new();
         }
 
         public List<Splits>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<Splits>>(RYCContextService.getInstance().BBDD.splits?.ToList());
+            return splitsManager.getAll()?.toListBO();
         }
 
         public List<Splits>? getbyTransactionidNull()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<Splits>>(RYCContextService.getInstance().BBDD.splits?.Where(x => x.transactionid == null).ToList());
+            return splitsManager.getbyTransactionidNull()?.toListBO();
         }
 
         public List<Splits>? getbyTransactionid(int transactionid)
         {
-            return MapperConfig.InitializeAutomapper().Map<List<Splits>>(RYCContextService.getInstance().BBDD.splits?.Where(x => x.transactionid == transactionid).ToList());
+            return splitsManager.getbyTransactionid(transactionid)?.toListBO();
         }
 
         public Splits? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<Splits>(RYCContextService.getInstance().BBDD.splits?.FirstOrDefault(x => id.Equals(x.id)));
+            return (Splits)splitsManager.getByID(id);
         }
 
         public void update(Splits splits)
         {
-            RYCContextService.getInstance().BBDD.Update(splits);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            splitsManager.update(splits?.toDAO());
         }
 
         public void delete(Splits splits)
         {
-            RYCContextService.getInstance().BBDD.Remove(splits);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            splitsManager.delete(splits?.toDAO());
         }
 
         public Decimal? getAmountTotal(Transactions transactions)
@@ -68,7 +73,7 @@ namespace BOLib.Services
         {
             if (splits.category == null && splits.categoryid != null)
             {
-                splits.category = servicesContainer.GetInstance<CategoriesService>().getByID(splits.categoryid);
+                splits.category = categoriesService.getByID(splits.categoryid);
             }
 
             if (splits.amountIn == null)

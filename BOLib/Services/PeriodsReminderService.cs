@@ -4,11 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BOLib.Helpers;
+using DAOLib.Managers;
+using DAOLib.Models;
 
 namespace BOLib.Services
 {
     public class PeriodsRemindersService
     {
+        public PeriodsRemindersManager periodsRemindersManager;
+
         public enum ePeriodsReminders : int
         {
             Diary = 1,
@@ -20,26 +24,29 @@ namespace BOLib.Services
             Annual = 7
         }
 
+        public PeriodsRemindersService()
+        {
+            periodsRemindersManager = new();
+        }
+
         public List<PeriodsReminders>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<PeriodsReminders>>(RYCContextService.getInstance().BBDD.periodsReminders?.ToList());
+            return periodsRemindersManager.getAll()?.toListBO();
         }
 
         public PeriodsReminders? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<PeriodsReminders>(RYCContextService.getInstance().BBDD.periodsReminders?.FirstOrDefault(x => id.Equals(x.id)));
+            return (PeriodsReminders)periodsRemindersManager.getByID(id);
         }
 
         public void update(PeriodsReminders periodsReminders)
         {
-            RYCContextService.getInstance().BBDD.Update(periodsReminders);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            periodsRemindersManager.update(periodsReminders?.toDAO());
         }
 
         public void delete(PeriodsReminders periodsReminders)
         {
-            RYCContextService.getInstance().BBDD.Remove(periodsReminders);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            periodsRemindersManager.delete(periodsReminders?.toDAO());
         }
 
         public ePeriodsReminders? toEnum(PeriodsReminders? periodsReminders)

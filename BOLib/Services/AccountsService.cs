@@ -4,6 +4,7 @@ using BOLib.Helpers;
 using BOLib.Models;
 using BOLib.ModelsView;
 using DAOLib.Managers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -13,10 +14,12 @@ namespace BOLib.Services
     public class AccountsService
     {
         private readonly AccountsManager accountsManager;
+        private readonly TransactionsService transactionsService;
 
         public AccountsService()
         {
             accountsManager = new();
+            transactionsService = new();
         }
 
         public List<Accounts>? getAll()
@@ -46,12 +49,22 @@ namespace BOLib.Services
 
         public void update(Accounts accounts)
         {
-            accountsManager.update(accounts.toDAO());
+            accountsManager.update(accounts?.toDAO());
         }
 
         public void delete(Accounts accounts)
         {
-            accountsManager.delete(accounts.toDAO());
+            accountsManager.delete(accounts?.toDAO());
+        }
+
+        public Decimal getBalanceByAccount(int? id)
+        {
+            return transactionsService.getByAccount(id)?.Sum(x => x.amount) ?? 0;       
+        }
+
+        public Decimal getBalanceByAccount(Accounts? accounts)
+        {
+            return getBalanceByAccount(accounts.id);
         }
     }
 }

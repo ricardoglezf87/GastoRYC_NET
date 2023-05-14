@@ -20,12 +20,12 @@ namespace BOLib.Helpers
                 //cfg.CreateMap<Categories, CategoriesDAO>().ReverseMap();                
                 //cfg.CreateMap<CategoriesTypes, CategoriesTypesDAO>().ReverseMap();
                 cfg.CreateMap<DateCalendar, DateCalendarDAO>().ReverseMap();
-                cfg.CreateMap<ExpirationsReminders, ExpirationsRemindersDAO>().ReverseMap();
+                //cfg.CreateMap<ExpirationsReminders, ExpirationsRemindersDAO>().ReverseMap();
                 //cfg.CreateMap<InvestmentProducts, InvestmentProductsDAO>().ReverseMap();
                 cfg.CreateMap<InvestmentProductsPrices, InvestmentProductsPricesDAO>().ReverseMap();
-                cfg.CreateMap<PeriodsReminders, PeriodsRemindersDAO>().ReverseMap();
+                //cfg.CreateMap<PeriodsReminders, PeriodsRemindersDAO>().ReverseMap();
                 //cfg.CreateMap<Persons, PersonsDAO>().ReverseMap();
-                cfg.CreateMap<Splits, SplitsDAO>().ReverseMap();
+                //cfg.CreateMap<Splits, SplitsDAO>().ReverseMap();
                 cfg.CreateMap<SplitsReminders, SplitsRemindersDAO>().ReverseMap();
                 //cfg.CreateMap<Tags, TagsDAO>().ReverseMap();
                 //cfg.CreateMap<Transactions, TransactionsDAO>().ReverseMap();

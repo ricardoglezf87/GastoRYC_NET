@@ -8,6 +8,33 @@ namespace BOLib.Extensions
 {
     public static class ListExtension
     {
+
+        public static List<PeriodsReminders> toListBO(this List<PeriodsRemindersDAO> source)
+        {
+            List<PeriodsReminders> list = new();
+            if (source != null)
+            {
+                foreach (PeriodsRemindersDAO obj in source)
+                {
+                    list.Add((PeriodsReminders)obj);
+                }
+            }
+            return list;
+        }
+
+        public static List<ExpirationsReminders> toListBO(this List<ExpirationsRemindersDAO> source)
+        {
+            List<ExpirationsReminders> list = new();
+            if (source != null)
+            {
+                foreach (ExpirationsRemindersDAO obj in source)
+                {
+                    list.Add((ExpirationsReminders)obj);
+                }
+            }
+            return list;
+        }
+
         public static List<VBalancebyCategory> toListBO(this List<VBalancebyCategoryDAO> source)
         {
             List<VBalancebyCategory> list = new();

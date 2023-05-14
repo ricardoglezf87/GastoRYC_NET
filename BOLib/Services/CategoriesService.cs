@@ -43,12 +43,12 @@ namespace BOLib.Services
 
         public void update(Categories categories)
         {
-            categoriesManager.delete(categories.toDAO());
+            categoriesManager.delete(categories?.toDAO());
         }
 
         public void delete(Categories categories)
         {
-            categoriesManager.delete(categories.toDAO());
+            categoriesManager.delete(categories?.toDAO());
         }
 
         //TODO: revisar este

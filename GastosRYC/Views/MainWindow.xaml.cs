@@ -203,7 +203,7 @@ namespace GastosRYC
         {
             foreach (AccountsView accounts in lvAccounts.ItemsSource)
             {
-                accounts.balance = servicesContainer.GetInstance<TransactionsService>().getBalanceByAccount(accounts);
+                accounts.balance = servicesContainer.GetInstance<AccountsService>().getBalanceByAccount(accounts.id);
             }
 
             autoResizeListView();
