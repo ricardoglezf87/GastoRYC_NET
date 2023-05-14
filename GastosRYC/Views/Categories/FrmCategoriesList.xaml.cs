@@ -10,18 +10,20 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmCategoriesList : Window
     {
-        private readonly SimpleInjector.Container servicesContainer;
+        private readonly CategoriesService categoriesService;
+        private readonly CategoriesTypesService categoriesTypesService;
 
-        public FrmCategoriesList(SimpleInjector.Container servicesContainer)
+        public FrmCategoriesList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
+            categoriesService = InstanceBase<CategoriesService>.Instance;
+            categoriesTypesService = InstanceBase<CategoriesTypesService>.Instance;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategoriesTypes.ItemsSource = servicesContainer.GetInstance<CategoriesTypesService>().getAllFilterTransfer();
-            gvCategories.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAllFilterTransfer();
+            cbCategoriesTypes.ItemsSource = categoriesTypesService.getAllFilterTransfer();
+            gvCategories.ItemsSource = categoriesService.getAllFilterTransfer();
         }
 
         private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -32,7 +34,7 @@ namespace GastosRYC.Views
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
                 {
                     case "categoriesTypesid":
-                        categories.categoriesTypes = servicesContainer.GetInstance<CategoriesTypesService>().getByID(categories.categoriesTypesid);
+                        categories.categoriesTypes = categoriesTypesService.getByID(categories.categoriesTypesid);
                         break;
                 }
             }
@@ -62,17 +64,17 @@ namespace GastosRYC.Views
 
             if (categories.categoriesTypes == null && categories.categoriesTypesid != null)
             {
-                categories.categoriesTypes = servicesContainer.GetInstance<CategoriesTypesService>().getByID(categories.categoriesTypesid);
+                categories.categoriesTypes = categoriesTypesService.getByID(categories.categoriesTypesid);
             }
 
-            servicesContainer.GetInstance<CategoriesService>().update(categories);
+            categoriesService.update(categories);
         }
 
         private void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Categories categories in e.Items)
             {
-                servicesContainer.GetInstance<CategoriesService>().delete(categories);
+                categoriesService.delete(categories);
             }
         }
 

@@ -10,17 +10,17 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmTagsList : Window
     {
-        private readonly SimpleInjector.Container servicesContainer;
+        private readonly TagsService tagsService;
 
-        public FrmTagsList(SimpleInjector.Container servicesContainer)
+        public FrmTagsList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
+            tagsService = InstanceBase<TagsService>.Instance;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvTags.ItemsSource = servicesContainer.GetInstance<TagsService>().getAll();
+            gvTags.ItemsSource = tagsService.getAll();
         }
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -38,14 +38,14 @@ namespace GastosRYC.Views
         private void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Tags tags = (Tags)e.RowData;
-            servicesContainer.GetInstance<TagsService>().update(tags);
+            tagsService.update(tags);
         }
 
         private void gvTags_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Tags tags in e.Items)
             {
-                servicesContainer.GetInstance<TagsService>().delete(tags);
+                tagsService.delete(tags);
             }
         }
 

@@ -1,5 +1,5 @@
 ﻿using BOLib.Extensions;
-using BOLib.Helpers;
+
 using BOLib.Models;
 using DAOLib.Managers;
 using System.Collections.Generic;
@@ -10,12 +10,13 @@ namespace BOLib.Services
     public class PersonsService
     {
         private readonly PersonsManager personsManager;
+        private readonly TransactionsService transactionsService;
 
         public PersonsService()
         {
-            personsManager = new();
+            personsManager = InstanceBase<PersonsManager>.Instance;
+            transactionsService = InstanceBase<TransactionsService>.Instance;
         }
-
 
         public List<Persons>? getAll()
         {
@@ -37,14 +38,12 @@ namespace BOLib.Services
             personsManager.delete(persons?.toDAO());
         }
 
-        //TODO:Revisar
         public void setCategoryDefault(Persons? persons)
         {
             if (persons == null)
                 return;
 
-            var result = (from x in RYCContextService.getInstance().BBDD?.transactions
-                          where x.personid.Equals(persons.id)
+            var result = (from x in transactionsService.getByPerson(persons)                          
                           group x by x.categoryid into g
                           select new
                           {
@@ -62,7 +61,6 @@ namespace BOLib.Services
                 persons.categoryid = maxCounts;
                 update(persons);
             }
-
         }
     }
 }

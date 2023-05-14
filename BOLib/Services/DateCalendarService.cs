@@ -1,5 +1,7 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+
 using BOLib.Models;
+using DAOLib.Managers;
 using DAOLib.Models;
 using System;
 using System.Collections.Generic;
@@ -9,16 +11,23 @@ namespace BOLib.Services
 {
     public class DateCalendarService
     {
-        private readonly DateTime initDate = new DateTime(2001, 01, 01);
+        private readonly DateCalendarManager dateCalendarManager;
+        private readonly DateTime initDate;
+
+        public DateCalendarService()
+        {
+            dateCalendarManager = new();
+            initDate = new DateTime(2001, 01, 01);
+        }
 
         public List<DateCalendar>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<DateCalendar>>(RYCContextService.getInstance().BBDD.dateCalendar?.ToList());
+            return dateCalendarManager.getAll()?.toListBO();
         }
 
         public DateCalendar? getByID(DateTime? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<DateCalendar>(RYCContextService.getInstance().BBDD.dateCalendar?.FirstOrDefault(x => id.Equals(x.date)));
+            return (DateCalendar) dateCalendarManager.getByID(id);
         }
 
         public void fillCalendar()
@@ -28,34 +37,31 @@ namespace BOLib.Services
             {
                 if (getByID(ini) == null)
                 {
-                    //TODO:Revisar esto que no es correcto
-                    DateCalendarDAO date = new DateCalendarDAO()
+                    DateCalendar date = new DateCalendar()
                     {
                         date = ini,
                         day = ini.Day,
                         month = ini.Month,
                         year = ini.Year
                     };
-                    
-                        RYCContextService.getInstance().BBDD.dateCalendar.Add(date);
+
+                    dateCalendarManager.add(date.toDAO());
                 }
 
                 ini = ini.AddDays(1);
             }
 
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            dateCalendarManager.saveChanges();
         }
 
         public void update(DateCalendar dateCalendar)
         {
-            RYCContextService.getInstance().BBDD.Update(dateCalendar);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            dateCalendarManager.update(dateCalendar.toDAO());
         }
 
         public void delete(DateCalendar dateCalendar)
         {
-            RYCContextService.getInstance().BBDD.Remove(dateCalendar);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            dateCalendarManager.delete(dateCalendar.toDAO());
         }
     }
 }

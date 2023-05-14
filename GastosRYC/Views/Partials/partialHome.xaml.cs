@@ -10,6 +10,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 
+
 namespace GastosRYC.Views
 {
     /// <summary>
@@ -19,18 +20,24 @@ namespace GastosRYC.Views
     {
         #region Variables
 
-        private readonly SimpleInjector.Container servicesContainer;
+        private readonly AccountsTypesService accountsTypesService;
+        private readonly AccountsService accountsService;
+        private readonly ForecastsChartService forecastsChartService;
+        private readonly VBalancebyCategoryService vBalancebyCategoryService;
         private readonly MainWindow parentForm;
 
         #endregion
 
         #region Constructor
 
-        public PartialHome(SimpleInjector.Container _servicesContainer, MainWindow _parentForm)
+        public PartialHome(MainWindow _parentForm)
         {
             InitializeComponent();
-            servicesContainer = _servicesContainer;
             parentForm = _parentForm;
+            accountsTypesService = InstanceBase<AccountsTypesService>.Instance;
+            accountsService = InstanceBase<AccountsService>.Instance;
+            forecastsChartService = InstanceBase<ForecastsChartService>.Instance;
+            vBalancebyCategoryService = InstanceBase<VBalancebyCategoryService>.Instance;            
         }
 
         #endregion
@@ -167,13 +174,13 @@ namespace GastosRYC.Views
 
             chForecast.Series.Clear();
 
-            foreach (Accounts accounts in servicesContainer.GetInstance<AccountsService>().getAllOpened()?
-                .Where(x => servicesContainer.GetInstance<AccountsTypesService>().accountExpensives(x.accountsTypesid)))
+            foreach (Accounts accounts in accountsService.getAllOpened()?
+                .Where(x => accountsTypesService.accountExpensives(x.accountsTypesid)))
             {
 
                 LineSeries series = new LineSeries()
                 {
-                    ItemsSource = servicesContainer.GetInstance<ForecastsChartService>().getMonthForecast()
+                    ItemsSource = forecastsChartService.getMonthForecast()
                         .Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
                     Label = accounts.description,
                     XBindingPath = "date",
@@ -293,7 +300,7 @@ namespace GastosRYC.Views
 
             //Series
 
-            List<VBalancebyCategory>? lExpensesCharts = servicesContainer.GetInstance<VBalancebyCategoryService>().getExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
+            List<VBalancebyCategory>? lExpensesCharts = vBalancebyCategoryService.getExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new ColumnSeries()

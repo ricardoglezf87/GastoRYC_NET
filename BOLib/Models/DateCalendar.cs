@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAOLib.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
@@ -10,5 +11,30 @@ namespace BOLib.Models
         public virtual int? day { set; get; }
         public virtual int? month { set; get; }
         public virtual int? year { set; get; }
+
+        internal DateCalendarDAO toDAO()
+        {
+            return new DateCalendarDAO()
+            {
+                date = this.date,
+                day = this.day,
+                month = this.month,
+                year = this.year
+            };
+        }
+
+        public static explicit operator DateCalendar(DateCalendarDAO v)
+        {
+            if (v == null)
+                return null;
+
+            return new DateCalendar()
+            {
+                date = v.date,
+                day = v.day,
+                month = v.month,
+                year = v.year
+            };
+        }
     }
 }

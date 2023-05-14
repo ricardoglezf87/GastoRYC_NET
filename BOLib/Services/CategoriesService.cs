@@ -1,5 +1,5 @@
 ﻿using BOLib.Extensions;
-using BOLib.Helpers;
+
 using BOLib.Models;
 using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,7 @@ namespace BOLib.Services
 
         public CategoriesService()
         {
-            categoriesManager = new();
+            categoriesManager = InstanceBase<CategoriesManager>.Instance;
         }
 
         public List<Categories>? getAll()

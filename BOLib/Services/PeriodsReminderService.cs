@@ -3,7 +3,7 @@ using BOLib.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BOLib.Helpers;
+
 using DAOLib.Managers;
 using DAOLib.Models;
 
@@ -26,7 +26,7 @@ namespace BOLib.Services
 
         public PeriodsRemindersService()
         {
-            periodsRemindersManager = new();
+            periodsRemindersManager = InstanceBase<PeriodsRemindersManager>.Instance;
         }
 
         public List<PeriodsReminders>? getAll()

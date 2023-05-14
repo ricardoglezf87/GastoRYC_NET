@@ -1,5 +1,5 @@
 ﻿using BOLib.Extensions;
-using BOLib.Helpers;
+
 using BOLib.Models;
 using DAOLib.Managers;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace BOLib.Services
 
         public AccountsTypesService()
         {
-            accountsTypesManager = new();
+            accountsTypesManager = InstanceBase<AccountsTypesManager>.Instance;
         }
 
         public enum eAccountsTypes : int

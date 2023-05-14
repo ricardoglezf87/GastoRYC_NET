@@ -11,6 +11,18 @@ namespace BOLib.Models
         public virtual InvestmentProducts? investmentProducts { set; get; }
         public virtual Decimal? prices { set; get; }
 
+        internal InvestmentProductsPricesDAO? toDAO()
+        {
+            return new InvestmentProductsPricesDAO()
+            {
+                id = this.id,
+                date = this.date,
+                investmentProducts = this.investmentProducts?.toDAO(),
+                investmentProductsid = this.investmentProductsid,
+                prices = this.prices
+            };
+        }
+
         public static explicit operator InvestmentProductsPrices(InvestmentProductsPricesDAO v)
         {
             return new InvestmentProductsPrices()

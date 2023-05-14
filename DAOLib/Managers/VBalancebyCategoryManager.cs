@@ -11,15 +11,5 @@ namespace DAOLib.Managers
         {
             return RYCContextServiceDAO.getInstance()?.BBDD?.vBalancebyCategory?.ToList();
         }
-
-        public List<VBalancebyCategoryDAO>? getbyYearMonth(int month, int year)
-        {
-            return getAll()?.Where(x => x.year == year && x.month == month).ToList();
-        }
-
-        public List<VBalancebyCategoryDAO>? getExpensesbyYearMonth(int month, int year)
-        {
-            return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesManager.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToList();
-        }
     }
 }

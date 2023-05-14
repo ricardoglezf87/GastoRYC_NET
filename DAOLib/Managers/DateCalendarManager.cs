@@ -20,40 +20,29 @@ namespace DAOLib.Managers
             return RYCContextServiceDAO.getInstance().BBDD.dateCalendar?.FirstOrDefault(x => id.Equals(x.date));
         }
 
-        public void fillCalendar()
+        public void add(DateCalendarDAO? obj)
         {
-            DateTime ini = initDate;
-            while (ini < DateTime.Now.AddYears(1))
+            if (obj != null)
             {
-                if (getByID(ini) == null)
-                {
-                    DateCalendarDAO date = new DateCalendarDAO()
-                    {
-                        date = ini,
-                        day = ini.Day,
-                        month = ini.Month,
-                        year = ini.Year
-                    };
-
-                    RYCContextServiceDAO.getInstance().BBDD.dateCalendar.Add(date);
-                }
-
-                ini = ini.AddDays(1);
+                RYCContextServiceDAO.getInstance().BBDD.Add(obj);
             }
+        }
 
+        public void saveChanges()
+        {
             RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
         }
 
         public void update(DateCalendarDAO dateCalendar)
         {
             RYCContextServiceDAO.getInstance().BBDD.Update(dateCalendar);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
+            saveChanges();
         }
 
         public void delete(DateCalendarDAO dateCalendar)
         {
             RYCContextServiceDAO.getInstance().BBDD.Remove(dateCalendar);
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
+            saveChanges();
         }
     }
 }

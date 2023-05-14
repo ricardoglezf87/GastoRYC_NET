@@ -1,6 +1,8 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+
 using BOLib.Models;
 using BOLib.Services;
+using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,9 +10,16 @@ namespace BOLib.Services
 {
     public class VBalancebyCategoryService
     {
+        private readonly VBalancebyCategoryManager vBalancebyCategoryManager;
+
+        public VBalancebyCategoryService()
+        {
+            vBalancebyCategoryManager = InstanceBase<VBalancebyCategoryManager>.Instance;
+        }
+
         public List<VBalancebyCategory>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<VBalancebyCategory>>(RYCContextService.getInstance()?.BBDD?.vBalancebyCategory?.ToList());
+            return vBalancebyCategoryManager.getAll()?.toListBO();
         }
 
         public List<VBalancebyCategory>? getbyYearMonth(int month, int year)

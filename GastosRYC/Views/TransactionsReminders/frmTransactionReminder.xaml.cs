@@ -15,35 +15,52 @@ namespace GastosRYC.Views
         #region Variables
 
         private TransactionsReminders? transaction;
-        private readonly SimpleInjector.Container servicesContainer;
         private readonly int? accountidDefault;
+        private readonly TagsService tagsService;
+        private readonly PersonsService personsService;
+        private readonly CategoriesService categoriesService;
+        private readonly AccountsService accountsService;
+        private readonly TransactionsRemindersService transactionsRemindersService;
+        private readonly ExpirationsRemindersService expirationsRemindersService;
+        private readonly InvestmentProductsService investmentProductsService;
+        private readonly PeriodsRemindersService periodsRemindersService;
+        private readonly TransactionsStatusService transactionsStatusService;
+
         public eWindowsResult windowsResult { set; get; }
 
         #endregion
 
         #region Constructors
 
-        public FrmTransactionReminders(SimpleInjector.Container servicesContainer)
+        public FrmTransactionReminders()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
+            personsService = InstanceBase<PersonsService>.Instance;
+            tagsService = InstanceBase<TagsService>.Instance;
+            transactionsRemindersService = InstanceBase<TransactionsRemindersService>.Instance;
+            categoriesService = InstanceBase<CategoriesService>.Instance;
+            accountsService = InstanceBase<AccountsService>.Instance;
+            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
+            investmentProductsService = InstanceBase<InvestmentProductsService>.Instance;
+            periodsRemindersService = InstanceBase<PeriodsRemindersService>.Instance;
+            transactionsStatusService = InstanceBase<TransactionsStatusService>.Instance;
         }
 
-        public FrmTransactionReminders(TransactionsReminders transaction, int accountidDefault, SimpleInjector.Container servicesContainer) :
-            this(servicesContainer)
+        public FrmTransactionReminders(TransactionsReminders transaction, int accountidDefault) :
+            this()
         {
             this.transaction = transaction;
             this.accountidDefault = accountidDefault;
         }
 
-        public FrmTransactionReminders(TransactionsReminders? transaction, SimpleInjector.Container servicesContainer) :
-            this(servicesContainer)
+        public FrmTransactionReminders(TransactionsReminders? transaction) :
+            this()
         {
             this.transaction = transaction;
         }
 
-        public FrmTransactionReminders(int accountidDefault, SimpleInjector.Container servicesContainer) :
-            this(servicesContainer)
+        public FrmTransactionReminders(int accountidDefault) :
+            this()
         {
             this.accountidDefault = accountidDefault;
         }
@@ -75,9 +92,9 @@ namespace GastosRYC.Views
                 return;
             }
 
-            FrmSplitsRemindersList frm = new FrmSplitsRemindersList(transaction, servicesContainer);
+            FrmSplitsRemindersList frm = new FrmSplitsRemindersList(transaction);
             frm.ShowDialog();
-            servicesContainer.GetInstance<TransactionsRemindersService>().updateSplitsReminders(transaction);
+            transactionsRemindersService.updateSplitsReminders(transaction);
             loadTransaction();
         }
 
@@ -124,7 +141,7 @@ namespace GastosRYC.Views
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = servicesContainer.GetInstance<ExpirationsRemindersService>().getNextReminder(transaction.id) ?? transaction.date;
+                dtpDate.SelectedDate = expirationsRemindersService.getNextReminder(transaction.id) ?? transaction.date;
                 cbPeriodTransaction.SelectedValue = transaction.periodsRemindersid;
                 cbAccount.SelectedValue = transaction.accountid;
                 cbPerson.SelectedValue = transaction.personid;
@@ -170,21 +187,21 @@ namespace GastosRYC.Views
             transaction.date = dtpDate.SelectedDate;
 
             transaction.periodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
-            transaction.periodsReminders = servicesContainer.GetInstance<PeriodsRemindersService>().getByID(transaction.periodsRemindersid);
+            transaction.periodsReminders = periodsRemindersService.getByID(transaction.periodsRemindersid);
 
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = servicesContainer.GetInstance<AccountsService>().getByID(transaction.accountid);
+            transaction.account = accountsService.getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = servicesContainer.GetInstance<PersonsService>().getByID(transaction.personid);
+                transaction.person = personsService.getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
 
             transaction.categoryid = (int)cbCategory.SelectedValue;
-            transaction.category = servicesContainer.GetInstance<CategoriesService>().getByID(transaction.categoryid);
+            transaction.category = categoriesService.getByID(transaction.categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -200,24 +217,24 @@ namespace GastosRYC.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = servicesContainer.GetInstance<TagsService>().getByID(transaction.tagid);
+                transaction.tag = tagsService.getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
 
             transaction.autoRegister = chkAutoregister.IsChecked ?? false;
 
-            transaction.transactionStatus = servicesContainer.GetInstance<TransactionsStatusService>().getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = transactionsStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = servicesContainer.GetInstance<AccountsService>().getAll();
-            cbPerson.ItemsSource = servicesContainer.GetInstance<PersonsService>().getAll();
-            cbCategory.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAll();
-            cbTag.ItemsSource = servicesContainer.GetInstance<TagsService>().getAll();
-            cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<TransactionsStatusService>().getAll();
-            cbPeriodTransaction.ItemsSource = servicesContainer.GetInstance<PeriodsRemindersService>().getAll();
+            cbAccount.ItemsSource = accountsService.getAll();
+            cbPerson.ItemsSource = personsService.getAll();
+            cbCategory.ItemsSource = categoriesService.getAll();
+            cbTag.ItemsSource = tagsService.getAll();
+            cbTransactionStatus.ItemsSource = transactionsStatusService.getAll();
+            cbPeriodTransaction.ItemsSource = periodsRemindersService.getAll();
         }
 
         private bool saveTransaction()
@@ -230,7 +247,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        servicesContainer.GetInstance<TransactionsRemindersService>().saveChanges(transaction);
+                        transactionsRemindersService.saveChanges(transaction);
                     }
                     return true;
                 }

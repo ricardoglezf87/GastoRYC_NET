@@ -3,7 +3,7 @@ using BOLib.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BOLib.Helpers;
+
 using DAOLib.Managers;
 
 namespace BOLib.Services
@@ -13,14 +13,17 @@ namespace BOLib.Services
         private readonly ExpirationsRemindersManager expirationsRemindersManager;      
         private readonly PeriodsRemindersService periodsRemindersService;
         private readonly TransactionsService transactionsService;
+        private readonly TransactionsRemindersService transactionsRemindersService;
         private readonly SplitsService splitsService;
 
         public ExpirationsRemindersService()
         {
-            expirationsRemindersManager = new();
-            periodsRemindersService = new();
-            transactionsService = new();
-            splitsService = new();
+            expirationsRemindersManager = InstanceBase<ExpirationsRemindersManager>.Instance;
+            periodsRemindersService = InstanceBase<PeriodsRemindersService>.Instance;
+            transactionsService = InstanceBase<TransactionsService>.Instance;
+            splitsService = InstanceBase<SplitsService>.Instance;
+            transactionsService = InstanceBase<TransactionsService>.Instance;
+            transactionsRemindersService = InstanceBase<TransactionsRemindersService>.Instance;
         }
 
         public List<ExpirationsReminders>? getAll()
@@ -36,12 +39,7 @@ namespace BOLib.Services
 
         public bool existsExpiration(TransactionsReminders? transactionsReminder, DateTime? date)
         {
-            if (transactionsReminder == null)
-            {
-                return false;
-            }
-            return RYCContextService.getInstance().BBDD.expirationsReminders?
-                    .Any(x => x.transactionsRemindersid == transactionsReminder.id && x.date == date) ?? false;
+            return expirationsRemindersManager.existsExpiration(transactionsReminder.toDAO(),date);
         }
 
         public List<ExpirationsReminders>? getAllPendingWithGeneration()
@@ -57,7 +55,7 @@ namespace BOLib.Services
 
         public void GenerationAllExpirations()
         {
-            foreach (TransactionsReminders transactionsReminders in MapperConfig.InitializeAutomapper().Map<List<TransactionsReminders>>(RYCContextService.getInstance().BBDD.transactionsReminders))
+            foreach (TransactionsReminders transactionsReminders in transactionsRemindersService.getAll())
             {
                 generationExpirations(transactionsReminders);
             }

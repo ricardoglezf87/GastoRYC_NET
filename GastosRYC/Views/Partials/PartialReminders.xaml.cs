@@ -14,18 +14,18 @@ namespace GastosRYC.Views
     {
         #region Variables
 
-        private readonly SimpleInjector.Container servicesContainer;
         private readonly MainWindow parentForm;
+        private readonly ExpirationsRemindersService expirationsRemindersService;
 
         #endregion
 
         #region Constructor
 
-        public PartialReminders(SimpleInjector.Container _servicesContainer, MainWindow _parentForm)
+        public PartialReminders(MainWindow _parentForm)
         {
-            InitializeComponent();
-            servicesContainer = _servicesContainer;
+            InitializeComponent();            
             parentForm = _parentForm;
+            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
         }
 
         #endregion
@@ -65,7 +65,7 @@ namespace GastosRYC.Views
         {
             if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders != null)
             {
-                FrmTransactionReminders frm = new FrmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders, servicesContainer);
+                FrmTransactionReminders frm = new FrmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders);
                 frm.ShowDialog();
                 loadReminders();
             }
@@ -73,15 +73,14 @@ namespace GastosRYC.Views
 
         #endregion
 
-
         #region Functions
 
         public void loadReminders()
         {
-            servicesContainer.GetInstance<ExpirationsRemindersService>().generateAutoregister();
+            expirationsRemindersService.generateAutoregister();
             parentForm.loadAccounts();
 
-            cvReminders.ItemsSource = new ListCollectionView(servicesContainer.GetInstance<ExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration());
+            cvReminders.ItemsSource = new ListCollectionView(expirationsRemindersService.getAllPendingWithoutFutureWithGeneration());
 
             cvReminders.CanGroup = true;
             cvReminders.GroupCards("groupDate");
@@ -93,11 +92,11 @@ namespace GastosRYC.Views
 
         private void putDoneReminder(int? id)
         {
-            ExpirationsReminders? expirationsReminders = servicesContainer.GetInstance<ExpirationsRemindersService>().getByID(id);
+            ExpirationsReminders? expirationsReminders = expirationsRemindersService.getByID(id);
             if (expirationsReminders != null)
             {
                 expirationsReminders.done = true;
-                servicesContainer.GetInstance<ExpirationsRemindersService>().update(expirationsReminders);
+                expirationsRemindersService.update(expirationsReminders);
             }
 
             loadReminders();
@@ -105,10 +104,10 @@ namespace GastosRYC.Views
 
         private void makeTransactionFromReminder(int? id)
         {
-            Transactions? transaction = servicesContainer.GetInstance<ExpirationsRemindersService>().registerTransactionfromReminder(id);
+            Transactions? transaction = expirationsRemindersService.registerTransactionfromReminder(id);
             if (transaction != null)
             {
-                FrmTransaction frm = new FrmTransaction(transaction, servicesContainer);
+                FrmTransaction frm = new FrmTransaction(transaction);
             }
 
             parentForm.loadAccounts();

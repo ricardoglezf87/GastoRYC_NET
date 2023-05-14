@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using BOLib.Extensions;
-using BOLib.Helpers;
+﻿using BOLib.Extensions;
 using BOLib.Models;
 using BOLib.ModelsView;
 using DAOLib.Managers;
@@ -18,8 +16,8 @@ namespace BOLib.Services
 
         public AccountsService()
         {
-            accountsManager = new();
-            transactionsService = new();
+            accountsManager = InstanceBase<AccountsManager>.Instance;
+            transactionsService = InstanceBase<TransactionsService>.Instance;
         }
 
         public List<Accounts>? getAll()

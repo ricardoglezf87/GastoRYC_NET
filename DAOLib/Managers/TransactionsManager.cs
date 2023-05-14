@@ -19,6 +19,16 @@ namespace DAOLib.Managers
             return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => id.Equals(x.accountid))?.ToList();
         }
 
+        public List<TransactionsDAO>? getByPerson(PersonsDAO? persons)
+        {
+            return getByPerson(persons?.id);
+        }
+
+        public List<TransactionsDAO>? getByPerson(int? id)
+        {
+            return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => id.Equals(x.personid))?.ToList();
+        }
+
         public List<TransactionsDAO>? getByInvestmentProduct(InvestmentProductsDAO? investment)
         {
             return getByInvestmentProduct(investment?.id);

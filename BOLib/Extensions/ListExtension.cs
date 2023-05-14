@@ -8,6 +8,18 @@ namespace BOLib.Extensions
 {
     public static class ListExtension
     {
+        public static List<DateCalendar> toListBO(this List<DateCalendarDAO> source)
+        {
+            List<DateCalendar> list = new();
+            if (source != null)
+            {
+                foreach (DateCalendarDAO obj in source)
+                {
+                    list.Add((DateCalendar)obj);
+                }
+            }
+            return list;
+        }
 
         public static List<PeriodsReminders> toListBO(this List<PeriodsRemindersDAO> source)
         {

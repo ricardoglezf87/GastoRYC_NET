@@ -1,5 +1,5 @@
 ﻿using BOLib.Extensions;
-using BOLib.Helpers;
+
 using BOLib.Models;
 using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +19,9 @@ namespace BOLib.Services
 
         public SplitsService()
         {
-            splitsManager = new();
-            transactionsService = new();
-            categoriesService = new();
+            splitsManager = InstanceBase<SplitsManager>.Instance;
+            transactionsService = InstanceBase<TransactionsService>.Instance;
+            categoriesService = InstanceBase<CategoriesService>.Instance;
         }
 
         public List<Splits>? getAll()
@@ -87,17 +87,7 @@ namespace BOLib.Services
 
         public int getNextID()
         {
-            var cmd = RYCContextService.getInstance().BBDD.Database.
-                GetDbConnection().CreateCommand();
-            cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'splits';";
-
-            RYCContextService.getInstance().BBDD.Database.OpenConnection();
-            var result = cmd.ExecuteReader();
-            result.Read();
-            int id = Convert.ToInt32(result[0]);
-            result.Close();
-
-            return id;
+            return splitsManager.getNextID();
         }
     }
 }

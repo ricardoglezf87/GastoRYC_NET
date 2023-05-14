@@ -16,34 +16,46 @@ namespace GastosRYC.Views
         #region Variables
 
         private Transactions? transaction;
+        private readonly PersonsService personsService;
+        private readonly CategoriesService categoriesService;
+        private readonly TagsService tagsService;
+        private readonly AccountsService accountsService;
+        private readonly TransactionsService transactionsService;
+        private readonly InvestmentProductsService investmentProductsService;
+        private readonly TransactionsStatusService transactionsStatusService;
         private readonly int? accountidDefault;
-        private readonly SimpleInjector.Container servicesContainer;
 
         #endregion
 
         #region Constructor
 
-        public FrmTransaction(SimpleInjector.Container servicesContainer)
+        public FrmTransaction()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
+            personsService = InstanceBase<PersonsService>.Instance;
+            tagsService = InstanceBase<TagsService>.Instance;
+            categoriesService = InstanceBase<CategoriesService>.Instance;
+            accountsService = InstanceBase<AccountsService>.Instance;
+            transactionsService = InstanceBase<TransactionsService>.Instance;
+            investmentProductsService = InstanceBase<InvestmentProductsService>.Instance;
+            transactionsStatusService = InstanceBase<TransactionsStatusService>.Instance;
         }
 
         public FrmTransaction(Transactions transaction, int accountidDefault, SimpleInjector.Container servicesContainer) :
-            this(servicesContainer)
+            this()
         {
             this.transaction = transaction;
             this.accountidDefault = accountidDefault;
         }
 
-        public FrmTransaction(Transactions transaction, SimpleInjector.Container servicesContainer) :
-            this(servicesContainer)
+        public FrmTransaction(Transactions transaction) :
+            this()
         {
             this.transaction = transaction;
         }
 
-        public FrmTransaction(int accountidDefault, SimpleInjector.Container servicesContainer) :
-            this(servicesContainer)
+        public FrmTransaction(int accountidDefault) :
+            this()
         {
             this.accountidDefault = accountidDefault;
         }
@@ -105,9 +117,9 @@ namespace GastosRYC.Views
                 return;
             }
 
-            FrmSplitsList frm = new FrmSplitsList(transaction, servicesContainer);
+            FrmSplitsList frm = new FrmSplitsList(transaction);
             frm.ShowDialog();
-            servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transaction);
+            transactionsService.updateTransactionAfterSplits(transaction);
             loadTransaction();
         }
 
@@ -272,12 +284,12 @@ namespace GastosRYC.Views
 
             transaction.date = dtpDate.SelectedDate;
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = servicesContainer.GetInstance<AccountsService>().getByID(transaction.accountid);
+            transaction.account = accountsService.getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = servicesContainer.GetInstance<PersonsService>().getByID(transaction.personid);
+                transaction.person = personsService.getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
@@ -290,13 +302,13 @@ namespace GastosRYC.Views
             if (cbCategory.SelectedValue != null)
             {
                 transaction.categoryid = (int)cbCategory.SelectedValue;
-                transaction.category = servicesContainer.GetInstance<CategoriesService>().getByID(transaction.categoryid);
+                transaction.category = categoriesService.getByID(transaction.categoryid);
             }
 
             if (cbInvestmentProduct.SelectedValue != null)
             {
                 transaction.investmentProductsid = (int)cbInvestmentProduct.SelectedValue;
-                transaction.investmentProducts = servicesContainer.GetInstance<InvestmentProductsService>().getByID(transaction.investmentProductsid);
+                transaction.investmentProducts = investmentProductsService.getByID(transaction.investmentProductsid);
             }
 
             transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value) ?? 0;
@@ -316,21 +328,21 @@ namespace GastosRYC.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = servicesContainer.GetInstance<TagsService>().getByID(transaction.tagid);
+                transaction.tag = tagsService.getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = servicesContainer.GetInstance<TransactionsStatusService>().getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = transactionsStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = servicesContainer.GetInstance<AccountsService>().getAll();
-            cbPerson.ItemsSource = servicesContainer.GetInstance<PersonsService>().getAll();
-            cbCategory.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAll();
-            cbInvestmentProduct.ItemsSource = servicesContainer.GetInstance<InvestmentProductsService>().getAll();
-            cbTag.ItemsSource = servicesContainer.GetInstance<TagsService>().getAll();
-            cbTransactionStatus.ItemsSource = servicesContainer.GetInstance<TransactionsStatusService>().getAll();
+            cbAccount.ItemsSource = accountsService.getAll();
+            cbPerson.ItemsSource = personsService.getAll();
+            cbCategory.ItemsSource = categoriesService.getAll();
+            cbInvestmentProduct.ItemsSource = investmentProductsService.getAll();
+            cbTag.ItemsSource = tagsService.getAll();
+            cbTransactionStatus.ItemsSource = transactionsStatusService.getAll();
         }
 
         private bool isTransactionValid()
@@ -413,7 +425,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        servicesContainer.GetInstance<TransactionsService>().saveChanges(transaction);
+                        transactionsService.saveChanges(transaction);
                     }
                     return true;
                 }

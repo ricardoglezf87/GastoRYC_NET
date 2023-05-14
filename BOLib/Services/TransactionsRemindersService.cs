@@ -1,5 +1,7 @@
-﻿using BOLib.Helpers;
+﻿using BOLib.Extensions;
+
 using BOLib.Models;
+using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -9,55 +11,49 @@ namespace BOLib.Services
 {
     public class TransactionsRemindersService
     {
-        private readonly SimpleInjector.Container servicesContainer;
+        private readonly TransactionsRemindersManager transactionsRemindersManager;
+        private readonly SplitsRemindersService splitsRemindersService;
+        private readonly ExpirationsRemindersService expirationsRemindersService;
+        private readonly CategoriesService categoriesService;
 
-        public TransactionsRemindersService(SimpleInjector.Container servicesContainer)
+        public TransactionsRemindersService()
         {
-            this.servicesContainer = servicesContainer;
+            transactionsRemindersManager = InstanceBase<TransactionsRemindersManager>.Instance;
+            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
+            splitsRemindersService = InstanceBase<SplitsRemindersService>.Instance;
+            categoriesService = InstanceBase<CategoriesService>.Instance;
         }
 
         #region TransactionsRemindersActions
 
         public List<TransactionsReminders>? getAll()
         {
-            return MapperConfig.InitializeAutomapper().Map<List<TransactionsReminders>>(RYCContextService.getInstance().BBDD.transactionsReminders?.ToList());
+            return transactionsRemindersManager.getAll()?.toListBO();
         }
 
         public TransactionsReminders? getByID(int? id)
         {
-            return MapperConfig.InitializeAutomapper().Map<TransactionsReminders>(RYCContextService.getInstance().BBDD.transactionsReminders?.FirstOrDefault(x => id.Equals(x.id)));
+            return (TransactionsReminders)transactionsRemindersManager.getByID(id);
         }
 
         public void update(TransactionsReminders transactionsReminders)
         {
-            servicesContainer.GetInstance<ExpirationsRemindersService>().deleteByTransactionReminderid(transactionsReminders.id);
-            RYCContextService.getInstance().BBDD.Update(transactionsReminders);
-            RYCContextService.getInstance().BBDD.SaveChanges();
+            expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
+            transactionsRemindersManager.update(transactionsReminders.toDAO());
         }
 
         public void delete(TransactionsReminders? transactionsReminders)
         {
             if (transactionsReminders != null)
             {
-                servicesContainer.GetInstance<ExpirationsRemindersService>().deleteByTransactionReminderid(transactionsReminders.id);
-                RYCContextService.getInstance().BBDD.Remove(transactionsReminders);
-                RYCContextService.getInstance().BBDD.SaveChanges();
+                expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
+                transactionsRemindersManager.delete(transactionsReminders.toDAO());
             }
         }
 
         public int getNextID()
         {
-            var cmd = RYCContextService.getInstance().BBDD.Database.
-                GetDbConnection().CreateCommand();
-            cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactionsReminders';";
-
-            RYCContextService.getInstance().BBDD.Database.OpenConnection();
-            var result = cmd.ExecuteReader();
-            result.Read();
-            int id = Convert.ToInt32(result[0]);
-            result.Close();
-
-            return id;
+            return transactionsRemindersManager.getNextID();
         }
 
         public void saveChanges(TransactionsReminders transactionsReminders)
@@ -77,7 +73,7 @@ namespace BOLib.Services
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            List<SplitsReminders>? lSplitsReminders = transactionsReminders.splits ?? servicesContainer.GetInstance<SplitsRemindersService>().getbyTransactionid(transactionsReminders.id);
+            List<SplitsReminders>? lSplitsReminders = transactionsReminders.splits ?? splitsRemindersService.getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
@@ -91,13 +87,13 @@ namespace BOLib.Services
                 }
 
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactionsReminders.category = servicesContainer.GetInstance<CategoriesService>().getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactionsReminders.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
             else if (transactionsReminders.categoryid != null
                 && transactionsReminders.categoryid == (int)CategoriesService.eSpecialCategories.Split)
             {
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactionsReminders.category = servicesContainer.GetInstance<CategoriesService>().getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactionsReminders.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.id == 0)
@@ -106,7 +102,7 @@ namespace BOLib.Services
                 foreach (SplitsReminders splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.transactionid = transactionsReminders.id;
-                    servicesContainer.GetInstance<SplitsRemindersService>().update(splitsReminders);
+                    splitsRemindersService.update(splitsReminders);
                 }
             }
             else

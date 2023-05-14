@@ -10,17 +10,17 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmInvestmentProductsList : Window
     {
-        private readonly SimpleInjector.Container servicesContainer;
+        private readonly InvestmentProductsService investmentProductsService;
 
-        public FrmInvestmentProductsList(SimpleInjector.Container servicesContainer)
+        public FrmInvestmentProductsList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
+            investmentProductsService = InstanceBase<InvestmentProductsService>.Instance;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvInvestmentProducts.ItemsSource = servicesContainer.GetInstance<InvestmentProductsService>().getAll();
+            gvInvestmentProducts.ItemsSource = investmentProductsService.getAll();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -38,14 +38,14 @@ namespace GastosRYC.Views
         private void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             InvestmentProducts InvestmentProducts = (InvestmentProducts)e.RowData;
-            servicesContainer.GetInstance<InvestmentProductsService>().update(InvestmentProducts);
+            investmentProductsService.update(InvestmentProducts);
         }
 
         private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (InvestmentProducts InvestmentProducts in e.Items)
             {
-                servicesContainer.GetInstance<InvestmentProductsService>().delete(InvestmentProducts);
+                investmentProductsService.delete(InvestmentProducts);
             }
         }
 

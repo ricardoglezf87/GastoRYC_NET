@@ -4,10 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BOLib.Helpers;
+
 using BOLib.ModelsView;
 using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using DAOLib.Models;
 
 namespace BOLib.Services
 {
@@ -15,13 +16,19 @@ namespace BOLib.Services
     {
         #region Propiedades y Contructor
 
-        private readonly TransactionsManager transactionsService;
+        private readonly TransactionsManager transactionsManager;
+        private readonly SplitsService splitsService;
+        private readonly AccountsService accountsService;
+        private readonly CategoriesService categoriesService;
         private readonly PersonsService personsService;
         
         public TransactionsService()
         {
-            transactionsService = new();
-            personsService = new();
+            transactionsManager = InstanceBase<TransactionsManager>.Instance;
+            accountsService = InstanceBase<AccountsService>.Instance;
+            splitsService = InstanceBase<SplitsService>.Instance;
+            categoriesService = InstanceBase<CategoriesService>.Instance;
+            personsService = InstanceBase<PersonsService>.Instance;
         }
 
         #endregion Propiedades y Contructor
@@ -30,17 +37,17 @@ namespace BOLib.Services
 
         public List<Transactions>? getAll()
         {
-            return transactionsService.getAll()?.toListBO();
+            return transactionsManager.getAll()?.toListBO();
         }
 
         public Transactions? getByID(int? id)
         {
-            return (Transactions)transactionsService.getByID(id);
+            return (Transactions)transactionsManager.getByID(id);
         }
 
         public List<Transactions>? getByInvestmentProduct(int? id)
         {
-            return transactionsService.getByInvestmentProduct(id)?.toListBO();
+            return transactionsManager.getByInvestmentProduct(id)?.toListBO();
         }
 
         public List<Transactions>? getByInvestmentProduct(InvestmentProducts? investment)
@@ -51,27 +58,37 @@ namespace BOLib.Services
         public void update(Transactions transactions)
         {
             transactions.date = transactions.date.removeTime();
-            transactionsService.update(transactions?.toDAO());
+            transactionsManager.update(transactions?.toDAO());
         }
 
         public void delete(Transactions? transactions)
         {
-            transactionsService.delete(transactions?.toDAO());
+            transactionsManager.delete(transactions?.toDAO());
         }
 
         public List<Transactions>? getByAccount(int? id)
         {
-            return transactionsService.getByAccount(id)?.toListBO();
+            return transactionsManager.getByAccount(id)?.toListBO();
         }
 
-        public List<Transactions>? getByAccount(AccountsView? accounts)
+        public List<Transactions>? getByAccount(Accounts? accounts)
         {
             return getByAccount(accounts?.id);
-        }        
+        }
+
+        public List<Transactions>? getByPerson(int? id)
+        {
+            return transactionsManager.getByPerson(id)?.toListBO();
+        }
+
+        public List<Transactions>? getByPerson(Persons? person)
+        {
+            return getByPerson(person?.id);
+        }
 
         public int getNextID()
         {
-            return transactionsService.getNextID();
+            return transactionsManager.getNextID();
         }
 
         public void saveChanges(Transactions transactions)
@@ -88,62 +105,61 @@ namespace BOLib.Services
 
         public void updateTranfer(Transactions transactions)
         {
-            //TODO: Revisar
-            //if (transactions.tranferid != null &&
-            //    transactions.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            //{
-            //    Transactions? tContraria = getByID(transactions.tranferid);
-            //    if (tContraria != null)
-            //    {
-            //        delete(tContraria);
-            //    }
-            //    transactions.tranferid = null;
-            //}
-            //else if (transactions.tranferid == null &&
-            //    transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            //{
-            //    transactions.tranferid = getNextID();
+            if (transactions.tranferid != null &&
+                transactions.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                Transactions? tContraria = getByID(transactions.tranferid);
+                if (tContraria != null)
+                {
+                    delete(tContraria);
+                }
+                transactions.tranferid = null;
+            }
+            else if (transactions.tranferid == null &&
+                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                transactions.tranferid = getNextID();
 
-            //    Transactions? tContraria = new()
-            //    {
-            //        date = transactions.date,
-            //        accountid = transactions.category.accounts.id,
-            //        personid = transactions.personid,
-            //        categoryid = servicesContainer.GetInstance<AccountsService>().getByID(transactions.accountid)?.categoryid,
-            //        memo = transactions.memo,
-            //        tagid = transactions.tagid,
-            //        amountIn = transactions.amountOut,
-            //        amountOut = transactions.amountIn
-            //    };
+                Transactions? tContraria = new()
+                {
+                    date = transactions.date,
+                    accountid = transactions.category.accounts.id,
+                    personid = transactions.personid,
+                    categoryid = accountsService.getByID(transactions.accountid)?.categoryid,
+                    memo = transactions.memo,
+                    tagid = transactions.tagid,
+                    amountIn = transactions.amountOut,
+                    amountOut = transactions.amountIn
+                };
 
-            //    if (transactions.id != 0)
-            //        tContraria.tranferid = transactions.id;
-            //    else
-            //        tContraria.tranferid = getNextID() + 1;
+                if (transactions.id != 0)
+                    tContraria.tranferid = transactions.id;
+                else
+                    tContraria.tranferid = getNextID() + 1;
 
-            //    tContraria.transactionStatusid = transactions.transactionStatusid;
+                tContraria.transactionStatusid = transactions.transactionStatusid;
 
-            //    update(tContraria);
+                update(tContraria);
 
-            //}
-            //else if (transactions.tranferid != null &&
-            //    transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            //{
-            //    Transactions? tContraria = getByID(transactions.tranferid);
-            //    if (tContraria != null)
-            //    {
-            //        tContraria.date = transactions.date;
-            //        tContraria.accountid = transactions.category.accounts.id;
-            //        tContraria.personid = transactions.personid;
-            //        tContraria.categoryid = servicesContainer.GetInstance<AccountsService>().getByID(transactions.accountid)?.categoryid;
-            //        tContraria.memo = transactions.memo;
-            //        tContraria.tagid = transactions.tagid;
-            //        tContraria.amountIn = transactions.amountOut;
-            //        tContraria.amountOut = transactions.amountIn;
-            //        tContraria.transactionStatusid = transactions.transactionStatusid;
-            //        update(tContraria);
-            //    }
-            //}
+            }
+            else if (transactions.tranferid != null &&
+                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                Transactions? tContraria = getByID(transactions.tranferid);
+                if (tContraria != null)
+                {
+                    tContraria.date = transactions.date;
+                    tContraria.accountid = transactions.category.accounts.id;
+                    tContraria.personid = transactions.personid;
+                    tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
+                    tContraria.memo = transactions.memo;
+                    tContraria.tagid = transactions.tagid;
+                    tContraria.amountIn = transactions.amountOut;
+                    tContraria.amountOut = transactions.amountIn;
+                    tContraria.transactionStatusid = transactions.transactionStatusid;
+                    update(tContraria);
+                }
+            }
         }
 
         #endregion
@@ -152,65 +168,63 @@ namespace BOLib.Services
 
         public void updateTranferFromSplit(Transactions transactions)
         {
-            //TODO:Hacer en clase servicios
-            //if (transactions.tranferSplitid != null &&
-            //    transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-            //{
-            //    Splits? tContraria = servicesContainer.GetInstance<SplitsService>().getByID(transactions.tranferSplitid);
-            //    if (tContraria != null)
-            //    {
-            //        tContraria.transaction.date = transactions.date;
-            //        tContraria.transaction.personid = transactions.personid;
-            //        tContraria.categoryid = transactions.account.categoryid;
-            //        tContraria.memo = transactions.memo;
-            //        tContraria.tagid = transactions.tagid;
-            //        tContraria.amountIn = transactions.amountOut;
-            //        tContraria.amountOut = transactions.amountIn;
-            //        tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
-            //        //servicesContainer.GetInstance<SplitsService>().update(tContraria);            
-            //    }
-            //}
+            if (transactions.tranferSplitid != null &&
+                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            {
+                Splits? tContraria = splitsService.getByID(transactions.tranferSplitid);
+                if (tContraria != null)
+                {
+                    tContraria.transaction.date = transactions.date;
+                    tContraria.transaction.personid = transactions.personid;
+                    tContraria.categoryid = transactions.account.categoryid;
+                    tContraria.memo = transactions.memo;
+                    tContraria.tagid = transactions.tagid;
+                    tContraria.amountIn = transactions.amountOut;
+                    tContraria.amountOut = transactions.amountIn;
+                    tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
+                    splitsService.update(tContraria);            
+                }
+            }
         }
 
         public void updateTransactionAfterSplits(Transactions? transactions)
         {
-            //TODO:Hacer en clase servicios
-            //List<Splits>? lSplits = transactions.splits ?? servicesContainer.GetInstance<SplitsService>().getbyTransactionid(transactions.id);
+            List<Splits>? lSplits = transactions.splits ?? splitsService.getbyTransactionid(transactions.id);
 
-            //if (lSplits != null && lSplits.Count != 0)
-            //{
-            //    transactions.amountIn = 0;
-            //    transactions.amountOut = 0;
+            if (lSplits != null && lSplits.Count != 0)
+            {
+                transactions.amountIn = 0;
+                transactions.amountOut = 0;
 
-            //    foreach (Splits splits in lSplits)
-            //    {
-            //        transactions.amountIn += (splits.amountIn == null ? 0 : splits.amountIn);
-            //        transactions.amountOut += (splits.amountOut == null ? 0 : splits.amountOut);
-            //    }
+                foreach (Splits splits in lSplits)
+                {
+                    transactions.amountIn += (splits.amountIn == null ? 0 : splits.amountIn);
+                    transactions.amountOut += (splits.amountOut == null ? 0 : splits.amountOut);
+                }
 
-            //    transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-            //    transactions.category = servicesContainer.GetInstance<CategoriesService>().getByID((int)CategoriesService.eSpecialCategories.Split);
-            //}
-            //else if (transactions.categoryid != null
-            //    && transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split)
-            //{
-            //    transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-            //    transactions.category = servicesContainer.GetInstance<CategoriesService>().getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
-            //}
+                transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
+                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
+            }
+            else if (transactions.categoryid != null
+                && transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split)
+            {
+                transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
+                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+            }
 
-            //if (transactions.id == 0)
-            //{
-            //    update(transactions);
-            //    foreach (Splits splits in lSplits)
-            //    {
-            //        splits.transactionid = transactions.id;
-            //        servicesContainer.GetInstance<SplitsService>().update(splits);
-            //    }
-            //}
-            //else
-            //{
-            //    update(transactions);
-            //}
+            if (transactions.id == 0)
+            {
+                update(transactions);
+                foreach (Splits splits in lSplits)
+                {
+                    splits.transactionid = transactions.id;
+                    splitsService.update(splits);
+                }
+            }
+            else
+            {
+                update(transactions);
+            }
         }
 
         public void updateTranferSplits(Transactions? transactions, Splits splits)
@@ -267,7 +281,7 @@ namespace BOLib.Services
             }
         }
 
-        #endregion       
+        #endregion
 
     }
 }

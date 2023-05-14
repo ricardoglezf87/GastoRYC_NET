@@ -19,20 +19,23 @@ namespace GastosRYC.Views
     {
 
         #region Variables
-
-        private readonly SimpleInjector.Container servicesContainer;
+        
         private AccountsView? accountSelected;
         private readonly MainWindow parentForm;
+        private readonly SplitsService splitsService;
+        private readonly TransactionsService transactionsService;
 
         #endregion
 
         #region Constructor
 
-        public PartialTransactions(SimpleInjector.Container _servicesContainer, MainWindow _parentForm)
+        public PartialTransactions(MainWindow _parentForm)
         {
             InitializeComponent();
-            servicesContainer = _servicesContainer;
             parentForm = _parentForm;
+            splitsService = InstanceBase<SplitsService>.Instance;
+            transactionsService = InstanceBase<TransactionsService>.Instance;
+            
         }
 
         #endregion
@@ -57,9 +60,9 @@ namespace GastosRYC.Views
         private void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
-            FrmSplitsList frm = new FrmSplitsList(transactions, servicesContainer);
+            FrmSplitsList frm = new FrmSplitsList(transactions);
             frm.ShowDialog();
-            servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transactions);
+            transactionsService.updateTransactionAfterSplits(transactions);
             loadTransactions();
             parentForm.loadAccounts();
         }
@@ -98,7 +101,7 @@ namespace GastosRYC.Views
                     transactionsReminders.tagid = transactions.tagid;
                     transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
-                    FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders, servicesContainer);
+                    FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders);
                     frm.ShowDialog();
                     if (frm.windowsResult == eWindowsResult.Sucess)
                         MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
@@ -126,7 +129,7 @@ namespace GastosRYC.Views
         {
             if (gvTransactions.CurrentItem != null)
             {
-                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem, servicesContainer);
+                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem);
                 frm.ShowDialog();
                 loadTransactions();
                 parentForm.loadAccounts();
@@ -158,7 +161,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
+                    transactionsService.update(transactions);
                 }
                 loadTransactions();
             }
@@ -175,7 +178,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
-                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
+                    transactionsService.update(transactions);
                 }
                 loadTransactions();
             }
@@ -192,7 +195,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
-                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
+                    transactionsService.update(transactions);
                 }
                 loadTransactions();
             }
@@ -245,7 +248,7 @@ namespace GastosRYC.Views
 
         public void loadTransactions()
         {
-            gvTransactions.ItemsSource = servicesContainer.GetInstance<TransactionsService>().getAll();
+            gvTransactions.ItemsSource = transactionsService.getAll();
             ApplyFilters(accountSelected);
         }
 
@@ -314,19 +317,19 @@ namespace GastosRYC.Views
                         Splits splits = lSplits[i];
                         if (splits.tranferid != null)
                         {
-                            servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(splits.tranferid));
+                            transactionsService.delete(transactionsService.getByID(splits.tranferid));
                         }
 
-                        servicesContainer.GetInstance<SplitsService>().delete(splits);
+                        splitsService.delete(splits);
                     }
                 }
 
                 if (transactions.tranferid != null)
                 {
-                    servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(transactions.tranferid));
+                    transactionsService.delete(transactionsService.getByID(transactions.tranferid));
                 }
 
-                servicesContainer.GetInstance<TransactionsService>().delete(transactions);
+                transactionsService.delete(transactions);
             }
         }
 

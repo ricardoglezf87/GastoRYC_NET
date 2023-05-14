@@ -1,5 +1,6 @@
-﻿using BOLib.Helpers;
+﻿
 using BOLib.Models;
+using DAOLib.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,16 @@ namespace BOLib.Services
 
         #region Propiedades y Contructor
 
-        private readonly SimpleInjector.Container servicesContainer;
+        private readonly ForecastsChartService forecastsChartService;
+        private readonly TransactionsService transactionsService;
+        private readonly AccountsService accountService;
 
-        public ForecastsChartService(SimpleInjector.Container servicesContainer)
+        public ForecastsChartService()
         {
-            this.servicesContainer = servicesContainer;
+            //TODO: Aqui creo que seria un forecast manager
+            forecastsChartService = InstanceBase<ForecastsChartService>.Instance;
+            transactionsService = InstanceBase<TransactionsService>.Instance;
+            accountService = InstanceBase<AccountsService>.Instance;
         }
 
         #endregion Propiedades y Contructor

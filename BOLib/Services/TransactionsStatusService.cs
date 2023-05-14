@@ -1,5 +1,4 @@
 ﻿using BOLib.Extensions;
-using BOLib.Helpers;
 using BOLib.Models;
 using DAOLib.Managers;
 using DAOLib.Models;
@@ -14,7 +13,7 @@ namespace BOLib.Services
 
         public TransactionsStatusService()
         {
-            transactionsStatusManager = new();
+            transactionsStatusManager = InstanceBase<TransactionsStatusManager>.Instance;
         }
 
         public enum eTransactionsTypes : int
