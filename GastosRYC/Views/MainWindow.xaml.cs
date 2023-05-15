@@ -27,6 +27,8 @@ namespace GastosRYC
         private readonly AccountsService accountsService;
         private readonly DateCalendarService dateCalendarService;
         private readonly ExpirationsRemindersService expirationsRemindersService;
+        private readonly InvestmentProductsPricesService investmentProductsPricesService;
+        private readonly InvestmentProductsService investmentProductsService;
 
 
         private enum eViews : int
@@ -48,6 +50,8 @@ namespace GastosRYC
             accountsService = InstanceBase<AccountsService>.Instance;
             dateCalendarService = InstanceBase<DateCalendarService>.Instance;
             expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
+            investmentProductsPricesService = InstanceBase<InvestmentProductsPricesService>.Instance;
+            investmentProductsService = InstanceBase<InvestmentProductsService>.Instance;
         }
 
         #endregion
@@ -288,35 +292,33 @@ namespace GastosRYC
 
         private async void updatePrices()
         {
-            //TODO: Clase servicio
-            //try
-            //{
-            //    List<InvestmentProducts>? lInvestmentProducts = investmentProductsService
-            //        .getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
+            try
+            {
+                List<InvestmentProducts>? lInvestmentProducts = investmentProductsService.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
 
-            //    if (lInvestmentProducts != null)
-            //    {
-            //        LoadDialog loadDialog = new(lInvestmentProducts.Count);
-            //        loadDialog.Show();
+                if (lInvestmentProducts != null)
+                {
+                    LoadDialog loadDialog = new(lInvestmentProducts.Count);
+                    loadDialog.Show();
 
-            //        foreach (InvestmentProducts investmentProducts in lInvestmentProducts)
-            //        {
-            //            await servicesContainer.GetInstance<InvestmentProductsPricesService>().getPricesOnlineAsync(investmentProducts);
-            //            loadDialog.performeStep();
-            //        }
+                    foreach (InvestmentProducts investmentProducts in lInvestmentProducts)
+                    {
+                        await investmentProductsPricesService.getPricesOnlineAsync(investmentProducts);
+                        loadDialog.performeStep();
+                    }
 
-            //        loadDialog.Close();
-            //        MessageBox.Show("Actualizado con exito!", "Actualización de precios");
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show("No hay productos financieros a actualizar", "Actualización de precios");
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de precios");
-            //}
+                    loadDialog.Close();
+                    MessageBox.Show("Actualizado con exito!", "Actualización de precios");
+                }
+                else
+                {
+                    MessageBox.Show("No hay productos financieros a actualizar", "Actualización de precios");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de precios");
+            }
         }
 
         #endregion

@@ -23,8 +23,10 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator DateCalendar(DateCalendarDAO v)
+        public static explicit operator DateCalendar?(DateCalendarDAO? v)
         {
+            if (v == null) return null;
+
             return new DateCalendar()
             {
                 date = v.date,

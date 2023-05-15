@@ -217,7 +217,7 @@ namespace BOLib.Services
             Transactions? tContraria = new()
             {
                 date = transactions.date.removeTime(),
-                accountid = transactions.category.accounts.id,
+                accountid = transactions.category.accounts?.id,
                 account = transactions.category.accounts,
                 personid = transactions.personid,
                 person = transactions.person,

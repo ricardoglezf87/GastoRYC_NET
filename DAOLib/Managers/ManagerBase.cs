@@ -20,13 +20,24 @@ namespace DAOLib.Managers
             return RYCContextServiceDAO.getInstance().BBDD.Set<T>().FirstOrDefault(x => id.Equals(x.id));
         }
 
-        public void update(T? obj)
+        public void update(T? obj,bool save = true)
         {
             if (obj != null)
             {
                 RYCContextServiceDAO.getInstance().BBDD.Update(obj);
-                RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
+                if (save)
+                    saveChanges();
             }
+        }
+
+        public void saveChanges()
+        {
+            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
+        }
+
+        public async Task saveChangesAsync()
+        {
+            await RYCContextServiceDAO.getInstance().BBDD.SaveChangesAsync();
         }
 
         public void delete(T? obj)

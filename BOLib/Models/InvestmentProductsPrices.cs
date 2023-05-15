@@ -23,7 +23,7 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator InvestmentProductsPrices(InvestmentProductsPricesDAO v)
+        public static explicit operator InvestmentProductsPrices(InvestmentProductsPricesDAO? v)
         {
             return new InvestmentProductsPrices()
             {
