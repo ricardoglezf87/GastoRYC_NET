@@ -34,18 +34,16 @@ namespace BOLib.Models
             };
         }        
         
-        public static explicit operator Accounts?(AccountsDAO? v)
+        public static explicit operator Accounts(AccountsDAO v)
         {
-            if (v == null) return null;
-
             return new Accounts()
             {
                 id = v.id,
                 description = v.description,
                 categoryid = v.categoryid,
-                category = (Categories) v.category,
+                category = (v.category != null) ? (Categories) v.category : null,
                 accountsTypesid = v.accountsTypesid,
-                accountsTypes = (AccountsTypes) v.accountsTypes
+                accountsTypes = (v.accountsTypes != null) ? (AccountsTypes)v.accountsTypes : null                
             };
         }
     }

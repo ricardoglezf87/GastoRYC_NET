@@ -141,10 +141,10 @@ namespace BOLib.Services
             return null;
         }
 
-        public List<Transactions> registerTransactionfromReminderSimulation(int id)
+        public List<Transactions> registerTransactionfromReminderSimulation(ExpirationsReminders exp)
         {
             List<Transactions>? lTransactions = new();
-            ExpirationsReminders? expirationsReminders = getByID(id);
+            ExpirationsReminders? expirationsReminders = exp;
             if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
             {
                 Transactions transactions = new Transactions();

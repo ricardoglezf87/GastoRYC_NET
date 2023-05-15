@@ -50,8 +50,7 @@ namespace BOLib.Services
 
             foreach (ExpirationsReminders exp in expirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
             {
-
-                remTransactions.AddRange(expirationsRemindersService.registerTransactionfromReminderSimulation(exp.id));
+                remTransactions.AddRange(expirationsRemindersService.registerTransactionfromReminderSimulation(exp));
             }
 
             List<Transactions>? transactions = transactionsService.getAll();

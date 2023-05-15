@@ -43,23 +43,21 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator SplitsReminders?(SplitsRemindersDAO v)
+        public static explicit operator SplitsReminders(SplitsRemindersDAO v)
         {
-            if (v == null) return null;
-
             return new SplitsReminders()
             {
                 id = v.id,
                 transactionid = v.transactionid,
-                transaction = (TransactionsReminders)v.transaction,
+                transaction = (v.transaction != null) ? (TransactionsReminders)v.transaction : null,
                 categoryid = v.categoryid,
-                category = (Categories)v.category,
+                category = (v.category != null) ? (Categories)v.category : null,
                 amountOut = v.amountOut,
                 amountIn = v.amountIn,
                 memo = v.memo,
                 tranferid = v.tranferid,
                 tagid = v.tagid,
-                tag = (Tags)v.tag
+                tag = (v.tag != null) ? (Tags)v.tag : null
             };
         }
     }

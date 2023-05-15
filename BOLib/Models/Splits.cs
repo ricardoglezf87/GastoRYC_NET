@@ -44,23 +44,21 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator Splits?(SplitsDAO v)
+        public static explicit operator Splits(SplitsDAO v)
         {
-            if (v == null) return null;
-
             return new Splits()
             {
                 id = v.id,
                 transactionid = v.transactionid,
-                transaction = (Transactions)v.transaction,
+                transaction = (v.transaction != null) ? (Transactions)v.transaction : null,
                 categoryid = v.categoryid,
-                category = (Categories)v.category,
+                category = (v.category != null) ? (Categories)v.category : null,
                 amountOut = v.amountOut,
                 amountIn = v.amountIn,
                 memo = v.memo,
                 tranferid = v.tranferid,
                 tagid = v.tagid,
-                tag = (Tags)v.tag
+                tag = (v.tag != null) ? (Tags)v.tag : null
             };
         }
     }

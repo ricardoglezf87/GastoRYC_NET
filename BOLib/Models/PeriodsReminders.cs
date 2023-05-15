@@ -17,10 +17,8 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator PeriodsReminders?(PeriodsRemindersDAO? v)
+        public static explicit operator PeriodsReminders(PeriodsRemindersDAO? v)
         {
-            if (v == null) return null;
-
             return new PeriodsReminders()
             {
                 id = v.id,

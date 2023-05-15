@@ -91,29 +91,27 @@ namespace BOLib.Models
         }
 
 
-        public static explicit operator TransactionsReminders?(TransactionsRemindersDAO v)
+        public static explicit operator TransactionsReminders(TransactionsRemindersDAO v)
         {
-            if (v == null) return null;
-
             return new TransactionsReminders()
             {
                 id = v.id,
                 date = v.date,
                 accountid = v.accountid,
-                account = (Accounts)v.account,
+                account = (v.account != null) ? (Accounts)v.account : null,
                 personid = v.personid,
-                person = (Persons)v.person,
+                person = (v.person != null) ? (Persons)v.person : null,
                 categoryid = v.categoryid,
-                category = (Categories)v.category,
+                category = (v.category != null) ? (Categories)v.category : null,
                 amountIn = v.amountIn,
                 amountOut = v.amountOut,
                 memo = v.memo,
                 tranferid = v.tranferid,
                 tranferSplitid = v.tranferSplitid,
-                transactionStatus = (TransactionsStatus)v.transactionStatus,
+                transactionStatus = (v.transactionStatus != null) ? (TransactionsStatus)v.transactionStatus : null,
                 transactionStatusid = v.transactionStatusid,
                 tagid = v.tagid,
-                tag = (Tags)v.tag
+                tag = (v.tag != null) ? (Tags)v.tag : null
             };
         }
     }

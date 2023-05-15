@@ -23,15 +23,13 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator InvestmentProductsPrices?(InvestmentProductsPricesDAO v)
+        public static explicit operator InvestmentProductsPrices(InvestmentProductsPricesDAO v)
         {
-            if (v == null) return null;
-
             return new InvestmentProductsPrices()
             {
                 id = v.id,
                 date = v.date,
-                investmentProducts = (InvestmentProducts)v.investmentProducts,
+                investmentProducts = (v.investmentProducts != null) ? (InvestmentProducts)v.investmentProducts : null,
                 investmentProductsid = v.investmentProductsid,
                 prices = v.prices
             };

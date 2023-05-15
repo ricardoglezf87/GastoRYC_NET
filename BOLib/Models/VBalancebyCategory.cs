@@ -29,10 +29,8 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator VBalancebyCategory?(VBalancebyCategoryDAO v)
+        public static explicit operator VBalancebyCategory(VBalancebyCategoryDAO v)
         {
-            if (v == null) return null;
-
             return new VBalancebyCategory()
             {
                 year = v.year,

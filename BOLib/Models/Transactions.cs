@@ -108,34 +108,32 @@ namespace BOLib.Models
         }
 
 
-        public static explicit operator Transactions?(TransactionsDAO v)
+        public static explicit operator Transactions(TransactionsDAO v)
         {
-            if (v == null) return null;
-
             return new Transactions()
             {
                 id = v.id,
                 date = v.date,
                 accountid = v.accountid,
-                account = (Accounts)v.account,
+                account = (v.account != null) ? (Accounts)v.account : null,
                 personid = v.personid,
-                person = (Persons)v.person,
+                person = (v.person != null) ? (Persons)v.person : null,
                 categoryid = v.categoryid,
-                category = (Categories)v.category,
+                category = (v.category != null) ? (Categories)v.category : null,
                 amountIn = v.amountIn,
                 amountOut = v.amountOut,
                 memo = v.memo,
                 investmentCategory = v.investmentCategory,
-                investmentProducts = (InvestmentProducts)v.investmentProducts,
+                investmentProducts = (v.investmentProducts != null) ? (InvestmentProducts)v.investmentProducts : null,
                 investmentProductsid = v.investmentProductsid,
                 tranferid = v.tranferid,
                 tranferSplitid = v.tranferSplitid,
-                transactionStatus = (TransactionsStatus)v.transactionStatus,
+                transactionStatus = (v.transactionStatus != null) ? (TransactionsStatus)v.transactionStatus : null,
                 transactionStatusid = v.transactionStatusid,
                 numShares = v.numShares,
                 pricesShares = v.pricesShares,
                 tagid = v.tagid,
-                tag = (Tags)v.tag
+                tag = (v.tag != null) ? (Tags)v.tag : null
             };
         }
     }

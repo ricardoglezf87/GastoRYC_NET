@@ -53,10 +53,8 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator ExpirationsReminders?(ExpirationsRemindersDAO v)
-        {            
-            if (v == null) return null;
-
+        public static explicit operator ExpirationsReminders(ExpirationsRemindersDAO v)
+        {      
             return new ExpirationsReminders()
             {
                 date = v.date,
