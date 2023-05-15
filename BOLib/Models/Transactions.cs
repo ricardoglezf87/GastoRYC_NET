@@ -43,7 +43,7 @@ namespace BOLib.Models
 
         public virtual InvestmentProducts? investmentProducts { set; get; }
 
-        public virtual List<Splits>? splits { set; get; }
+        public virtual List<Splits?>? splits { set; get; }
 
         public virtual Decimal? numShares { set; get; }
 
@@ -96,33 +96,35 @@ namespace BOLib.Models
         }
 
 
-        public static explicit operator Transactions(TransactionsDAO v)
+        public static explicit operator Transactions?(TransactionsDAO? v)
         {
-            return new Transactions()
-            {
-                id = v.id,
-                date = v.date,
-                accountid = v.accountid,
-                account = (v.account != null) ? (Accounts)v.account : null,
-                personid = v.personid,
-                person = (v.person != null) ? (Persons)v.person : null,
-                categoryid = v.categoryid,
-                category = (v.category != null) ? (Categories)v.category : null,
-                amountIn = v.amountIn,
-                amountOut = v.amountOut,
-                memo = v.memo,
-                investmentCategory = v.investmentCategory,
-                investmentProducts = (v.investmentProducts != null) ? (InvestmentProducts)v.investmentProducts : null,
-                investmentProductsid = v.investmentProductsid,
-                tranferid = v.tranferid,
-                tranferSplitid = v.tranferSplitid,
-                transactionStatus = (v.transactionStatus != null) ? (TransactionsStatus)v.transactionStatus : null,
-                transactionStatusid = v.transactionStatusid,
-                numShares = v.numShares,
-                pricesShares = v.pricesShares,
-                tagid = v.tagid,
-                tag = (v.tag != null) ? (Tags)v.tag : null
-            };
+            return v == null
+                ? null
+                : new Transactions()
+                {
+                    id = v.id,
+                    date = v.date,
+                    accountid = v.accountid,
+                    account = (v.account != null) ? (Accounts?)v.account : null,
+                    personid = v.personid,
+                    person = (v.person != null) ? (Persons?)v.person : null,
+                    categoryid = v.categoryid,
+                    category = (v.category != null) ? (Categories?)v.category : null,
+                    amountIn = v.amountIn,
+                    amountOut = v.amountOut,
+                    memo = v.memo,
+                    investmentCategory = v.investmentCategory,
+                    investmentProducts = (v.investmentProducts != null) ? (InvestmentProducts?)v.investmentProducts : null,
+                    investmentProductsid = v.investmentProductsid,
+                    tranferid = v.tranferid,
+                    tranferSplitid = v.tranferSplitid,
+                    transactionStatus = (v.transactionStatus != null) ? (TransactionsStatus?)v.transactionStatus : null,
+                    transactionStatusid = v.transactionStatusid,
+                    numShares = v.numShares,
+                    pricesShares = v.pricesShares,
+                    tagid = v.tagid,
+                    tag = (v.tag != null) ? (Tags?)v.tag : null
+                };
         }
     }
 }

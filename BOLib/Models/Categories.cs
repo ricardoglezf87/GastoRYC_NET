@@ -28,15 +28,17 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator Categories(CategoriesDAO? v)
+        public static explicit operator Categories?(CategoriesDAO? v)
         {
-            return new Categories()
-            {
-                id = v.id,
-                description = v.description,
-                categoriesTypesid = v.categoriesTypesid,
-                categoriesTypes = (v.categoriesTypes != null) ? (CategoriesTypes)v.categoriesTypes : null
-            };
+            return v == null
+                ? null
+                : new Categories()
+                {
+                    id = v.id,
+                    description = v.description,
+                    categoriesTypesid = v.categoriesTypesid,
+                    categoriesTypes = (v.categoriesTypes != null) ? (CategoriesTypes?)v.categoriesTypes : null
+                };
         }
     }
 }

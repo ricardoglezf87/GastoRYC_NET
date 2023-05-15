@@ -21,19 +21,19 @@ namespace BOLib.Services
             Reconciled = 3
         }
 
-        public List<TransactionsStatus>? getAll()
+        public List<TransactionsStatus?>? getAll()
         {
             return transactionsStatusManager.getAll()?.toListBO();
         }
 
         public TransactionsStatus? getFirst()
         {
-            return (TransactionsStatus)transactionsStatusManager.getFirst();
+            return (TransactionsStatus?)transactionsStatusManager.getFirst();
         }
 
         public TransactionsStatus? getByID(int? id)
         {
-            return (TransactionsStatus)transactionsStatusManager.getByID(id);
+            return (TransactionsStatus?)transactionsStatusManager.getByID(id);
         }
     }
 }

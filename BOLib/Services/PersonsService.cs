@@ -18,14 +18,14 @@ namespace BOLib.Services
             transactionsService = InstanceBase<TransactionsService>.Instance;
         }
 
-        public List<Persons>? getAll()
+        public List<Persons?>? getAll()
         {
             return personsManager.getAll()?.toListBO();
         }
 
         public Persons? getByID(int? id)
         {
-            return (Persons)personsManager.getByID(id);
+            return (Persons?)personsManager.getByID(id);
         }
 
         public void update(Persons persons)

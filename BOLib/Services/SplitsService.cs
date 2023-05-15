@@ -22,24 +22,24 @@ namespace BOLib.Services
             categoriesService = InstanceBase<CategoriesService>.Instance;
         }
 
-        public List<Splits>? getAll()
+        public List<Splits?>? getAll()
         {
             return splitsManager.getAll()?.toListBO();
         }
 
-        public List<Splits>? getbyTransactionidNull()
+        public List<Splits?>? getbyTransactionidNull()
         {
             return splitsManager.getbyTransactionidNull()?.toListBO();
         }
 
-        public List<Splits>? getbyTransactionid(int transactionid)
+        public List<Splits?>? getbyTransactionid(int transactionid)
         {
             return splitsManager.getbyTransactionid(transactionid)?.toListBO();
         }
 
         public Splits? getByID(int? id)
         {
-            return (Splits)splitsManager.getByID(id);
+            return (Splits?)splitsManager.getByID(id);
         }
 
         public void update(Splits splits)
@@ -57,7 +57,7 @@ namespace BOLib.Services
             Decimal? total = 0;
             if (transactions.splits != null && transactions.splits.Count != 0)
             {
-                foreach (Splits splits in transactions.splits)
+                foreach (Splits? splits in transactions.splits)
                 {
                     total += (splits.amountIn == null ? 0 : splits.amountIn);
                     total -= (splits.amountOut == null ? 0 : splits.amountOut);

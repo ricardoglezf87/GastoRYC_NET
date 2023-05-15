@@ -28,22 +28,22 @@ namespace BOLib.Services
 
         #region TransactionsActions
 
-        public List<Transactions>? getAll()
+        public List<Transactions?>? getAll()
         {
             return transactionsManager.getAll()?.toListBO();
         }
 
         public Transactions? getByID(int? id)
         {
-            return (Transactions)transactionsManager.getByID(id);
+            return (Transactions?)transactionsManager.getByID(id);
         }
 
-        public List<Transactions>? getByInvestmentProduct(int? id)
+        public List<Transactions?>? getByInvestmentProduct(int? id)
         {
             return transactionsManager.getByInvestmentProduct(id)?.toListBO();
         }
 
-        public List<Transactions>? getByInvestmentProduct(InvestmentProducts? investment)
+        public List<Transactions?>? getByInvestmentProduct(InvestmentProducts? investment)
         {
             return getByInvestmentProduct(investment.id);
         }
@@ -59,22 +59,22 @@ namespace BOLib.Services
             transactionsManager.delete(transactions?.toDAO());
         }
 
-        public List<Transactions>? getByAccount(int? id)
+        public List<Transactions?>? getByAccount(int? id)
         {
             return transactionsManager.getByAccount(id)?.toListBO();
         }
 
-        public List<Transactions>? getByAccount(Accounts? accounts)
+        public List<Transactions?>? getByAccount(Accounts? accounts)
         {
             return getByAccount(accounts?.id);
         }
 
-        public List<Transactions>? getByPerson(int? id)
+        public List<Transactions?>? getByPerson(int? id)
         {
             return transactionsManager.getByPerson(id)?.toListBO();
         }
 
-        public List<Transactions>? getByPerson(Persons? person)
+        public List<Transactions?>? getByPerson(Persons? person)
         {
             return getByPerson(person?.id);
         }
@@ -179,14 +179,14 @@ namespace BOLib.Services
 
         public void updateTransactionAfterSplits(Transactions? transactions)
         {
-            List<Splits>? lSplits = transactions.splits ?? splitsService.getbyTransactionid(transactions.id);
+            List<Splits?>? lSplits = transactions.splits ?? splitsService.getbyTransactionid(transactions.id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
                 transactions.amountIn = 0;
                 transactions.amountOut = 0;
 
-                foreach (Splits splits in lSplits)
+                foreach (Splits? splits in lSplits)
                 {
                     transactions.amountIn += (splits.amountIn == null ? 0 : splits.amountIn);
                     transactions.amountOut += (splits.amountOut == null ? 0 : splits.amountOut);
@@ -205,7 +205,7 @@ namespace BOLib.Services
             if (transactions.id == 0)
             {
                 update(transactions);
-                foreach (Splits splits in lSplits)
+                foreach (Splits? splits in lSplits)
                 {
                     splits.transactionid = transactions.id;
                     splitsService.update(splits);

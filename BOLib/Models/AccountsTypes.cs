@@ -16,13 +16,15 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator AccountsTypes(AccountsTypesDAO? v)
+        public static explicit operator AccountsTypes?(AccountsTypesDAO? v)
         {
-            return new AccountsTypes()
-            {
-                id = v.id,
-                description = v.description
-            };
+            return v == null
+                ? null
+                : new AccountsTypes()
+                {
+                    id = v.id,
+                    description = v.description
+                };
         }
     }
 }

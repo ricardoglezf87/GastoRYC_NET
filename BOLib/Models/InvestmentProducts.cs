@@ -26,15 +26,17 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator InvestmentProducts(InvestmentProductsDAO? v)
+        public static explicit operator InvestmentProducts?(InvestmentProductsDAO? v)
         {
-            return new InvestmentProducts()
-            {
-                id = v.id,
-                description = v.description,
-                symbol = v.symbol,
-                url = v.url
-            };
+            return v == null
+                ? null
+                : new InvestmentProducts()
+                {
+                    id = v.id,
+                    description = v.description,
+                    symbol = v.symbol,
+                    url = v.url
+                };
         }
     }
 }

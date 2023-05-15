@@ -16,14 +16,14 @@ namespace BOLib.Services
         }
 
 
-        public List<Tags>? getAll()
+        public List<Tags?>? getAll()
         {
             return tagsManager.getAll()?.toListBO();
         }
 
         public Tags? getByID(int? id)
         {
-            return (Tags)tagsManager.getByID(id);
+            return (Tags?)tagsManager.getByID(id);
         }
 
         public void update(Tags tags)

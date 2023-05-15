@@ -29,17 +29,19 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator VBalancebyCategory(VBalancebyCategoryDAO v)
+        public static explicit operator VBalancebyCategory?(VBalancebyCategoryDAO? v)
         {
-            return new VBalancebyCategory()
-            {
-                year = v.year,
-                month = v.month,
-                categoriesTypesid = v.categoriesTypesid,
-                categoryid = v.categoryid,
-                category = v.category,
-                amount = v.amount
-            };
+            return v == null
+                ? null
+                : new VBalancebyCategory()
+                {
+                    year = v.year,
+                    month = v.month,
+                    categoriesTypesid = v.categoriesTypesid,
+                    categoryid = v.categoryid,
+                    category = v.category,
+                    amount = v.amount
+                };
         }
     }
 }

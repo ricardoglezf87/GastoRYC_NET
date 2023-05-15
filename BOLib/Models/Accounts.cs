@@ -32,17 +32,19 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator Accounts(AccountsDAO v)
+        public static explicit operator Accounts?(AccountsDAO? v)
         {
-            return new Accounts()
-            {
-                id = v.id,
-                description = v.description,
-                categoryid = v.categoryid,
-                category = (v.category != null) ? (Categories)v.category : null,
-                accountsTypesid = v.accountsTypesid,
-                accountsTypes = (v.accountsTypes != null) ? (AccountsTypes)v.accountsTypes : null
-            };
+            return v == null
+                ? null
+                : new Accounts()
+                {
+                    id = v.id,
+                    description = v.description,
+                    categoryid = v.categoryid,
+                    category = (v.category != null) ? (Categories?)v.category : null,
+                    accountsTypesid = v.accountsTypesid,
+                    accountsTypes = (v.accountsTypes != null) ? (AccountsTypes?)v.accountsTypes : null
+                };
         }
     }
 }

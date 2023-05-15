@@ -23,14 +23,14 @@ namespace BOLib.Services
 
         #region TransactionsRemindersActions
 
-        public List<TransactionsReminders>? getAll()
+        public List<TransactionsReminders?>? getAll()
         {
             return transactionsRemindersManager.getAll()?.toListBO();
         }
 
         public TransactionsReminders? getByID(int? id)
         {
-            return (TransactionsReminders)transactionsRemindersManager.getByID(id);
+            return (TransactionsReminders?)transactionsRemindersManager.getByID(id);
         }
 
         public void update(TransactionsReminders transactionsReminders)
@@ -68,14 +68,14 @@ namespace BOLib.Services
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            List<SplitsReminders>? lSplitsReminders = transactionsReminders.splits ?? splitsRemindersService.getbyTransactionid(transactionsReminders.id);
+            List<SplitsReminders?>? lSplitsReminders = transactionsReminders.splits ?? splitsRemindersService.getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
                 transactionsReminders.amountIn = 0;
                 transactionsReminders.amountOut = 0;
 
-                foreach (SplitsReminders splitsReminders in lSplitsReminders)
+                foreach (SplitsReminders? splitsReminders in lSplitsReminders)
                 {
                     transactionsReminders.amountIn += (splitsReminders.amountIn == null ? 0 : splitsReminders.amountIn);
                     transactionsReminders.amountOut += (splitsReminders.amountOut == null ? 0 : splitsReminders.amountOut);
@@ -94,7 +94,7 @@ namespace BOLib.Services
             if (transactionsReminders.id == 0)
             {
                 update(transactionsReminders);
-                foreach (SplitsReminders splitsReminders in lSplitsReminders)
+                foreach (SplitsReminders? splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.transactionid = transactionsReminders.id;
                     splitsRemindersService.update(splitsReminders);

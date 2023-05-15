@@ -16,13 +16,15 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator TransactionsStatus(TransactionsStatusDAO v)
+        public static explicit operator TransactionsStatus?(TransactionsStatusDAO? v)
         {
-            return new TransactionsStatus()
-            {
-                id = v.id,
-                description = v.description
-            };
+            return v == null
+                ? null
+                : new TransactionsStatus()
+                {
+                    id = v.id,
+                    description = v.description
+                };
         }
     }
 }

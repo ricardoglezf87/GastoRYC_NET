@@ -15,24 +15,24 @@ namespace BOLib.Services
             splitsRemindersManager = InstanceBase<SplitsRemindersManager>.Instance;
         }
 
-        public List<SplitsReminders>? getAll()
+        public List<SplitsReminders?>? getAll()
         {
             return splitsRemindersManager.getAll()?.toListBO();
         }
 
-        public List<SplitsReminders>? getbyTransactionidNull()
+        public List<SplitsReminders?>? getbyTransactionidNull()
         {
             return splitsRemindersManager.getbyTransactionidNull()?.toListBO();
         }
 
-        public List<SplitsReminders>? getbyTransactionid(int transactionid)
+        public List<SplitsReminders?>? getbyTransactionid(int transactionid)
         {
             return splitsRemindersManager.getbyTransactionid(transactionid)?.toListBO();
         }
 
         public SplitsReminders? getByID(int? id)
         {
-            return (SplitsReminders)splitsRemindersManager.getByID(id);
+            return (SplitsReminders?)splitsRemindersManager.getByID(id);
         }
 
         public void update(SplitsReminders splitsReminders)

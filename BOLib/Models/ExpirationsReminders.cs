@@ -38,15 +38,17 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator ExpirationsReminders(ExpirationsRemindersDAO v)
+        public static explicit operator ExpirationsReminders?(ExpirationsRemindersDAO? v)
         {
-            return new ExpirationsReminders()
-            {
-                date = v.date,
-                transactionsReminders = (v.transactionsReminders != null) ? (TransactionsReminders)v.transactionsReminders : null,
-                transactionsRemindersid = v.transactionsRemindersid,
-                done = v.done
-            };
+            return v == null
+                ? null
+                : new ExpirationsReminders()
+                {
+                    date = v.date,
+                    transactionsReminders = (v.transactionsReminders != null) ? (TransactionsReminders?)v.transactionsReminders : null,
+                    transactionsRemindersid = v.transactionsRemindersid,
+                    done = v.done
+                };
         }
     }
 }

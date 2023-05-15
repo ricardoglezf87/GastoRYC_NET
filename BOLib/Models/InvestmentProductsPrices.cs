@@ -22,16 +22,18 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator InvestmentProductsPrices(InvestmentProductsPricesDAO? v)
+        public static explicit operator InvestmentProductsPrices?(InvestmentProductsPricesDAO? v)
         {
-            return new InvestmentProductsPrices()
-            {
-                id = v.id,
-                date = v.date,
-                investmentProducts = (v.investmentProducts != null) ? (InvestmentProducts)v.investmentProducts : null,
-                investmentProductsid = v.investmentProductsid,
-                prices = v.prices
-            };
+            return v == null
+                ? null
+                : new InvestmentProductsPrices()
+                {
+                    id = v.id,
+                    date = v.date,
+                    investmentProducts = (v.investmentProducts != null) ? (InvestmentProducts?)v.investmentProducts : null,
+                    investmentProductsid = v.investmentProductsid,
+                    prices = v.prices
+                };
         }
     }
 }

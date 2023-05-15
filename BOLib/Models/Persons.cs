@@ -20,15 +20,17 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator Persons(PersonsDAO v)
+        public static explicit operator Persons?(PersonsDAO? v)
         {
-            return new Persons()
-            {
-                id = v.id,
-                name = v.name,
-                categoryid = v.categoryid,
-                category = (v.category != null) ? (Categories)v.category : null
-            };
+            return v == null
+                ? null
+                : new Persons()
+                {
+                    id = v.id,
+                    name = v.name,
+                    categoryid = v.categoryid,
+                    category = (v.category != null) ? (Categories?)v.category : null
+                };
         }
     }
 }

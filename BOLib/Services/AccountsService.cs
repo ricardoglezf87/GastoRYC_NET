@@ -19,17 +19,17 @@ namespace BOLib.Services
             transactionsService = InstanceBase<TransactionsService>.Instance;
         }
 
-        public List<Accounts>? getAll()
+        public List<Accounts?>? getAll()
         {
             return accountsManager.getAll()?.toListBO();
         }
 
-        public List<Accounts>? getAllOrderByAccountsTypesId()
+        public List<Accounts?>? getAllOrderByAccountsTypesId()
         {
             return accountsManager.getAllOrderByAccountsTypesId()?.toListBO();
         }
 
-        public List<Accounts>? getAllOpened()
+        public List<Accounts?>? getAllOpened()
         {
             return accountsManager.getAllOpened()?.toListBO();
         }
@@ -41,7 +41,7 @@ namespace BOLib.Services
 
         public Accounts? getByID(int? id)
         {
-            return (Accounts)accountsManager.getByID(id);
+            return (Accounts?)accountsManager.getByID(id);
         }
 
         public void update(Accounts accounts)

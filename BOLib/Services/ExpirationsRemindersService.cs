@@ -27,12 +27,12 @@ namespace BOLib.Services
             transactionsRemindersService = InstanceBase<TransactionsRemindersService>.Instance;
         }
 
-        public List<ExpirationsReminders>? getAll()
+        public List<ExpirationsReminders?>? getAll()
         {
             return expirationsRemindersManager.getAll()?.toListBO();
         }
 
-        public List<ExpirationsReminders>? getAllWithGeneration()
+        public List<ExpirationsReminders?>? getAllWithGeneration()
         {
             GenerationAllExpirations();
             return getAll();
@@ -43,19 +43,19 @@ namespace BOLib.Services
             return expirationsRemindersManager.existsExpiration(transactionsReminder.toDAO(), date);
         }
 
-        public List<ExpirationsReminders>? getAllPendingWithGeneration()
+        public List<ExpirationsReminders?>? getAllPendingWithGeneration()
         {
             return getAllWithGeneration()?.Where(x => x.done != true).ToList();
         }
 
-        public List<ExpirationsReminders>? getAllPendingWithoutFutureWithGeneration()
+        public List<ExpirationsReminders?>? getAllPendingWithoutFutureWithGeneration()
         {
             return getAllWithGeneration()?.Where(x => x.done != true && x.groupDate != "Futuro").ToList();
         }
 
         public void GenerationAllExpirations()
         {
-            foreach (TransactionsReminders transactionsReminders in transactionsRemindersService.getAll())
+            foreach (TransactionsReminders? transactionsReminders in transactionsRemindersService.getAll())
             {
                 generationExpirations(transactionsReminders);
             }
@@ -63,7 +63,7 @@ namespace BOLib.Services
 
         public void generateAutoregister()
         {
-            foreach (ExpirationsReminders exp in getAllPendingWithGeneration()?
+            foreach (ExpirationsReminders? exp in getAllPendingWithGeneration()?
                 .Where(x => x.date <= DateTime.Now &&
                     (x.transactionsReminders.autoRegister.HasValue && x.transactionsReminders.autoRegister.Value)))
             {
@@ -118,7 +118,7 @@ namespace BOLib.Services
 
                     if (expirationsReminders.transactionsReminders.splits != null)
                     {
-                        foreach (SplitsReminders splitsReminders in expirationsReminders.transactionsReminders.splits)
+                        foreach (SplitsReminders? splitsReminders in expirationsReminders.transactionsReminders.splits)
                         {
                             Splits splits = new();
                             splits.transactionid = transactions.id;
@@ -168,7 +168,7 @@ namespace BOLib.Services
                 if (expirationsReminders.transactionsReminders.splits != null)
                 {
 
-                    foreach (SplitsReminders splitsReminders in expirationsReminders.transactionsReminders.splits)
+                    foreach (SplitsReminders? splitsReminders in expirationsReminders.transactionsReminders.splits)
                     {
                         Splits splits = new();
                         splits.transactionid = transactions.id;
@@ -233,10 +233,10 @@ namespace BOLib.Services
 
         public ExpirationsReminders? getByID(int? id)
         {
-            return (ExpirationsReminders)expirationsRemindersManager.getByID(id);
+            return (ExpirationsReminders?)expirationsRemindersManager.getByID(id);
         }
 
-        public List<ExpirationsReminders>? getByTransactionReminderid(int? id)
+        public List<ExpirationsReminders?>? getByTransactionReminderid(int? id)
         {
             return expirationsRemindersManager.getByTransactionReminderid(id)?.toListBO();
         }
@@ -246,14 +246,14 @@ namespace BOLib.Services
             expirationsRemindersManager.update(expirationsReminders?.toDAO());
         }
 
-        public void delete(ExpirationsReminders expirationsReminders)
+        public void delete(ExpirationsReminders? expirationsReminders)
         {
             expirationsRemindersManager.delete(expirationsReminders?.toDAO());
         }
 
         public void deleteByTransactionReminderid(int id)
         {
-            foreach (ExpirationsReminders expirationsReminder in getByTransactionReminderid(id))
+            foreach (ExpirationsReminders? expirationsReminder in getByTransactionReminderid(id))
             {
                 delete(expirationsReminder);
             }

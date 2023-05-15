@@ -44,7 +44,7 @@ namespace BOLib.Models
 
         public virtual TransactionsStatus? transactionStatus { set; get; }
 
-        public virtual List<SplitsReminders>? splits { set; get; }
+        public virtual List<SplitsReminders?>? splits { set; get; }
 
         [NotMapped]
         public virtual Decimal? amount => amountIn - amountOut;
@@ -85,28 +85,30 @@ namespace BOLib.Models
         }
 
 
-        public static explicit operator TransactionsReminders(TransactionsRemindersDAO v)
+        public static explicit operator TransactionsReminders?(TransactionsRemindersDAO? v)
         {
-            return new TransactionsReminders()
-            {
-                id = v.id,
-                date = v.date,
-                accountid = v.accountid,
-                account = (v.account != null) ? (Accounts)v.account : null,
-                personid = v.personid,
-                person = (v.person != null) ? (Persons)v.person : null,
-                categoryid = v.categoryid,
-                category = (v.category != null) ? (Categories)v.category : null,
-                amountIn = v.amountIn,
-                amountOut = v.amountOut,
-                memo = v.memo,
-                tranferid = v.tranferid,
-                tranferSplitid = v.tranferSplitid,
-                transactionStatus = (v.transactionStatus != null) ? (TransactionsStatus)v.transactionStatus : null,
-                transactionStatusid = v.transactionStatusid,
-                tagid = v.tagid,
-                tag = (v.tag != null) ? (Tags)v.tag : null
-            };
+            return v == null
+                ? null
+                : new TransactionsReminders()
+                {
+                    id = v.id,
+                    date = v.date,
+                    accountid = v.accountid,
+                    account = (v.account != null) ? (Accounts?)v.account : null,
+                    personid = v.personid,
+                    person = (v.person != null) ? (Persons?)v.person : null,
+                    categoryid = v.categoryid,
+                    category = (v.category != null) ? (Categories?)v.category : null,
+                    amountIn = v.amountIn,
+                    amountOut = v.amountOut,
+                    memo = v.memo,
+                    tranferid = v.tranferid,
+                    tranferSplitid = v.tranferSplitid,
+                    transactionStatus = (v.transactionStatus != null) ? (TransactionsStatus?)v.transactionStatus : null,
+                    transactionStatusid = v.transactionStatusid,
+                    tagid = v.tagid,
+                    tag = (v.tag != null) ? (Tags?)v.tag : null
+                };
         }
     }
 }
