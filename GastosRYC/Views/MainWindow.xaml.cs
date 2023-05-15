@@ -218,17 +218,7 @@ namespace GastosRYC
 
         private void openNewTransaction()
         {
-            FrmTransaction frm;
-
-            if (lvAccounts.SelectedItem == null)
-            {
-                frm = new FrmTransaction();
-            }
-            else
-            {
-                frm = new FrmTransaction(((AccountsView)lvAccounts.SelectedItem).id);
-            }
-
+            FrmTransaction frm = lvAccounts.SelectedItem == null ? new FrmTransaction() : new FrmTransaction(((AccountsView)lvAccounts.SelectedItem).id);
             frm.ShowDialog();
             loadAccounts();
 

@@ -67,16 +67,10 @@ namespace GastosRYC.Views
         {
             if (cbAccount?.SelectedItem != null && !transaction.investmentCategory.HasValue)
             {
-                if (((Accounts)cbAccount.SelectedItem).accountsTypesid ==
-                    (int)AccountsTypesService.eAccountsTypes.Invests)
-
-                {
-                    transaction.investmentCategory = false;
-                }
-                else
-                {
-                    transaction.investmentCategory = true;
-                }
+                transaction.investmentCategory = ((Accounts)cbAccount.SelectedItem).accountsTypesid ==
+                    (int)AccountsTypesService.eAccountsTypes.Invests
+                    ? false
+                    : true;
             }
             toggleViews();
         }
@@ -252,14 +246,7 @@ namespace GastosRYC.Views
                 transaction = new Transactions();
                 dtpDate.SelectedDate = DateTime.Now;
 
-                if (accountidDefault != null)
-                {
-                    cbAccount.SelectedValue = accountidDefault;
-                }
-                else
-                {
-                    cbAccount.SelectedValue = null;
-                }
+                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object?)null;
 
                 cbPerson.SelectedValue = null;
                 cbCategory.SelectedValue = null;
@@ -277,10 +264,7 @@ namespace GastosRYC.Views
 
         private void updateTransaction()
         {
-            if (transaction == null)
-            {
-                transaction = new Transactions();
-            }
+            transaction ??= new Transactions();
 
             transaction.date = dtpDate.SelectedDate;
             transaction.accountid = (int)cbAccount.SelectedValue;

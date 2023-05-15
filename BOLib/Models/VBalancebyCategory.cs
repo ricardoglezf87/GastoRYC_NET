@@ -14,7 +14,7 @@ namespace BOLib.Models
         public virtual Decimal? amount { set; get; }
 
         [NotMapped]
-        public virtual Decimal? neg_amount { get { return -amount; } }
+        public virtual Decimal? neg_amount => -amount;
 
         internal VBalancebyCategoryDAO toDAO()
         {

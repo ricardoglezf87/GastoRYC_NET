@@ -34,7 +34,7 @@ namespace DAOLib.Services
             context.vBalancebyCategory?.Load();
         }
 
-        public RYCContext BBDD { get { return context; } }
+        public RYCContext BBDD => context;
 
         public static RYCContextServiceDAO getInstance()
         {

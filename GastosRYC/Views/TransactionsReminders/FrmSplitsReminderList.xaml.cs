@@ -33,14 +33,9 @@ namespace GastosRYC.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = categoriesService.getAll();
-            if (transactionsReminders != null && transactionsReminders.id > 0)
-            {
-                gvSplitsReminders.ItemsSource = splitsRemindersService.getbyTransactionid(transactionsReminders.id);
-            }
-            else
-            {
-                gvSplitsReminders.ItemsSource = splitsRemindersService.getbyTransactionidNull();
-            }
+            gvSplitsReminders.ItemsSource = transactionsReminders != null && transactionsReminders.id > 0
+                ? splitsRemindersService.getbyTransactionid(transactionsReminders.id)
+                : (object?)splitsRemindersService.getbyTransactionidNull();
         }
 
         private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -94,11 +89,9 @@ namespace GastosRYC.Views
                 splitsReminders.category = categoriesService.getByID(splitsReminders.categoryid);
             }
 
-            if (splitsReminders.amountIn == null)
-                splitsReminders.amountIn = 0;
+            splitsReminders.amountIn ??= 0;
 
-            if (splitsReminders.amountOut == null)
-                splitsReminders.amountOut = 0;
+            splitsReminders.amountOut ??= 0;
 
             splitsRemindersService.update(splitsReminders);
         }

@@ -55,11 +55,9 @@ namespace BOLib.Services
 
         public void saveChanges(TransactionsReminders transactionsReminders)
         {
-            if (transactionsReminders.amountIn == null)
-                transactionsReminders.amountIn = 0;
+            transactionsReminders.amountIn ??= 0;
 
-            if (transactionsReminders.amountOut == null)
-                transactionsReminders.amountOut = 0;
+            transactionsReminders.amountOut ??= 0;
 
             update(transactionsReminders);
         }
@@ -86,8 +84,8 @@ namespace BOLib.Services
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.Split;
                 transactionsReminders.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
-            else if (transactionsReminders.categoryid != null
-                && transactionsReminders.categoryid == (int)CategoriesService.eSpecialCategories.Split)
+            else if (transactionsReminders.categoryid is not null
+                and ((int)CategoriesService.eSpecialCategories.Split))
             {
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
                 transactionsReminders.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);

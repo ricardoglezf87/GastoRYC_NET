@@ -32,14 +32,9 @@ namespace GastosRYC.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = categoriesService.getAll();
-            if (transactions != null && transactions.id > 0)
-            {
-                gvSplits.ItemsSource = splitsService.getbyTransactionid(transactions.id);
-            }
-            else
-            {
-                gvSplits.ItemsSource = splitsService.getbyTransactionidNull();
-            }
+            gvSplits.ItemsSource = transactions != null && transactions.id > 0
+                ? splitsService.getbyTransactionid(transactions.id)
+                : (object?)splitsService.getbyTransactionidNull();
         }
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)

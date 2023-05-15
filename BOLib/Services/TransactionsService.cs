@@ -125,10 +125,7 @@ namespace BOLib.Services
                     amountOut = transactions.amountIn
                 };
 
-                if (transactions.id != 0)
-                    tContraria.tranferid = transactions.id;
-                else
-                    tContraria.tranferid = getNextID() + 1;
+                tContraria.tranferid = transactions.id != 0 ? transactions.id : getNextID() + 1;
 
                 tContraria.transactionStatusid = transactions.transactionStatusid;
 
@@ -198,8 +195,8 @@ namespace BOLib.Services
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
                 transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
-            else if (transactions.categoryid != null
-                && transactions.categoryid == (int)CategoriesService.eSpecialCategories.Split)
+            else if (transactions.categoryid is not null
+                and ((int)CategoriesService.eSpecialCategories.Split))
             {
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
                 transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);

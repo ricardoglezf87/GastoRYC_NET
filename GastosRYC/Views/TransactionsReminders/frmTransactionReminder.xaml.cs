@@ -157,14 +157,7 @@ namespace GastosRYC.Views
 
                 dtpDate.SelectedDate = DateTime.Now;
 
-                if (accountidDefault != null)
-                {
-                    cbAccount.SelectedValue = accountidDefault;
-                }
-                else
-                {
-                    cbAccount.SelectedValue = null;
-                }
+                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object?)null;
 
                 cbPerson.SelectedValue = null;
                 cbCategory.SelectedValue = null;
@@ -179,10 +172,7 @@ namespace GastosRYC.Views
 
         private void updateTransaction()
         {
-            if (transaction == null)
-            {
-                transaction = new TransactionsReminders();
-            }
+            transaction ??= new TransactionsReminders();
 
             transaction.date = dtpDate.SelectedDate;
 

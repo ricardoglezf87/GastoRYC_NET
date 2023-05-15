@@ -74,11 +74,9 @@ namespace BOLib.Services
                 splits.category = categoriesService.getByID(splits.categoryid);
             }
 
-            if (splits.amountIn == null)
-                splits.amountIn = 0;
+            splits.amountIn ??= 0;
 
-            if (splits.amountOut == null)
-                splits.amountOut = 0;
+            splits.amountOut ??= 0;
 
             update(splits);
         }

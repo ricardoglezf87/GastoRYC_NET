@@ -62,15 +62,10 @@ namespace DAOLib.Managers
             string path = string.Empty;
             string nameDDBB = string.Empty;
 
-            if (!Settings.Default.BBDDLocal)
-            {
-                path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                    + "\\GastosRYC\\Data\\";
-            }
-            else
-            {
-                path = "Data\\";
-            }
+            path = !Settings.Default.BBDDLocal
+                ? Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+                    + "\\GastosRYC\\Data\\"
+                : "Data\\";
 
             if (!Directory.Exists(path + "Backup\\"))
                 Directory.CreateDirectory(path + "Backup\\");

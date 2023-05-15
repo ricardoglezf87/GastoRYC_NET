@@ -221,10 +221,9 @@ namespace GastosRYC.Views
                     GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
                         GridQueryableCollectionViewWrapper)gvTransactions.View;
 
-                if (accountSelected != null)
-                    balanceTotal = (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount");
-                else
-                    balanceTotal = (decimal?)col.ViewSource.Sum("amount");
+                balanceTotal = accountSelected != null
+                    ? (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
+                    : (decimal?)col.ViewSource.Sum("amount");
 
                 foreach (Transactions t in col.ViewSource)
                 {
@@ -255,13 +254,7 @@ namespace GastosRYC.Views
         public bool accountFilter(object? o)
         {
             Transactions? p = (o as Transactions);
-            if (p == null)
-                return false;
-            else
-                if (p.account?.id == accountSelected?.id)
-                return true;
-            else
-                return false;
+            return p == null ? false : p.account?.id == accountSelected?.id;
         }
 
         public void ApplyFilters(AccountsView? _accountSelected = null)

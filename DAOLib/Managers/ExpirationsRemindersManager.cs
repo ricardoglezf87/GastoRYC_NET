@@ -10,11 +10,9 @@ namespace DAOLib.Managers
     {
         public bool existsExpiration(TransactionsRemindersDAO? transactionsReminder, DateTime? date)
         {
-            if (transactionsReminder == null)
-            {
-                return false;
-            }
-            return RYCContextServiceDAO.getInstance().BBDD.expirationsReminders?
+            return transactionsReminder == null
+                ? false
+                : RYCContextServiceDAO.getInstance().BBDD.expirationsReminders?
                     .Any(x => x.transactionsRemindersid == transactionsReminder.id && x.date == date) ?? false;
         }
 

@@ -21,23 +21,9 @@ namespace BOLib.Models
             {
                 String group = String.Empty;
 
-                if (date != null)
-                {
-                    if (date < DateTime.Now)
-                    {
-                        return "Vencido";
-                    }
-                    else if (date > DateTime.Now.AddMonths(1))
-                    {
-                        return "Futuro";
-                    }
-                    else
-                    {
-                        return date.Value.Day + "/" + date.Value.Month;
-                    }
-                }
-
-                return group;
+                return date != null
+                    ? date < DateTime.Now ? "Vencido" : date > DateTime.Now.AddMonths(1) ? "Futuro" : date.Value.Day + "/" + date.Value.Month
+                    : group;
             }
         }
 

@@ -53,27 +53,15 @@ namespace BOLib.Models
 
 
         [NotMapped]
-        public virtual Decimal? amount
-        {
-            get
-            {
-                return ((investmentCategory.HasValue && investmentCategory.Value == false) ? (numShares * pricesShares) : amountIn - amountOut);
-            }
-        }
+        public virtual Decimal? amount => ((investmentCategory.HasValue && investmentCategory.Value == false) ? (numShares * pricesShares) : amountIn - amountOut);
 
         [NotMapped]
-        public virtual Double? orden
-        {
-            get
-            {
-                return Double.Parse(
+        public virtual Double? orden => Double.Parse(
                     date?.Year.ToString("0000")
                     + date?.Month.ToString("00")
                     + date?.Day.ToString("00")
                     + id.ToString("000000")
                     + (amountIn != 0 ? "1" : "0"));
-            }
-        }
 
         [NotMapped]
         public virtual Decimal? balance { set; get; }

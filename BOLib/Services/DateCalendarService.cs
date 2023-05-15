@@ -23,7 +23,10 @@ namespace BOLib.Services
             return dateCalendarManager.getAll()?.toListBO();
         }
 
-        public DateCalendar? getByID(DateTime? id) => (DateCalendar?)dateCalendarManager.getByID(id);
+        public DateCalendar? getByID(DateTime? id)
+        {
+            return (DateCalendar?)dateCalendarManager.getByID(id);
+        }
 
         public void fillCalendar()
         {
