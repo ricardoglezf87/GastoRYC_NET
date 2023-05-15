@@ -2,12 +2,11 @@
 using DAOLib.Services;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace DAOLib.Managers
 {
     public class AccountsManager : ManagerBase<AccountsDAO>
-    {        
+    {
         public List<AccountsDAO>? getAllOrderByAccountsTypesId()
         {
             return RYCContextServiceDAO.getInstance().BBDD.accounts?.OrderBy(x => x.accountsTypesid).ToList();

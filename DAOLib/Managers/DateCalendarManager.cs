@@ -8,7 +8,7 @@ namespace DAOLib.Managers
 {
     public class DateCalendarManager
     {
-        private readonly DateTime initDate = new DateTime(2001, 01, 01);
+        private readonly DateTime initDate = new(2001, 01, 01);
 
         public List<DateCalendarDAO>? getAll()
         {

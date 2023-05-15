@@ -1,5 +1,5 @@
-﻿using BOLib.Services;
-using BOLib.Models;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -49,7 +49,7 @@ namespace GastosRYC.Views
         {
             if (gvTransactionsReminders.CurrentItem != null)
             {
-                FrmTransactionReminders frm = new FrmTransactionReminders((TransactionsReminders)gvTransactionsReminders.CurrentItem);
+                FrmTransactionReminders frm = new((TransactionsReminders)gvTransactionsReminders.CurrentItem);
                 frm.ShowDialog();
                 loadTransactions();
             }
@@ -62,7 +62,7 @@ namespace GastosRYC.Views
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            FrmTransactionReminders frm = new FrmTransactionReminders();
+            FrmTransactionReminders frm = new();
             frm.ShowDialog();
             loadTransactions();
         }

@@ -7,7 +7,7 @@ using System.Linq;
 namespace DAOLib.Managers
 {
     public class ExpirationsRemindersManager : ManagerBase<ExpirationsRemindersDAO>
-    {        
+    {
         public bool existsExpiration(TransactionsRemindersDAO? transactionsReminder, DateTime? date)
         {
             if (transactionsReminder == null)

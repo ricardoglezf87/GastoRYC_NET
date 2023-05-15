@@ -80,7 +80,7 @@ namespace BOLib.Services
                         productsPrices.investmentProductsid = investmentProducts.id;
                         productsPrices.investmentProducts = investmentProducts;
                         productsPrices.prices = transactions.price;
-                        investmentProductsPricesManager.update(productsPrices.toDAO(),false);
+                        investmentProductsPricesManager.update(productsPrices.toDAO(), false);
                     }
                 }
 
@@ -101,7 +101,7 @@ namespace BOLib.Services
         }
 
         private async Task<List<InvestmentProductsPrices>> getPricesOnlineInvesting(InvestmentProducts investmentProducts)
-        {            
+        {
             List<InvestmentProductsPrices> lproductsPrices = new();
 
             var httpClient = new HttpClient();
@@ -120,7 +120,7 @@ namespace BOLib.Services
                 var cells = row.SelectNodes("td");
                 var date = cells[0].InnerText;
                 var price = cells[1].InnerText;
-                InvestmentProductsPrices productsPrices = new InvestmentProductsPrices();
+                InvestmentProductsPrices productsPrices = new();
                 productsPrices.investmentProductsid = investmentProducts.id;
                 productsPrices.investmentProducts = investmentProducts;
                 productsPrices.date = DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);

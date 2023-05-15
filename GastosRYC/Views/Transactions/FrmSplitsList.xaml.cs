@@ -1,5 +1,5 @@
-﻿using BOLib.Services;
-using BOLib.Models;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 
 namespace GastosRYC.Views

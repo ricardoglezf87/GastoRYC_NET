@@ -1,8 +1,8 @@
-﻿using BOLib.Services;
-using BOLib.Models;
+﻿using BOLib.Models;
+using BOLib.ModelsView;
+using BOLib.Services;
 using GastosRYC.Views;
 using GastosRYC.Views.Common;
-using SimpleInjector;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Windows.Tools.Controls;
 using System;
@@ -13,7 +13,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using BOLib.ModelsView;
 
 namespace GastosRYC
 {
@@ -147,7 +146,7 @@ namespace GastosRYC
 
         private void btnMntAccounts_Click(object sender, RoutedEventArgs e)
         {
-            FrmAccountsList frm = new FrmAccountsList();
+            FrmAccountsList frm = new();
             frm.ShowDialog();
             loadAccounts();
 
@@ -157,7 +156,7 @@ namespace GastosRYC
 
         private void btnMntPersons_Click(object sender, RoutedEventArgs e)
         {
-            FrmPersonsList frm = new FrmPersonsList();
+            FrmPersonsList frm = new();
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
@@ -166,7 +165,7 @@ namespace GastosRYC
 
         private void btnMntInvestmentProducts_Click(object sender, RoutedEventArgs e)
         {
-            FrmInvestmentProductsList frm = new FrmInvestmentProductsList();
+            FrmInvestmentProductsList frm = new();
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
@@ -175,7 +174,7 @@ namespace GastosRYC
 
         private void btnMntCategories_Click(object sender, RoutedEventArgs e)
         {
-            FrmCategoriesList frm = new FrmCategoriesList();
+            FrmCategoriesList frm = new();
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
@@ -184,7 +183,7 @@ namespace GastosRYC
 
         private void btnMntTags_Click(object sender, RoutedEventArgs e)
         {
-            FrmTagsList frm = new FrmTagsList();
+            FrmTagsList frm = new();
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
@@ -194,7 +193,7 @@ namespace GastosRYC
 
         private void btnMntReminders_Click(object sender, RoutedEventArgs e)
         {
-            FrmTransactionReminderList frm = new FrmTransactionReminderList();
+            FrmTransactionReminderList frm = new();
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialReminders)
@@ -239,7 +238,7 @@ namespace GastosRYC
 
         private void loadCalendar()
         {
-           dateCalendarService.fillCalendar();
+            dateCalendarService.fillCalendar();
         }
 
         private void toggleViews(eViews views)

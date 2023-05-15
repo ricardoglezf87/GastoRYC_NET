@@ -8,7 +8,7 @@ using System.Linq;
 namespace DAOLib.Managers
 {
     public class SplitsManager : ManagerBase<SplitsDAO>
-    { 
+    {
         public List<SplitsDAO>? getbyTransactionidNull()
         {
             return RYCContextServiceDAO.getInstance().BBDD.splits?.Where(x => x.transactionid == null).ToList();

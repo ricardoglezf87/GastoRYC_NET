@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAOLib.Models
@@ -13,7 +12,7 @@ namespace DAOLib.Models
         public virtual String? symbol { set; get; }
 
         public virtual String? url { set; get; }
-        
+
         [DefaultValue(true)]
         public virtual bool? active { set; get; }
     }

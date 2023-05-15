@@ -43,7 +43,7 @@ namespace BOLib.Services
             if (persons == null)
                 return;
 
-            var result = (from x in transactionsService.getByPerson(persons)                          
+            var result = (from x in transactionsService.getByPerson(persons)
                           group x by x.categoryid into g
                           select new
                           {

@@ -1,7 +1,7 @@
 ﻿using DAOLib.Models;
+using DAOLib.Services;
 using System.Collections.Generic;
 using System.Linq;
-using DAOLib.Services;
 
 namespace DAOLib.Managers
 {

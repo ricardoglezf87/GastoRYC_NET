@@ -37,7 +37,7 @@ namespace DAOLib.Managers
         public List<TransactionsDAO>? getByInvestmentProduct(int? id)
         {
             return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => id.Equals(x.investmentProductsid))?.ToList();
-        }       
+        }
 
         public int getNextID()
         {

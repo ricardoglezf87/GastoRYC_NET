@@ -44,6 +44,6 @@ namespace DAOLib.Models
 
         public virtual TransactionsStatusDAO? transactionStatus { set; get; }
 
-        public virtual List<SplitsRemindersDAO>? splits { set; get; }        
+        public virtual List<SplitsRemindersDAO>? splits { set; get; }
     }
 }

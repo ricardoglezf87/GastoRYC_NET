@@ -1,6 +1,7 @@
-﻿using BOLib.Services;
+﻿using BOLib.Extensions;
 using BOLib.Models;
-using BOLib.Extensions;
+using BOLib.ModelsView;
+using BOLib.Services;
 using Syncfusion.Data.Extensions;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static BOLib.Extensions.WindowsExtension;
-using BOLib.ModelsView;
 
 namespace GastosRYC.Views
 {
@@ -19,7 +19,7 @@ namespace GastosRYC.Views
     {
 
         #region Variables
-        
+
         private AccountsView? accountSelected;
         private readonly MainWindow parentForm;
         private readonly SplitsService splitsService;
@@ -35,7 +35,7 @@ namespace GastosRYC.Views
             parentForm = _parentForm;
             splitsService = InstanceBase<SplitsService>.Instance;
             transactionsService = InstanceBase<TransactionsService>.Instance;
-            
+
         }
 
         #endregion
@@ -60,7 +60,7 @@ namespace GastosRYC.Views
         private void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
-            FrmSplitsList frm = new FrmSplitsList(transactions);
+            FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
             transactionsService.updateTransactionAfterSplits(transactions);
             loadTransactions();
@@ -90,7 +90,7 @@ namespace GastosRYC.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    TransactionsReminders transactionsReminders = new TransactionsReminders();
+                    TransactionsReminders transactionsReminders = new();
                     transactionsReminders.date = transactions.date;
                     transactionsReminders.accountid = transactions.accountid;
                     transactionsReminders.personid = transactions.personid;
@@ -101,7 +101,7 @@ namespace GastosRYC.Views
                     transactionsReminders.tagid = transactions.tagid;
                     transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
-                    FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders);
+                    FrmTransactionReminders frm = new(transactionsReminders);
                     frm.ShowDialog();
                     if (frm.windowsResult == eWindowsResult.Sucess)
                         MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
@@ -129,7 +129,7 @@ namespace GastosRYC.Views
         {
             if (gvTransactions.CurrentItem != null)
             {
-                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem);
+                FrmTransaction frm = new((Transactions)gvTransactions.CurrentItem);
                 frm.ShowDialog();
                 loadTransactions();
                 parentForm.loadAccounts();

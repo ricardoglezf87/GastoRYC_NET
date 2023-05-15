@@ -1,5 +1,5 @@
-﻿using BOLib.Services;
-using BOLib.Models;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,7 +11,7 @@ namespace GastosRYC.Views
     public partial class FrmPersonsList : Window
     {
         private readonly PersonsService personsService;
-   
+
         public FrmPersonsList()
         {
             InitializeComponent();

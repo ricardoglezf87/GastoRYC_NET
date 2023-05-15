@@ -1,6 +1,5 @@
 ﻿using DAOLib.Models;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
 {
@@ -18,7 +17,7 @@ namespace BOLib.Models
         }
 
         public static explicit operator Tags(TagsDAO v)
-        {  
+        {
             return new Tags()
             {
                 id = v.id,

@@ -1,6 +1,5 @@
 ﻿using DAOLib.Models;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
 {
@@ -8,7 +7,7 @@ namespace BOLib.Models
     {
         public virtual String? description { set; get; }
 
-        internal TransactionsStatusDAO toDAO() 
+        internal TransactionsStatusDAO toDAO()
         {
             return new TransactionsStatusDAO()
             {

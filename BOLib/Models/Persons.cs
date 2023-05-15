@@ -1,6 +1,5 @@
 ﻿using DAOLib.Models;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
 {

@@ -1,6 +1,5 @@
 ﻿using DAOLib.Models;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BOLib.Models
@@ -54,11 +53,11 @@ namespace BOLib.Models
         }
 
         public static explicit operator ExpirationsReminders(ExpirationsRemindersDAO v)
-        {      
+        {
             return new ExpirationsReminders()
             {
                 date = v.date,
-                transactionsReminders = (v.transactionsReminders!=null) ? (TransactionsReminders) v.transactionsReminders : null,
+                transactionsReminders = (v.transactionsReminders != null) ? (TransactionsReminders)v.transactionsReminders : null,
                 transactionsRemindersid = v.transactionsRemindersid,
                 done = v.done
             };

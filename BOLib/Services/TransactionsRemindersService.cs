@@ -2,10 +2,7 @@
 
 using BOLib.Models;
 using DAOLib.Managers;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BOLib.Services
 {

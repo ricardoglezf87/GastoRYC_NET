@@ -1,8 +1,6 @@
 ﻿using DAOLib.Models;
 using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BOLib.Models
 {
@@ -32,8 +30,8 @@ namespace BOLib.Models
                 accountsTypesid = this.accountsTypesid,
                 accountsTypes = this.accountsTypes?.toDAO()
             };
-        }        
-        
+        }
+
         public static explicit operator Accounts(AccountsDAO v)
         {
             return new Accounts()
@@ -41,9 +39,9 @@ namespace BOLib.Models
                 id = v.id,
                 description = v.description,
                 categoryid = v.categoryid,
-                category = (v.category != null) ? (Categories) v.category : null,
+                category = (v.category != null) ? (Categories)v.category : null,
                 accountsTypesid = v.accountsTypesid,
-                accountsTypes = (v.accountsTypes != null) ? (AccountsTypes)v.accountsTypes : null                
+                accountsTypes = (v.accountsTypes != null) ? (AccountsTypes)v.accountsTypes : null
             };
         }
     }

@@ -1,11 +1,8 @@
-﻿using BOLib.Models;
-using BOLib.Extensions;
+﻿using BOLib.Extensions;
+using BOLib.Models;
+using DAOLib.Managers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-
-using DAOLib.Managers;
-using DAOLib.Models;
 
 namespace BOLib.Services
 {

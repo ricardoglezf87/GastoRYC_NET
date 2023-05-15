@@ -5,8 +5,8 @@ namespace DAOLib.Services
 {
     public sealed class RYCContextServiceDAO
     {
-        private readonly static RYCContextServiceDAO _instance = new RYCContextServiceDAO();
-        private readonly RYCContext context = new RYCContext();
+        private static readonly RYCContextServiceDAO _instance = new();
+        private readonly RYCContext context = new();
 
         private RYCContextServiceDAO()
         {

@@ -1,5 +1,5 @@
-﻿using BOLib.Services;
-using BOLib.Models;
+﻿using BOLib.Models;
+using BOLib.Services;
 using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace GastosRYC.Views
             accountsTypesService = InstanceBase<AccountsTypesService>.Instance;
             accountsService = InstanceBase<AccountsService>.Instance;
             forecastsChartService = InstanceBase<ForecastsChartService>.Instance;
-            vBalancebyCategoryService = InstanceBase<VBalancebyCategoryService>.Instance;            
+            vBalancebyCategoryService = InstanceBase<VBalancebyCategoryService>.Instance;
         }
 
         #endregion
@@ -58,7 +58,7 @@ namespace GastosRYC.Views
         {
             //Header
 
-            Border border = new Border()
+            Border border = new()
             {
 
                 BorderThickness = new Thickness(0.5),
@@ -70,7 +70,7 @@ namespace GastosRYC.Views
                 CornerRadius = new CornerRadius(5)
             };
 
-            TextBlock textBlock = new TextBlock()
+            TextBlock textBlock = new()
             {
 
                 Text = "Prevision de cobros / pagos",
@@ -114,7 +114,7 @@ namespace GastosRYC.Views
 
             //Axis
 
-            DateTimeAxis primaryAxis = new DateTimeAxis();
+            DateTimeAxis primaryAxis = new();
             primaryAxis.Header = "Fecha";
             //primaryAxis.Minimum = DateTime.Today.AddDays(-1);
             //primaryAxis.Maximum= DateTime.Today.AddMonths(1).AddDays(1);
@@ -125,18 +125,18 @@ namespace GastosRYC.Views
             primaryAxis.LabelFormat = "dd/MM";
             chForecast.PrimaryAxis = primaryAxis;
 
-            NumericalAxis secondaryAxis = new NumericalAxis();
+            NumericalAxis secondaryAxis = new();
             secondaryAxis.Header = "Importe (€)";
             chForecast.SecondaryAxis = secondaryAxis;
 
             //ToolTip
 
-            DataTemplate tooltip = new DataTemplate();
+            DataTemplate tooltip = new();
 
-            FrameworkElementFactory stackpanel = new FrameworkElementFactory(typeof(StackPanel));
+            FrameworkElementFactory stackpanel = new(typeof(StackPanel));
             stackpanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
 
-            FrameworkElementFactory textblock = new FrameworkElementFactory(typeof(TextBlock));
+            FrameworkElementFactory textblock = new(typeof(TextBlock));
             textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.account"));
             textblock.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
             textblock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
@@ -145,7 +145,7 @@ namespace GastosRYC.Views
 
             stackpanel.AppendChild(textblock);
 
-            FrameworkElementFactory textblock1 = new FrameworkElementFactory(typeof(TextBlock));
+            FrameworkElementFactory textblock1 = new(typeof(TextBlock));
             textblock1.SetValue(TextBlock.TextProperty, " : ");
             textblock1.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
             textblock1.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
@@ -154,7 +154,7 @@ namespace GastosRYC.Views
 
             stackpanel.AppendChild(textblock1);
 
-            FrameworkElementFactory textblock2 = new FrameworkElementFactory(typeof(TextBlock));
+            FrameworkElementFactory textblock2 = new(typeof(TextBlock));
             textblock2.SetBinding(TextBlock.TextProperty,
                 new Binding("Item.amount")
                 {
@@ -178,7 +178,7 @@ namespace GastosRYC.Views
                 .Where(x => accountsTypesService.accountExpensives(x.accountsTypesid)))
             {
 
-                LineSeries series = new LineSeries()
+                LineSeries series = new()
                 {
                     ItemsSource = forecastsChartService.getMonthForecast()
                         .Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
@@ -210,7 +210,7 @@ namespace GastosRYC.Views
         {
             //Header
 
-            Border border = new Border()
+            Border border = new()
             {
 
                 BorderThickness = new Thickness(0.5),
@@ -223,7 +223,7 @@ namespace GastosRYC.Views
 
             };
 
-            TextBlock textBlock = new TextBlock()
+            TextBlock textBlock = new()
             {
 
                 Text = "Clasificación Gastos",
@@ -249,22 +249,22 @@ namespace GastosRYC.Views
 
             //Axis
 
-            CategoryAxis primaryAxis = new CategoryAxis();
+            CategoryAxis primaryAxis = new();
             primaryAxis.Header = "Categoría";
             chExpenses.PrimaryAxis = primaryAxis;
 
-            NumericalAxis secondaryAxis = new NumericalAxis();
+            NumericalAxis secondaryAxis = new();
             secondaryAxis.Header = "Importe (€)";
             chExpenses.SecondaryAxis = secondaryAxis;
 
             //ToolTip
 
-            DataTemplate tooltip = new DataTemplate();
+            DataTemplate tooltip = new();
 
-            FrameworkElementFactory stackpanel = new FrameworkElementFactory(typeof(StackPanel));
+            FrameworkElementFactory stackpanel = new(typeof(StackPanel));
             stackpanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
 
-            FrameworkElementFactory textblock = new FrameworkElementFactory(typeof(TextBlock));
+            FrameworkElementFactory textblock = new(typeof(TextBlock));
             textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.category"));
             textblock.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
             textblock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
@@ -273,7 +273,7 @@ namespace GastosRYC.Views
 
             stackpanel.AppendChild(textblock);
 
-            FrameworkElementFactory textblock1 = new FrameworkElementFactory(typeof(TextBlock));
+            FrameworkElementFactory textblock1 = new(typeof(TextBlock));
             textblock1.SetValue(TextBlock.TextProperty, " : ");
             textblock1.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
             textblock1.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
@@ -282,7 +282,7 @@ namespace GastosRYC.Views
 
             stackpanel.AppendChild(textblock1);
 
-            FrameworkElementFactory textblock2 = new FrameworkElementFactory(typeof(TextBlock));
+            FrameworkElementFactory textblock2 = new(typeof(TextBlock));
             textblock2.SetBinding(TextBlock.TextProperty,
                 new Binding("Item.neg_amount")
                 {
@@ -303,7 +303,7 @@ namespace GastosRYC.Views
             List<VBalancebyCategory>? lExpensesCharts = vBalancebyCategoryService.getExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
-            ColumnSeries series = new ColumnSeries()
+            ColumnSeries series = new()
             {
                 ItemsSource = lExpensesCharts?.OrderByDescending(x => x.neg_amount).Take(10),
                 XBindingPath = "category",

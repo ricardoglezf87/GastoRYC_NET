@@ -1,5 +1,5 @@
-﻿using BOLib.Services;
-using BOLib.Models;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -92,7 +92,7 @@ namespace GastosRYC.Views
                 return;
             }
 
-            FrmSplitsRemindersList frm = new FrmSplitsRemindersList(transaction);
+            FrmSplitsRemindersList frm = new(transaction);
             frm.ShowDialog();
             transactionsRemindersService.updateSplitsReminders(transaction);
             loadTransaction();

@@ -1,5 +1,5 @@
-﻿using BOLib.Services;
-using BOLib.Models;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -117,7 +117,7 @@ namespace GastosRYC.Views
                 return;
             }
 
-            FrmSplitsList frm = new FrmSplitsList(transaction);
+            FrmSplitsList frm = new(transaction);
             frm.ShowDialog();
             transactionsService.updateTransactionAfterSplits(transaction);
             loadTransaction();

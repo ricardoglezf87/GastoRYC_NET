@@ -5,7 +5,6 @@ using DAOLib.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace BOLib.Services
 {
@@ -42,7 +41,7 @@ namespace BOLib.Services
 
         public Accounts? getByID(int? id)
         {
-            return (Accounts) accountsManager.getByID(id);
+            return (Accounts)accountsManager.getByID(id);
         }
 
         public void update(Accounts accounts)
@@ -57,7 +56,7 @@ namespace BOLib.Services
 
         public Decimal getBalanceByAccount(int? id)
         {
-            return transactionsService.getByAccount(id)?.Sum(x => x.amount) ?? 0;       
+            return transactionsService.getByAccount(id)?.Sum(x => x.amount) ?? 0;
         }
 
         public Decimal getBalanceByAccount(Accounts? accounts)

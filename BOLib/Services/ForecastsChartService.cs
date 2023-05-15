@@ -1,6 +1,5 @@
 ﻿
 using BOLib.Models;
-using DAOLib.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +72,7 @@ namespace BOLib.Services
                                         x.account?.accountsTypesid == (int)eAccountsTypes.Cards)))
                                     .GroupBy(g => g.accountid))
                     {
-                        Decimal saldo_act = (decimal)(g.Sum(x => x.amount) ?? 0);
+                        Decimal saldo_act = g.Sum(x => x.amount) ?? 0;
 
                         if (g.Key != null && (saldos[g.Key.Value] != saldo_act || i == 29))
                         {

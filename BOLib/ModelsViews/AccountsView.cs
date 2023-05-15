@@ -1,9 +1,6 @@
-﻿using BOLib.Models;
-using DAOLib.Models;
+﻿using DAOLib.Models;
 using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BOLib.ModelsView
 {
@@ -25,7 +22,7 @@ namespace BOLib.ModelsView
             return new AccountsView()
             {
                 id = v.id,
-                description = v.description,                
+                description = v.description,
                 accountsTypesid = v.accountsTypesid,
                 accountsTypesdescription = v.accountsTypes.description
             };

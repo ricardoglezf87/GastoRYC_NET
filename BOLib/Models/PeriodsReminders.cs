@@ -1,11 +1,10 @@
 ﻿using DAOLib.Models;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
 {
     public class PeriodsReminders : ModelBase
-    { 
+    {
         public virtual String? description { set; get; }
 
         internal PeriodsRemindersDAO toDAO()

@@ -1,14 +1,7 @@
-﻿using BOLib.Models;
-using BOLib.Extensions;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using BOLib.ModelsView;
+﻿using BOLib.Extensions;
+using BOLib.Models;
 using DAOLib.Managers;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using DAOLib.Models;
+using System.Collections.Generic;
 
 namespace BOLib.Services
 {
@@ -21,7 +14,7 @@ namespace BOLib.Services
         private readonly AccountsService accountsService;
         private readonly CategoriesService categoriesService;
         private readonly PersonsService personsService;
-        
+
         public TransactionsService()
         {
             transactionsManager = InstanceBase<TransactionsManager>.Instance;
@@ -182,7 +175,7 @@ namespace BOLib.Services
                     tContraria.amountIn = transactions.amountOut;
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
-                    splitsService.update(tContraria);            
+                    splitsService.update(tContraria);
                 }
             }
         }

@@ -1,16 +1,15 @@
-﻿using BOLib.Models;
-using BOLib.Extensions;
+﻿using BOLib.Extensions;
+using BOLib.Models;
+using DAOLib.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using DAOLib.Managers;
 
 namespace BOLib.Services
 {
     public class ExpirationsRemindersService
     {
-        private readonly ExpirationsRemindersManager expirationsRemindersManager;      
+        private readonly ExpirationsRemindersManager expirationsRemindersManager;
         private readonly PeriodsRemindersService periodsRemindersService;
         private readonly TransactionsService transactionsService;
         private readonly TransactionsRemindersService transactionsRemindersService;
@@ -41,7 +40,7 @@ namespace BOLib.Services
 
         public bool existsExpiration(TransactionsReminders? transactionsReminder, DateTime? date)
         {
-            return expirationsRemindersManager.existsExpiration(transactionsReminder.toDAO(),date);
+            return expirationsRemindersManager.existsExpiration(transactionsReminder.toDAO(), date);
         }
 
         public List<ExpirationsReminders>? getAllPendingWithGeneration()
@@ -84,7 +83,7 @@ namespace BOLib.Services
                 {
                     if (!existsExpiration(transactionsReminders, date))
                     {
-                        ExpirationsReminders expirationsReminders = new ExpirationsReminders();
+                        ExpirationsReminders expirationsReminders = new();
                         expirationsReminders.transactionsRemindersid = transactionsReminders.id;
                         expirationsReminders.transactionsReminders = transactionsReminders;
                         expirationsReminders.date = date;
@@ -104,7 +103,7 @@ namespace BOLib.Services
                 ExpirationsReminders? expirationsReminders = getByID(id);
                 if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
                 {
-                    Transactions transactions = new Transactions();
+                    Transactions transactions = new();
                     transactions.date = expirationsReminders.date;
                     transactions.accountid = expirationsReminders.transactionsReminders.accountid;
                     transactions.personid = expirationsReminders.transactionsReminders.personid;
@@ -121,7 +120,7 @@ namespace BOLib.Services
                     {
                         foreach (SplitsReminders splitsReminders in expirationsReminders.transactionsReminders.splits)
                         {
-                            Splits splits = new Splits();
+                            Splits splits = new();
                             splits.transactionid = transactions.id;
                             splits.categoryid = splitsReminders.categoryid;
                             splits.memo = splitsReminders.memo;
@@ -147,7 +146,7 @@ namespace BOLib.Services
             ExpirationsReminders? expirationsReminders = exp;
             if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
             {
-                Transactions transactions = new Transactions();
+                Transactions transactions = new();
                 transactions.date = expirationsReminders.date.removeTime();
                 transactions.accountid = expirationsReminders.transactionsReminders.accountid;
                 transactions.account = expirationsReminders.transactionsReminders.account;
@@ -171,7 +170,7 @@ namespace BOLib.Services
 
                     foreach (SplitsReminders splitsReminders in expirationsReminders.transactionsReminders.splits)
                     {
-                        Splits splits = new Splits();
+                        Splits splits = new();
                         splits.transactionid = transactions.id;
                         splits.categoryid = splitsReminders.categoryid;
                         splits.category = splitsReminders.category;
@@ -234,12 +233,12 @@ namespace BOLib.Services
 
         public ExpirationsReminders? getByID(int? id)
         {
-            return (ExpirationsReminders) expirationsRemindersManager.getByID(id);            
+            return (ExpirationsReminders)expirationsRemindersManager.getByID(id);
         }
 
         public List<ExpirationsReminders>? getByTransactionReminderid(int? id)
         {
-            return expirationsRemindersManager.getByTransactionReminderid(id)?.toListBO();            
+            return expirationsRemindersManager.getByTransactionReminderid(id)?.toListBO();
         }
 
         public void update(ExpirationsReminders expirationsReminders)

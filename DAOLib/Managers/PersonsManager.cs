@@ -1,12 +1,11 @@
 ﻿using DAOLib.Models;
 using DAOLib.Services;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace DAOLib.Managers
 {
     public class PersonsManager : ManagerBase<PersonsDAO>
-    { 
+    {
         public void setCategoryDefault(PersonsDAO? persons)
         {
             if (persons == null)

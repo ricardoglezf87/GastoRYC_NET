@@ -2,10 +2,8 @@
 
 using BOLib.Models;
 using DAOLib.Managers;
-using DAOLib.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BOLib.Services
 {
@@ -34,7 +32,7 @@ namespace BOLib.Services
             {
                 if (getByID(ini) == null)
                 {
-                    DateCalendar date = new DateCalendar()
+                    DateCalendar date = new()
                     {
                         date = ini,
                         day = ini.Day,

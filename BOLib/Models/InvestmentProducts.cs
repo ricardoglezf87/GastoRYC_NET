@@ -1,8 +1,6 @@
 ﻿using DAOLib.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace BOLib.Models
 {
@@ -13,7 +11,7 @@ namespace BOLib.Models
         public virtual String? symbol { set; get; }
 
         public virtual String? url { set; get; }
-        
+
         [DefaultValue(true)]
         public virtual bool? active { set; get; }
 

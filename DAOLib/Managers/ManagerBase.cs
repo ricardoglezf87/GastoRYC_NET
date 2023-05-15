@@ -1,9 +1,7 @@
 ﻿using DAOLib.Models;
 using DAOLib.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DAOLib.Managers
@@ -20,7 +18,7 @@ namespace DAOLib.Managers
             return RYCContextServiceDAO.getInstance().BBDD.Set<T>().FirstOrDefault(x => id.Equals(x.id));
         }
 
-        public void update(T? obj,bool save = true)
+        public void update(T? obj, bool save = true)
         {
             if (obj != null)
             {

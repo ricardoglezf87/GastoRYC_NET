@@ -1,5 +1,5 @@
-﻿using BOLib.Services;
-using BOLib.Models;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,7 +23,7 @@ namespace GastosRYC.Views
 
         public PartialReminders(MainWindow _parentForm)
         {
-            InitializeComponent();            
+            InitializeComponent();
             parentForm = _parentForm;
             expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
         }
@@ -65,7 +65,7 @@ namespace GastosRYC.Views
         {
             if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders != null)
             {
-                FrmTransactionReminders frm = new FrmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders);
+                FrmTransactionReminders frm = new(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders);
                 frm.ShowDialog();
                 loadReminders();
             }
@@ -107,7 +107,7 @@ namespace GastosRYC.Views
             Transactions? transaction = expirationsRemindersService.registerTransactionfromReminder(id);
             if (transaction != null)
             {
-                FrmTransaction frm = new FrmTransaction(transaction);
+                FrmTransaction frm = new(transaction);
             }
 
             parentForm.loadAccounts();
