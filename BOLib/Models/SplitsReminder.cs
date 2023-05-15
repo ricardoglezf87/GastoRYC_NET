@@ -43,8 +43,10 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator SplitsReminders(SplitsRemindersDAO v)
+        public static explicit operator SplitsReminders?(SplitsRemindersDAO v)
         {
+            if (v == null) return null;
+
             return new SplitsReminders()
             {
                 id = v.id,

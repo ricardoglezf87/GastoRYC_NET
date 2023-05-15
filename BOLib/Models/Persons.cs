@@ -21,7 +21,7 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator Persons(PersonsDAO? v)
+        public static explicit operator Persons?(PersonsDAO? v)
         {
             if (v == null) return null;
 

@@ -25,6 +25,8 @@ namespace GastosRYC
         private ICollectionView? viewAccounts;
         private Page? actualPrincipalContent;
         private readonly AccountsService accountsService;
+        private readonly DateCalendarService dateCalendarService;
+        private readonly ExpirationsRemindersService expirationsRemindersService;
 
 
         private enum eViews : int
@@ -44,6 +46,8 @@ namespace GastosRYC
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
             SfSkinManager.ApplyStylesOnApplication = true;
             accountsService = InstanceBase<AccountsService>.Instance;
+            dateCalendarService = InstanceBase<DateCalendarService>.Instance;
+            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
         }
 
         #endregion
@@ -103,7 +107,7 @@ namespace GastosRYC
         private void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             loadCalendar();
-            new ExpirationsRemindersService().generateAutoregister();
+            expirationsRemindersService.generateAutoregister();
             loadAccounts();
             toggleViews(eViews.Home);
         }
@@ -231,7 +235,7 @@ namespace GastosRYC
 
         private void loadCalendar()
         {
-            new DateCalendarService().fillCalendar();
+           dateCalendarService.fillCalendar();
         }
 
         private void toggleViews(eViews views)

@@ -20,8 +20,10 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator CategoriesTypes(CategoriesTypesDAO? v)
+        public static explicit operator CategoriesTypes?(CategoriesTypesDAO? v)
         {
+            if (v == null) return null;
+
             return new CategoriesTypes()
             {
                 id = v.id,

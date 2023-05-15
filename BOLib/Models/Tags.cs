@@ -17,8 +17,8 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator Tags(TagsDAO? v)
-        {
+        public static explicit operator Tags?(TagsDAO v)
+        {            
             if (v == null) return null;
 
             return new Tags()

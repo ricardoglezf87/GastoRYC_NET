@@ -34,8 +34,10 @@ namespace BOLib.Models
             };
         }        
         
-        public static explicit operator Accounts(AccountsDAO? v)
+        public static explicit operator Accounts?(AccountsDAO? v)
         {
+            if (v == null) return null;
+
             return new Accounts()
             {
                 id = v.id,

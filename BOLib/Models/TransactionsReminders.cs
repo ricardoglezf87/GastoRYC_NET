@@ -91,8 +91,10 @@ namespace BOLib.Models
         }
 
 
-        public static explicit operator TransactionsReminders(TransactionsRemindersDAO v)
+        public static explicit operator TransactionsReminders?(TransactionsRemindersDAO v)
         {
+            if (v == null) return null;
+
             return new TransactionsReminders()
             {
                 id = v.id,

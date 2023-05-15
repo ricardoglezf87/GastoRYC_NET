@@ -54,7 +54,6 @@ namespace BOLib.Services
             return getAllWithGeneration()?.Where(x => x.done != true && x.groupDate != "Futuro").ToList();
         }
 
-
         public void GenerationAllExpirations()
         {
             foreach (TransactionsReminders transactionsReminders in transactionsRemindersService.getAll())
@@ -210,7 +209,6 @@ namespace BOLib.Services
             };
 
             return tContraria;
-            return null;
         }
 
 
@@ -232,7 +230,6 @@ namespace BOLib.Services
                 amountOut = transactions.amountIn
             };
             return tContraria;
-            return null;
         }
 
         public ExpirationsReminders? getByID(int? id)

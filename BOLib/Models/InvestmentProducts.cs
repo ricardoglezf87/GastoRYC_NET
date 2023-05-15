@@ -28,7 +28,7 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator InvestmentProducts(InvestmentProductsDAO? v)
+        public static explicit operator InvestmentProducts?(InvestmentProductsDAO? v)
         {
             if (v == null) return null;
 

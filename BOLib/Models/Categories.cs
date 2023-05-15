@@ -29,7 +29,7 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator Categories(CategoriesDAO? v)
+        public static explicit operator Categories?(CategoriesDAO? v)
         {
             if (v == null) return null;
 

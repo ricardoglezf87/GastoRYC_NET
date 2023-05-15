@@ -44,8 +44,10 @@ namespace BOLib.Models
             };
         }
 
-        public static explicit operator Splits(SplitsDAO v)
+        public static explicit operator Splits?(SplitsDAO v)
         {
+            if (v == null) return null;
+
             return new Splits()
             {
                 id = v.id,
