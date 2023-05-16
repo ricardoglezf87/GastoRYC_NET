@@ -67,10 +67,8 @@ namespace GastosRYC.Views
         {
             if (cbAccount?.SelectedItem != null && !transaction.investmentCategory.HasValue)
             {
-                transaction.investmentCategory = ((Accounts)cbAccount.SelectedItem).accountsTypesid ==
-                    (int)AccountsTypesService.eAccountsTypes.Invests
-                    ? false
-                    : true;
+                transaction.investmentCategory = ((Accounts)cbAccount.SelectedItem).accountsTypesid !=
+                    (int)AccountsTypesService.eAccountsTypes.Invests;
             }
             toggleViews();
         }
@@ -151,7 +149,7 @@ namespace GastosRYC.Views
         {
             if (cbPerson.SelectedItem != null)
             {
-                Persons p = ((Persons)cbPerson.SelectedItem);
+                Persons p = (Persons)cbPerson.SelectedItem;
                 if (p?.categoryid != null)
                 {
                     cbCategory.SelectedValue = p.categoryid;

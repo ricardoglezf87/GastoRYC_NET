@@ -77,8 +77,8 @@ namespace BOLib.Services
 
                 foreach (SplitsReminders? splitsReminders in lSplitsReminders)
                 {
-                    transactionsReminders.amountIn += (splitsReminders.amountIn == null ? 0 : splitsReminders.amountIn);
-                    transactionsReminders.amountOut += (splitsReminders.amountOut == null ? 0 : splitsReminders.amountOut);
+                    transactionsReminders.amountIn += splitsReminders.amountIn == null ? 0 : splitsReminders.amountIn;
+                    transactionsReminders.amountOut += splitsReminders.amountOut == null ? 0 : splitsReminders.amountOut;
                 }
 
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.Split;

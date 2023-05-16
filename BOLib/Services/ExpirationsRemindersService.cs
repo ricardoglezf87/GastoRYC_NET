@@ -65,7 +65,7 @@ namespace BOLib.Services
         {
             foreach (ExpirationsReminders? exp in getAllPendingWithGeneration()?
                 .Where(x => x.date <= DateTime.Now &&
-                    (x.transactionsReminders.autoRegister.HasValue && x.transactionsReminders.autoRegister.Value)))
+                    x.transactionsReminders.autoRegister.HasValue && x.transactionsReminders.autoRegister.Value))
             {
                 registerTransactionfromReminder(exp.id);
                 exp.done = true;

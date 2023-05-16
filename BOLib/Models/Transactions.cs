@@ -53,7 +53,7 @@ namespace BOLib.Models
 
 
         [NotMapped]
-        public virtual Decimal? amount => ((investmentCategory.HasValue && investmentCategory.Value == false) ? (numShares * pricesShares) : amountIn - amountOut);
+        public virtual Decimal? amount => (investmentCategory.HasValue && investmentCategory.Value == false) ? (numShares * pricesShares) : amountIn - amountOut;
 
         [NotMapped]
         public virtual Double? orden => Double.Parse(

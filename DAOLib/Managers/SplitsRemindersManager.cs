@@ -27,8 +27,8 @@ namespace DAOLib.Managers
             {
                 foreach (SplitsRemindersDAO splitsReminders in transactions.splits)
                 {
-                    total += (splitsReminders.amountIn == null ? 0 : splitsReminders.amountIn);
-                    total -= (splitsReminders.amountOut == null ? 0 : splitsReminders.amountOut);
+                    total += splitsReminders.amountIn == null ? 0 : splitsReminders.amountIn;
+                    total -= splitsReminders.amountOut == null ? 0 : splitsReminders.amountOut;
                 }
             }
 

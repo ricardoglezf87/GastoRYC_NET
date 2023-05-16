@@ -38,7 +38,7 @@ namespace BOLib.Services
 
         public bool accountExpensives(int? types)
         {
-            return (types is ((int)eAccountsTypes.Cash) or ((int)eAccountsTypes.Banks) or ((int)eAccountsTypes.Cards));
+            return types is ((int)eAccountsTypes.Cash) or ((int)eAccountsTypes.Banks) or ((int)eAccountsTypes.Cards);
         }
 
     }

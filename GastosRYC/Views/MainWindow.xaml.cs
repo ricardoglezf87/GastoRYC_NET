@@ -261,7 +261,7 @@ namespace GastosRYC
         private void autoResizeListView()
         {
             double remainingSpace = lvAccounts.ActualWidth * .93;
-            GridView? gv = (lvAccounts.View as GridView);
+            GridView? gv = lvAccounts.View as GridView;
 
             if (remainingSpace > 0)
             {

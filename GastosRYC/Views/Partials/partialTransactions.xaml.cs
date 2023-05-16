@@ -3,7 +3,6 @@ using BOLib.Models;
 using BOLib.ModelsView;
 using BOLib.Services;
 using Syncfusion.Data.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -212,8 +211,6 @@ namespace GastosRYC.Views
 
         public void refreshBalanceTransactions()
         {
-            Decimal? balanceTotal = 0;
-
             if (gvTransactions.View != null)
             {
 
@@ -221,10 +218,9 @@ namespace GastosRYC.Views
                     GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
                         GridQueryableCollectionViewWrapper)gvTransactions.View;
 
-                balanceTotal = accountSelected != null
-                    ? (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
-                    : (decimal?)col.ViewSource.Sum("amount");
-
+                decimal? balanceTotal = accountSelected != null
+        ? (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
+        : (decimal?)col.ViewSource.Sum("amount");
                 foreach (Transactions t in col.ViewSource)
                 {
                     if (t.amount != null)
@@ -253,8 +249,7 @@ namespace GastosRYC.Views
 
         public bool accountFilter(object? o)
         {
-            Transactions? p = (o as Transactions);
-            return p == null ? false : p.account?.id == accountSelected?.id;
+            return o is Transactions p && p.account?.id == accountSelected?.id;
         }
 
         public void ApplyFilters(AccountsView? _accountSelected = null)

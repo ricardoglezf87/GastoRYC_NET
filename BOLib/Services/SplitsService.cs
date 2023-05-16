@@ -59,8 +59,8 @@ namespace BOLib.Services
             {
                 foreach (Splits? splits in transactions.splits)
                 {
-                    total += (splits.amountIn == null ? 0 : splits.amountIn);
-                    total -= (splits.amountOut == null ? 0 : splits.amountOut);
+                    total += splits.amountIn == null ? 0 : splits.amountIn;
+                    total -= splits.amountOut == null ? 0 : splits.amountOut;
                 }
             }
 

@@ -188,8 +188,8 @@ namespace BOLib.Services
 
                 foreach (Splits? splits in lSplits)
                 {
-                    transactions.amountIn += (splits.amountIn == null ? 0 : splits.amountIn);
-                    transactions.amountOut += (splits.amountOut == null ? 0 : splits.amountOut);
+                    transactions.amountIn += splits.amountIn == null ? 0 : splits.amountIn;
+                    transactions.amountOut += splits.amountOut == null ? 0 : splits.amountOut;
                 }
 
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
@@ -244,7 +244,7 @@ namespace BOLib.Services
                     tagid = transactions.tagid,
                     amountIn = splits.amountOut,
                     amountOut = splits.amountIn,
-                    tranferSplitid = (splits.id != 0 ? splits.id : getNextID() + 1),
+                    tranferSplitid = splits.id != 0 ? splits.id : getNextID() + 1,
                     transactionStatusid = transactions.transactionStatusid
                 };
 

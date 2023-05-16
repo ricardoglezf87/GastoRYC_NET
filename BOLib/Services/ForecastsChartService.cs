@@ -38,9 +38,9 @@ namespace BOLib.Services
             DateTime now = DateTime.Now;
 
             foreach (var g in accountService.getAll()?.Where(x => (x.closed == false || x.closed == null)
-                                                            && ((x.accountsTypesid == (int)eAccountsTypes.Cash ||
+                                                            && (x.accountsTypesid == (int)eAccountsTypes.Cash ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Banks ||
-                                                            x.accountsTypesid == (int)eAccountsTypes.Cards))))
+                                                            x.accountsTypesid == (int)eAccountsTypes.Cards)))
             {
                 saldos.Add(g.id, 0);
             }
@@ -67,9 +67,9 @@ namespace BOLib.Services
                     foreach (var g in transactions
                                     .Where(x => x.category != null && x.date <= d
                                        && (x.account?.closed == false || x.account?.closed == null)
-                                       && ((x.account?.accountsTypesid == (int)eAccountsTypes.Cash ||
+                                       && (x.account?.accountsTypesid == (int)eAccountsTypes.Cash ||
                                         x.account?.accountsTypesid == (int)eAccountsTypes.Banks ||
-                                        x.account?.accountsTypesid == (int)eAccountsTypes.Cards)))
+                                        x.account?.accountsTypesid == (int)eAccountsTypes.Cards))
                                     .GroupBy(g => g.accountid))
                     {
                         Decimal saldo_act = g.Sum(x => x.amount) ?? 0;
