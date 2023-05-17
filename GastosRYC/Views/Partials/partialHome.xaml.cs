@@ -4,6 +4,7 @@ using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -180,7 +181,7 @@ namespace GastosRYC.Views
 
                 LineSeries series = new()
                 {
-                    ItemsSource = (await forecastsChartService.getMonthForecast()).Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
+                    ItemsSource = (await Task.Run(()=>forecastsChartService.getMonthForecast()))?.Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
                     Label = accounts.description,
                     XBindingPath = "date",
                     YBindingPath = "amount",

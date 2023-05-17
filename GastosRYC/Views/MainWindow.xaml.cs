@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -107,10 +108,10 @@ namespace GastosRYC
             }
         }
 
-        private void frmInicio_Loaded(object sender, RoutedEventArgs e)
+        private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             loadCalendar();
-            expirationsRemindersService.generateAutoregister();
+            await Task.Run(() => expirationsRemindersService.generateAutoregister());
             loadAccounts();
             toggleViews(eViews.Home);
         }

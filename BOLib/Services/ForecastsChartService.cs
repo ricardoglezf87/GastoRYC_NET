@@ -2,7 +2,9 @@
 using BOLib.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using static BOLib.Services.AccountsTypesService;
 
@@ -28,14 +30,14 @@ namespace BOLib.Services
 
         #region Functions
 
-        public async Task<List<ForecastsChart>> getMonthForecast()
+        public List<ForecastsChart> getMonthForecast()
         {
             Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
             Dictionary<int, Decimal> saldos = new();
 
             DateTime now = DateTime.Now;
 
-            foreach (var g in (await accountService.getAllAync())?.Where(x => (x.closed == false || x.closed == null)
+            foreach (var g in accountService.getAll()?.Where(x => (x.closed == false || x.closed == null)
                                                             && (x.accountsTypesid == (int)eAccountsTypes.Cash ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Banks ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Cards)))
@@ -45,13 +47,13 @@ namespace BOLib.Services
 
             List<Transactions> remTransactions = new();
 
-            foreach (ExpirationsReminders? exp in await expirationsRemindersService.getAllPendingWithoutFutureWithGenerationAsync())
+            foreach (ExpirationsReminders? exp in expirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
             {
                 if (exp != null)
-                    remTransactions.AddRange(await expirationsRemindersService.registerTransactionfromReminderSimulationAsync(exp));
+                    remTransactions.AddRange(expirationsRemindersService.registerTransactionfromReminderSimulation(exp));
             }
 
-            List<Transactions?>? transactions = await transactionsService.getAllAsync();
+            List<Transactions?>? transactions = transactionsService.getAll();
 
             if (transactions != null)
             {
@@ -87,7 +89,7 @@ namespace BOLib.Services
             foreach (Tuple<DateTime, int?> key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    (await accountService.getByIDAsync(key.Item2))?.description,
+                    accountService.getByID(key.Item2)?.description,
                     key.Item2, dChart[key]));
             }
             return lChart;
