@@ -206,11 +206,11 @@ namespace GastosRYC
 
         #region Functions
 
-        public void refreshBalance()
+        public async void refreshBalance()
         {
             foreach (AccountsView accounts in lvAccounts.ItemsSource)
             {
-                accounts.balance = accountsService.getBalanceByAccount(accounts.id);
+                accounts.balance = await Task.Run(() => accountsService.getBalanceByAccount(accounts.id));
             }
 
             autoResizeListView();

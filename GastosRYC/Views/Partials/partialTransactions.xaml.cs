@@ -299,10 +299,10 @@ namespace GastosRYC.Views
             {
                 if (transactions.splits != null)
                 {
-                    List<Splits> lSplits = transactions.splits;
+                    List<Splits?>? lSplits = transactions.splits;
                     for (int i = 0; i < lSplits.Count; i++)
                     {
-                        Splits splits = lSplits[i];
+                        Splits? splits = lSplits[i];
                         if (splits.tranferid != null)
                         {
                             transactionsService.delete(transactionsService.getByID(splits.tranferid));
