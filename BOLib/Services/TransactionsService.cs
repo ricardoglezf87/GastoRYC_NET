@@ -2,6 +2,7 @@
 using BOLib.Models;
 using DAOLib.Managers;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BOLib.Services
 {
@@ -31,6 +32,11 @@ namespace BOLib.Services
         public List<Transactions?>? getAll()
         {
             return transactionsManager.getAll()?.toListBO();
+        }
+
+        public async Task<List<Transactions?>?> getAllAsync()
+        {
+            return await Task.Run(() => getAll()); 
         }
 
         public Transactions? getByID(int? id)

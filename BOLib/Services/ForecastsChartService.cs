@@ -3,6 +3,7 @@ using BOLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using static BOLib.Services.AccountsTypesService;
 
 namespace BOLib.Services
@@ -27,14 +28,14 @@ namespace BOLib.Services
 
         #region Functions
 
-        public List<ForecastsChart> getMonthForecast()
+        public async Task<List<ForecastsChart>> getMonthForecast()
         {
             Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
             Dictionary<int, Decimal> saldos = new();
 
             DateTime now = DateTime.Now;
 
-            foreach (var g in accountService.getAll()?.Where(x => (x.closed == false || x.closed == null)
+            foreach (var g in (await accountService.getAllAync())?.Where(x => (x.closed == false || x.closed == null)
                                                             && (x.accountsTypesid == (int)eAccountsTypes.Cash ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Banks ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Cards)))
@@ -44,12 +45,13 @@ namespace BOLib.Services
 
             List<Transactions> remTransactions = new();
 
-            foreach (ExpirationsReminders exp in expirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
+            foreach (ExpirationsReminders? exp in await expirationsRemindersService.getAllPendingWithoutFutureWithGenerationAsync())
             {
-                remTransactions.AddRange(expirationsRemindersService.registerTransactionfromReminderSimulation(exp));
+                if (exp != null)
+                    remTransactions.AddRange(await expirationsRemindersService.registerTransactionfromReminderSimulationAsync(exp));
             }
 
-            List<Transactions>? transactions = transactionsService.getAll();
+            List<Transactions?>? transactions = await transactionsService.getAllAsync();
 
             if (transactions != null)
             {
@@ -79,15 +81,15 @@ namespace BOLib.Services
                     }
                 }
             }
+            
             List<ForecastsChart> lChart = new();
 
             foreach (Tuple<DateTime, int?> key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    accountService.getByID(key.Item2)?.description,
+                    (await accountService.getByIDAsync(key.Item2))?.description,
                     key.Item2, dChart[key]));
             }
-
             return lChart;
         }
 

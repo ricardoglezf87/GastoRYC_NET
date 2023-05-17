@@ -4,6 +4,7 @@ using DAOLib.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BOLib.Services
 {
@@ -51,6 +52,11 @@ namespace BOLib.Services
         public List<ExpirationsReminders?>? getAllPendingWithoutFutureWithGeneration()
         {
             return getAllWithGeneration()?.Where(x => x.done != true && x.groupDate != "Futuro").ToList();
+        }
+
+        public async Task<List<ExpirationsReminders?>?> getAllPendingWithoutFutureWithGenerationAsync()
+        {
+            return await Task.Run(() => getAllPendingWithoutFutureWithGeneration());
         }
 
         public void GenerationAllExpirations()
@@ -187,7 +193,11 @@ namespace BOLib.Services
                 lTransactions.Add(transactions);
             }
             return lTransactions;
+        }
 
+        public Task<List<Transactions>> registerTransactionfromReminderSimulationAsync(ExpirationsReminders exp)
+        {
+            return Task.Run(() => registerTransactionfromReminderSimulation(exp));
         }
 
         public Transactions updateTranferSplitsSimulation(Transactions? transactions, Splits splits)

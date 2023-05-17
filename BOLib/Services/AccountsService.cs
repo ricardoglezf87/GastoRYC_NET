@@ -5,6 +5,7 @@ using DAOLib.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BOLib.Services
 {
@@ -24,6 +25,11 @@ namespace BOLib.Services
             return accountsManager.getAll()?.toListBO();
         }
 
+        public async Task<List<Accounts?>?> getAllAync()
+        {
+            return await Task.Run(() => getAll());
+        }
+
         public List<Accounts?>? getAllOrderByAccountsTypesId()
         {
             return accountsManager.getAllOrderByAccountsTypesId()?.toListBO();
@@ -34,6 +40,11 @@ namespace BOLib.Services
             return accountsManager.getAllOpened()?.toListBO();
         }
 
+        public async Task<List<Accounts?>?> getAllOpenedAync()
+        {
+            return await Task.Run(() => getAllOpened());
+        }
+
         public List<AccountsView>? getAllOpenedListView()
         {
             return accountsManager.getAllOpened()?.toListViewBO();
@@ -42,6 +53,11 @@ namespace BOLib.Services
         public Accounts? getByID(int? id)
         {
             return (Accounts?)accountsManager.getByID(id);
+        }
+
+        public async Task<Accounts?> getByIDAsync(int? id)
+        {
+            return await Task.Run(() => getByID(id));
         }
 
         public void update(Accounts accounts)

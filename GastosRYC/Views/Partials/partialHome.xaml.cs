@@ -54,7 +54,7 @@ namespace GastosRYC.Views
 
         #region Functions
 
-        private void loadChartForecast()
+        private async void loadChartForecast()
         {
             //Header
 
@@ -174,14 +174,13 @@ namespace GastosRYC.Views
 
             chForecast.Series.Clear();
 
-            foreach (Accounts accounts in accountsService.getAllOpened()?
+            foreach (Accounts? accounts in (await accountsService.getAllOpenedAync())?
                 .Where(x => accountsTypesService.accountExpensives(x.accountsTypesid)))
             {
 
                 LineSeries series = new()
                 {
-                    ItemsSource = forecastsChartService.getMonthForecast()
-                        .Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
+                    ItemsSource = (await forecastsChartService.getMonthForecast()).Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
                     Label = accounts.description,
                     XBindingPath = "date",
                     YBindingPath = "amount",
