@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Navigation;
 
 namespace BOLib.Services
 {
@@ -49,6 +50,10 @@ namespace BOLib.Services
         {
             return accountsManager.getAllOpened()?.toListViewBO();
         }
+        public async Task<List<AccountsView>?> getAllOpenedListViewAsync()
+        {
+            return await Task.Run(() => getAllOpenedListView());
+        }
 
         public Accounts? getByID(int? id)
         {
@@ -73,6 +78,11 @@ namespace BOLib.Services
         public Decimal getBalanceByAccount(int? id)
         {
             return transactionsService.getByAccount(id)?.Sum(x => x.amount) ?? 0;
+        }
+
+        public Task<Decimal> getBalanceByAccountAsync(int? id)
+        {
+            return Task.Run(() => getBalanceByAccount(id));
         }
 
         public Decimal getBalanceByAccount(Accounts? accounts)

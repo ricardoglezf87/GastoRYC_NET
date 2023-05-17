@@ -271,9 +271,9 @@ namespace GastosRYC
             }
         }
 
-        public async void loadAccounts()
+        public void loadAccounts()
         {
-            List<AccountsView>? accountsViews = await Task.Run(() => accountsService.getAllOpenedListView());
+            List<AccountsView>? accountsViews = accountsService.getAllOpenedListView();
             viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypesdescription"));

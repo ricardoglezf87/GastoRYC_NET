@@ -241,9 +241,9 @@ namespace GastosRYC.Views
             }
         }
 
-        public void loadTransactions()
+        public async void loadTransactions()
         {
-            gvTransactions.ItemsSource = transactionsService.getAll();
+            gvTransactions.ItemsSource = await transactionsService.getAllAsync();
             ApplyFilters(accountSelected);
         }
 
