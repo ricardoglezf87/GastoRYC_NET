@@ -205,7 +205,7 @@ namespace GastosRYC.Views
             }
         }
 
-        private void loadChartExpenses()
+        private async void loadChartExpenses()
         {
             //Header
 
@@ -299,7 +299,7 @@ namespace GastosRYC.Views
 
             //Series
 
-            List<VBalancebyCategory>? lExpensesCharts = vBalancebyCategoryService.getExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
+            List<VBalancebyCategory?>? lExpensesCharts = await vBalancebyCategoryService.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new()

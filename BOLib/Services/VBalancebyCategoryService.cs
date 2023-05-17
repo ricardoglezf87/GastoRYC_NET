@@ -4,6 +4,7 @@ using BOLib.Models;
 using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BOLib.Services
 {
@@ -16,19 +17,24 @@ namespace BOLib.Services
             vBalancebyCategoryManager = InstanceBase<VBalancebyCategoryManager>.Instance;
         }
 
-        public List<VBalancebyCategory>? getAll()
+        public List<VBalancebyCategory?>? getAll()
         {
             return vBalancebyCategoryManager.getAll()?.toListBO();
         }
 
-        public List<VBalancebyCategory>? getbyYearMonth(int month, int year)
+        public List<VBalancebyCategory?>? getbyYearMonth(int month, int year)
         {
             return getAll()?.Where(x => x.year == year && x.month == month).ToList();
         }
 
-        public List<VBalancebyCategory>? getExpensesbyYearMonth(int month, int year)
+        public List<VBalancebyCategory?>? getExpensesbyYearMonth(int month, int year)
         {
             return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToList();
+        }
+
+        public async Task<List<VBalancebyCategory?>?> getExpensesbyYearMonthAsync(int month, int year)
+        {
+            return await Task.Run(() => getExpensesbyYearMonth(month,year));
         }
     }
 }

@@ -26,14 +26,14 @@ namespace BOLib.Services
             Savings = 7
         }
 
-        public List<AccountsTypes>? getAll()
+        public List<AccountsTypes?>? getAll()
         {
             return accountsTypesManager.getAll()?.toListBO();
         }
 
         public AccountsTypes? getByID(int? id)
         {
-            return (AccountsTypes)accountsTypesManager.getByID(id);
+            return (AccountsTypes?)accountsTypesManager.getByID(id);
         }
 
         public bool accountExpensives(int? types)
