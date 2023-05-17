@@ -12,15 +12,12 @@ namespace BOLib.Services
 
         #region Propiedades y Contructor
 
-        private readonly ForecastsChartService forecastsChartService;
         private readonly TransactionsService transactionsService;
         private readonly ExpirationsRemindersService expirationsRemindersService;
         private readonly AccountsService accountService;
 
         public ForecastsChartService()
         {
-            //TODO: Aqui creo que seria un forecast manager
-            forecastsChartService = InstanceBase<ForecastsChartService>.Instance;
             transactionsService = InstanceBase<TransactionsService>.Instance;
             accountService = InstanceBase<AccountsService>.Instance;
             expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
