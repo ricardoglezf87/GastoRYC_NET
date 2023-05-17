@@ -271,9 +271,10 @@ namespace GastosRYC
             }
         }
 
-        public void loadAccounts()
+        public async void loadAccounts()
         {
-            viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAllOpenedListView());
+            List<AccountsView>? accountsViews = await Task.Run(() => accountsService.getAllOpenedListView());
+            viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypesdescription"));
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypesid", ListSortDirection.Ascending));

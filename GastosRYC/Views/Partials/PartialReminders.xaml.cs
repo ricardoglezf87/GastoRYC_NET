@@ -1,5 +1,7 @@
 ﻿using BOLib.Models;
 using BOLib.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -75,12 +77,14 @@ namespace GastosRYC.Views
 
         #region Functions
 
-        public void loadReminders()
+        public async void loadReminders()
         {
-            expirationsRemindersService.generateAutoregister();
+            await Task.Run(() => expirationsRemindersService.generateAutoregister());
             parentForm.loadAccounts();
 
-            cvReminders.ItemsSource = new ListCollectionView(expirationsRemindersService.getAllPendingWithoutFutureWithGeneration());
+            List<ExpirationsReminders?>? expirationsReminders = await Task.Run(() => expirationsRemindersService.getAllPendingWithoutFutureWithGeneration());
+
+            cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 
             cvReminders.CanGroup = true;
             cvReminders.GroupCards("groupDate");
