@@ -29,7 +29,7 @@ namespace GastosRYC
         private readonly ExpirationsRemindersService expirationsRemindersService;
         private readonly InvestmentProductsPricesService investmentProductsPricesService;
         private readonly InvestmentProductsService investmentProductsService;
-
+        private readonly RYCContextService contextService;
 
         private enum eViews : int
         {
@@ -52,6 +52,9 @@ namespace GastosRYC
             expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
             investmentProductsPricesService = InstanceBase<InvestmentProductsPricesService>.Instance;
             investmentProductsService = InstanceBase<InvestmentProductsService>.Instance;
+            contextService = InstanceBase<RYCContextService>.Instance;
+
+            contextService.makeBackup();
         }
 
         #endregion
