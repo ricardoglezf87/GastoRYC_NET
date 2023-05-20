@@ -172,19 +172,14 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
-    <PackageReference Include="Syncfusion.SfChart.WPF" Version="21.1.41" />
-    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="21.1.41" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="21.1.35" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="21.1.41" />
-    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="21.1.41" />
-    <PackageReference Include="Syncfusion.Tools.WPF" Version="21.1.41" />
+    <PackageReference Include="Syncfusion.SfChart.WPF" Version="21.2.5" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="21.2.5" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="21.2.5" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="21.2.5" />
+    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="21.2.5" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="21.2.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BOLib\BOLib.csproj" />

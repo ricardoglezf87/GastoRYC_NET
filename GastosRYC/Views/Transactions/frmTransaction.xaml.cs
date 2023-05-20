@@ -41,7 +41,7 @@ namespace GastosRYC.Views
             transactionsStatusService = InstanceBase<TransactionsStatusService>.Instance;
         }
 
-        public FrmTransaction(Transactions transaction, int accountidDefault, SimpleInjector.Container servicesContainer) :
+        public FrmTransaction(Transactions transaction, int accountidDefault) :
             this()
         {
             this.transaction = transaction;
