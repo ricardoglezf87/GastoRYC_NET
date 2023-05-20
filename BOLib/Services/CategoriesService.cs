@@ -23,19 +23,19 @@ namespace BOLib.Services
             categoriesManager = InstanceBase<CategoriesManager>.Instance;
         }
 
-        public List<Categories>? getAll()
+        public List<Categories?>? getAll()
         {
             return categoriesManager.getAll()?.toListBO();
         }
 
-        public List<Categories>? getAllFilterTransfer()
+        public List<Categories?>? getAllFilterTransfer()
         {
-            return categoriesManager.getAllFilterTransfer()?.toListBO();
+            return categoriesManager?.getAllFilterTransfer()?.toListBO();
         }
 
         public Categories? getByID(int? id)
         {
-            return (Categories)categoriesManager.getByID(id);
+            return (Categories?)categoriesManager.getByID(id);
         }
 
         public void update(Categories categories)
