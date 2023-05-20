@@ -75,6 +75,9 @@ namespace DAOLib.Managers
             {
                 optionsBuilder.UseSqlite("Data Source=Data\\" + nameDDBB);
             }
+
+            optionsBuilder.EnableSensitiveDataLogging(true);
+            optionsBuilder.UseLazyLoadingProxies(true);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
