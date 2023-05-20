@@ -213,6 +213,8 @@ namespace GastosRYC
                 accounts.balance = await Task.Run(() => accountsService.getBalanceByAccount(accounts.id));
             }
 
+            viewAccounts.Refresh();
+
             autoResizeListView();
         }
 

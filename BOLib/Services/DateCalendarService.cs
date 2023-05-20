@@ -18,7 +18,7 @@ namespace BOLib.Services
             initDate = new DateTime(2001, 01, 01);
         }
 
-        public List<DateCalendar>? getAll()
+        public List<DateCalendar?>? getAll()
         {
             return dateCalendarManager.getAll()?.toListBO();
         }

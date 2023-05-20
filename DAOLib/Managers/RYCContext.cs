@@ -50,40 +50,10 @@ namespace DAOLib.Managers
             {
                 if (!Directory.Exists("Data\\"))
                     Directory.CreateDirectory("Data\\");
-            }
-
-            makeBackup();
+            }        
 
             Database.Migrate();
-        }
-
-        private void makeBackup()
-        {
-            string path = string.Empty;
-            string nameDDBB = string.Empty;
-
-            path = !Settings.Default.BBDDLocal
-                ? Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-                    + "\\GastosRYC\\Data\\"
-                : "Data\\";
-
-            if (!Directory.Exists(path + "Backup\\"))
-                Directory.CreateDirectory(path + "Backup\\");
-
-#if DEBUG
-            nameDDBB = "rycBBDD_PRE.db";
-#else
-            nameDDBB = "rycBBDD.db";
-#endif
-
-            if (File.Exists(path + nameDDBB))
-            {
-
-                File.Copy(path + nameDDBB, path + "Backup\\" +
-                    nameDDBB + "." + DateTime.Now.Ticks.ToString() + ".bk", true);
-            }
-
-        }
+        }       
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -1,9 +1,11 @@
 ﻿using BOLib.Extensions;
 using BOLib.Models;
 using DAOLib.Managers;
+using DAOLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BOLib.Services
@@ -15,7 +17,7 @@ namespace BOLib.Services
         private readonly TransactionsService transactionsService;
         private readonly TransactionsRemindersService transactionsRemindersService;
         private readonly CategoriesService categoriesService;
-        private readonly SplitsService splitsService;
+        private readonly SplitsService splitsService;        
 
         public ExpirationsRemindersService()
         {
@@ -230,8 +232,8 @@ namespace BOLib.Services
                 account = transactions.category.accounts,
                 personid = transactions.personid,
                 person = transactions.person,
-                categoryid = transactions.account.categoryid,
-                category = categoriesService.getByID(transactions.account.categoryid),
+                categoryid = transactions.account?.categoryid,
+                category = categoriesService.getByID(transactions.account?.categoryid),
                 memo = transactions.memo,
                 tagid = transactions.tagid,
                 tag = transactions.tag,

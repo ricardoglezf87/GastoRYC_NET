@@ -23,14 +23,14 @@ namespace BOLib.Services
             transactionsService = InstanceBase<TransactionsService>.Instance;
         }
 
-        public List<InvestmentProductsPrices>? getAll()
+        public List<InvestmentProductsPrices?>? getAll()
         {
             return investmentProductsPricesManager.getAll()?.toListBO();
         }
 
         public InvestmentProductsPrices? getByID(int? id)
         {
-            return (InvestmentProductsPrices)investmentProductsPricesManager.getByID(id);
+            return (InvestmentProductsPrices?)investmentProductsPricesManager.getByID(id);
         }
 
         public bool exists(int? investmentProductId, DateTime? date)
@@ -90,9 +90,7 @@ namespace BOLib.Services
                     {
                         investmentProductsPricesManager.update(productsPrices.toDAO(), false);
                     }
-                }
-
-                await investmentProductsPricesManager.saveChangesAsync();
+                }               
             }
             catch (Exception)
             {

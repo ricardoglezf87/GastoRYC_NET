@@ -243,7 +243,7 @@ namespace GastosRYC.Views
 
         public async void loadTransactions()
         {
-            gvTransactions.ItemsSource = await transactionsService.getAllAsync();
+            gvTransactions.ItemsSource = await transactionsService.getAllAsync();                          
             ApplyFilters(accountSelected);
         }
 

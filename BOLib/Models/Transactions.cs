@@ -51,6 +51,11 @@ namespace BOLib.Models
 
         public virtual bool? investmentCategory { set; get; }
 
+        public virtual String? categoryDescripGrid => (investmentCategory.HasValue && investmentCategory.Value == false) ?
+            (numShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra") : category?.description ?? String.Empty;
+
+        public virtual String? personDescripGrid => (investmentCategory.HasValue && investmentCategory.Value == false) ? 
+            investmentProducts?.description ?? String.Empty : person?.name ?? String.Empty;
 
         [NotMapped]
         public virtual Decimal? amount => (investmentCategory.HasValue && investmentCategory.Value == false) ? (numShares * pricesShares) : amountIn - amountOut;

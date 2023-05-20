@@ -1,20 +1,42 @@
 ﻿using DAOLib.Models;
-using DAOLib.Services;
+using DAOLib.Repositories;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace DAOLib.Managers
 {
     public class AccountsManager : ManagerBase<AccountsDAO>
     {
+#pragma warning disable CS8603
+        public override Expression<Func<AccountsDAO, object>>[] getIncludes()
+        {
+            return new Expression<Func<AccountsDAO, object>>[]
+            {
+                a => a.accountsTypes,
+                a => a.category
+            };
+        }
+#pragma warning restore CS8603
+
         public List<AccountsDAO>? getAllOrderByAccountsTypesId()
         {
-            return RYCContextServiceDAO.getInstance().BBDD.accounts?.OrderBy(x => x.accountsTypesid).ToList();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<AccountsDAO>();
+                return getEntyWithInclude(repository)?.OrderBy(x => x.accountsTypesid).ToList();
+            }
         }
 
         public List<AccountsDAO>? getAllOpened()
         {
-            return RYCContextServiceDAO.getInstance().BBDD.accounts?.Where(x => !x.closed.HasValue || !x.closed.Value).ToList();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<AccountsDAO>();
+                return getEntyWithInclude(repository)?.Where(x => !x.closed.HasValue || !x.closed.Value).ToList();
+            }
         }
     }
 }

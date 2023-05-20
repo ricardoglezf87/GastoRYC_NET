@@ -1,14 +1,32 @@
 ﻿using DAOLib.Models;
-using DAOLib.Services;
+using DAOLib.Repositories;
+
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace DAOLib.Managers
 {
     public class TransactionsManager : ManagerBase<TransactionsDAO>
     {
+
+        #pragma warning disable CS8603
+        public override Expression<Func<TransactionsDAO, object>>[] getIncludes()
+        {
+            return new Expression<Func<TransactionsDAO, object>>[]
+            {
+                a => a.account,
+                a => a.person,
+                a => a.category,
+                a => a.tag,
+                a => a.investmentProducts,
+                a => a.transactionStatus
+            };
+        }
+        #pragma warning restore CS8603
+
         public List<TransactionsDAO>? getByAccount(AccountsDAO? accounts)
         {
             return getByAccount(accounts?.id);
@@ -16,7 +34,11 @@ namespace DAOLib.Managers
 
         public List<TransactionsDAO>? getByAccount(int? id)
         {
-            return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => id.Equals(x.accountid))?.ToList();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?.Where(x => id.Equals(x.accountid))?.ToList();
+            }
         }
 
         public List<TransactionsDAO>? getByPerson(PersonsDAO? persons)
@@ -26,7 +48,11 @@ namespace DAOLib.Managers
 
         public List<TransactionsDAO>? getByPerson(int? id)
         {
-            return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => id.Equals(x.personid))?.ToList();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?.Where(x => id.Equals(x.personid))?.ToList();
+            }
         }
 
         public List<TransactionsDAO>? getByInvestmentProduct(InvestmentProductsDAO? investment)
@@ -36,22 +62,29 @@ namespace DAOLib.Managers
 
         public List<TransactionsDAO>? getByInvestmentProduct(int? id)
         {
-            return RYCContextServiceDAO.getInstance().BBDD.transactions?.Where(x => id.Equals(x.investmentProductsid))?.ToList();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?.Where(x => id.Equals(x.investmentProductsid))?.ToList();
+            }
         }
 
         public int getNextID()
         {
-            var cmd = RYCContextServiceDAO.getInstance().BBDD.Database.
-                GetDbConnection().CreateCommand();
-            cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactions';";
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {                
+                var cmd = unitOfWork.getDataBase().
+                    GetDbConnection().CreateCommand();
+                cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactions';";
 
-            RYCContextServiceDAO.getInstance().BBDD.Database.OpenConnection();
-            var result = cmd.ExecuteReader();
-            result.Read();
-            int id = Convert.ToInt32(result[0]);
-            result.Close();
+                unitOfWork.getDataBase().OpenConnection();
+                var result = cmd.ExecuteReader();
+                result.Read();
+                int id = Convert.ToInt32(result[0]);
+                result.Close();
 
-            return id;
+                return id;
+            }
         }
     }
 }

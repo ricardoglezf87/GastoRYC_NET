@@ -1,5 +1,7 @@
-﻿using DAOLib.Models;
-using DAOLib.Services;
+﻿using DAOLib.Migrations;
+using DAOLib.Models;
+using DAOLib.Repositories;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,37 +14,62 @@ namespace DAOLib.Managers
 
         public List<DateCalendarDAO>? getAll()
         {
-            return RYCContextServiceDAO.getInstance().BBDD.dateCalendar?.ToList();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
+                return repository.GetAll();
+            }
         }
 
         public DateCalendarDAO? getByID(DateTime? id)
         {
-            return RYCContextServiceDAO.getInstance().BBDD.dateCalendar?.FirstOrDefault(x => id.Equals(x.date));
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
+                return repository.GetById(id);
+            }
         }
 
-        public void add(DateCalendarDAO? obj)
+        public void add(DateCalendarDAO? dateCalendar)
         {
-            if (obj != null)
+            if (dateCalendar != null)
             {
-                RYCContextServiceDAO.getInstance().BBDD.Add(obj);
+                using (var unitOfWork = new UnitOfWork(new RYCContext()))
+                {
+                    var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
+                    repository.Add(dateCalendar);
+                    repository.saveChanges();
+                }
             }
         }
 
         public void saveChanges()
         {
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
+                repository.saveChanges();
+            }
         }
 
         public void update(DateCalendarDAO dateCalendar)
         {
-            RYCContextServiceDAO.getInstance().BBDD.Update(dateCalendar);
-            saveChanges();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
+                repository.Update(dateCalendar);
+                repository.saveChanges();
+            }
         }
 
         public void delete(DateCalendarDAO dateCalendar)
         {
-            RYCContextServiceDAO.getInstance().BBDD.Remove(dateCalendar);
-            saveChanges();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
+                repository.Delete(dateCalendar);
+                repository.saveChanges();
+            }
         }
     }
 }
