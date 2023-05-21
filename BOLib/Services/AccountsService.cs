@@ -2,6 +2,7 @@
 using BOLib.Models;
 using BOLib.ModelsView;
 using DAOLib.Managers;
+using DAOLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +59,11 @@ namespace BOLib.Services
         public Accounts? getByID(int? id)
         {
             return (Accounts?)accountsManager.getByID(id);
+        }
+
+        public Accounts? getByCategoryId(int? id)
+        {
+            return (Accounts?)accountsManager.getByCategoryId(id);
         }
 
         public async Task<Accounts?> getByIDAsync(int? id)

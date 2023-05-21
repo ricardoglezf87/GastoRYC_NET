@@ -38,5 +38,14 @@ namespace DAOLib.Managers
                 return getEntyWithInclude(repository)?.Where(x => !x.closed.HasValue || !x.closed.Value).ToList();
             }
         }
+
+        public AccountsDAO? getByCategoryId(int? id)
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<AccountsDAO>();
+                return repository?.entities?.FirstOrDefault(x => id.Equals(x.categoryid));
+            }
+        }
     }
 }

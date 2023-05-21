@@ -40,27 +40,28 @@ namespace BOLib.Services
 
         public void setCategoryDefault(Persons? persons)
         {
-            if (persons == null)
-                return;
+            //TODO: Arreglar
+            //if (persons == null)
+            //    return;
 
-            var result = (from x in transactionsService.getByPerson(persons)
-                          group x by x.categoryid into g
-                          select new
-                          {
-                              categoryid = g.Key,
-                              count = g.Count()
-                          }).ToList();
+            //var result = (from x in transactionsService.getByPerson(persons)
+            //              group x by x.categoryid into g
+            //              select new
+            //              {
+            //                  categoryid = g.Key,
+            //                  count = g.Count()
+            //              })?.ToList();
 
-            if (result != null)
-            {
-                int maxCount = result.Max(c => c.count);
-                int? maxCounts = (from c in result
-                                  where c.count == maxCount
-                                  select c.categoryid).FirstOrDefault();
+            //if (result != null)
+            //{
+            //    int maxCount = result.Max(c => c.count);
+            //    int? maxCounts = (from c in result
+            //                      where c.count == maxCount
+            //                      select c.categoryid).FirstOrDefault();
 
-                persons.categoryid = maxCounts;
-                update(persons);
-            }
+            //    persons.categoryid = maxCounts;
+            //    update(persons);
+            //}
         }
     }
 }

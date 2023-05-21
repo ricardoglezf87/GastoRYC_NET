@@ -14,15 +14,13 @@ namespace BOLib.Services
         #region Propiedades y Contructor
 
         private readonly TransactionsManager transactionsManager;
-        private readonly SplitsService splitsService;
-        private readonly AccountsService accountsService;
+        private readonly SplitsService splitsService;        
         private readonly CategoriesService categoriesService;
         private readonly PersonsService personsService;
 
         public TransactionsService()
         {
-            transactionsManager = InstanceBase<TransactionsManager>.Instance;
-            accountsService = InstanceBase<AccountsService>.Instance;
+            transactionsManager = InstanceBase<TransactionsManager>.Instance;            
             splitsService = InstanceBase<SplitsService>.Instance;
             categoriesService = InstanceBase<CategoriesService>.Instance;
             personsService = InstanceBase<PersonsService>.Instance;
@@ -125,9 +123,9 @@ namespace BOLib.Services
                 Transactions? tContraria = new()
                 {
                     date = transactions.date,
-                    accountid = transactions.category.accounts.id,
+                    accountid = InstanceBase<AccountsService>.Instance.getByCategoryId(transactions.categoryid)?.id,
                     personid = transactions.personid,
-                    categoryid = accountsService.getByID(transactions.accountid)?.categoryid,
+                    categoryid = InstanceBase<AccountsService>.Instance.getByID(transactions.accountid)?.categoryid,
                     memo = transactions.memo,
                     tagid = transactions.tagid,
                     amountIn = transactions.amountOut,
@@ -148,9 +146,9 @@ namespace BOLib.Services
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;
-                    tContraria.accountid = transactions.category.accounts.id;
+                    tContraria.accountid = InstanceBase<AccountsService>.Instance.getByCategoryId(transactions.categoryid)?.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
+                    tContraria.categoryid = InstanceBase<AccountsService>.Instance.getByID(transactions.accountid)?.categoryid;
                     tContraria.memo = transactions.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;
@@ -246,7 +244,7 @@ namespace BOLib.Services
                 Transactions? tContraria = new()
                 {
                     date = transactions.date,
-                    accountid = splits.category.accounts.id,
+                    accountid = InstanceBase<AccountsService>.Instance.getByCategoryId(splits.categoryid)?.id,
                     personid = transactions.personid,
                     categoryid = transactions.account.categoryid,
                     memo = splits.memo,
@@ -267,7 +265,7 @@ namespace BOLib.Services
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;
-                    tContraria.accountid = splits.category.accounts.id;
+                    tContraria.accountid = InstanceBase<AccountsService>.Instance.getByCategoryId(splits.categoryid)?.id;
                     tContraria.personid = transactions.personid;
                     tContraria.categoryid = transactions.account.categoryid;
                     tContraria.memo = splits.memo;

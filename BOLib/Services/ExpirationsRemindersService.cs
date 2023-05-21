@@ -16,6 +16,7 @@ namespace BOLib.Services
         private readonly PeriodsRemindersService periodsRemindersService;
         private readonly TransactionsService transactionsService;
         private readonly TransactionsRemindersService transactionsRemindersService;
+        private readonly AccountsService accountsService;
         private readonly CategoriesService categoriesService;
         private readonly SplitsService splitsService;        
 
@@ -24,6 +25,7 @@ namespace BOLib.Services
             expirationsRemindersManager = InstanceBase<ExpirationsRemindersManager>.Instance;
             periodsRemindersService = InstanceBase<PeriodsRemindersService>.Instance;
             categoriesService = InstanceBase<CategoriesService>.Instance;
+            accountsService = InstanceBase<AccountsService>.Instance;
             transactionsService = InstanceBase<TransactionsService>.Instance;
             splitsService = InstanceBase<SplitsService>.Instance;
             transactionsService = InstanceBase<TransactionsService>.Instance;
@@ -207,8 +209,8 @@ namespace BOLib.Services
             Transactions? tContraria = new()
             {
                 date = transactions.date,
-                accountid = splits.category.accounts.id,
-                account = splits.category.accounts,
+                accountid = accountsService.getByCategoryId(splits.categoryid)?.id,
+                account = accountsService.getByCategoryId(splits.categoryid),
                 personid = transactions.personid,
                 person = transactions.person,
                 categoryid = transactions.account.categoryid,
@@ -228,8 +230,8 @@ namespace BOLib.Services
             Transactions? tContraria = new()
             {
                 date = transactions.date.removeTime(),
-                accountid = transactions.category.accounts?.id,
-                account = transactions.category.accounts,
+                accountid = accountsService.getByCategoryId(transactions.categoryid)?.id,
+                account = accountsService.getByCategoryId(transactions.categoryid),
                 personid = transactions.personid,
                 person = transactions.person,
                 categoryid = transactions.account?.categoryid,
