@@ -75,7 +75,7 @@ namespace GastosRYC
             openNewTransaction();
         }
 
-        private void frmInicio_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private async void frmInicio_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -95,6 +95,8 @@ namespace GastosRYC
                     else if (actualPrincipalContent is PartialReminders)
                     {
                         ((PartialReminders)actualPrincipalContent).loadReminders();
+                        await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
+                        loadAccounts();
                     }
                     break;
             }
@@ -184,13 +186,16 @@ namespace GastosRYC
 
         }
 
-        private void btnMntReminders_Click(object sender, RoutedEventArgs e)
+        private async void btnMntReminders_Click(object sender, RoutedEventArgs e)
         {
             FrmTransactionReminderList frm = new();
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialReminders)
                 ((PartialReminders)actualPrincipalContent).loadReminders();
+
+            await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
+            loadAccounts();
         }
 
 

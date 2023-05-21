@@ -77,9 +77,6 @@ namespace GastosRYC.Views
 
         public async void loadReminders()
         {
-            await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
-            parentForm.loadAccounts();
-
             List<ExpirationsReminders?>? expirationsReminders = await Task.Run(() => ExpirationsRemindersService.Instance.getAllPendingWithoutFutureWithGeneration());
 
             cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
@@ -110,7 +107,7 @@ namespace GastosRYC.Views
             if (transaction != null)
             {
                 FrmTransaction frm = new(transaction);
-                frm.ShowDialog();
+                frm.ShowDialog();                
             }
 
             parentForm.loadAccounts();
