@@ -24,7 +24,7 @@ namespace BOLib.Models
             return new ExpirationsRemindersDAO()
             {
                 date = this.date,
-                transactionsReminders = this.transactionsReminders?.toDAO(),
+                transactionsReminders = null,
                 transactionsRemindersid = this.transactionsRemindersid,
                 done = this.done
             };

@@ -24,7 +24,7 @@ namespace BOLib.Models
                 id = this.id,
                 description = this.description,
                 categoriesTypesid = this.categoriesTypesid,
-                categoriesTypes = this.categoriesTypes?.toDAO()
+                categoriesTypes = null
             };
         }
 

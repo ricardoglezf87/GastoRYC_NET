@@ -13,10 +13,5 @@ namespace DAOLib.Models
         public virtual int? categoriesTypesid { set; get; }
 
         public virtual CategoriesTypesDAO? categoriesTypes { set; get; }
-
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public virtual AccountsDAO? accounts { set; get; }
-
     }
 }

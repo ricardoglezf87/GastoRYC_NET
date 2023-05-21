@@ -77,7 +77,6 @@ namespace DAOLib.Managers
             }
 
             optionsBuilder.EnableSensitiveDataLogging(true);
-            optionsBuilder.UseLazyLoadingProxies(true);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

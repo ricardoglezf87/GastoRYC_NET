@@ -31,15 +31,15 @@ namespace BOLib.Models
             {
                 id = this.id,
                 transactionid = this.transactionid,
-                transaction = this.transaction?.toDAO(),
+                transaction = null,
                 categoryid = this.categoryid,
-                category = this.category?.toDAO(),
+                category = null,
                 amountOut = this.amountOut,
                 amountIn = this.amountIn,
                 memo = this.memo,
                 tranferid = this.tranferid,
                 tagid = this.tagid,
-                tag = this.tag?.toDAO()
+                tag = null
             };
         }
 

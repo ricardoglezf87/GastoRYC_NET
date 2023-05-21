@@ -67,20 +67,20 @@ namespace BOLib.Models
                 id = this.id,
                 date = this.date,
                 accountid = this.accountid,
-                account = this.account?.toDAO(),
+                account = null,
                 personid = this.personid,
-                person = this.person?.toDAO(),
+                person = null,
                 categoryid = this.categoryid,
-                category = this.category?.toDAO(),
+                category = null,
                 amountIn = this.amountIn,
                 amountOut = this.amountOut,
                 memo = this.memo,
                 tranferid = this.tranferid,
                 tranferSplitid = this.tranferSplitid,
-                transactionStatus = this.transactionStatus?.toDAO(),
+                transactionStatus = null,
                 transactionStatusid = this.transactionStatusid,
                 tagid = this.tagid,
-                tag = this.tag?.toDAO()
+                tag = null
             };
         }
 
