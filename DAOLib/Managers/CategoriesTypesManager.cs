@@ -16,14 +16,14 @@ namespace DAOLib.Managers
             Specials = 4
         }
 
-        public List<CategoriesTypesDAO>? getAllFilterTransfer()
+        public List<CategoriesTypesDAO>? getAllWithoutSpecialTransfer()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<CategoriesTypesDAO>();
                 return repository.GetAll()?
-                    .Where(x => !x.id.Equals((int)eCategoriesTypes.Transfers) &&
-                    !x.id.Equals((int)eCategoriesTypes.Transfers)).ToList();
+                    .Where(x => x.id != (int)eCategoriesTypes.Specials &&
+                    x.id != (int)eCategoriesTypes.Transfers).ToList();
             }
         }
     }

@@ -21,14 +21,14 @@ namespace DAOLib.Managers
         }
 #pragma warning restore CS8603
 
-        public List<CategoriesDAO>? getAllFilterTransfer()
+        public List<CategoriesDAO>? getAllWithoutSpecialTransfer()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<CategoriesDAO>();
                 return getEntyWithInclude(repository)?
-                .Where(x => !x.id.Equals(CategoriesTypesManager.eCategoriesTypes.Transfers) &&
-                !x.id.Equals(CategoriesTypesManager.eCategoriesTypes.Specials)).ToList();
+                .Where(x => !x.categoriesTypesid.Equals((int)CategoriesTypesManager.eCategoriesTypes.Transfers) &&
+                !x.categoriesTypesid.Equals((int)CategoriesTypesManager.eCategoriesTypes.Specials)).ToList();
             }
         }
 

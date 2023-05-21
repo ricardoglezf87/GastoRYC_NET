@@ -22,8 +22,8 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategoriesTypes.ItemsSource = categoriesTypesService.getAllFilterTransfer();
-            gvCategories.ItemsSource = categoriesService.getAllFilterTransfer();
+            cbCategoriesTypes.ItemsSource = categoriesTypesService.getAllWithoutSpecialTransfer();
+            gvCategories.ItemsSource = categoriesService.getAllWithoutSpecialTransfer();
         }
 
         private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)

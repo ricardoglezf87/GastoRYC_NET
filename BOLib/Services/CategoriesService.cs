@@ -28,9 +28,9 @@ namespace BOLib.Services
             return categoriesManager.getAll()?.toListBO();
         }
 
-        public List<Categories?>? getAllFilterTransfer()
+        public List<Categories?>? getAllWithoutSpecialTransfer()
         {
-            return categoriesManager?.getAllFilterTransfer()?.toListBO();
+            return categoriesManager?.getAllWithoutSpecialTransfer()?.toListBO();
         }
 
         public Categories? getByID(int? id)
