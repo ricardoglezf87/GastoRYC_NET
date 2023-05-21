@@ -40,7 +40,7 @@ namespace BOLib.Services
 
         public void update(Categories categories)
         {
-            categoriesManager.delete(categories?.toDAO());
+            categoriesManager.update(categories?.toDAO());
         }
 
         public void delete(Categories categories)
