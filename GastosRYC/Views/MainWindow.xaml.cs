@@ -43,6 +43,7 @@ namespace GastosRYC
             SfSkinManager.ApplyStylesOnApplication = true;
 
             RYCContextService.Instance.makeBackup();
+            RYCContextService.Instance.migrateDataBase();
         }
 
         #endregion

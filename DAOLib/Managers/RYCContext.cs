@@ -36,7 +36,6 @@ namespace DAOLib.Managers
 
         #endregion
 
-
         public RYCContext() : base()
         {
             if (!Settings.Default.BBDDLocal)
@@ -51,8 +50,6 @@ namespace DAOLib.Managers
                 if (!Directory.Exists("Data\\"))
                     Directory.CreateDirectory("Data\\");
             }        
-
-            Database.Migrate();
         }       
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

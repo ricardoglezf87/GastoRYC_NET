@@ -33,6 +33,11 @@ namespace BOLib.Services
             contextManager = new();
         }
 
+        public void migrateDataBase()
+        {
+            contextManager.migrateDataBase();
+        }
+
         public void loadContext()
         {
             contextManager.loadContext();

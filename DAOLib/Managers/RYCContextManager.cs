@@ -16,9 +16,13 @@ namespace DAOLib.Managers
             return new RYCContext();
         }
 
+        public void migrateDataBase()
+        {
+            getContext().Database.Migrate();
+        }
 
         public void loadContext()
-        {
+        {            
             using (RYCContext context = getContext())
             {
                 context.dateCalendar?.Load();
@@ -62,7 +66,6 @@ namespace DAOLib.Managers
 
             if (File.Exists(path + nameDDBB))
             {
-
                 File.Copy(path + nameDDBB, path + "Backup\\" +
                     nameDDBB + "." + DateTime.Now.Ticks.ToString() + ".bk", true);
             }
