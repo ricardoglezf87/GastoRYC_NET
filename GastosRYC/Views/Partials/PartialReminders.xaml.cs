@@ -110,6 +110,7 @@ namespace GastosRYC.Views
             if (transaction != null)
             {
                 FrmTransaction frm = new(transaction);
+                frm.ShowDialog();
             }
 
             parentForm.loadAccounts();
