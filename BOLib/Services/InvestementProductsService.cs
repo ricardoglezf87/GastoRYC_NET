@@ -9,20 +9,37 @@ namespace BOLib.Services
     public class InvestmentProductsService
     {
         private readonly InvestmentProductsManager investmentProductsManager;
+        private static InvestmentProductsService? _instance;
+        private static readonly object _lock = new object();
 
-        public InvestmentProductsService()
+        public static InvestmentProductsService Instance
         {
-            investmentProductsManager = InstanceBase<InvestmentProductsManager>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new InvestmentProductsService();
+                    }
+                }
+                return _instance;
+            }
         }
 
-        public List<InvestmentProducts>? getAll()
+        private InvestmentProductsService()
+        {
+            investmentProductsManager = new();
+        }
+
+        public List<InvestmentProducts?>? getAll()
         {
             return investmentProductsManager.getAll()?.toListBO();
         }
 
         public InvestmentProducts? getByID(int? id)
         {
-            return (InvestmentProducts)investmentProductsManager.getByID(id);
+            return (InvestmentProducts?)investmentProductsManager.getByID(id);
         }
 
         public void update(InvestmentProducts investmentProducts)

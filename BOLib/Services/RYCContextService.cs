@@ -10,9 +10,27 @@ namespace BOLib.Services
     public class RYCContextService
     {
         private readonly RYCContextManager contextManager;
-        public RYCContextService() 
+        private static RYCContextService? _instance;
+        private static readonly object _lock = new object();
+
+        public static RYCContextService Instance
         {
-            contextManager = InstanceBase<RYCContextManager>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new RYCContextService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private RYCContextService() 
+        {
+            contextManager = new();
         }
 
         public void loadContext()

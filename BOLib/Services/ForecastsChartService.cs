@@ -15,16 +15,24 @@ namespace BOLib.Services
 
         #region Propiedades y Contructor
 
-        private readonly TransactionsService transactionsService;
-        private readonly ExpirationsRemindersService expirationsRemindersService;
-        private readonly AccountsService accountService;
+        private static ForecastsChartService? _instance;
+        private static readonly object _lock = new object();
 
-        public ForecastsChartService()
+        public static ForecastsChartService Instance
         {
-            transactionsService = InstanceBase<TransactionsService>.Instance;
-            accountService = InstanceBase<AccountsService>.Instance;
-            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new ForecastsChartService();
+                    }
+                }
+                return _instance;
+            }
         }
+
 
         #endregion Propiedades y Contructor
 
@@ -37,7 +45,7 @@ namespace BOLib.Services
 
             DateTime now = DateTime.Now;
 
-            foreach (var g in accountService.getAll()?.Where(x => (x.closed == false || x.closed == null)
+            foreach (var g in AccountsService.Instance.getAll()?.Where(x => (x.closed == false || x.closed == null)
                                                             && (x.accountsTypesid == (int)eAccountsTypes.Cash ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Banks ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Cards)))
@@ -47,13 +55,13 @@ namespace BOLib.Services
 
             List<Transactions> remTransactions = new();
 
-            foreach (ExpirationsReminders? exp in expirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
+            foreach (ExpirationsReminders? exp in ExpirationsRemindersService.Instance.getAllPendingWithoutFutureWithGeneration())
             {
                 if (exp != null)
-                    remTransactions.AddRange(expirationsRemindersService.registerTransactionfromReminderSimulation(exp));
+                    remTransactions.AddRange(ExpirationsRemindersService.Instance.registerTransactionfromReminderSimulation(exp));
             }
 
-            List<Transactions?>? transactions = transactionsService.getAll();
+            List<Transactions?>? transactions = TransactionsService.Instance.getAll();
 
             if (transactions != null)
             {
@@ -89,7 +97,7 @@ namespace BOLib.Services
             foreach (Tuple<DateTime, int?> key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    accountService.getByID(key.Item2)?.description,
+                    AccountsService.Instance.getByID(key.Item2)?.description,
                     key.Item2, dChart[key]));
             }
             return lChart;

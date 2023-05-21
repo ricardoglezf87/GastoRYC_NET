@@ -24,12 +24,6 @@ namespace GastosRYC
 
         private ICollectionView? viewAccounts;
         private Page? actualPrincipalContent;
-        private readonly AccountsService accountsService;
-        private readonly DateCalendarService dateCalendarService;
-        private readonly ExpirationsRemindersService expirationsRemindersService;
-        private readonly InvestmentProductsPricesService investmentProductsPricesService;
-        private readonly InvestmentProductsService investmentProductsService;
-        private readonly RYCContextService contextService;
 
         private enum eViews : int
         {
@@ -47,14 +41,8 @@ namespace GastosRYC
             InitializeComponent();
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
             SfSkinManager.ApplyStylesOnApplication = true;
-            accountsService = InstanceBase<AccountsService>.Instance;
-            dateCalendarService = InstanceBase<DateCalendarService>.Instance;
-            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
-            investmentProductsPricesService = InstanceBase<InvestmentProductsPricesService>.Instance;
-            investmentProductsService = InstanceBase<InvestmentProductsService>.Instance;
-            contextService = InstanceBase<RYCContextService>.Instance;
 
-            contextService.makeBackup();
+            RYCContextService.Instance.makeBackup();
         }
 
         #endregion
@@ -114,7 +102,7 @@ namespace GastosRYC
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             loadCalendar();
-            await Task.Run(() => expirationsRemindersService.generateAutoregister());
+            await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
             loadAccounts();
             toggleViews(eViews.Home);
         }
@@ -213,7 +201,7 @@ namespace GastosRYC
         {
             foreach (AccountsView accounts in lvAccounts.ItemsSource)
             {
-                accounts.balance = await Task.Run(() => accountsService.getBalanceByAccount(accounts.id));
+                accounts.balance = await Task.Run(() => AccountsService.Instance.getBalanceByAccount(accounts.id));
             }
 
             viewAccounts.Refresh();
@@ -234,7 +222,7 @@ namespace GastosRYC
 
         private void loadCalendar()
         {
-            dateCalendarService.fillCalendar();
+            DateCalendarService.Instance.fillCalendar();
         }
 
         private void toggleViews(eViews views)
@@ -278,7 +266,7 @@ namespace GastosRYC
 
         public void loadAccounts()
         {
-            List<AccountsView>? accountsViews = accountsService.getAllOpenedListView();
+            List<AccountsView>? accountsViews = AccountsService.Instance.getAllOpenedListView();
             viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypesdescription"));
@@ -290,16 +278,16 @@ namespace GastosRYC
         {
             try
             {
-                List<InvestmentProducts>? lInvestmentProducts = investmentProductsService.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
+                List<InvestmentProducts?>? lInvestmentProducts = InvestmentProductsService.Instance.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
 
                 if (lInvestmentProducts != null)
                 {
                     LoadDialog loadDialog = new(lInvestmentProducts.Count);
                     loadDialog.Show();
 
-                    foreach (InvestmentProducts investmentProducts in lInvestmentProducts)
+                    foreach (InvestmentProducts? investmentProducts in lInvestmentProducts)
                     {
-                        await investmentProductsPricesService.getPricesOnlineAsync(investmentProducts);
+                        await InvestmentProductsPricesService.Instance.getPricesOnlineAsync(investmentProducts);
                         loadDialog.performeStep();
                     }
 

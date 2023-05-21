@@ -14,12 +14,27 @@ namespace BOLib.Services
     public class AccountsService
     {
         private readonly AccountsManager accountsManager;
-        private readonly TransactionsService transactionsService;
+        private static AccountsService? _instance;
+        private static readonly object _lock = new object();
 
-        public AccountsService()
+        public static AccountsService Instance
         {
-            accountsManager = InstanceBase<AccountsManager>.Instance;
-            transactionsService = InstanceBase<TransactionsService>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new AccountsService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private AccountsService()
+        {
+            accountsManager = new();
         }
 
         public List<Accounts?>? getAll()
@@ -83,7 +98,7 @@ namespace BOLib.Services
 
         public Decimal getBalanceByAccount(int? id)
         {
-            return transactionsService.getByAccount(id)?.Sum(x => x.amount) ?? 0;
+            return TransactionsService.Instance.getByAccount(id)?.Sum(x => x.amount) ?? 0;
         }
 
         public Task<Decimal> getBalanceByAccountAsync(int? id)

@@ -11,15 +11,28 @@ namespace BOLib.Services
     {
 
         private readonly SplitsManager splitsManager;
-        private readonly TransactionsService transactionsService;
-        private readonly CategoriesService categoriesService;
+        private static SplitsService? _instance;
+        private static readonly object _lock = new object();
 
-
-        public SplitsService()
+        public static SplitsService Instance
         {
-            splitsManager = InstanceBase<SplitsManager>.Instance;
-            transactionsService = InstanceBase<TransactionsService>.Instance;
-            categoriesService = InstanceBase<CategoriesService>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new SplitsService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+
+        private SplitsService()
+        {
+            splitsManager = new();
         }
 
         public List<Splits?>? getAll()
@@ -71,7 +84,7 @@ namespace BOLib.Services
         {
             if (splits.category == null && splits.categoryid != null)
             {
-                splits.category = categoriesService.getByID(splits.categoryid);
+                splits.category = CategoriesService.Instance.getByID(splits.categoryid);
             }
 
             splits.amountIn ??= 0;

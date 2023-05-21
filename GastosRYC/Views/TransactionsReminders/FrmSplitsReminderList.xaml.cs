@@ -10,18 +10,10 @@ namespace GastosRYC.Views
     public partial class FrmSplitsRemindersList : Window
     {
         private readonly TransactionsReminders? transactionsReminders;
-        private readonly CategoriesService categoriesService;
-        private readonly TransactionsRemindersService transactionsRemindersService;
-        private readonly SplitsService splitsService;
-        private readonly SplitsRemindersService splitsRemindersService;
 
         public FrmSplitsRemindersList()
         {
             InitializeComponent();
-            transactionsRemindersService = InstanceBase<TransactionsRemindersService>.Instance;
-            categoriesService = InstanceBase<CategoriesService>.Instance;
-            splitsService = InstanceBase<SplitsService>.Instance;
-            splitsRemindersService = InstanceBase<SplitsRemindersService>.Instance;
         }
 
         public FrmSplitsRemindersList(TransactionsReminders? transactionsReminders)
@@ -32,10 +24,10 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = categoriesService.getAll();
+            cbCategories.ItemsSource = CategoriesService.Instance.getAll();
             gvSplitsReminders.ItemsSource = transactionsReminders != null && transactionsReminders.id > 0
-                ? splitsRemindersService.getbyTransactionid(transactionsReminders.id)
-                : (object?)splitsRemindersService.getbyTransactionidNull();
+                ? SplitsRemindersService.Instance.getbyTransactionid(transactionsReminders.id)
+                : (object?)SplitsRemindersService.Instance.getbyTransactionidNull();
         }
 
         private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -46,7 +38,7 @@ namespace GastosRYC.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.category = categoriesService.getByID(splitsReminders.categoryid);
+                        splitsReminders.category = CategoriesService.Instance.getByID(splitsReminders.categoryid);
                         break;
                 }
             }
@@ -86,14 +78,14 @@ namespace GastosRYC.Views
         {
             if (splitsReminders.category == null && splitsReminders.categoryid != null)
             {
-                splitsReminders.category = categoriesService.getByID(splitsReminders.categoryid);
+                splitsReminders.category = CategoriesService.Instance.getByID(splitsReminders.categoryid);
             }
 
             splitsReminders.amountIn ??= 0;
 
             splitsReminders.amountOut ??= 0;
 
-            splitsRemindersService.update(splitsReminders);
+            SplitsRemindersService.Instance.update(splitsReminders);
         }
         private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
@@ -101,9 +93,9 @@ namespace GastosRYC.Views
             {
                 if (splitsReminders.tranferid != null)
                 {
-                    transactionsRemindersService.delete(transactionsRemindersService.getByID(splitsReminders.tranferid));
+                    TransactionsRemindersService.Instance.delete(TransactionsRemindersService.Instance.getByID(splitsReminders.tranferid));
                 }
-                splitsRemindersService.delete(splitsReminders);
+                SplitsRemindersService.Instance.delete(splitsReminders);
             }
         }
 

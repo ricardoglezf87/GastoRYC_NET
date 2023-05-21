@@ -10,12 +10,27 @@ namespace BOLib.Services
     public class PersonsService
     {
         private readonly PersonsManager personsManager;
-        private readonly TransactionsService transactionsService;
+        private static PersonsService? _instance;
+        private static readonly object _lock = new object();
 
-        public PersonsService()
+        public static PersonsService Instance
         {
-            personsManager = InstanceBase<PersonsManager>.Instance;
-            transactionsService = InstanceBase<TransactionsService>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new PersonsService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private PersonsService()
+        {
+            personsManager = new();
         }
 
         public List<Persons?>? getAll()
@@ -44,7 +59,7 @@ namespace BOLib.Services
             //if (persons == null)
             //    return;
 
-            //var result = (from x in transactionsService.getByPerson(persons)
+            //var result = (from x in TransactionsService.Instance.getByPerson(persons)
             //              group x by x.categoryid into g
             //              select new
             //              {
