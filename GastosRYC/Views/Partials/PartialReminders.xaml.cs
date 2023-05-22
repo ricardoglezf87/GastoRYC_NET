@@ -1,5 +1,7 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Models;
+using BOLib.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -14,17 +16,15 @@ namespace GastosRYC.Views
     {
         #region Variables
 
-        private readonly SimpleInjector.Container servicesContainer;
         private readonly MainWindow parentForm;
 
         #endregion
 
         #region Constructor
 
-        public PartialReminders(SimpleInjector.Container _servicesContainer, MainWindow _parentForm)
+        public PartialReminders(MainWindow _parentForm)
         {
             InitializeComponent();
-            servicesContainer = _servicesContainer;
             parentForm = _parentForm;
         }
 
@@ -65,7 +65,7 @@ namespace GastosRYC.Views
         {
             if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders != null)
             {
-                FrmTransactionReminders frm = new FrmTransactionReminders(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders, servicesContainer);
+                FrmTransactionReminders frm = new(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders);
                 frm.ShowDialog();
                 loadReminders();
             }
@@ -73,15 +73,13 @@ namespace GastosRYC.Views
 
         #endregion
 
-
         #region Functions
 
-        public void loadReminders()
+        public async void loadReminders()
         {
-            servicesContainer.GetInstance<ExpirationsRemindersService>().generateAutoregister();
-            parentForm.loadAccounts();
+            List<ExpirationsReminders?>? expirationsReminders = await Task.Run(() => ExpirationsRemindersService.Instance.getAllPendingWithoutFutureWithGeneration());
 
-            cvReminders.ItemsSource = new ListCollectionView(servicesContainer.GetInstance<ExpirationsRemindersService>().getAllPendingWithoutFutureWithGeneration());
+            cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 
             cvReminders.CanGroup = true;
             cvReminders.GroupCards("groupDate");
@@ -93,11 +91,11 @@ namespace GastosRYC.Views
 
         private void putDoneReminder(int? id)
         {
-            ExpirationsReminders? expirationsReminders = servicesContainer.GetInstance<ExpirationsRemindersService>().getByID(id);
+            ExpirationsReminders? expirationsReminders = ExpirationsRemindersService.Instance.getByID(id);
             if (expirationsReminders != null)
             {
                 expirationsReminders.done = true;
-                servicesContainer.GetInstance<ExpirationsRemindersService>().update(expirationsReminders);
+                ExpirationsRemindersService.Instance.update(expirationsReminders);
             }
 
             loadReminders();
@@ -105,10 +103,11 @@ namespace GastosRYC.Views
 
         private void makeTransactionFromReminder(int? id)
         {
-            Transactions? transaction = servicesContainer.GetInstance<ExpirationsRemindersService>().registerTransactionfromReminder(id);
+            Transactions? transaction = ExpirationsRemindersService.Instance.registerTransactionfromReminder(id);
             if (transaction != null)
             {
-                FrmTransaction frm = new FrmTransaction(transaction, servicesContainer);
+                FrmTransaction frm = new(transaction);
+                frm.ShowDialog();
             }
 
             parentForm.loadAccounts();

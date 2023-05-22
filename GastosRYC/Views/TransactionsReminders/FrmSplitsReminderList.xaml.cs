@@ -1,5 +1,5 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 
 namespace GastosRYC.Views
@@ -10,31 +10,24 @@ namespace GastosRYC.Views
     public partial class FrmSplitsRemindersList : Window
     {
         private readonly TransactionsReminders? transactionsReminders;
-        private readonly SimpleInjector.Container servicesContainer;
 
-        public FrmSplitsRemindersList(SimpleInjector.Container servicesContainer)
+        public FrmSplitsRemindersList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
         }
 
-        public FrmSplitsRemindersList(TransactionsReminders? transactionsReminders, SimpleInjector.Container servicesContainer)
-            : this(servicesContainer)
+        public FrmSplitsRemindersList(TransactionsReminders? transactionsReminders)
+            : this()
         {
             this.transactionsReminders = transactionsReminders;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAll();
-            if (transactionsReminders != null && transactionsReminders.id > 0)
-            {
-                gvSplitsReminders.ItemsSource = servicesContainer.GetInstance<SplitsRemindersService>().getbyTransactionid(transactionsReminders.id);
-            }
-            else
-            {
-                gvSplitsReminders.ItemsSource = servicesContainer.GetInstance<SplitsRemindersService>().getbyTransactionidNull();
-            }
+            cbCategories.ItemsSource = CategoriesService.Instance.getAll();
+            gvSplitsReminders.ItemsSource = transactionsReminders != null && transactionsReminders.id > 0
+                ? SplitsRemindersService.Instance.getbyTransactionid(transactionsReminders.id)
+                : (object?)SplitsRemindersService.Instance.getbyTransactionidNull();
         }
 
         private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -45,7 +38,7 @@ namespace GastosRYC.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.category = servicesContainer.GetInstance<CategoriesService>().getByID(splitsReminders.categoryid);
+                        splitsReminders.category = CategoriesService.Instance.getByID(splitsReminders.categoryid);
                         break;
                 }
             }
@@ -85,16 +78,14 @@ namespace GastosRYC.Views
         {
             if (splitsReminders.category == null && splitsReminders.categoryid != null)
             {
-                splitsReminders.category = servicesContainer.GetInstance<CategoriesService>().getByID(splitsReminders.categoryid);
+                splitsReminders.category = CategoriesService.Instance.getByID(splitsReminders.categoryid);
             }
 
-            if (splitsReminders.amountIn == null)
-                splitsReminders.amountIn = 0;
+            splitsReminders.amountIn ??= 0;
 
-            if (splitsReminders.amountOut == null)
-                splitsReminders.amountOut = 0;
+            splitsReminders.amountOut ??= 0;
 
-            servicesContainer.GetInstance<SplitsRemindersService>().update(splitsReminders);
+            SplitsRemindersService.Instance.update(splitsReminders);
         }
         private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
@@ -102,9 +93,9 @@ namespace GastosRYC.Views
             {
                 if (splitsReminders.tranferid != null)
                 {
-                    servicesContainer.GetInstance<TransactionsRemindersService>().delete(servicesContainer.GetInstance<TransactionsRemindersService>().getByID(splitsReminders.tranferid));
+                    TransactionsRemindersService.Instance.delete(TransactionsRemindersService.Instance.getByID(splitsReminders.tranferid));
                 }
-                servicesContainer.GetInstance<SplitsRemindersService>().delete(splitsReminders);
+                SplitsRemindersService.Instance.delete(splitsReminders);
             }
         }
 

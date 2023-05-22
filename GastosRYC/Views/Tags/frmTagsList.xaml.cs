@@ -1,5 +1,5 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,17 +10,14 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmTagsList : Window
     {
-        private readonly SimpleInjector.Container servicesContainer;
-
-        public FrmTagsList(SimpleInjector.Container servicesContainer)
+        public FrmTagsList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvTags.ItemsSource = servicesContainer.GetInstance<TagsService>().getAll();
+            gvTags.ItemsSource = TagsService.Instance.getAll();
         }
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -38,14 +35,14 @@ namespace GastosRYC.Views
         private void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Tags tags = (Tags)e.RowData;
-            servicesContainer.GetInstance<TagsService>().update(tags);
+            TagsService.Instance.update(tags);
         }
 
         private void gvTags_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Tags tags in e.Items)
             {
-                servicesContainer.GetInstance<TagsService>().delete(tags);
+                TagsService.Instance.delete(tags);
             }
         }
 

@@ -1,5 +1,5 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 
 namespace GastosRYC.Views
@@ -10,16 +10,14 @@ namespace GastosRYC.Views
     public partial class FrmSplitsList : Window
     {
         private readonly Transactions? transactions;
-        private readonly SimpleInjector.Container servicesContainer;
 
-        public FrmSplitsList(SimpleInjector.Container servicesContainer)
+        public FrmSplitsList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
         }
 
-        public FrmSplitsList(Transactions? transactions, SimpleInjector.Container servicesContainer) :
-            this(servicesContainer)
+        public FrmSplitsList(Transactions? transactions) :
+            this()
 
         {
             this.transactions = transactions;
@@ -27,15 +25,10 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = servicesContainer.GetInstance<CategoriesService>().getAll();
-            if (transactions != null && transactions.id > 0)
-            {
-                gvSplits.ItemsSource = servicesContainer.GetInstance<SplitsService>().getbyTransactionid(transactions.id);
-            }
-            else
-            {
-                gvSplits.ItemsSource = servicesContainer.GetInstance<SplitsService>().getbyTransactionidNull();
-            }
+            cbCategories.ItemsSource = CategoriesService.Instance.getAll();
+            gvSplits.ItemsSource = transactions != null && transactions.id > 0
+                ? SplitsService.Instance.getbyTransactionid(transactions.id)
+                : (object?)SplitsService.Instance.getbyTransactionidNull();
         }
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -46,7 +39,7 @@ namespace GastosRYC.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.category = servicesContainer.GetInstance<CategoriesService>().getByID(splits.categoryid);
+                        splits.category = CategoriesService.Instance.getByID(splits.categoryid);
                         break;
                 }
             }
@@ -80,8 +73,8 @@ namespace GastosRYC.Views
         {
             Splits splits = (Splits)e.RowData;
 
-            servicesContainer.GetInstance<SplitsService>().saveChanges(transactions, splits);
-            servicesContainer.GetInstance<TransactionsService>().updateTranferSplits(transactions, splits);
+            SplitsService.Instance.saveChanges(transactions, splits);
+            TransactionsService.Instance.updateTranferSplits(transactions, splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -90,9 +83,9 @@ namespace GastosRYC.Views
             {
                 if (splits.tranferid != null)
                 {
-                    servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(splits.tranferid));
+                    TransactionsService.Instance.delete(TransactionsService.Instance.getByID(splits.tranferid));
                 }
-                servicesContainer.GetInstance<SplitsService>().delete(splits);
+                SplitsService.Instance.delete(splits);
             }
         }
 

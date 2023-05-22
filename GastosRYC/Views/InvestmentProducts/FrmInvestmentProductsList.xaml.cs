@@ -1,7 +1,9 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
+
+//TODO: En esta version de syncfusion no permite guardar los checkbox al perder foco, tienes que saltar a un texbox antes de saltar de linea
 
 namespace GastosRYC.Views
 {
@@ -10,17 +12,15 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmInvestmentProductsList : Window
     {
-        private readonly SimpleInjector.Container servicesContainer;
 
-        public FrmInvestmentProductsList(SimpleInjector.Container servicesContainer)
+        public FrmInvestmentProductsList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvInvestmentProducts.ItemsSource = servicesContainer.GetInstance<InvestmentProductsService>().getAll();
+            gvInvestmentProducts.ItemsSource = InvestmentProductsService.Instance.getAll();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -38,14 +38,14 @@ namespace GastosRYC.Views
         private void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             InvestmentProducts InvestmentProducts = (InvestmentProducts)e.RowData;
-            servicesContainer.GetInstance<InvestmentProductsService>().update(InvestmentProducts);
+            InvestmentProductsService.Instance.update(InvestmentProducts);
         }
 
         private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (InvestmentProducts InvestmentProducts in e.Items)
             {
-                servicesContainer.GetInstance<InvestmentProductsService>().delete(InvestmentProducts);
+                InvestmentProductsService.Instance.delete(InvestmentProducts);
             }
         }
 

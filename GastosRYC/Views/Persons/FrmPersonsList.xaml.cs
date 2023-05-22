@@ -1,5 +1,5 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,17 +10,14 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmPersonsList : Window
     {
-        private readonly SimpleInjector.Container servicesContainer;
-
-        public FrmPersonsList(SimpleInjector.Container servicesContainer)
+        public FrmPersonsList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvPersons.ItemsSource = servicesContainer.GetInstance<PersonsService>().getAll();
+            gvPersons.ItemsSource = PersonsService.Instance.getAll();
         }
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -38,14 +35,14 @@ namespace GastosRYC.Views
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Persons persons = (Persons)e.RowData;
-            servicesContainer.GetInstance<PersonsService>().update(persons);
+            PersonsService.Instance.update(persons);
         }
 
         private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Persons persons in e.Items)
             {
-                servicesContainer.GetInstance<PersonsService>().delete(persons);
+                PersonsService.Instance.delete(persons);
             }
         }
 

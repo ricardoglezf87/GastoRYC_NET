@@ -1,7 +1,9 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
+
+//TODO: En esta version de syncfusion no permite guardar los checkbox al perder foco, tienes que saltar a un texbox antes de saltar de linea
 
 namespace GastosRYC.Views
 {
@@ -10,18 +12,15 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmAccountsList : Window
     {
-        private readonly SimpleInjector.Container servicesContainer;
-
-        public FrmAccountsList(SimpleInjector.Container servicesContainer)
+        public FrmAccountsList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = servicesContainer.GetInstance<AccountsTypesService>().getAll();
-            gvAccounts.ItemsSource = servicesContainer.GetInstance<AccountsService>().getAll();
+            cbAccountsTypes.ItemsSource = AccountsTypesService.Instance.getAll();
+            gvAccounts.ItemsSource = AccountsService.Instance.getAll();
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -32,7 +31,7 @@ namespace GastosRYC.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.accountsTypes = servicesContainer.GetInstance<AccountsTypesService>().getByID(accounts.accountsTypesid);
+                        accounts.accountsTypes = AccountsTypesService.Instance.getByID(accounts.accountsTypesid);
                         break;
                 }
             }
@@ -62,17 +61,17 @@ namespace GastosRYC.Views
 
             if (accounts.categoryid != null)
             {
-                categories = servicesContainer.GetInstance<CategoriesService>().getByID(accounts.categoryid);
+                categories = CategoriesService.Instance.getByID(accounts.categoryid);
                 if (categories != null)
                 {
                     categories.description = "[" + accounts.description + "]";
-                    servicesContainer.GetInstance<CategoriesService>().update(categories);
+                    CategoriesService.Instance.update(categories);
                 }
             }
             else
             {
                 categories = new Categories();
-                accounts.categoryid = servicesContainer.GetInstance<CategoriesService>().getNextID(); ;
+                accounts.categoryid = CategoriesService.Instance.getNextID(); ;
                 categories.description = "[" + accounts.description + "]";
                 categories.categoriesTypesid = (int)CategoriesTypesService.eCategoriesTypes.Transfers;
 
@@ -80,7 +79,7 @@ namespace GastosRYC.Views
 
             if (categories != null)
             {
-                servicesContainer.GetInstance<CategoriesService>().update(categories);
+                CategoriesService.Instance.update(categories);
             }
         }
 
@@ -90,24 +89,24 @@ namespace GastosRYC.Views
 
             if (accounts.accountsTypes == null && accounts.accountsTypesid != null)
             {
-                accounts.accountsTypes = servicesContainer.GetInstance<AccountsTypesService>().getByID(accounts.accountsTypesid);
+                accounts.accountsTypes = AccountsTypesService.Instance.getByID(accounts.accountsTypesid);
             }
 
             updateCategory(accounts);
-            servicesContainer.GetInstance<AccountsService>().update(accounts);
+            AccountsService.Instance.update(accounts);
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items)
             {
-                Categories? categories = servicesContainer.GetInstance<CategoriesService>().getByID(accounts.categoryid);
+                Categories? categories = CategoriesService.Instance.getByID(accounts.categoryid);
                 if (categories != null)
                 {
-                    servicesContainer.GetInstance<CategoriesService>().delete(categories);
+                    CategoriesService.Instance.delete(categories);
                 }
 
-                servicesContainer.GetInstance<AccountsService>().delete(accounts);
+                AccountsService.Instance.delete(accounts);
             }
         }
 

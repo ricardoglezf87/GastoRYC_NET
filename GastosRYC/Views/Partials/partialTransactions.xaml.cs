@@ -1,13 +1,13 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
-using GastosRYC.Extensions;
+﻿using BOLib.Extensions;
+using BOLib.Models;
+using BOLib.ModelsView;
+using BOLib.Services;
 using Syncfusion.Data.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using static BBDDLib.Extensions.WindowsExtension;
+using static BOLib.Extensions.WindowsExtension;
 
 namespace GastosRYC.Views
 {
@@ -19,18 +19,16 @@ namespace GastosRYC.Views
 
         #region Variables
 
-        private readonly SimpleInjector.Container servicesContainer;
-        private Accounts? accountSelected;
+        private AccountsView? accountSelected;
         private readonly MainWindow parentForm;
 
         #endregion
 
         #region Constructor
 
-        public PartialTransactions(SimpleInjector.Container _servicesContainer, MainWindow _parentForm)
+        public PartialTransactions(MainWindow _parentForm)
         {
             InitializeComponent();
-            servicesContainer = _servicesContainer;
             parentForm = _parentForm;
         }
 
@@ -56,9 +54,9 @@ namespace GastosRYC.Views
         private void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
-            FrmSplitsList frm = new FrmSplitsList(transactions, servicesContainer);
+            FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
-            servicesContainer.GetInstance<TransactionsService>().updateTransactionAfterSplits(transactions);
+            TransactionsService.Instance.updateTransactionAfterSplits(transactions);
             loadTransactions();
             parentForm.loadAccounts();
         }
@@ -86,7 +84,7 @@ namespace GastosRYC.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    TransactionsReminders transactionsReminders = new TransactionsReminders();
+                    TransactionsReminders transactionsReminders = new();
                     transactionsReminders.date = transactions.date;
                     transactionsReminders.accountid = transactions.accountid;
                     transactionsReminders.personid = transactions.personid;
@@ -97,10 +95,12 @@ namespace GastosRYC.Views
                     transactionsReminders.tagid = transactions.tagid;
                     transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
-                    FrmTransactionReminders frm = new FrmTransactionReminders(transactionsReminders, servicesContainer);
+                    FrmTransactionReminders frm = new(transactionsReminders);
                     frm.ShowDialog();
                     if (frm.windowsResult == eWindowsResult.Sucess)
+                    {
                         MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
+                    }
                 }
             }
             else
@@ -125,7 +125,7 @@ namespace GastosRYC.Views
         {
             if (gvTransactions.CurrentItem != null)
             {
-                FrmTransaction frm = new FrmTransaction((Transactions)gvTransactions.CurrentItem, servicesContainer);
+                FrmTransaction frm = new((Transactions)gvTransactions.CurrentItem);
                 frm.ShowDialog();
                 loadTransactions();
                 parentForm.loadAccounts();
@@ -157,7 +157,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
+                    TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
             }
@@ -174,7 +174,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
-                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
+                    TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
             }
@@ -191,7 +191,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
-                    servicesContainer.GetInstance<TransactionsService>().update(transactions);
+                    TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
             }
@@ -208,8 +208,6 @@ namespace GastosRYC.Views
 
         public void refreshBalanceTransactions()
         {
-            Decimal? balanceTotal = 0;
-
             if (gvTransactions.View != null)
             {
 
@@ -217,11 +215,9 @@ namespace GastosRYC.Views
                     GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
                         GridQueryableCollectionViewWrapper)gvTransactions.View;
 
-                if (accountSelected != null)
-                    balanceTotal = (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount");
-                else
-                    balanceTotal = (decimal?)col.ViewSource.Sum("amount");
-
+                decimal? balanceTotal = accountSelected != null
+                    ? (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
+                    : (decimal?)col.ViewSource.Sum("amount");
                 foreach (Transactions t in col.ViewSource)
                 {
                     if (t.amount != null)
@@ -242,25 +238,18 @@ namespace GastosRYC.Views
             }
         }
 
-        public void loadTransactions()
+        public async void loadTransactions()
         {
-            gvTransactions.ItemsSource = servicesContainer.GetInstance<TransactionsService>().getAll();
+            gvTransactions.ItemsSource = await TransactionsService.Instance.getAllAsync();
             ApplyFilters(accountSelected);
         }
 
         public bool accountFilter(object? o)
         {
-            Transactions? p = (o as Transactions);
-            if (p == null)
-                return false;
-            else
-                if (p.account?.id == accountSelected?.id)
-                return true;
-            else
-                return false;
+            return o is Transactions p && p.account?.id == accountSelected?.id;
         }
 
-        public void ApplyFilters(Accounts? _accountSelected = null)
+        public void ApplyFilters(AccountsView? _accountSelected = null)
         {
             accountSelected = _accountSelected;
             if (gvTransactions.View != null)
@@ -307,25 +296,25 @@ namespace GastosRYC.Views
             {
                 if (transactions.splits != null)
                 {
-                    List<Splits> lSplits = transactions.splits;
+                    List<Splits?>? lSplits = transactions.splits;
                     for (int i = 0; i < lSplits.Count; i++)
                     {
-                        Splits splits = lSplits[i];
+                        Splits? splits = lSplits[i];
                         if (splits.tranferid != null)
                         {
-                            servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(splits.tranferid));
+                            TransactionsService.Instance.delete(TransactionsService.Instance.getByID(splits.tranferid));
                         }
 
-                        servicesContainer.GetInstance<SplitsService>().delete(splits);
+                        SplitsService.Instance.delete(splits);
                     }
                 }
 
                 if (transactions.tranferid != null)
                 {
-                    servicesContainer.GetInstance<TransactionsService>().delete(servicesContainer.GetInstance<TransactionsService>().getByID(transactions.tranferid));
+                    TransactionsService.Instance.delete(TransactionsService.Instance.getByID(transactions.tranferid));
                 }
 
-                servicesContainer.GetInstance<TransactionsService>().delete(transactions);
+                TransactionsService.Instance.delete(transactions);
             }
         }
 

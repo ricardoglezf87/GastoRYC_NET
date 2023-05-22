@@ -1,5 +1,5 @@
-﻿using BBDDLib.Models;
-using GastosRYC.BBDDLib.Services;
+﻿using BOLib.Models;
+using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,13 +10,9 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmTransactionReminderList : Window
     {
-
-        private readonly SimpleInjector.Container servicesContainer;
-
-        public FrmTransactionReminderList(SimpleInjector.Container servicesContainer)
+        public FrmTransactionReminderList()
         {
             InitializeComponent();
-            this.servicesContainer = servicesContainer;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -28,7 +24,7 @@ namespace GastosRYC.Views
         {
             foreach (TransactionsReminders transactionsReminders in e.Items)
             {
-                servicesContainer.GetInstance<TransactionsRemindersService>().delete(transactionsReminders);
+                TransactionsRemindersService.Instance.delete(transactionsReminders);
             }
         }
 
@@ -50,7 +46,7 @@ namespace GastosRYC.Views
         {
             if (gvTransactionsReminders.CurrentItem != null)
             {
-                FrmTransactionReminders frm = new FrmTransactionReminders((TransactionsReminders)gvTransactionsReminders.CurrentItem, servicesContainer);
+                FrmTransactionReminders frm = new((TransactionsReminders)gvTransactionsReminders.CurrentItem);
                 frm.ShowDialog();
                 loadTransactions();
             }
@@ -58,12 +54,12 @@ namespace GastosRYC.Views
 
         private void loadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = servicesContainer.GetInstance<TransactionsRemindersService>().getAll();
+            gvTransactionsReminders.ItemsSource = TransactionsRemindersService.Instance.getAll();
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            FrmTransactionReminders frm = new FrmTransactionReminders(servicesContainer);
+            FrmTransactionReminders frm = new();
             frm.ShowDialog();
             loadTransactions();
         }
