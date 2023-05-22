@@ -22,7 +22,8 @@ namespace BOLib.Models
                 id = this.id,
                 description = this.description,
                 symbol = this.symbol,
-                url = this.url
+                url = this.url,
+                active = this.active
             };
         }
 
@@ -35,7 +36,8 @@ namespace BOLib.Models
                     id = v.id,
                     description = v.description,
                     symbol = v.symbol,
-                    url = v.url
+                    url = v.url,
+                    active = v.active
                 };
         }
     }
