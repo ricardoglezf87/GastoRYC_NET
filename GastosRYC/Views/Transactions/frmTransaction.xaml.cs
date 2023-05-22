@@ -393,7 +393,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        TransactionsService.Instance.saveChanges(transaction);
+                        TransactionsService.Instance.saveChanges(ref transaction);
                     }
                     return true;
                 }

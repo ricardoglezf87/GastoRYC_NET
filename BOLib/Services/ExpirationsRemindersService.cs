@@ -117,7 +117,7 @@ namespace BOLib.Services
                 ExpirationsReminders? expirationsReminders = getByID(id);
                 if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
                 {
-                    Transactions transactions = new();
+                    Transactions? transactions = new();
                     transactions.date = expirationsReminders.date;
                     transactions.accountid = expirationsReminders.transactionsReminders.accountid;
                     transactions.personid = expirationsReminders.transactionsReminders.personid;
@@ -128,7 +128,7 @@ namespace BOLib.Services
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    TransactionsService.Instance.saveChanges(transactions);
+                    TransactionsService.Instance.saveChanges(ref transactions);                    
 
                     if (expirationsReminders.transactionsReminders.splits != null)
                     {
@@ -145,7 +145,6 @@ namespace BOLib.Services
                             TransactionsService.Instance.updateTranferSplits(transactions, splits);
                         }
                     }
-
                     return transactions;
 
                 }

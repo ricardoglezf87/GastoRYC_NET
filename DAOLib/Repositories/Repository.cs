@@ -33,14 +33,14 @@ namespace DAOLib.Repositories
             return _entities.ToList();
         }
 
-        public void Add(TEntity entity)
+        public TEntity Add(TEntity entity)
         {
-            _entities.Add(entity);
+            return _entities.Add(entity).Entity;
         }
 
-        public void Update(TEntity entity)
+        public TEntity Update(TEntity entity)
         {
-            _entities.Update(entity);
+            return _entities.Update(entity).Entity;
         }
 
         public void Delete(TEntity entity)

@@ -66,10 +66,10 @@ namespace BOLib.Services
             return getByInvestmentProduct(investment.id);
         }
 
-        public void update(Transactions transactions)
+        public Transactions? update(Transactions transactions)
         {
             transactions.date = transactions.date.removeTime();
-            transactionsManager.update(transactions?.toDAO());
+            return (Transactions?)transactionsManager.update(transactions?.toDAO());
         }
 
         public void delete(Transactions? transactions)
@@ -102,7 +102,7 @@ namespace BOLib.Services
             return transactionsManager.getNextID();
         }
 
-        public void saveChanges(Transactions transactions)
+        public void saveChanges(ref Transactions? transactions)
         {
             transactions.amountIn ??= 0;
 
@@ -110,7 +110,7 @@ namespace BOLib.Services
 
             updateTranfer(transactions);
             updateTranferFromSplit(transactions);
-            update(transactions);
+            transactions = update(transactions);
             PersonsService.Instance.setCategoryDefault(transactions.person);
         }
 

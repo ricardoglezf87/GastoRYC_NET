@@ -67,18 +67,20 @@ namespace DAOLib.Managers
             }
         }
 
-        public void update(T? obj, bool save = true)
+        public T? update(T? obj, bool save = true)
         {
             if (obj != null)
             {
                 using (var unitOfWork = new UnitOfWork(new RYCContext()))
                 {
                     var repository = unitOfWork.GetRepositoryModelBase<T>();
-                    repository.Update(obj);
+                    var entity = repository.Update(obj);
                     if (save)
                         repository.saveChanges();
+                    return entity;
                 }
             }
+            return null;
         }
 
         public void delete(T? obj)
