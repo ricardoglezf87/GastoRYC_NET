@@ -66,21 +66,24 @@ namespace BOLib.Models
             {
                 id = this.id,
                 date = this.date,
+                periodsRemindersid = this.periodsRemindersid,
+                periodsReminders = null,
                 accountid = this.accountid,
-                account = this.account?.toDAO(),
+                account = null,
                 personid = this.personid,
-                person = this.person?.toDAO(),
+                person = null,
                 categoryid = this.categoryid,
-                category = this.category?.toDAO(),
+                category = null,
                 amountIn = this.amountIn,
                 amountOut = this.amountOut,
                 memo = this.memo,
                 tranferid = this.tranferid,
                 tranferSplitid = this.tranferSplitid,
-                transactionStatus = this.transactionStatus?.toDAO(),
+                transactionStatus = null,
                 transactionStatusid = this.transactionStatusid,
                 tagid = this.tagid,
-                tag = this.tag?.toDAO()
+                tag = null,
+                autoRegister = this.autoRegister
             };
         }
 
@@ -93,6 +96,8 @@ namespace BOLib.Models
                 {
                     id = v.id,
                     date = v.date,
+                    periodsRemindersid = v.periodsRemindersid,
+                    periodsReminders = (v.periodsReminders != null) ? (PeriodsReminders?)v.periodsReminders : null,
                     accountid = v.accountid,
                     account = (v.account != null) ? (Accounts?)v.account : null,
                     personid = v.personid,
@@ -107,7 +112,8 @@ namespace BOLib.Models
                     transactionStatus = (v.transactionStatus != null) ? (TransactionsStatus?)v.transactionStatus : null,
                     transactionStatusid = v.transactionStatusid,
                     tagid = v.tagid,
-                    tag = (v.tag != null) ? (Tags?)v.tag : null
+                    tag = (v.tag != null) ? (Tags?)v.tag : null,
+                    autoRegister = v.autoRegister
                 };
         }
     }

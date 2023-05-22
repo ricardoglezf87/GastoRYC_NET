@@ -11,18 +11,27 @@ namespace BOLib.Services
         #region Propiedades y Contructor
 
         private readonly TransactionsManager transactionsManager;
-        private readonly SplitsService splitsService;
-        private readonly AccountsService accountsService;
-        private readonly CategoriesService categoriesService;
-        private readonly PersonsService personsService;
+        private static TransactionsService? _instance;
+        private static readonly object _lock = new();
 
-        public TransactionsService()
+        public static TransactionsService Instance
         {
-            transactionsManager = InstanceBase<TransactionsManager>.Instance;
-            accountsService = InstanceBase<AccountsService>.Instance;
-            splitsService = InstanceBase<SplitsService>.Instance;
-            categoriesService = InstanceBase<CategoriesService>.Instance;
-            personsService = InstanceBase<PersonsService>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new TransactionsService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private TransactionsService()
+        {
+            transactionsManager = new();
         }
 
         #endregion Propiedades y Contructor
@@ -36,7 +45,7 @@ namespace BOLib.Services
 
         public async Task<List<Transactions?>?> getAllAsync()
         {
-            return await Task.Run(() => getAll()); 
+            return await Task.Run(() => getAll());
         }
 
         public Transactions? getByID(int? id)
@@ -54,10 +63,10 @@ namespace BOLib.Services
             return getByInvestmentProduct(investment.id);
         }
 
-        public void update(Transactions transactions)
+        public Transactions? update(Transactions transactions)
         {
             transactions.date = transactions.date.removeTime();
-            transactionsManager.update(transactions?.toDAO());
+            return (Transactions?)transactionsManager.update(transactions?.toDAO());
         }
 
         public void delete(Transactions? transactions)
@@ -90,7 +99,7 @@ namespace BOLib.Services
             return transactionsManager.getNextID();
         }
 
-        public void saveChanges(Transactions transactions)
+        public void saveChanges(ref Transactions? transactions)
         {
             transactions.amountIn ??= 0;
 
@@ -98,8 +107,8 @@ namespace BOLib.Services
 
             updateTranfer(transactions);
             updateTranferFromSplit(transactions);
-            update(transactions);
-            personsService.setCategoryDefault(transactions.person);
+            transactions = update(transactions);
+            PersonsService.Instance.setCategoryDefault(transactions.person);
         }
 
         public void updateTranfer(Transactions transactions)
@@ -122,9 +131,9 @@ namespace BOLib.Services
                 Transactions? tContraria = new()
                 {
                     date = transactions.date,
-                    accountid = transactions.category.accounts.id,
+                    accountid = AccountsService.Instance.getByCategoryId(transactions.categoryid)?.id,
                     personid = transactions.personid,
-                    categoryid = accountsService.getByID(transactions.accountid)?.categoryid,
+                    categoryid = AccountsService.Instance.getByID(transactions.accountid)?.categoryid,
                     memo = transactions.memo,
                     tagid = transactions.tagid,
                     amountIn = transactions.amountOut,
@@ -145,9 +154,9 @@ namespace BOLib.Services
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;
-                    tContraria.accountid = transactions.category.accounts.id;
+                    tContraria.accountid = AccountsService.Instance.getByCategoryId(transactions.categoryid)?.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = accountsService.getByID(transactions.accountid)?.categoryid;
+                    tContraria.categoryid = AccountsService.Instance.getByID(transactions.accountid)?.categoryid;
                     tContraria.memo = transactions.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;
@@ -167,7 +176,7 @@ namespace BOLib.Services
             if (transactions.tranferSplitid != null &&
                 transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Splits? tContraria = splitsService.getByID(transactions.tranferSplitid);
+                Splits? tContraria = SplitsService.Instance.getByID(transactions.tranferSplitid);
                 if (tContraria != null)
                 {
                     tContraria.transaction.date = transactions.date;
@@ -178,14 +187,14 @@ namespace BOLib.Services
                     tContraria.amountIn = transactions.amountOut;
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
-                    splitsService.update(tContraria);
+                    SplitsService.Instance.update(tContraria);
                 }
             }
         }
 
         public void updateTransactionAfterSplits(Transactions? transactions)
         {
-            List<Splits?>? lSplits = transactions.splits ?? splitsService.getbyTransactionid(transactions.id);
+            List<Splits?>? lSplits = transactions.splits ?? SplitsService.Instance.getbyTransactionid(transactions.id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
@@ -199,13 +208,13 @@ namespace BOLib.Services
                 }
 
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactions.category = CategoriesService.Instance.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
             else if (transactions.categoryid is not null
                 and ((int)CategoriesService.eSpecialCategories.Split))
             {
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactions.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactions.category = CategoriesService.Instance.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactions.id == 0)
@@ -214,7 +223,7 @@ namespace BOLib.Services
                 foreach (Splits? splits in lSplits)
                 {
                     splits.transactionid = transactions.id;
-                    splitsService.update(splits);
+                    SplitsService.Instance.update(splits);
                 }
             }
             else
@@ -243,7 +252,7 @@ namespace BOLib.Services
                 Transactions? tContraria = new()
                 {
                     date = transactions.date,
-                    accountid = splits.category.accounts.id,
+                    accountid = AccountsService.Instance.getByCategoryId(splits.categoryid)?.id,
                     personid = transactions.personid,
                     categoryid = transactions.account.categoryid,
                     memo = splits.memo,
@@ -264,7 +273,7 @@ namespace BOLib.Services
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;
-                    tContraria.accountid = splits.category.accounts.id;
+                    tContraria.accountid = AccountsService.Instance.getByCategoryId(splits.categoryid)?.id;
                     tContraria.personid = transactions.personid;
                     tContraria.categoryid = transactions.account.categoryid;
                     tContraria.memo = splits.memo;

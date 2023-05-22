@@ -10,12 +10,9 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmTransactionReminderList : Window
     {
-        private readonly TransactionsRemindersService transactionsRemindersService;
-
         public FrmTransactionReminderList()
         {
             InitializeComponent();
-            transactionsRemindersService = InstanceBase<TransactionsRemindersService>.Instance;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -27,7 +24,7 @@ namespace GastosRYC.Views
         {
             foreach (TransactionsReminders transactionsReminders in e.Items)
             {
-                transactionsRemindersService.delete(transactionsReminders);
+                TransactionsRemindersService.Instance.delete(transactionsReminders);
             }
         }
 
@@ -57,7 +54,7 @@ namespace GastosRYC.Views
 
         private void loadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = transactionsRemindersService.getAll();
+            gvTransactionsReminders.ItemsSource = TransactionsRemindersService.Instance.getAll();
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)

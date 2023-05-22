@@ -16,7 +16,7 @@ namespace BOLib.Models
             {
                 id = this.id,
                 date = this.date,
-                investmentProducts = this.investmentProducts?.toDAO(),
+                investmentProducts = null,
                 investmentProductsid = this.investmentProductsid,
                 prices = this.prices
             };

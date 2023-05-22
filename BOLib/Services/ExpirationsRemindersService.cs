@@ -11,21 +11,27 @@ namespace BOLib.Services
     public class ExpirationsRemindersService
     {
         private readonly ExpirationsRemindersManager expirationsRemindersManager;
-        private readonly PeriodsRemindersService periodsRemindersService;
-        private readonly TransactionsService transactionsService;
-        private readonly TransactionsRemindersService transactionsRemindersService;
-        private readonly CategoriesService categoriesService;
-        private readonly SplitsService splitsService;
+        private static ExpirationsRemindersService? _instance;
+        private static readonly object _lock = new();
 
-        public ExpirationsRemindersService()
+        public static ExpirationsRemindersService Instance
         {
-            expirationsRemindersManager = InstanceBase<ExpirationsRemindersManager>.Instance;
-            periodsRemindersService = InstanceBase<PeriodsRemindersService>.Instance;
-            categoriesService = InstanceBase<CategoriesService>.Instance;
-            transactionsService = InstanceBase<TransactionsService>.Instance;
-            splitsService = InstanceBase<SplitsService>.Instance;
-            transactionsService = InstanceBase<TransactionsService>.Instance;
-            transactionsRemindersService = InstanceBase<TransactionsRemindersService>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new ExpirationsRemindersService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private ExpirationsRemindersService()
+        {
+            expirationsRemindersManager = new();
         }
 
         public List<ExpirationsReminders?>? getAll()
@@ -61,7 +67,7 @@ namespace BOLib.Services
 
         public void GenerationAllExpirations()
         {
-            foreach (TransactionsReminders? transactionsReminders in transactionsRemindersService.getAll())
+            foreach (TransactionsReminders? transactionsReminders in TransactionsRemindersService.Instance.getAll())
             {
                 generationExpirations(transactionsReminders);
             }
@@ -70,7 +76,7 @@ namespace BOLib.Services
         public void generateAutoregister()
         {
             foreach (ExpirationsReminders? exp in getAllPendingWithGeneration()?
-                .Where(x => x.date <= DateTime.Now &&
+                .Where(x => x.date <= DateTime.Now && //x.transactionsReminders != null &&
                     x.transactionsReminders.autoRegister.HasValue && x.transactionsReminders.autoRegister.Value))
             {
                 registerTransactionfromReminder(exp.id);
@@ -96,7 +102,7 @@ namespace BOLib.Services
                         update(expirationsReminders);
                     }
 
-                    date = periodsRemindersService.getNextDate(date, periodsRemindersService.toEnum(transactionsReminders.periodsReminders));
+                    date = PeriodsRemindersService.Instance.getNextDate(date, PeriodsRemindersService.Instance.toEnum(transactionsReminders.periodsReminders));
 
                 }
             }
@@ -109,7 +115,7 @@ namespace BOLib.Services
                 ExpirationsReminders? expirationsReminders = getByID(id);
                 if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
                 {
-                    Transactions transactions = new();
+                    Transactions? transactions = new();
                     transactions.date = expirationsReminders.date;
                     transactions.accountid = expirationsReminders.transactionsReminders.accountid;
                     transactions.personid = expirationsReminders.transactionsReminders.personid;
@@ -120,7 +126,7 @@ namespace BOLib.Services
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    transactionsService.saveChanges(transactions);
+                    TransactionsService.Instance.saveChanges(ref transactions);
 
                     if (expirationsReminders.transactionsReminders.splits != null)
                     {
@@ -133,11 +139,10 @@ namespace BOLib.Services
                             splits.amountIn = splitsReminders.amountIn;
                             splits.amountOut = splitsReminders.amountOut;
                             splits.tagid = splitsReminders.tagid;
-                            splitsService.saveChanges(transactions, splits);
-                            transactionsService.updateTranferSplits(transactions, splits);
+                            SplitsService.Instance.saveChanges(transactions, splits);
+                            TransactionsService.Instance.updateTranferSplits(transactions, splits);
                         }
                     }
-
                     return transactions;
 
                 }
@@ -205,12 +210,12 @@ namespace BOLib.Services
             Transactions? tContraria = new()
             {
                 date = transactions.date,
-                accountid = splits.category.accounts.id,
-                account = splits.category.accounts,
+                accountid = AccountsService.Instance.getByCategoryId(splits.categoryid)?.id,
+                account = AccountsService.Instance.getByCategoryId(splits.categoryid),
                 personid = transactions.personid,
                 person = transactions.person,
                 categoryid = transactions.account.categoryid,
-                category = categoriesService.getByID(transactions.account.categoryid),
+                category = CategoriesService.Instance.getByID(transactions.account.categoryid),
                 memo = splits.memo,
                 tagid = transactions.tagid,
                 amountIn = splits.amountOut,
@@ -226,12 +231,12 @@ namespace BOLib.Services
             Transactions? tContraria = new()
             {
                 date = transactions.date.removeTime(),
-                accountid = transactions.category.accounts?.id,
-                account = transactions.category.accounts,
+                accountid = AccountsService.Instance.getByCategoryId(transactions.categoryid)?.id,
+                account = AccountsService.Instance.getByCategoryId(transactions.categoryid),
                 personid = transactions.personid,
                 person = transactions.person,
-                categoryid = transactions.account.categoryid,
-                category = categoriesService.getByID(transactions.account.categoryid),
+                categoryid = transactions.account?.categoryid,
+                category = CategoriesService.Instance.getByID(transactions.account?.categoryid),
                 memo = transactions.memo,
                 tagid = transactions.tagid,
                 tag = transactions.tag,

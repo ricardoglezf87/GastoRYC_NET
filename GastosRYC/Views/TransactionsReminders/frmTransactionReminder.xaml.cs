@@ -16,15 +16,6 @@ namespace GastosRYC.Views
 
         private TransactionsReminders? transaction;
         private readonly int? accountidDefault;
-        private readonly TagsService tagsService;
-        private readonly PersonsService personsService;
-        private readonly CategoriesService categoriesService;
-        private readonly AccountsService accountsService;
-        private readonly TransactionsRemindersService transactionsRemindersService;
-        private readonly ExpirationsRemindersService expirationsRemindersService;
-        private readonly InvestmentProductsService investmentProductsService;
-        private readonly PeriodsRemindersService periodsRemindersService;
-        private readonly TransactionsStatusService transactionsStatusService;
 
         public eWindowsResult windowsResult { set; get; }
 
@@ -35,15 +26,6 @@ namespace GastosRYC.Views
         public FrmTransactionReminders()
         {
             InitializeComponent();
-            personsService = InstanceBase<PersonsService>.Instance;
-            tagsService = InstanceBase<TagsService>.Instance;
-            transactionsRemindersService = InstanceBase<TransactionsRemindersService>.Instance;
-            categoriesService = InstanceBase<CategoriesService>.Instance;
-            accountsService = InstanceBase<AccountsService>.Instance;
-            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
-            investmentProductsService = InstanceBase<InvestmentProductsService>.Instance;
-            periodsRemindersService = InstanceBase<PeriodsRemindersService>.Instance;
-            transactionsStatusService = InstanceBase<TransactionsStatusService>.Instance;
         }
 
         public FrmTransactionReminders(TransactionsReminders transaction, int accountidDefault) :
@@ -94,7 +76,7 @@ namespace GastosRYC.Views
 
             FrmSplitsRemindersList frm = new(transaction);
             frm.ShowDialog();
-            transactionsRemindersService.updateSplitsReminders(transaction);
+            TransactionsRemindersService.Instance.updateSplitsReminders(transaction);
             loadTransaction();
         }
 
@@ -141,7 +123,7 @@ namespace GastosRYC.Views
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = expirationsRemindersService.getNextReminder(transaction.id) ?? transaction.date;
+                dtpDate.SelectedDate = ExpirationsRemindersService.Instance.getNextReminder(transaction.id) ?? transaction.date;
                 cbPeriodTransaction.SelectedValue = transaction.periodsRemindersid;
                 cbAccount.SelectedValue = transaction.accountid;
                 cbPerson.SelectedValue = transaction.personid;
@@ -177,21 +159,21 @@ namespace GastosRYC.Views
             transaction.date = dtpDate.SelectedDate;
 
             transaction.periodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
-            transaction.periodsReminders = periodsRemindersService.getByID(transaction.periodsRemindersid);
+            transaction.periodsReminders = PeriodsRemindersService.Instance.getByID(transaction.periodsRemindersid);
 
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = accountsService.getByID(transaction.accountid);
+            transaction.account = AccountsService.Instance.getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = personsService.getByID(transaction.personid);
+                transaction.person = PersonsService.Instance.getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
 
             transaction.categoryid = (int)cbCategory.SelectedValue;
-            transaction.category = categoriesService.getByID(transaction.categoryid);
+            transaction.category = CategoriesService.Instance.getByID(transaction.categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -207,24 +189,24 @@ namespace GastosRYC.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = tagsService.getByID(transaction.tagid);
+                transaction.tag = TagsService.Instance.getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
 
             transaction.autoRegister = chkAutoregister.IsChecked ?? false;
 
-            transaction.transactionStatus = transactionsStatusService.getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = TransactionsStatusService.Instance.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = accountsService.getAll();
-            cbPerson.ItemsSource = personsService.getAll();
-            cbCategory.ItemsSource = categoriesService.getAll();
-            cbTag.ItemsSource = tagsService.getAll();
-            cbTransactionStatus.ItemsSource = transactionsStatusService.getAll();
-            cbPeriodTransaction.ItemsSource = periodsRemindersService.getAll();
+            cbAccount.ItemsSource = AccountsService.Instance.getAll();
+            cbPerson.ItemsSource = PersonsService.Instance.getAll();
+            cbCategory.ItemsSource = CategoriesService.Instance.getAll();
+            cbTag.ItemsSource = TagsService.Instance.getAll();
+            cbTransactionStatus.ItemsSource = TransactionsStatusService.Instance.getAll();
+            cbPeriodTransaction.ItemsSource = PeriodsRemindersService.Instance.getAll();
         }
 
         private bool saveTransaction()
@@ -237,7 +219,7 @@ namespace GastosRYC.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        transactionsRemindersService.saveChanges(transaction);
+                        TransactionsRemindersService.Instance.saveChanges(transaction);
                     }
                     return true;
                 }

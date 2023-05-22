@@ -8,10 +8,27 @@ namespace BOLib.Services
     public class TransactionsStatusService
     {
         private readonly TransactionsStatusManager transactionsStatusManager;
+        private static TransactionsStatusService? _instance;
+        private static readonly object _lock = new();
 
-        public TransactionsStatusService()
+        public static TransactionsStatusService Instance
         {
-            transactionsStatusManager = InstanceBase<TransactionsStatusManager>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new TransactionsStatusService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private TransactionsStatusService()
+        {
+            transactionsStatusManager = new();
         }
 
         public enum eTransactionsTypes : int

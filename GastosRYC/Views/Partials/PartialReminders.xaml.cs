@@ -1,5 +1,7 @@
 ﻿using BOLib.Models;
 using BOLib.Services;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,7 +17,6 @@ namespace GastosRYC.Views
         #region Variables
 
         private readonly MainWindow parentForm;
-        private readonly ExpirationsRemindersService expirationsRemindersService;
 
         #endregion
 
@@ -25,7 +26,6 @@ namespace GastosRYC.Views
         {
             InitializeComponent();
             parentForm = _parentForm;
-            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
         }
 
         #endregion
@@ -75,12 +75,11 @@ namespace GastosRYC.Views
 
         #region Functions
 
-        public void loadReminders()
+        public async void loadReminders()
         {
-            expirationsRemindersService.generateAutoregister();
-            parentForm.loadAccounts();
+            List<ExpirationsReminders?>? expirationsReminders = await Task.Run(() => ExpirationsRemindersService.Instance.getAllPendingWithoutFutureWithGeneration());
 
-            cvReminders.ItemsSource = new ListCollectionView(expirationsRemindersService.getAllPendingWithoutFutureWithGeneration());
+            cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 
             cvReminders.CanGroup = true;
             cvReminders.GroupCards("groupDate");
@@ -92,11 +91,11 @@ namespace GastosRYC.Views
 
         private void putDoneReminder(int? id)
         {
-            ExpirationsReminders? expirationsReminders = expirationsRemindersService.getByID(id);
+            ExpirationsReminders? expirationsReminders = ExpirationsRemindersService.Instance.getByID(id);
             if (expirationsReminders != null)
             {
                 expirationsReminders.done = true;
-                expirationsRemindersService.update(expirationsReminders);
+                ExpirationsRemindersService.Instance.update(expirationsReminders);
             }
 
             loadReminders();
@@ -104,10 +103,11 @@ namespace GastosRYC.Views
 
         private void makeTransactionFromReminder(int? id)
         {
-            Transactions? transaction = expirationsRemindersService.registerTransactionfromReminder(id);
+            Transactions? transaction = ExpirationsRemindersService.Instance.registerTransactionfromReminder(id);
             if (transaction != null)
             {
                 FrmTransaction frm = new(transaction);
+                frm.ShowDialog();
             }
 
             parentForm.loadAccounts();

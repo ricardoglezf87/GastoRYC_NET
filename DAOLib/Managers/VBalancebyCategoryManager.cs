@@ -1,7 +1,7 @@
 ﻿using DAOLib.Models;
-using DAOLib.Services;
+using DAOLib.Repositories;
+
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DAOLib.Managers
 {
@@ -9,7 +9,11 @@ namespace DAOLib.Managers
     {
         public List<VBalancebyCategoryDAO>? getAll()
         {
-            return RYCContextServiceDAO.getInstance()?.BBDD?.vBalancebyCategory?.ToList();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryGeneral<VBalancebyCategoryDAO>();
+                return repository.GetAll();
+            }
         }
     }
 }

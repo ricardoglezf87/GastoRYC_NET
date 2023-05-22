@@ -3,7 +3,6 @@ using BOLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using static BOLib.Services.AccountsTypesService;
 
 namespace BOLib.Services
@@ -13,29 +12,37 @@ namespace BOLib.Services
 
         #region Propiedades y Contructor
 
-        private readonly TransactionsService transactionsService;
-        private readonly ExpirationsRemindersService expirationsRemindersService;
-        private readonly AccountsService accountService;
+        private static ForecastsChartService? _instance;
+        private static readonly object _lock = new();
 
-        public ForecastsChartService()
+        public static ForecastsChartService Instance
         {
-            transactionsService = InstanceBase<TransactionsService>.Instance;
-            accountService = InstanceBase<AccountsService>.Instance;
-            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new ForecastsChartService();
+                    }
+                }
+                return _instance;
+            }
         }
+
 
         #endregion Propiedades y Contructor
 
         #region Functions
 
-        public async Task<List<ForecastsChart>> getMonthForecast()
+        public List<ForecastsChart> getMonthForecast()
         {
             Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
             Dictionary<int, Decimal> saldos = new();
 
             DateTime now = DateTime.Now;
 
-            foreach (var g in (await accountService.getAllAync())?.Where(x => (x.closed == false || x.closed == null)
+            foreach (var g in AccountsService.Instance.getAll()?.Where(x => (x.closed == false || x.closed == null)
                                                             && (x.accountsTypesid == (int)eAccountsTypes.Cash ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Banks ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Cards)))
@@ -45,13 +52,15 @@ namespace BOLib.Services
 
             List<Transactions> remTransactions = new();
 
-            foreach (ExpirationsReminders? exp in await expirationsRemindersService.getAllPendingWithoutFutureWithGenerationAsync())
+            foreach (ExpirationsReminders? exp in ExpirationsRemindersService.Instance.getAllPendingWithoutFutureWithGeneration())
             {
                 if (exp != null)
-                    remTransactions.AddRange(await expirationsRemindersService.registerTransactionfromReminderSimulationAsync(exp));
+                {
+                    remTransactions.AddRange(ExpirationsRemindersService.Instance.registerTransactionfromReminderSimulation(exp));
+                }
             }
 
-            List<Transactions?>? transactions = await transactionsService.getAllAsync();
+            List<Transactions?>? transactions = TransactionsService.Instance.getAll();
 
             if (transactions != null)
             {
@@ -81,13 +90,13 @@ namespace BOLib.Services
                     }
                 }
             }
-            
+
             List<ForecastsChart> lChart = new();
 
             foreach (Tuple<DateTime, int?> key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    (await accountService.getByIDAsync(key.Item2))?.description,
+                    AccountsService.Instance.getByID(key.Item2)?.description,
                     key.Item2, dChart[key]));
             }
             return lChart;

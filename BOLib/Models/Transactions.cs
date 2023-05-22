@@ -51,6 +51,11 @@ namespace BOLib.Models
 
         public virtual bool? investmentCategory { set; get; }
 
+        public virtual String? categoryDescripGrid => (investmentCategory.HasValue && investmentCategory.Value == false) ?
+            (numShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra") : category?.description ?? String.Empty;
+
+        public virtual String? personDescripGrid => (investmentCategory.HasValue && investmentCategory.Value == false) ?
+            investmentProducts?.description ?? String.Empty : person?.name ?? String.Empty;
 
         [NotMapped]
         public virtual Decimal? amount => (investmentCategory.HasValue && investmentCategory.Value == false) ? (numShares * pricesShares) : amountIn - amountOut;
@@ -73,25 +78,25 @@ namespace BOLib.Models
                 id = this.id,
                 date = this.date,
                 accountid = this.accountid,
-                account = this.account?.toDAO(),
+                account = null,
                 personid = this.personid,
-                person = this.person?.toDAO(),
+                person = null,
                 categoryid = this.categoryid,
-                category = this.category?.toDAO(),
+                category = null,
                 amountIn = this.amountIn,
                 amountOut = this.amountOut,
                 memo = this.memo,
                 investmentCategory = this.investmentCategory,
-                investmentProducts = this.investmentProducts?.toDAO(),
+                investmentProducts = null,
                 investmentProductsid = this.investmentProductsid,
                 tranferid = this.tranferid,
                 tranferSplitid = this.tranferSplitid,
-                transactionStatus = this.transactionStatus?.toDAO(),
+                transactionStatus = null,
                 transactionStatusid = this.transactionStatusid,
                 numShares = this.numShares,
                 pricesShares = this.pricesShares,
                 tagid = this.tagid,
-                tag = this.tag?.toDAO()
+                tag = null
             };
         }
 

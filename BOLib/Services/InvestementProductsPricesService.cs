@@ -15,22 +15,37 @@ namespace BOLib.Services
     public class InvestmentProductsPricesService
     {
         private readonly InvestmentProductsPricesManager investmentProductsPricesManager;
-        private readonly TransactionsService transactionsService;
+        private static InvestmentProductsPricesService? _instance;
+        private static readonly object _lock = new();
 
-        public InvestmentProductsPricesService()
+        public static InvestmentProductsPricesService Instance
         {
-            investmentProductsPricesManager = InstanceBase<InvestmentProductsPricesManager>.Instance;
-            transactionsService = InstanceBase<TransactionsService>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new InvestmentProductsPricesService();
+                    }
+                }
+                return _instance;
+            }
         }
 
-        public List<InvestmentProductsPrices>? getAll()
+        private InvestmentProductsPricesService()
+        {
+            investmentProductsPricesManager = new();
+        }
+
+        public List<InvestmentProductsPrices?>? getAll()
         {
             return investmentProductsPricesManager.getAll()?.toListBO();
         }
 
         public InvestmentProductsPrices? getByID(int? id)
         {
-            return (InvestmentProductsPrices)investmentProductsPricesManager.getByID(id);
+            return (InvestmentProductsPrices?)investmentProductsPricesManager.getByID(id);
         }
 
         public bool exists(int? investmentProductId, DateTime? date)
@@ -53,7 +68,7 @@ namespace BOLib.Services
             return investmentProductsPricesManager.getActualPrice(investmentProducts.toDAO());
         }
 
-        public async Task getPricesOnlineAsync(InvestmentProducts investmentProducts)
+        public async Task getPricesOnlineAsync(InvestmentProducts? investmentProducts)
         {
             try
             {
@@ -70,7 +85,7 @@ namespace BOLib.Services
                     lproductsPrices = await getPricesOnlineInvesting(investmentProducts);
                 }
 
-                foreach (var transactions in transactionsService.getByInvestmentProduct(investmentProducts)?
+                foreach (var transactions in TransactionsService.Instance.getByInvestmentProduct(investmentProducts)?
                         .GroupBy(g => g.date)?.Select(x => new { date = x.Key, price = x.Average(y => y.pricesShares) }))
                 {
                     if (!exists(investmentProducts.id, transactions.date))
@@ -91,8 +106,6 @@ namespace BOLib.Services
                         investmentProductsPricesManager.update(productsPrices.toDAO(), false);
                     }
                 }
-
-                await investmentProductsPricesManager.saveChangesAsync();
             }
             catch (Exception)
             {

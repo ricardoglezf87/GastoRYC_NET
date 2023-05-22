@@ -1,36 +1,20 @@
 ﻿using DAOLib.Models;
-using DAOLib.Services;
-using System.Linq;
+
+using System;
+using System.Linq.Expressions;
 
 namespace DAOLib.Managers
 {
     public class PersonsManager : ManagerBase<PersonsDAO>
     {
-        public void setCategoryDefault(PersonsDAO? persons)
+#pragma warning disable CS8603
+        public override Expression<Func<PersonsDAO, object>>[] getIncludes()
         {
-            if (persons == null)
-                return;
-
-            var result = (from x in RYCContextServiceDAO.getInstance().BBDD?.transactions
-                          where x.personid.Equals(persons.id)
-                          group x by x.categoryid into g
-                          select new
-                          {
-                              categoryid = g.Key,
-                              count = g.Count()
-                          }).ToList();
-
-            if (result != null)
+            return new Expression<Func<PersonsDAO, object>>[]
             {
-                int maxCount = result.Max(c => c.count);
-                int? maxCounts = (from c in result
-                                  where c.count == maxCount
-                                  select c.categoryid).FirstOrDefault();
-
-                persons.categoryid = maxCounts;
-                update(persons);
-            }
-
+                a => a.category
+            };
         }
+#pragma warning restore CS8603
     }
 }

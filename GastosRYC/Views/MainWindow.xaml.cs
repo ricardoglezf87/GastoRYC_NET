@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,12 +24,6 @@ namespace GastosRYC
 
         private ICollectionView? viewAccounts;
         private Page? actualPrincipalContent;
-        private readonly AccountsService accountsService;
-        private readonly DateCalendarService dateCalendarService;
-        private readonly ExpirationsRemindersService expirationsRemindersService;
-        private readonly InvestmentProductsPricesService investmentProductsPricesService;
-        private readonly InvestmentProductsService investmentProductsService;
-
 
         private enum eViews : int
         {
@@ -46,11 +41,9 @@ namespace GastosRYC
             InitializeComponent();
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
             SfSkinManager.ApplyStylesOnApplication = true;
-            accountsService = InstanceBase<AccountsService>.Instance;
-            dateCalendarService = InstanceBase<DateCalendarService>.Instance;
-            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
-            investmentProductsPricesService = InstanceBase<InvestmentProductsPricesService>.Instance;
-            investmentProductsService = InstanceBase<InvestmentProductsService>.Instance;
+
+            RYCContextService.Instance.makeBackup();
+            RYCContextService.Instance.migrateDataBase();
         }
 
         #endregion
@@ -82,7 +75,7 @@ namespace GastosRYC
             openNewTransaction();
         }
 
-        private void frmInicio_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private async void frmInicio_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -102,15 +95,17 @@ namespace GastosRYC
                     else if (actualPrincipalContent is PartialReminders)
                     {
                         ((PartialReminders)actualPrincipalContent).loadReminders();
+                        await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
+                        loadAccounts();
                     }
                     break;
             }
         }
 
-        private void frmInicio_Loaded(object sender, RoutedEventArgs e)
+        private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             loadCalendar();
-            expirationsRemindersService.generateAutoregister();
+            await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
             loadAccounts();
             toggleViews(eViews.Home);
         }
@@ -122,10 +117,14 @@ namespace GastosRYC
                 toggleViews(eViews.Transactions);
 
                 if (actualPrincipalContent is PartialReminders)
+                {
                     ((PartialReminders)actualPrincipalContent).loadReminders();
+                }
 
                 if (actualPrincipalContent is PartialTransactions)
+                {
                     ((PartialTransactions)actualPrincipalContent).ApplyFilters((AccountsView?)lvAccounts.SelectedValue);
+                }
             }
         }
 
@@ -136,7 +135,9 @@ namespace GastosRYC
             toggleViews(eViews.Transactions);
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).ApplyFilters();
+            }
         }
 
         private void lvAccounts_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -151,7 +152,9 @@ namespace GastosRYC
             loadAccounts();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void btnMntPersons_Click(object sender, RoutedEventArgs e)
@@ -160,7 +163,9 @@ namespace GastosRYC
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void btnMntInvestmentProducts_Click(object sender, RoutedEventArgs e)
@@ -169,7 +174,9 @@ namespace GastosRYC
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void btnMntCategories_Click(object sender, RoutedEventArgs e)
@@ -178,7 +185,9 @@ namespace GastosRYC
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void btnMntTags_Click(object sender, RoutedEventArgs e)
@@ -187,17 +196,23 @@ namespace GastosRYC
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
-
+            }
         }
 
-        private void btnMntReminders_Click(object sender, RoutedEventArgs e)
+        private async void btnMntReminders_Click(object sender, RoutedEventArgs e)
         {
             FrmTransactionReminderList frm = new();
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialReminders)
+            {
                 ((PartialReminders)actualPrincipalContent).loadReminders();
+            }
+
+            await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
+            loadAccounts();
         }
 
 
@@ -205,12 +220,14 @@ namespace GastosRYC
 
         #region Functions
 
-        public void refreshBalance()
+        public async void refreshBalance()
         {
             foreach (AccountsView accounts in lvAccounts.ItemsSource)
             {
-                accounts.balance = accountsService.getBalanceByAccount(accounts.id);
+                accounts.balance = await Task.Run(() => AccountsService.Instance.getBalanceByAccount(accounts.id));
             }
+
+            viewAccounts.Refresh();
 
             autoResizeListView();
         }
@@ -223,12 +240,14 @@ namespace GastosRYC
             loadAccounts();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void loadCalendar()
         {
-            dateCalendarService.fillCalendar();
+            DateCalendarService.Instance.fillCalendar();
         }
 
         private void toggleViews(eViews views)
@@ -272,7 +291,8 @@ namespace GastosRYC
 
         public void loadAccounts()
         {
-            viewAccounts = CollectionViewSource.GetDefaultView(accountsService.getAllOpenedListView());
+            List<AccountsView>? accountsViews = AccountsService.Instance.getAllOpenedListView();
+            viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypesdescription"));
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypesid", ListSortDirection.Ascending));
@@ -283,16 +303,16 @@ namespace GastosRYC
         {
             try
             {
-                List<InvestmentProducts>? lInvestmentProducts = investmentProductsService.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
+                List<InvestmentProducts?>? lInvestmentProducts = InvestmentProductsService.Instance.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
 
                 if (lInvestmentProducts != null)
                 {
                     LoadDialog loadDialog = new(lInvestmentProducts.Count);
                     loadDialog.Show();
 
-                    foreach (InvestmentProducts investmentProducts in lInvestmentProducts)
+                    foreach (InvestmentProducts? investmentProducts in lInvestmentProducts)
                     {
-                        await investmentProductsPricesService.getPricesOnlineAsync(investmentProducts);
+                        await InvestmentProductsPricesService.Instance.getPricesOnlineAsync(investmentProducts);
                         loadDialog.performeStep();
                     }
 

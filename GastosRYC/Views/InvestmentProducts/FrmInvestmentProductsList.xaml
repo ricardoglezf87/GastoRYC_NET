@@ -35,6 +35,7 @@
                 <syncfusion:GridTextColumn MappingName="description" HeaderText="Descripción" Width="300"/>
                 <syncfusion:GridTextColumn MappingName="symbol" HeaderText="Simbolo" Width="150" />
                 <syncfusion:GridTextColumn MappingName="url" HeaderText="Url" />
+                <syncfusion:GridCheckBoxColumn MappingName="active" HeaderText="Activo"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 

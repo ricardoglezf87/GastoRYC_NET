@@ -1,49 +1,99 @@
 ﻿using DAOLib.Models;
-using DAOLib.Services;
+using DAOLib.Repositories;
+
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace DAOLib.Managers
 {
     public class ManagerBase<T> where T : ModelBaseDAO
     {
-        public List<T>? getAll()
+#pragma warning disable CS8603
+        public virtual Expression<Func<T, object>>[] getIncludes()
         {
-            return RYCContextServiceDAO.getInstance().BBDD.Set<T>().ToList();
+            return null;
         }
+#pragma warning restore CS8603
 
-        public T? getByID(int? id)
+        public IQueryable<T>? getEntyWithInclude(Repository<T> repository)
         {
-            return RYCContextServiceDAO.getInstance().BBDD.Set<T>().FirstOrDefault(x => id.Equals(x.id));
-        }
+            var query = repository.entities.AsQueryable();
 
-        public void update(T? obj, bool save = true)
-        {
-            if (obj != null)
+            foreach (var include in getIncludes())
             {
-                RYCContextServiceDAO.getInstance().BBDD.Update(obj);
-                if (save)
-                    saveChanges();
+                query = query?.Include(include);
+            }
+
+            return query;
+        }
+
+        public IQueryable<T>? getEntyWithInclude()
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<T>();
+                var query = repository.entities.AsQueryable();
+
+                foreach (var include in getIncludes())
+                {
+                    query = query?.Include(include);
+                }
+
+                return query;
             }
         }
 
-        public void saveChanges()
+        public List<T>? getAll()
         {
-            RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<T>();
+                return repository.GetAllWithInclude(getIncludes());
+            }
         }
 
-        public async Task saveChangesAsync()
+
+        public T? getByID(int? id)
         {
-            await RYCContextServiceDAO.getInstance().BBDD.SaveChangesAsync();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<T>();
+                return repository.GetWithInclude(id, getIncludes());
+            }
+        }
+
+        public T? update(T? obj, bool save = true)
+        {
+            if (obj != null)
+            {
+                using (var unitOfWork = new UnitOfWork(new RYCContext()))
+                {
+                    var repository = unitOfWork.GetRepositoryModelBase<T>();
+                    var entity = repository.Update(obj);
+                    if (save)
+                    {
+                        repository.saveChanges();
+                    }
+
+                    return entity;
+                }
+            }
+            return null;
         }
 
         public void delete(T? obj)
         {
             if (obj != null)
             {
-                RYCContextServiceDAO.getInstance().BBDD.Remove(obj);
-                RYCContextServiceDAO.getInstance().BBDD.SaveChanges();
+                using (var unitOfWork = new UnitOfWork(new RYCContext()))
+                {
+                    var repository = unitOfWork.GetRepositoryModelBase<T>();
+                    repository.Delete(obj);
+                    repository.saveChanges();
+                }
             }
         }
     }

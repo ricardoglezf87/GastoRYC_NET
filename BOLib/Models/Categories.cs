@@ -1,7 +1,5 @@
 ﻿using DAOLib.Models;
 using System;
-using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
 namespace BOLib.Models
 {
@@ -13,10 +11,6 @@ namespace BOLib.Models
 
         public virtual CategoriesTypes? categoriesTypes { set; get; }
 
-        [JsonIgnore]
-        [IgnoreDataMember]
-        public virtual Accounts? accounts { set; get; }
-
         internal CategoriesDAO toDAO()
         {
             return new CategoriesDAO()
@@ -24,7 +18,7 @@ namespace BOLib.Models
                 id = this.id,
                 description = this.description,
                 categoriesTypesid = this.categoriesTypesid,
-                categoriesTypes = this.categoriesTypes?.toDAO()
+                categoriesTypes = null
             };
         }
 

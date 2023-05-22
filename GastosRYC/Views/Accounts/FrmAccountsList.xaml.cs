@@ -3,6 +3,8 @@ using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
 
+//TODO: En esta version de syncfusion no permite guardar los checkbox al perder foco, tienes que saltar a un texbox antes de saltar de linea
+
 namespace GastosRYC.Views
 {
     /// <summary>
@@ -10,22 +12,15 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmAccountsList : Window
     {
-        private readonly AccountsTypesService accountsTypesService;
-        private readonly AccountsService accountsService;
-        private readonly CategoriesService categoriesService;
-
         public FrmAccountsList()
         {
             InitializeComponent();
-            accountsTypesService = InstanceBase<AccountsTypesService>.Instance;
-            accountsService = InstanceBase<AccountsService>.Instance;
-            categoriesService = InstanceBase<CategoriesService>.Instance;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = accountsTypesService.getAll();
-            gvAccounts.ItemsSource = accountsService.getAll();
+            cbAccountsTypes.ItemsSource = AccountsTypesService.Instance.getAll();
+            gvAccounts.ItemsSource = AccountsService.Instance.getAll();
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -36,7 +31,7 @@ namespace GastosRYC.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);
+                        accounts.accountsTypes = AccountsTypesService.Instance.getByID(accounts.accountsTypesid);
                         break;
                 }
             }
@@ -66,17 +61,17 @@ namespace GastosRYC.Views
 
             if (accounts.categoryid != null)
             {
-                categories = categoriesService.getByID(accounts.categoryid);
+                categories = CategoriesService.Instance.getByID(accounts.categoryid);
                 if (categories != null)
                 {
                     categories.description = "[" + accounts.description + "]";
-                    categoriesService.update(categories);
+                    CategoriesService.Instance.update(categories);
                 }
             }
             else
             {
                 categories = new Categories();
-                accounts.categoryid = categoriesService.getNextID(); ;
+                accounts.categoryid = CategoriesService.Instance.getNextID(); ;
                 categories.description = "[" + accounts.description + "]";
                 categories.categoriesTypesid = (int)CategoriesTypesService.eCategoriesTypes.Transfers;
 
@@ -84,7 +79,7 @@ namespace GastosRYC.Views
 
             if (categories != null)
             {
-                categoriesService.update(categories);
+                CategoriesService.Instance.update(categories);
             }
         }
 
@@ -94,24 +89,24 @@ namespace GastosRYC.Views
 
             if (accounts.accountsTypes == null && accounts.accountsTypesid != null)
             {
-                accounts.accountsTypes = accountsTypesService.getByID(accounts.accountsTypesid);
+                accounts.accountsTypes = AccountsTypesService.Instance.getByID(accounts.accountsTypesid);
             }
 
             updateCategory(accounts);
-            accountsService.update(accounts);
+            AccountsService.Instance.update(accounts);
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items)
             {
-                Categories? categories = categoriesService.getByID(accounts.categoryid);
+                Categories? categories = CategoriesService.Instance.getByID(accounts.categoryid);
                 if (categories != null)
                 {
-                    categoriesService.delete(categories);
+                    CategoriesService.Instance.delete(categories);
                 }
 
-                accountsService.delete(accounts);
+                AccountsService.Instance.delete(accounts);
             }
         }
 

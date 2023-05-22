@@ -10,37 +10,53 @@ namespace BOLib.Services
     {
 
         private readonly CategoriesManager categoriesManager;
+        private static CategoriesService? _instance;
+        private static readonly object _lock = new();
 
-        //TDOO:Revisar enums
+        public static CategoriesService Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new CategoriesService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
         public enum eSpecialCategories : int
         {
             Split = -1,
             WithoutCategory = 0
         }
 
-        public CategoriesService()
+        private CategoriesService()
         {
-            categoriesManager = InstanceBase<CategoriesManager>.Instance;
+            categoriesManager = new();
         }
 
-        public List<Categories>? getAll()
+        public List<Categories?>? getAll()
         {
             return categoriesManager.getAll()?.toListBO();
         }
 
-        public List<Categories>? getAllFilterTransfer()
+        public List<Categories?>? getAllWithoutSpecialTransfer()
         {
-            return categoriesManager.getAllFilterTransfer()?.toListBO();
+            return categoriesManager?.getAllWithoutSpecialTransfer()?.toListBO();
         }
 
         public Categories? getByID(int? id)
         {
-            return (Categories)categoriesManager.getByID(id);
+            return (Categories?)categoriesManager.getByID(id);
         }
 
         public void update(Categories categories)
         {
-            categoriesManager.delete(categories?.toDAO());
+            categoriesManager.update(categories?.toDAO());
         }
 
         public void delete(Categories categories)

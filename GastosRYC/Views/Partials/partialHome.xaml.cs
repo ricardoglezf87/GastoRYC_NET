@@ -4,6 +4,7 @@ using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -20,10 +21,6 @@ namespace GastosRYC.Views
     {
         #region Variables
 
-        private readonly AccountsTypesService accountsTypesService;
-        private readonly AccountsService accountsService;
-        private readonly ForecastsChartService forecastsChartService;
-        private readonly VBalancebyCategoryService vBalancebyCategoryService;
         private readonly MainWindow parentForm;
 
         #endregion
@@ -34,10 +31,6 @@ namespace GastosRYC.Views
         {
             InitializeComponent();
             parentForm = _parentForm;
-            accountsTypesService = InstanceBase<AccountsTypesService>.Instance;
-            accountsService = InstanceBase<AccountsService>.Instance;
-            forecastsChartService = InstanceBase<ForecastsChartService>.Instance;
-            vBalancebyCategoryService = InstanceBase<VBalancebyCategoryService>.Instance;
         }
 
         #endregion
@@ -174,13 +167,13 @@ namespace GastosRYC.Views
 
             chForecast.Series.Clear();
 
-            foreach (Accounts? accounts in (await accountsService.getAllOpenedAync())?
-                .Where(x => accountsTypesService.accountExpensives(x.accountsTypesid)))
+            foreach (Accounts? accounts in (await AccountsService.Instance.getAllOpenedAync())?
+                .Where(x => AccountsTypesService.Instance.accountExpensives(x.accountsTypesid)))
             {
 
                 LineSeries series = new()
                 {
-                    ItemsSource = (await forecastsChartService.getMonthForecast()).Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
+                    ItemsSource = (await Task.Run(() => ForecastsChartService.Instance.getMonthForecast()))?.Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
                     Label = accounts.description,
                     XBindingPath = "date",
                     YBindingPath = "amount",
@@ -299,7 +292,7 @@ namespace GastosRYC.Views
 
             //Series
 
-            List<VBalancebyCategory?>? lExpensesCharts = await vBalancebyCategoryService.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
+            List<VBalancebyCategory?>? lExpensesCharts = await VBalancebyCategoryService.Instance.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new()

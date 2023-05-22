@@ -3,6 +3,8 @@ using BOLib.Services;
 using System.Windows;
 using System.Windows.Controls;
 
+//TODO: En esta version de syncfusion no permite guardar los checkbox al perder foco, tienes que saltar a un texbox antes de saltar de linea
+
 namespace GastosRYC.Views
 {
     /// <summary>
@@ -10,17 +12,15 @@ namespace GastosRYC.Views
     /// </summary>
     public partial class FrmInvestmentProductsList : Window
     {
-        private readonly InvestmentProductsService investmentProductsService;
 
         public FrmInvestmentProductsList()
         {
             InitializeComponent();
-            investmentProductsService = InstanceBase<InvestmentProductsService>.Instance;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvInvestmentProducts.ItemsSource = investmentProductsService.getAll();
+            gvInvestmentProducts.ItemsSource = InvestmentProductsService.Instance.getAll();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -38,14 +38,14 @@ namespace GastosRYC.Views
         private void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             InvestmentProducts InvestmentProducts = (InvestmentProducts)e.RowData;
-            investmentProductsService.update(InvestmentProducts);
+            InvestmentProductsService.Instance.update(InvestmentProducts);
         }
 
         private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (InvestmentProducts InvestmentProducts in e.Items)
             {
-                investmentProductsService.delete(InvestmentProducts);
+                InvestmentProductsService.Instance.delete(InvestmentProducts);
             }
         }
 

@@ -21,8 +21,6 @@ namespace GastosRYC.Views
 
         private AccountsView? accountSelected;
         private readonly MainWindow parentForm;
-        private readonly SplitsService splitsService;
-        private readonly TransactionsService transactionsService;
 
         #endregion
 
@@ -32,9 +30,6 @@ namespace GastosRYC.Views
         {
             InitializeComponent();
             parentForm = _parentForm;
-            splitsService = InstanceBase<SplitsService>.Instance;
-            transactionsService = InstanceBase<TransactionsService>.Instance;
-
         }
 
         #endregion
@@ -61,7 +56,7 @@ namespace GastosRYC.Views
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
-            transactionsService.updateTransactionAfterSplits(transactions);
+            TransactionsService.Instance.updateTransactionAfterSplits(transactions);
             loadTransactions();
             parentForm.loadAccounts();
         }
@@ -103,7 +98,9 @@ namespace GastosRYC.Views
                     FrmTransactionReminders frm = new(transactionsReminders);
                     frm.ShowDialog();
                     if (frm.windowsResult == eWindowsResult.Sucess)
+                    {
                         MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
+                    }
                 }
             }
             else
@@ -160,7 +157,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    transactionsService.update(transactions);
+                    TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
             }
@@ -177,7 +174,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
-                    transactionsService.update(transactions);
+                    TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
             }
@@ -194,7 +191,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
-                    transactionsService.update(transactions);
+                    TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
             }
@@ -219,8 +216,8 @@ namespace GastosRYC.Views
                         GridQueryableCollectionViewWrapper)gvTransactions.View;
 
                 decimal? balanceTotal = accountSelected != null
-        ? (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
-        : (decimal?)col.ViewSource.Sum("amount");
+                    ? (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
+                    : (decimal?)col.ViewSource.Sum("amount");
                 foreach (Transactions t in col.ViewSource)
                 {
                     if (t.amount != null)
@@ -241,9 +238,9 @@ namespace GastosRYC.Views
             }
         }
 
-        public void loadTransactions()
+        public async void loadTransactions()
         {
-            gvTransactions.ItemsSource = transactionsService.getAll();
+            gvTransactions.ItemsSource = await TransactionsService.Instance.getAllAsync();
             ApplyFilters(accountSelected);
         }
 
@@ -299,25 +296,25 @@ namespace GastosRYC.Views
             {
                 if (transactions.splits != null)
                 {
-                    List<Splits> lSplits = transactions.splits;
+                    List<Splits?>? lSplits = transactions.splits;
                     for (int i = 0; i < lSplits.Count; i++)
                     {
-                        Splits splits = lSplits[i];
+                        Splits? splits = lSplits[i];
                         if (splits.tranferid != null)
                         {
-                            transactionsService.delete(transactionsService.getByID(splits.tranferid));
+                            TransactionsService.Instance.delete(TransactionsService.Instance.getByID(splits.tranferid));
                         }
 
-                        splitsService.delete(splits);
+                        SplitsService.Instance.delete(splits);
                     }
                 }
 
                 if (transactions.tranferid != null)
                 {
-                    transactionsService.delete(transactionsService.getByID(transactions.tranferid));
+                    TransactionsService.Instance.delete(TransactionsService.Instance.getByID(transactions.tranferid));
                 }
 
-                transactionsService.delete(transactions);
+                TransactionsService.Instance.delete(transactions);
             }
         }
 

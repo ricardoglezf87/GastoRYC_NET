@@ -1,5 +1,6 @@
 ﻿using DAOLib.Models;
-using DAOLib.Services;
+using DAOLib.Repositories;
+
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,11 +16,15 @@ namespace DAOLib.Managers
             Specials = 4
         }
 
-        public List<CategoriesTypesDAO>? getAllFilterTransfer()
+        public List<CategoriesTypesDAO>? getAllWithoutSpecialTransfer()
         {
-            return RYCContextServiceDAO.getInstance().BBDD.categoriesTypes?
-                .Where(x => !x.id.Equals((int)eCategoriesTypes.Transfers) &&
-                !x.id.Equals((int)eCategoriesTypes.Transfers)).ToList();
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<CategoriesTypesDAO>();
+                return repository.GetAll()?
+                    .Where(x => x.id is not ((int)eCategoriesTypes.Specials) and
+                    not ((int)eCategoriesTypes.Transfers)).ToList();
+            }
         }
     }
 }

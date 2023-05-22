@@ -9,6 +9,23 @@ namespace BOLib.Services
     public class PeriodsRemindersService
     {
         public PeriodsRemindersManager periodsRemindersManager;
+        private static PeriodsRemindersService? _instance;
+        private static readonly object _lock = new();
+
+        public static PeriodsRemindersService Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new PeriodsRemindersService();
+                    }
+                }
+                return _instance;
+            }
+        }
 
         public enum ePeriodsReminders : int
         {
@@ -21,19 +38,19 @@ namespace BOLib.Services
             Annual = 7
         }
 
-        public PeriodsRemindersService()
+        private PeriodsRemindersService()
         {
-            periodsRemindersManager = InstanceBase<PeriodsRemindersManager>.Instance;
+            periodsRemindersManager = new();
         }
 
-        public List<PeriodsReminders>? getAll()
+        public List<PeriodsReminders?>? getAll()
         {
             return periodsRemindersManager.getAll()?.toListBO();
         }
 
         public PeriodsReminders? getByID(int? id)
         {
-            return (PeriodsReminders)periodsRemindersManager.getByID(id);
+            return (PeriodsReminders?)periodsRemindersManager.getByID(id);
         }
 
         public void update(PeriodsReminders periodsReminders)

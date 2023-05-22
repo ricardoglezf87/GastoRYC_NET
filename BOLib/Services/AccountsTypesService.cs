@@ -9,10 +9,27 @@ namespace BOLib.Services
     public class AccountsTypesService
     {
         private readonly AccountsTypesManager accountsTypesManager;
+        private static AccountsTypesService? _instance;
+        private static readonly object _lock = new();
 
-        public AccountsTypesService()
+        public static AccountsTypesService Instance
         {
-            accountsTypesManager = InstanceBase<AccountsTypesManager>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new AccountsTypesService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private AccountsTypesService()
+        {
+            accountsTypesManager = new();
         }
 
         public enum eAccountsTypes : int

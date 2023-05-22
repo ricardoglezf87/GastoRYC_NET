@@ -23,8 +23,9 @@ namespace BOLib.Models
         {
             return new ExpirationsRemindersDAO()
             {
+                id = this.id,
                 date = this.date,
-                transactionsReminders = this.transactionsReminders?.toDAO(),
+                transactionsReminders = null,
                 transactionsRemindersid = this.transactionsRemindersid,
                 done = this.done
             };
@@ -36,6 +37,7 @@ namespace BOLib.Models
                 ? null
                 : new ExpirationsReminders()
                 {
+                    id = v.id,
                     date = v.date,
                     transactionsReminders = (v.transactionsReminders != null) ? (TransactionsReminders?)v.transactionsReminders : null,
                     transactionsRemindersid = v.transactionsRemindersid,

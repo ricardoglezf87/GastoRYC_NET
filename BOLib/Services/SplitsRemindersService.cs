@@ -9,10 +9,27 @@ namespace BOLib.Services
     public class SplitsRemindersService
     {
         private readonly SplitsRemindersManager splitsRemindersManager;
+        private static SplitsRemindersService? _instance;
+        private static readonly object _lock = new();
 
-        public SplitsRemindersService()
+        public static SplitsRemindersService Instance
         {
-            splitsRemindersManager = InstanceBase<SplitsRemindersManager>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new SplitsRemindersService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private SplitsRemindersService()
+        {
+            splitsRemindersManager = new();
         }
 
         public List<SplitsReminders?>? getAll()

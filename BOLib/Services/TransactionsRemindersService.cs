@@ -9,16 +9,27 @@ namespace BOLib.Services
     public class TransactionsRemindersService
     {
         private readonly TransactionsRemindersManager transactionsRemindersManager;
-        private readonly SplitsRemindersService splitsRemindersService;
-        private readonly ExpirationsRemindersService expirationsRemindersService;
-        private readonly CategoriesService categoriesService;
+        private static TransactionsRemindersService? _instance;
+        private static readonly object _lock = new();
 
-        public TransactionsRemindersService()
+        public static TransactionsRemindersService Instance
         {
-            transactionsRemindersManager = InstanceBase<TransactionsRemindersManager>.Instance;
-            expirationsRemindersService = InstanceBase<ExpirationsRemindersService>.Instance;
-            splitsRemindersService = InstanceBase<SplitsRemindersService>.Instance;
-            categoriesService = InstanceBase<CategoriesService>.Instance;
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new TransactionsRemindersService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private TransactionsRemindersService()
+        {
+            transactionsRemindersManager = new();
         }
 
         #region TransactionsRemindersActions
@@ -35,7 +46,7 @@ namespace BOLib.Services
 
         public void update(TransactionsReminders transactionsReminders)
         {
-            expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
+            ExpirationsRemindersService.Instance.deleteByTransactionReminderid(transactionsReminders.id);
             transactionsRemindersManager.update(transactionsReminders.toDAO());
         }
 
@@ -43,7 +54,7 @@ namespace BOLib.Services
         {
             if (transactionsReminders != null)
             {
-                expirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
+                ExpirationsRemindersService.Instance.deleteByTransactionReminderid(transactionsReminders.id);
                 transactionsRemindersManager.delete(transactionsReminders.toDAO());
             }
         }
@@ -68,7 +79,7 @@ namespace BOLib.Services
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            List<SplitsReminders?>? lSplitsReminders = transactionsReminders.splits ?? splitsRemindersService.getbyTransactionid(transactionsReminders.id);
+            List<SplitsReminders?>? lSplitsReminders = transactionsReminders.splits ?? SplitsRemindersService.Instance.getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
@@ -82,13 +93,13 @@ namespace BOLib.Services
                 }
 
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactionsReminders.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactionsReminders.category = CategoriesService.Instance.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
             else if (transactionsReminders.categoryid is not null
                 and ((int)CategoriesService.eSpecialCategories.Split))
             {
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactionsReminders.category = categoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactionsReminders.category = CategoriesService.Instance.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.id == 0)
@@ -97,7 +108,7 @@ namespace BOLib.Services
                 foreach (SplitsReminders? splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.transactionid = transactionsReminders.id;
-                    splitsRemindersService.update(splitsReminders);
+                    SplitsRemindersService.Instance.update(splitsReminders);
                 }
             }
             else
