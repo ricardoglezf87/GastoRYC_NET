@@ -28,7 +28,8 @@ namespace BOLib.Models
                 categoryid = this.categoryid,
                 category = null,
                 accountsTypesid = this.accountsTypesid,
-                accountsTypes = null
+                accountsTypes = null,
+                closed = this.closed
             };
         }
 
@@ -43,7 +44,8 @@ namespace BOLib.Models
                     categoryid = v.categoryid,
                     category = (v.category != null) ? (Categories?)v.category : null,
                     accountsTypesid = v.accountsTypesid,
-                    accountsTypes = (v.accountsTypes != null) ? (AccountsTypes?)v.accountsTypes : null
+                    accountsTypes = (v.accountsTypes != null) ? (AccountsTypes?)v.accountsTypes : null,
+                    closed = v.closed
                 };
         }
     }

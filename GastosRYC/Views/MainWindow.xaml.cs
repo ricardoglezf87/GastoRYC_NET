@@ -291,12 +291,41 @@ namespace GastosRYC
 
         public void loadAccounts()
         {
+            AccountsView? accountsView = null;
+            if(lvAccounts != null && lvAccounts.SelectedItem != null)
+            {
+                accountsView = lvAccounts.SelectedValue as AccountsView;
+            }
+
             List<AccountsView>? accountsViews = AccountsService.Instance.getAllOpenedListView();
             viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypesdescription"));
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypesid", ListSortDirection.Ascending));
             refreshBalance();
+
+            if(accountsView != null)
+            {
+                int index = -1;
+                for(int i=0;i<lvAccounts.Items.Count-1;i++)
+                {
+                    if (((AccountsView)lvAccounts.Items[i]).id.Equals(accountsView.id))
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index != -1)
+                {
+                    lvAccounts.SelectedIndex = index;
+                }
+                else
+                {
+                    toggleViews(eViews.Home);
+                }
+            }
+
         }
 
         private async void updatePrices()
