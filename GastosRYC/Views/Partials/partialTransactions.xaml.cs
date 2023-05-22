@@ -214,8 +214,8 @@ namespace GastosRYC.Views
                         GridQueryableCollectionViewWrapper)gvTransactions.View;
 
                 decimal? balanceTotal = accountSelected != null
-        ? (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
-        : (decimal?)col.ViewSource.Sum("amount");
+                    ? (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
+                    : (decimal?)col.ViewSource.Sum("amount");
                 foreach (Transactions t in col.ViewSource)
                 {
                     if (t.amount != null)
