@@ -100,9 +100,9 @@ namespace GastosRYC.Views
             }
         }
 
-        private void dtpDate_KeyDown(object sender, KeyEventArgs e)
+        private void dtpDate_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Tab)
+            if (e.Key == Key.Tab || e.Key == Key.Enter)
             {
                 if (dtpDate.Text.Length == 4)
                 {
@@ -111,6 +111,11 @@ namespace GastosRYC.Views
                 else if (dtpDate.Text.Length == 6)
                 {
                     dtpDate.Text = dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2) + "/" + dtpDate.Text.Substring(4, 2);
+                }
+
+                if (e.Key == Key.Enter)
+                {
+                    cbAccount.Focus();
                 }
             }
         }
