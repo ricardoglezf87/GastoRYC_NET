@@ -3,10 +3,10 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.9.0.61</AssemblyVersion>
-    <FileVersion>1.9.0.0</FileVersion>
-    <InformationalVersion>1.9.0-alpha.61+Branch.develop.Sha.994c65ed3bd0fe8218b01ec65935e7c6ac64427a</InformationalVersion>
-    <Version>1.9.0-alpha0061</Version>
+    <AssemblyVersion>1.8.1.64</AssemblyVersion>
+    <FileVersion>1.8.1.0</FileVersion>
+    <InformationalVersion>1.8.1-beta.64+Branch.hotfix-writeDateFormatTextboxTransaction.Sha.8c206466f5ac7af514e1460c00e83017a0fb838a</InformationalVersion>
+    <Version>1.8.1-beta0064</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
