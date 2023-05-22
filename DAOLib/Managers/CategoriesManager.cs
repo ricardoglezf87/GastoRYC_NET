@@ -16,7 +16,7 @@ namespace DAOLib.Managers
         {
             return new Expression<Func<CategoriesDAO, object>>[]
             {
-                a => a.categoriesTypes                
+                a => a.categoriesTypes
             };
         }
 #pragma warning restore CS8603

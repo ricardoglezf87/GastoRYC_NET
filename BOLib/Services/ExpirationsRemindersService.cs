@@ -1,11 +1,9 @@
 ﻿using BOLib.Extensions;
 using BOLib.Models;
 using DAOLib.Managers;
-using DAOLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BOLib.Services
@@ -14,7 +12,7 @@ namespace BOLib.Services
     {
         private readonly ExpirationsRemindersManager expirationsRemindersManager;
         private static ExpirationsRemindersService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static ExpirationsRemindersService Instance
         {
@@ -77,7 +75,7 @@ namespace BOLib.Services
 
         public void generateAutoregister()
         {
-            foreach (ExpirationsReminders? exp in getAllPendingWithGeneration()?                
+            foreach (ExpirationsReminders? exp in getAllPendingWithGeneration()?
                 .Where(x => x.date <= DateTime.Now && //x.transactionsReminders != null &&
                     x.transactionsReminders.autoRegister.HasValue && x.transactionsReminders.autoRegister.Value))
             {
@@ -128,7 +126,7 @@ namespace BOLib.Services
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    TransactionsService.Instance.saveChanges(ref transactions);                    
+                    TransactionsService.Instance.saveChanges(ref transactions);
 
                     if (expirationsReminders.transactionsReminders.splits != null)
                     {

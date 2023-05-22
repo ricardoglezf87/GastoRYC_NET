@@ -13,7 +13,7 @@ namespace DAOLib.Managers
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsStatusDAO>();
                 return getEntyWithInclude(repository)?.FirstOrDefault();
-            }    
+            }
         }
     }
 }

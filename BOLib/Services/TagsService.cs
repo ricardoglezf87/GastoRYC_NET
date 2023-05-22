@@ -10,7 +10,7 @@ namespace BOLib.Services
     {
         private readonly TagsManager tagsManager;
         private static TagsService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static TagsService Instance
         {

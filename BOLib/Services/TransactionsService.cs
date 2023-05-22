@@ -1,10 +1,7 @@
 ﻿using BOLib.Extensions;
 using BOLib.Models;
 using DAOLib.Managers;
-using DAOLib.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BOLib.Services
@@ -15,7 +12,7 @@ namespace BOLib.Services
 
         private readonly TransactionsManager transactionsManager;
         private static TransactionsService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static TransactionsService Instance
         {
@@ -34,7 +31,7 @@ namespace BOLib.Services
 
         private TransactionsService()
         {
-            transactionsManager = new();           
+            transactionsManager = new();
         }
 
         #endregion Propiedades y Contructor
@@ -48,7 +45,7 @@ namespace BOLib.Services
 
         public async Task<List<Transactions?>?> getAllAsync()
         {
-            return await Task.Run(() => getAll()); 
+            return await Task.Run(() => getAll());
         }
 
         public Transactions? getByID(int? id)

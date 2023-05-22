@@ -10,7 +10,7 @@ namespace BOLib.Services
     {
         private readonly InvestmentProductsManager investmentProductsManager;
         private static InvestmentProductsService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static InvestmentProductsService Instance
         {

@@ -42,15 +42,19 @@ namespace DAOLib.Managers
             {
                 if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                     + "\\GastosRYC\\Data\\"))
+                {
                     Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                     + "\\GastosRYC\\Data\\");
+                }
             }
             else
             {
                 if (!Directory.Exists("Data\\"))
+                {
                     Directory.CreateDirectory("Data\\");
-            }        
-        }       
+                }
+            }
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

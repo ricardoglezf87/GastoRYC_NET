@@ -1,11 +1,7 @@
 ﻿using DAOLib.Properties;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAOLib.Managers
 {
@@ -22,7 +18,7 @@ namespace DAOLib.Managers
         }
 
         public void loadContext()
-        {            
+        {
             using (RYCContext context = getContext())
             {
                 context.dateCalendar?.Load();
@@ -56,7 +52,9 @@ namespace DAOLib.Managers
                 : "Data\\";
 
             if (!Directory.Exists(path + "Backup\\"))
+            {
                 Directory.CreateDirectory(path + "Backup\\");
+            }
 
 #if DEBUG
             nameDDBB = "rycBBDD_PRE.db";

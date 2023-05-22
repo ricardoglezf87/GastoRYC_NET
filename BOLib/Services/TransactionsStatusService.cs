@@ -9,7 +9,7 @@ namespace BOLib.Services
     {
         private readonly TransactionsStatusManager transactionsStatusManager;
         private static TransactionsStatusService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static TransactionsStatusService Instance
         {

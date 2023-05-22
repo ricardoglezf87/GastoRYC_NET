@@ -12,7 +12,7 @@ namespace DAOLib.Managers
     public class TransactionsManager : ManagerBase<TransactionsDAO>
     {
 
-        #pragma warning disable CS8603
+#pragma warning disable CS8603
         public override Expression<Func<TransactionsDAO, object>>[] getIncludes()
         {
             return new Expression<Func<TransactionsDAO, object>>[]
@@ -25,7 +25,7 @@ namespace DAOLib.Managers
                 a => a.transactionStatus
             };
         }
-        #pragma warning restore CS8603
+#pragma warning restore CS8603
 
         public List<TransactionsDAO>? getByAccount(AccountsDAO? accounts)
         {
@@ -72,7 +72,7 @@ namespace DAOLib.Managers
         public int getNextID()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
-            {                
+            {
                 var cmd = unitOfWork.getDataBase().
                     GetDbConnection().CreateCommand();
                 cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactions';";

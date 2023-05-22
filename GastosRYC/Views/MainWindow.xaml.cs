@@ -117,10 +117,14 @@ namespace GastosRYC
                 toggleViews(eViews.Transactions);
 
                 if (actualPrincipalContent is PartialReminders)
+                {
                     ((PartialReminders)actualPrincipalContent).loadReminders();
+                }
 
                 if (actualPrincipalContent is PartialTransactions)
+                {
                     ((PartialTransactions)actualPrincipalContent).ApplyFilters((AccountsView?)lvAccounts.SelectedValue);
+                }
             }
         }
 
@@ -131,7 +135,9 @@ namespace GastosRYC
             toggleViews(eViews.Transactions);
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).ApplyFilters();
+            }
         }
 
         private void lvAccounts_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -146,7 +152,9 @@ namespace GastosRYC
             loadAccounts();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void btnMntPersons_Click(object sender, RoutedEventArgs e)
@@ -155,7 +163,9 @@ namespace GastosRYC
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void btnMntInvestmentProducts_Click(object sender, RoutedEventArgs e)
@@ -164,7 +174,9 @@ namespace GastosRYC
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void btnMntCategories_Click(object sender, RoutedEventArgs e)
@@ -173,7 +185,9 @@ namespace GastosRYC
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void btnMntTags_Click(object sender, RoutedEventArgs e)
@@ -182,8 +196,9 @@ namespace GastosRYC
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
-
+            }
         }
 
         private async void btnMntReminders_Click(object sender, RoutedEventArgs e)
@@ -192,7 +207,9 @@ namespace GastosRYC
             frm.ShowDialog();
 
             if (actualPrincipalContent is PartialReminders)
+            {
                 ((PartialReminders)actualPrincipalContent).loadReminders();
+            }
 
             await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
             loadAccounts();
@@ -223,7 +240,9 @@ namespace GastosRYC
             loadAccounts();
 
             if (actualPrincipalContent is PartialTransactions)
+            {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
         }
 
         private void loadCalendar()

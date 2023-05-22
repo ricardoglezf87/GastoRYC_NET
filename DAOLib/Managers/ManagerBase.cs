@@ -2,12 +2,10 @@
 using DAOLib.Repositories;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace DAOLib.Managers
 {
@@ -76,7 +74,10 @@ namespace DAOLib.Managers
                     var repository = unitOfWork.GetRepositoryModelBase<T>();
                     var entity = repository.Update(obj);
                     if (save)
+                    {
                         repository.saveChanges();
+                    }
+
                     return entity;
                 }
             }

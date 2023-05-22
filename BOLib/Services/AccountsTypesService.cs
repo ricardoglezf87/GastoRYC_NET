@@ -10,7 +10,7 @@ namespace BOLib.Services
     {
         private readonly AccountsTypesManager accountsTypesManager;
         private static AccountsTypesService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static AccountsTypesService Instance
         {

@@ -1,12 +1,9 @@
 ﻿using DAOLib.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAOLib.Repositories
 {
@@ -15,7 +12,7 @@ namespace DAOLib.Repositories
         private readonly DbContext context;
         private readonly DbSet<TEntity> _entities;
 
-        public DbSet<TEntity> entities { get { return _entities; } }
+        public DbSet<TEntity> entities => _entities;
 
         public Repository(DbContext dbContext)
         {
@@ -69,12 +66,12 @@ namespace DAOLib.Repositories
         public List<TEntity> GetAllWithInclude(params Expression<Func<TEntity, object>>[] includes)
         {
             var query = _entities.AsQueryable();
-            if (includes != null) 
-            { 
+            if (includes != null)
+            {
                 foreach (var include in includes)
                 {
                     query = query.Include(include);
-                } 
+                }
             }
             return query.ToList();
         }

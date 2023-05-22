@@ -1,7 +1,5 @@
 ﻿using DAOLib.Models;
 using DAOLib.Repositories;
-
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +9,7 @@ namespace DAOLib.Managers
 {
     public class ExpirationsRemindersManager : ManagerBase<ExpirationsRemindersDAO>
     {
-        #pragma warning disable CS8603
+#pragma warning disable CS8603
         public override Expression<Func<ExpirationsRemindersDAO, object>>[] getIncludes()
         {
             return new Expression<Func<ExpirationsRemindersDAO, object>>[]
@@ -22,7 +20,7 @@ namespace DAOLib.Managers
                 a => a.transactionsReminders.category.categoriesTypes
             };
         }
-        #pragma warning restore CS8603        
+#pragma warning restore CS8603
 
         public bool existsExpiration(TransactionsRemindersDAO? transactionsReminder, DateTime? date)
         {

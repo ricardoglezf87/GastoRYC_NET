@@ -2,11 +2,10 @@
 using DAOLib.Repositories;
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DAOLib.Managers
 {
-    public class VBalancebyCategoryManager 
+    public class VBalancebyCategoryManager
     {
         public List<VBalancebyCategoryDAO>? getAll()
         {

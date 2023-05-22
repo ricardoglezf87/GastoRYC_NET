@@ -11,7 +11,7 @@ namespace BOLib.Services
     {
         private readonly PersonsManager personsManager;
         private static PersonsService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static PersonsService Instance
         {
@@ -56,7 +56,9 @@ namespace BOLib.Services
         public void setCategoryDefault(Persons? persons)
         {
             if (persons == null)
+            {
                 return;
+            }
 
             var result = (from x in TransactionsService.Instance.getByPerson(persons)
                           group x by x.categoryid into g

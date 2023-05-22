@@ -110,7 +110,9 @@ namespace GastosRYC.Views
                     {
                         DateTime previousDate = DateTime.Now;
                         if (dtpDate.SelectedDate != null)
+                        {
                             previousDate = (DateTime)dtpDate.SelectedDate;
+                        }
 
                         transaction = null;
                         loadTransaction();

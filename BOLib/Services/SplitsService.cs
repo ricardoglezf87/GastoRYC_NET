@@ -12,7 +12,7 @@ namespace BOLib.Services
 
         private readonly SplitsManager splitsManager;
         private static SplitsService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static SplitsService Instance
         {

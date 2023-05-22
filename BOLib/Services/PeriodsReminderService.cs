@@ -10,7 +10,7 @@ namespace BOLib.Services
     {
         public PeriodsRemindersManager periodsRemindersManager;
         private static PeriodsRemindersService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static PeriodsRemindersService Instance
         {

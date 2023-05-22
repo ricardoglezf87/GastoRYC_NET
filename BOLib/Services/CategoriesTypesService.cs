@@ -9,7 +9,7 @@ namespace BOLib.Services
     {
         private readonly CategoriesTypesManager categoriesTypesManager;
         private static CategoriesTypesService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static CategoriesTypesService Instance
         {

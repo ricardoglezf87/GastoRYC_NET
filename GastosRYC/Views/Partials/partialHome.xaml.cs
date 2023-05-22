@@ -173,7 +173,7 @@ namespace GastosRYC.Views
 
                 LineSeries series = new()
                 {
-                    ItemsSource = (await Task.Run(()=>ForecastsChartService.Instance.getMonthForecast()))?.Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
+                    ItemsSource = (await Task.Run(() => ForecastsChartService.Instance.getMonthForecast()))?.Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
                     Label = accounts.description,
                     XBindingPath = "date",
                     YBindingPath = "amount",

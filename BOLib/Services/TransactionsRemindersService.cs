@@ -10,7 +10,7 @@ namespace BOLib.Services
     {
         private readonly TransactionsRemindersManager transactionsRemindersManager;
         private static TransactionsRemindersService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static TransactionsRemindersService Instance
         {

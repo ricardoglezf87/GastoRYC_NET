@@ -98,7 +98,9 @@ namespace GastosRYC.Views
                     FrmTransactionReminders frm = new(transactionsReminders);
                     frm.ShowDialog();
                     if (frm.windowsResult == eWindowsResult.Sucess)
+                    {
                         MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
+                    }
                 }
             }
             else
@@ -238,7 +240,7 @@ namespace GastosRYC.Views
 
         public async void loadTransactions()
         {
-            gvTransactions.ItemsSource = await TransactionsService.Instance.getAllAsync();                          
+            gvTransactions.ItemsSource = await TransactionsService.Instance.getAllAsync();
             ApplyFilters(accountSelected);
         }
 

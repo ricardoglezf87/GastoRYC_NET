@@ -1,12 +1,7 @@
-﻿using DAOLib.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAOLib.Repositories
 {
@@ -15,13 +10,13 @@ namespace DAOLib.Repositories
         private readonly DbContext context;
         private readonly DbSet<TEntity> _entities;
 
-        public DbSet<TEntity> entities { get { return _entities; } }
+        public DbSet<TEntity> entities => _entities;
 
         public RepositoryGeneral(DbContext dbContext)
         {
             context = dbContext;
             _entities = context.Set<TEntity>();
-        }        
+        }
 
         public TEntity? GetById(int? id)
         {

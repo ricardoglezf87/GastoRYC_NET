@@ -16,7 +16,7 @@ namespace BOLib.Services
     {
         private readonly InvestmentProductsPricesManager investmentProductsPricesManager;
         private static InvestmentProductsPricesService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static InvestmentProductsPricesService Instance
         {
@@ -105,7 +105,7 @@ namespace BOLib.Services
                     {
                         investmentProductsPricesManager.update(productsPrices.toDAO(), false);
                     }
-                }               
+                }
             }
             catch (Exception)
             {

@@ -1,9 +1,4 @@
 ﻿using DAOLib.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BOLib.Services
 {
@@ -11,7 +6,7 @@ namespace BOLib.Services
     {
         private readonly RYCContextManager contextManager;
         private static RYCContextService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static RYCContextService Instance
         {
@@ -28,7 +23,7 @@ namespace BOLib.Services
             }
         }
 
-        private RYCContextService() 
+        private RYCContextService()
         {
             contextManager = new();
         }

@@ -12,7 +12,7 @@ namespace BOLib.Services
         private readonly DateCalendarManager dateCalendarManager;
         private readonly DateTime initDate;
         private static DateCalendarService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static DateCalendarService Instance
         {

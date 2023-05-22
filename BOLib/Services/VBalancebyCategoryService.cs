@@ -12,7 +12,7 @@ namespace BOLib.Services
     {
         private readonly VBalancebyCategoryManager vBalancebyCategoryManager;
         private static VBalancebyCategoryService? _instance;
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
 
         public static VBalancebyCategoryService Instance
         {
@@ -51,7 +51,7 @@ namespace BOLib.Services
 
         public async Task<List<VBalancebyCategory?>?> getExpensesbyYearMonthAsync(int month, int year)
         {
-            return await Task.Run(() => getExpensesbyYearMonth(month,year));
+            return await Task.Run(() => getExpensesbyYearMonth(month, year));
         }
     }
 }

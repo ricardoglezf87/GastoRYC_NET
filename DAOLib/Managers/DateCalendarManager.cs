@@ -1,10 +1,8 @@
-﻿using DAOLib.Migrations;
-using DAOLib.Models;
+﻿using DAOLib.Models;
 using DAOLib.Repositories;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DAOLib.Managers
 {
