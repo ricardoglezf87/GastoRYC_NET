@@ -63,6 +63,11 @@ namespace BOLib.Services
             investmentProductsPricesManager.delete(investmentProductsPrices.toDAO());
         }
 
+        public void saveChanges()
+        {
+            investmentProductsPricesManager.saveChanges();
+        }
+
         public Decimal? getActualPrice(InvestmentProducts investmentProducts)
         {
             return investmentProductsPricesManager.getActualPrice(investmentProducts.toDAO());
@@ -78,13 +83,8 @@ namespace BOLib.Services
                     return;
                 }
 
-                List<InvestmentProductsPrices> lproductsPrices = new();
-
-                if (investmentProducts.url.Contains("investing.com"))
-                {
-                    lproductsPrices = await getPricesOnlineInvesting(investmentProducts);
-                }
-
+               
+                //Get prices from buy and sell ins transactions
                 foreach (var transactions in TransactionsService.Instance.getByInvestmentProduct(investmentProducts)?
                         .GroupBy(g => g.date)?.Select(x => new { date = x.Key, price = x.Average(y => y.pricesShares) }))
                 {
@@ -92,20 +92,30 @@ namespace BOLib.Services
                     {
                         InvestmentProductsPrices productsPrices = new();
                         productsPrices.date = transactions.date;
-                        productsPrices.investmentProductsid = investmentProducts.id;
-                        productsPrices.investmentProducts = investmentProducts;
+                        productsPrices.investmentProductsid = investmentProducts.id;                       
                         productsPrices.prices = transactions.price;
-                        investmentProductsPricesManager.update(productsPrices.toDAO(), false);
+                        investmentProductsPricesManager.update(productsPrices.toDAO());
                     }
+                }
+
+                //Get prices online
+
+                List<InvestmentProductsPrices> lproductsPrices = new();
+
+                if (investmentProducts.url.Contains("investing.com"))
+                {
+                    lproductsPrices = await getPricesOnlineInvesting(investmentProducts);
                 }
 
                 foreach (InvestmentProductsPrices productsPrices in lproductsPrices)
                 {
                     if (!exists(productsPrices.investmentProductsid, productsPrices.date))
                     {
-                        investmentProductsPricesManager.update(productsPrices.toDAO(), false);
-                    }
+                        investmentProductsPricesManager.update(productsPrices.toDAO());
+                    }                    
                 }
+
+                investmentProductsPricesManager.saveChanges();
             }
             catch (Exception)
             {
@@ -135,7 +145,6 @@ namespace BOLib.Services
                 var price = cells[1].InnerText;
                 InvestmentProductsPrices productsPrices = new();
                 productsPrices.investmentProductsid = investmentProducts.id;
-                productsPrices.investmentProducts = investmentProducts;
                 productsPrices.date = DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
                 productsPrices.prices = Decimal.Parse(price);
                 lproductsPrices.Add(productsPrices);

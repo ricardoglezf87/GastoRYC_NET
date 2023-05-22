@@ -65,19 +65,15 @@ namespace DAOLib.Managers
             }
         }
 
-        public T? update(T? obj, bool save = true)
+        public T? update(T? obj)
         {
             if (obj != null)
             {
                 using (var unitOfWork = new UnitOfWork(new RYCContext()))
                 {
                     var repository = unitOfWork.GetRepositoryModelBase<T>();
-                    var entity = repository.Update(obj);
-                    if (save)
-                    {
-                        repository.saveChanges();
-                    }
-
+                    var entity = repository.Update(obj);                    
+                    repository.saveChanges();
                     return entity;
                 }
             }
@@ -94,6 +90,15 @@ namespace DAOLib.Managers
                     repository.Delete(obj);
                     repository.saveChanges();
                 }
+            }
+        }
+
+        public void saveChanges()
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<T>();
+                repository.saveChanges();
             }
         }
     }
