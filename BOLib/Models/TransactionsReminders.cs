@@ -45,6 +45,8 @@ namespace BOLib.Models
 
         public virtual List<SplitsReminders?>? splits { set; get; }
 
+        public virtual String? personDescripGrid => person?.name ?? String.Empty;
+
         public virtual Decimal? amount => amountIn - amountOut;
 
         public virtual Double? orden => Double.Parse(
