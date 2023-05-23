@@ -254,7 +254,7 @@ namespace BOLib.Services
                     date = transactions.date,
                     accountid = AccountsService.Instance.getByCategoryId(splits.categoryid)?.id,
                     personid = transactions.personid,
-                    categoryid = transactions.account.categoryid,
+                    categoryid = AccountsService.Instance.getByID(transactions.accountid).categoryid,
                     memo = splits.memo,
                     tagid = transactions.tagid,
                     amountIn = splits.amountOut,
@@ -275,7 +275,7 @@ namespace BOLib.Services
                     tContraria.date = transactions.date;
                     tContraria.accountid = AccountsService.Instance.getByCategoryId(splits.categoryid)?.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = transactions.account.categoryid;
+                    tContraria.categoryid = AccountsService.Instance.getByID(transactions.accountid).categoryid;
                     tContraria.memo = splits.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = splits.amountOut ?? 0;
