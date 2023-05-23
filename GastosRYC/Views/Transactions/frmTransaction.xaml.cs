@@ -240,12 +240,12 @@ namespace GastosRYC.Views
 
                 cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object?)null;
 
-                cbPerson.SelectedValue = null;
-                cbCategory.SelectedValue = null;
+                cbPerson.SelectedIndex = -1;
+                cbCategory.SelectedIndex = -1;
                 txtMemo.Text = null;
                 txtAmount.Value = null;
-                cbTag.SelectedValue = null;
-                cbInvestmentProduct.SelectedValue = null;
+                cbTag.SelectedIndex = -1;
+                cbInvestmentProduct.SelectedIndex = -1;
                 txtNumShares.Value = null;
                 txtPriceShares.Value = null;
                 cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.eTransactionsTypes.Pending;

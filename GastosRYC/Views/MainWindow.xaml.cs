@@ -258,14 +258,14 @@ namespace GastosRYC
             switch (views)
             {
                 case eViews.Home:
-                    lvAccounts.SelectedValue = null;
+                    lvAccounts.SelectedIndex = -1;
                     win = new PartialHome(this);
                     break;
                 case eViews.Transactions:
                     win = new PartialTransactions(this);
                     break;
                 case eViews.Reminders:
-                    lvAccounts.SelectedValue = null;
+                    lvAccounts.SelectedIndex = -1;
                     win = new PartialReminders(this);
                     break;
             }
