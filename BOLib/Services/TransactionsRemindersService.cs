@@ -44,10 +44,10 @@ namespace BOLib.Services
             return (TransactionsReminders?)transactionsRemindersManager.getByID(id);
         }
 
-        public void update(TransactionsReminders transactionsReminders)
+        public TransactionsReminders? update(TransactionsReminders transactionsReminders)
         {
             ExpirationsRemindersService.Instance.deleteByTransactionReminderid(transactionsReminders.id);
-            transactionsRemindersManager.update(transactionsReminders.toDAO());
+            return (TransactionsReminders?)transactionsRemindersManager.update(transactionsReminders.toDAO());
         }
 
         public void delete(TransactionsReminders? transactionsReminders)
