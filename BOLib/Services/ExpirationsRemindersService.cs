@@ -127,22 +127,21 @@ namespace BOLib.Services
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
                     TransactionsService.Instance.saveChanges(ref transactions);
-
-                    if (expirationsReminders.transactionsReminders.splits != null)
+                   
+                    foreach (SplitsReminders? splitsReminders in 
+                        SplitsRemindersService.Instance.getbyTransactionid(expirationsReminders.transactionsReminders.id))
                     {
-                        foreach (SplitsReminders? splitsReminders in expirationsReminders.transactionsReminders.splits)
-                        {
-                            Splits splits = new();
-                            splits.transactionid = transactions.id;
-                            splits.categoryid = splitsReminders.categoryid;
-                            splits.memo = splitsReminders.memo;
-                            splits.amountIn = splitsReminders.amountIn;
-                            splits.amountOut = splitsReminders.amountOut;
-                            splits.tagid = splitsReminders.tagid;
-                            SplitsService.Instance.saveChanges(transactions, splits);
-                            TransactionsService.Instance.updateTranferSplits(transactions, splits);
-                        }
+                        Splits splits = new();
+                        splits.transactionid = transactions.id;
+                        splits.categoryid = splitsReminders.categoryid;
+                        splits.memo = splitsReminders.memo;
+                        splits.amountIn = splitsReminders.amountIn;
+                        splits.amountOut = splitsReminders.amountOut;
+                        splits.tagid = splitsReminders.tagid;
+                        SplitsService.Instance.saveChanges(transactions, splits);
+                        TransactionsService.Instance.updateTranferSplits(transactions, splits);
                     }
+
                     return transactions;
 
                 }
