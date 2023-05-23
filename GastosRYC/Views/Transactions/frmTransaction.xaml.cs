@@ -89,7 +89,7 @@ namespace GastosRYC.Views
                 }
             }
 
-            if (transaction == null && !saveTransaction())
+            if (transaction == null || !saveTransaction())
             {
                 MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
                 return;
