@@ -14,7 +14,6 @@ namespace BOLib.Models
 
         public virtual bool? done { set; get; }
 
-        [NotMapped]
         public virtual String? groupDate => date != null
                     ? date < DateTime.Now ? "Vencido" : date > DateTime.Now.AddMonths(1) ? "Futuro" : date.Value.Day + "/" + date.Value.Month
                     : String.Empty;

@@ -15,6 +15,7 @@ namespace DAOLib.Managers
             return new Expression<Func<ExpirationsRemindersDAO, object>>[]
             {
                 a => a.transactionsReminders,
+                a => a.transactionsReminders.person,
                 a => a.transactionsReminders.account,
                 a => a.transactionsReminders.category,
                 a => a.transactionsReminders.category.categoriesTypes

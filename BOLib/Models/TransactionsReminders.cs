@@ -1,7 +1,6 @@
 ﻿using DAOLib.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BOLib.Models
 {
@@ -46,10 +45,10 @@ namespace BOLib.Models
 
         public virtual List<SplitsReminders?>? splits { set; get; }
 
-        [NotMapped]
+        public virtual String? personDescripGrid => person?.name ?? String.Empty;
+
         public virtual Decimal? amount => amountIn - amountOut;
 
-        [NotMapped]
         public virtual Double? orden => Double.Parse(
                     date?.Year.ToString("0000")
                     + date?.Month.ToString("00")
@@ -57,7 +56,6 @@ namespace BOLib.Models
                     + id.ToString("000000")
                     + (amountIn != 0 ? "1" : "0"));
 
-        [NotMapped]
         public virtual Decimal? balance { set; get; }
 
         internal TransactionsRemindersDAO toDAO()
