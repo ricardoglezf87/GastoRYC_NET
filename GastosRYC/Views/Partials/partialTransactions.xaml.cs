@@ -82,25 +82,48 @@ namespace GastosRYC.Views
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
+                if (MessageBox.Show("Se va a proceder a crear los recordatorios", "Crear Recordatorio", MessageBoxButton.YesNo,
+                MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    TransactionsReminders transactionsReminders = new();
-                    transactionsReminders.date = transactions.date;
-                    transactionsReminders.accountid = transactions.accountid;
-                    transactionsReminders.personid = transactions.personid;
-                    transactionsReminders.categoryid = transactions.categoryid;
-                    transactionsReminders.memo = transactions.memo;
-                    transactionsReminders.amountIn = transactions.amountIn;
-                    transactionsReminders.amountOut = transactions.amountOut;
-                    transactionsReminders.tagid = transactions.tagid;
-                    transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-
-                    FrmTransactionReminders frm = new(transactionsReminders);
-                    frm.ShowDialog();
-                    if (frm.windowsResult == eWindowsResult.Sucess)
+                    foreach (Transactions transactions in gvTransactions.SelectedItems)
                     {
-                        MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
+                        TransactionsReminders? transactionsReminders = new();
+                        transactionsReminders.date = transactions.date;
+                        transactionsReminders.periodsRemindersid = (int)PeriodsRemindersService.ePeriodsReminders.Monthly;
+                        transactionsReminders.accountid = transactions.accountid;
+                        transactionsReminders.personid = transactions.personid;
+                        transactionsReminders.categoryid = transactions.categoryid;
+                        transactionsReminders.memo = transactions.memo;
+                        transactionsReminders.amountIn = transactions.amountIn;
+                        transactionsReminders.amountOut = transactions.amountOut;
+                        transactionsReminders.tagid = transactions.tagid;
+                        transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+
+                        transactionsReminders = TransactionsRemindersService.Instance.update(transactionsReminders);
+
+                        foreach (Splits? splits in SplitsService.Instance.getbyTransactionid(transactions.id))
+                        {
+                            SplitsReminders splitsReminders = new();
+                            splitsReminders.transactionid = transactionsReminders.id;
+                            splitsReminders.categoryid = splits.categoryid;
+                            splitsReminders.memo = splits.memo;
+                            splitsReminders.amountIn = splits.amountIn;
+                            splitsReminders.amountOut = splits.amountOut;
+                            splitsReminders.tagid = splits.tagid; 
+                            SplitsRemindersService.Instance.update(splitsReminders);
+                        }
+
+                        FrmTransactionReminders frm = new(transactionsReminders);
+                        frm.ShowDialog();
+                        if (frm.windowsResult == eWindowsResult.Sucess)
+                        {
+                            MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
+                        }
                     }
+                }
+                else
+                {
+                    MessageBox.Show("No se ha creado el recordatorios.", "Crear Recordatorio");
                 }
             }
             else
