@@ -34,10 +34,6 @@ namespace DAOLib.Models
 
         public virtual Decimal? amountOut { set; get; }
 
-        public virtual int? tranferid { set; get; }
-
-        public virtual int? tranferSplitid { set; get; }
-
         public virtual String? memo { set; get; }
 
         public virtual int? transactionStatusid { set; get; }

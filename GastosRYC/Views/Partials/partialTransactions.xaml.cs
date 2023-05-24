@@ -2,6 +2,7 @@
 using BOLib.Models;
 using BOLib.ModelsView;
 using BOLib.Services;
+using GastosRYC.ViewModels;
 using Syncfusion.Data.Extensions;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,6 @@ namespace GastosRYC.Views
 
         #region Variables
 
-        private AccountsView? accountSelected;
         private readonly MainWindow parentForm;
 
         #endregion
@@ -238,19 +238,19 @@ namespace GastosRYC.Views
                     GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
                         GridQueryableCollectionViewWrapper)gvTransactions.View;
 
-                decimal? balanceTotal = accountSelected != null
-                    ? (decimal?)col.ViewSource.Where("accountid", accountSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
+                decimal? balanceTotal = TransactionViewModel.accountsSelected != null
+                    ? (decimal?)col.ViewSource.Where("accountid", TransactionViewModel.accountsSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
                     : (decimal?)col.ViewSource.Sum("amount");
                 foreach (Transactions t in col.ViewSource)
                 {
                     if (t.amount != null)
                     {
-                        if (accountSelected != null && accountSelected.id == t.account?.id)
+                        if (TransactionViewModel.accountsSelected != null && TransactionViewModel.accountsSelected.id == t.account?.id)
                         {
                             t.balance = balanceTotal;
                             balanceTotal -= t.amount;
                         }
-                        else if (accountSelected == null)
+                        else if (TransactionViewModel.accountsSelected == null)
                         {
                             t.balance = balanceTotal;
                             balanceTotal -= t.amount;
@@ -261,20 +261,20 @@ namespace GastosRYC.Views
             }
         }
 
-        public async void loadTransactions()
+        public void loadTransactions()
         {
-            gvTransactions.ItemsSource = await TransactionsService.Instance.getAllAsync();
-            ApplyFilters(accountSelected);
+            //gvTransactions.ItemsSource = await TransactionsService.Instance.getAllAsync();
+            ApplyFilters(TransactionViewModel.accountsSelected);
         }
 
         public bool accountFilter(object? o)
         {
-            return o is Transactions p && p.account?.id == accountSelected?.id;
+            return o is Transactions p && p.account?.id == TransactionViewModel.accountsSelected?.id;
         }
 
         public void ApplyFilters(AccountsView? _accountSelected = null)
         {
-            accountSelected = _accountSelected;
+            TransactionViewModel.accountsSelected = _accountSelected;
             if (gvTransactions.View != null)
             {
                 if (_accountSelected != null)
@@ -282,7 +282,7 @@ namespace GastosRYC.Views
                     gvTransactions.View.Filter = accountFilter;
                     gvTransactions.Columns["account.description"].IsHidden = true;
 
-                    if (accountSelected.accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
+                    if (TransactionViewModel.accountsSelected.accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
                     {
                         gvTransactions.Columns["numShares"].IsHidden = false;
                         gvTransactions.Columns["pricesShares"].IsHidden = false;

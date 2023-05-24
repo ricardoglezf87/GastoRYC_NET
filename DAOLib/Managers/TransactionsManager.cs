@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DAOLib.Managers
 {
@@ -38,6 +40,36 @@ namespace DAOLib.Managers
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
                 return getEntyWithInclude(repository)?.Where(x => id.Equals(x.accountid))?.ToList();
+            }
+        }
+        public List<TransactionsDAO>? getByAccountOrderByDateDesc(int? id)
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?
+                    .Where(x => id.Equals(x.accountid))?
+                    .OrderByDescending(x => x.date)?.ToList();
+            }
+        }
+
+        public List<TransactionsDAO>? getAllOpenned()
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?.Where(x => !x.account.closed.HasValue || !x.account.closed.Value)?.ToList();
+            }
+        }
+
+        public List<TransactionsDAO>? getAllOpennedOrderByDateDesc()
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?
+                    .Where(x => !x.account.closed.HasValue || !x.account.closed.Value)?
+                    .OrderByDescending(x => x.date)?.ToList();
             }
         }
 

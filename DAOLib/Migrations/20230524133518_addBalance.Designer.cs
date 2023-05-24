@@ -3,6 +3,7 @@ using System;
 using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    partial class RYCContextModelSnapshot : ModelSnapshot
+    [Migration("20230524133518_addBalance")]
+    partial class addBalance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
@@ -405,6 +408,12 @@ namespace DAOLib.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("tagid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tranferSplitid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tranferid")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("transactionStatusid")

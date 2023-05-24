@@ -43,6 +43,16 @@ namespace BOLib.Services
             return transactionsManager.getAll()?.toListBO();
         }
 
+        public List<Transactions>? getAllOpenned()
+        {
+            return transactionsManager.getAllOpenned()?.toListBO();
+        }
+
+        public List<Transactions>? getAllOpennedOrderByDateDesc()
+        {
+            return transactionsManager.getAllOpennedOrderByDateDesc()?.toListBO();
+        }
+
         public async Task<List<Transactions?>?> getAllAsync()
         {
             return await Task.Run(() => getAll());
@@ -77,6 +87,11 @@ namespace BOLib.Services
         public List<Transactions?>? getByAccount(int? id)
         {
             return transactionsManager.getByAccount(id)?.toListBO();
+        }
+
+        public List<Transactions>? getByAccountOrderByDateDesc(int? id)
+        {
+            return transactionsManager.getByAccountOrderByDateDesc(id)?.toListBO();
         }
 
         public List<Transactions?>? getByAccount(Accounts? accounts)
