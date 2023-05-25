@@ -42,7 +42,7 @@ namespace BOLib.Services
 
             DateTime now = DateTime.Now;
 
-            foreach (var g in AccountsService.Instance.getAll()?.Where(x => (x.closed == false || x.closed == null)
+            foreach (var g in AccountsService.Instance.getAllOpened()?.Where(x => (x.closed == false || x.closed == null)
                                                             && (x.accountsTypesid == (int)eAccountsTypes.Cash ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Banks ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Cards)))

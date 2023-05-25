@@ -6,7 +6,7 @@ using System;
 namespace DAOLib.Migrations
 {
     /// <inheritdoc />
-    public partial class ExpiracionReminders : Migration
+    public partial class addExpiracionReminders : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

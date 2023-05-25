@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    [Migration("20221225220014_ExpiracionReminders")]
-    partial class ExpiracionReminders
+    [Migration("20221225220014_addExpiracionReminders")]
+    partial class addExpiracionReminders
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
