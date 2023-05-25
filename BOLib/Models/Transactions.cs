@@ -94,7 +94,8 @@ namespace BOLib.Models
                 numShares = this.numShares,
                 pricesShares = this.pricesShares,
                 tagid = this.tagid,
-                tag = null
+                tag = null,
+                balance = this.balance
             };
         }
 
@@ -126,7 +127,8 @@ namespace BOLib.Models
                     numShares = v.numShares,
                     pricesShares = v.pricesShares,
                     tagid = v.tagid,
-                    tag = (v.tag != null) ? (Tags?)v.tag : null
+                    tag = (v.tag != null) ? (Tags?)v.tag : null,
+                    balance = v.balance
                 };
         }
     }

@@ -33,10 +33,6 @@ namespace BOLib.Models
 
         public virtual Decimal? amountOut { set; get; }
 
-        public virtual int? tranferid { set; get; }
-
-        public virtual int? tranferSplitid { set; get; }
-
         public virtual String? memo { set; get; }
 
         public virtual int? transactionStatusid { set; get; }
@@ -48,15 +44,6 @@ namespace BOLib.Models
         public virtual String? personDescripGrid => person?.name ?? String.Empty;
 
         public virtual Decimal? amount => amountIn - amountOut;
-
-        public virtual Double? orden => Double.Parse(
-                    date?.Year.ToString("0000")
-                    + date?.Month.ToString("00")
-                    + date?.Day.ToString("00")
-                    + id.ToString("000000")
-                    + (amountIn != 0 ? "1" : "0"));
-
-        public virtual Decimal? balance { set; get; }
 
         internal TransactionsRemindersDAO toDAO()
         {
@@ -75,8 +62,6 @@ namespace BOLib.Models
                 amountIn = this.amountIn,
                 amountOut = this.amountOut,
                 memo = this.memo,
-                tranferid = this.tranferid,
-                tranferSplitid = this.tranferSplitid,
                 transactionStatus = null,
                 transactionStatusid = this.transactionStatusid,
                 tagid = this.tagid,
@@ -105,8 +90,6 @@ namespace BOLib.Models
                     amountIn = v.amountIn,
                     amountOut = v.amountOut,
                     memo = v.memo,
-                    tranferid = v.tranferid,
-                    tranferSplitid = v.tranferSplitid,
                     transactionStatus = (v.transactionStatus != null) ? (TransactionsStatus?)v.transactionStatus : null,
                     transactionStatusid = v.transactionStatusid,
                     tagid = v.tagid,
