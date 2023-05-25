@@ -29,6 +29,6 @@ namespace DAOLib.Models
         public virtual Decimal? numShares { set; get; }
         public virtual Decimal? pricesShares { set; get; }
         public virtual bool? investmentCategory { set; get; }
-
+        public virtual Decimal? balance { set; get; }
     }
 }

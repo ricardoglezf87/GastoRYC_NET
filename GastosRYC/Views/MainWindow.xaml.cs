@@ -155,6 +155,10 @@ namespace GastosRYC
             {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
             }
+            else if (actualPrincipalContent is PartialHome)
+            {
+                ((PartialHome)actualPrincipalContent).loadCharts();
+            }
         }
 
         private void btnMntPersons_Click(object sender, RoutedEventArgs e)
@@ -187,6 +191,10 @@ namespace GastosRYC
             if (actualPrincipalContent is PartialTransactions)
             {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
+            else if(actualPrincipalContent is PartialHome)
+            {
+                ((PartialHome)actualPrincipalContent).loadCharts();
             }
         }
 

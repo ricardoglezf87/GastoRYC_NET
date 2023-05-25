@@ -7,20 +7,24 @@
         xmlns:chart="clr-namespace:Syncfusion.UI.Xaml.Charts;assembly=Syncfusion.SfChart.WPF"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GastosRYC.Views"
-         xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
-        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+         xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" xmlns:local1="clr-namespace:GastosRYC.ViewModels"
+      syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
         Title="partialTransactions" Loaded="Page_Loaded">
+    <Page.DataContext>
+        <local1:TransactionViewModel/>
+    </Page.DataContext>
     <Grid>
 
         <syncfusion:SfDataGrid  x:Name="gvTransactions"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
-                               CanMaintainScrollPosition="True"
+                               CanMaintainScrollPosition="True" 
                                AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
-                               LiveDataUpdateMode="AllowDataShaping" AllowDeleting="True"
+                               AllowDeleting="True"
                                MouseDoubleClick="gvTransactions_MouseDoubleClick"
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
-                               ShowRowHeader="True" SelectionMode="Extended">
+                               ShowRowHeader="True" SelectionMode="Extended"
+                                ItemsSource="{Binding IncrementalItemsSource}">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
