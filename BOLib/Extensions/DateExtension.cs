@@ -14,6 +14,11 @@ namespace BOLib.Extensions
             return date != null ? (date?.Date.AddDays(1)) : null;
         }
 
+        public static DateTime? addDay(this DateTime? date, int n)
+        {
+            return date != null ? (date?.Date.AddDays(n)) : null;
+        }
+
         public static DateTime? addWeek(this DateTime? date)
         {
             return date != null ? (date?.Date.AddDays(7)) : null;

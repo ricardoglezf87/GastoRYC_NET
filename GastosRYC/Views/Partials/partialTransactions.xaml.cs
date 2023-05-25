@@ -226,40 +226,7 @@ namespace GastosRYC.Views
 
         #endregion
 
-
-        #region Functions  
-
-        public void refreshBalanceTransactions()
-        {
-            if (gvTransactions.View != null)
-            {
-
-                Syncfusion.UI.Xaml.Grid.
-                    GridQueryableCollectionViewWrapper col = (Syncfusion.UI.Xaml.Grid.
-                        GridQueryableCollectionViewWrapper)gvTransactions.View;
-
-                decimal? balanceTotal = TransactionViewModel.accountsSelected != null
-                    ? (decimal?)col.ViewSource.Where("accountid", TransactionViewModel.accountsSelected.id, Syncfusion.Data.FilterType.Equals, false).Sum("amount")
-                    : (decimal?)col.ViewSource.Sum("amount");
-                foreach (Transactions t in col.ViewSource)
-                {
-                    if (t.amount != null)
-                    {
-                        if (TransactionViewModel.accountsSelected != null && TransactionViewModel.accountsSelected.id == t.account?.id)
-                        {
-                            t.balance = balanceTotal;
-                            balanceTotal -= t.amount;
-                        }
-                        else if (TransactionViewModel.accountsSelected == null)
-                        {
-                            t.balance = balanceTotal;
-                            balanceTotal -= t.amount;
-                        }
-
-                    }
-                }
-            }
-        }
+        #region Functions        
 
         public void loadTransactions()
         {
@@ -301,10 +268,7 @@ namespace GastosRYC.Views
                 {
                     gvTransactions.View.Filter = null;
                     gvTransactions.Columns["account.description"].IsHidden = false;
-                }
-
-                gvTransactions.View.RefreshFilter();
-                refreshBalanceTransactions();
+                }                
             }
         }
 

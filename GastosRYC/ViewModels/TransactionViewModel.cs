@@ -39,18 +39,18 @@ namespace GastosRYC.ViewModels
         /// <param name="baseIndex"></param>
         async void LoadMoreItems(uint count, int baseIndex)
         {
-            List<Transactions>? item;
+            List<Transactions?>? item;
             if (accountsSelected != null)
             {
-                item = await Task.Run(() => TransactionsService.Instance.getByAccountOrderByDateDesc(accountsSelected.id));
+                item = await Task.Run(() => TransactionsService.Instance.getByAccountOrderByOrderDesc(accountsSelected.id));
             }
             else
             {
-              item = await Task.Run(() => TransactionsService.Instance.getAllOpennedOrderByDateDesc());
+              item = await Task.Run(() => TransactionsService.Instance.getAllOpennedOrderByOrderDesc());
             }
             if (item != null)
             {
-                var transactions = new ObservableCollection<Transactions>(item);
+                var transactions = new ObservableCollection<Transactions?>(item);
                 var list = transactions.Skip(baseIndex).Take(50).ToList();
                 IncrementalItemsSource.LoadItems(list);
             }

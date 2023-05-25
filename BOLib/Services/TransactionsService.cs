@@ -2,6 +2,7 @@
 using BOLib.Models;
 using DAOLib.Managers;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BOLib.Services
@@ -43,14 +44,19 @@ namespace BOLib.Services
             return transactionsManager.getAll()?.toListBO();
         }
 
-        public List<Transactions>? getAllOpenned()
+        public List<Transactions?>? getAllOpenned()
         {
             return transactionsManager.getAllOpenned()?.toListBO();
         }
 
-        public List<Transactions>? getAllOpennedOrderByDateDesc()
+        public List<Transactions?>? getAllOpennedOrderByDateDesc()
         {
             return transactionsManager.getAllOpennedOrderByDateDesc()?.toListBO();
+        }
+
+        public List<Transactions?>? getAllOpennedOrderByOrderDesc()
+        {
+            return transactionsManager.getAllOpennedOrderByDateDesc()?.toListBO()?.OrderByDescending(x => x.orden)?.ToList();
         }
 
         public async Task<List<Transactions?>?> getAllAsync()
@@ -89,9 +95,14 @@ namespace BOLib.Services
             return transactionsManager.getByAccount(id)?.toListBO();
         }
 
-        public List<Transactions>? getByAccountOrderByDateDesc(int? id)
+        public List<Transactions?>? getByAccountOrderByDateDesc(int? id)
         {
             return transactionsManager.getByAccountOrderByDateDesc(id)?.toListBO();
+        }
+
+        public List<Transactions?>? getByAccountOrderByOrderDesc(int? id)
+        {
+            return transactionsManager.getByAccount(id)?.toListBO()?.OrderByDescending(x => x.orden)?.ToList();
         }
 
         public List<Transactions?>? getByAccount(Accounts? accounts)
@@ -124,6 +135,31 @@ namespace BOLib.Services
             updateTranferFromSplit(transactions);
             transactions = update(transactions);
             PersonsService.Instance.setCategoryDefault(transactions.person);
+            refreshBalanceTransactions(transactions);
+        }
+
+        public void refreshBalanceTransactions(Transactions tUpdate)
+        {                        
+            List<Transactions?>? tList = getByAccount(tUpdate.accountid)?.OrderByDescending(x => x.orden)?.ToList();
+            decimal? balanceTotal = 0;
+
+            if(tList != null)
+            {
+                balanceTotal = tList.Sum(x=>x.amount);
+            }
+
+            if (tUpdate != null && tUpdate.date != null)
+            {
+                foreach (Transactions? t in tList?.Where(x => x.date >= tUpdate?.date.addDay(-1)))
+                {
+                    if (t.amount != null)
+                    {
+                        t.balance = balanceTotal;
+                        balanceTotal -= t.amount;
+                    }
+                    update(t);
+                }
+            }
         }
 
         public void updateTranfer(Transactions transactions)
