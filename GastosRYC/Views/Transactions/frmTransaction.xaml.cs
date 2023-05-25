@@ -241,11 +241,15 @@ namespace GastosRYC.Views
                 cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object?)null;
 
                 cbPerson.SelectedIndex = -1;
+                cbPerson.Text = String.Empty;
                 cbCategory.SelectedIndex = -1;
+                cbCategory.Text = String.Empty;
                 txtMemo.Text = null;
                 txtAmount.Value = null;
                 cbTag.SelectedIndex = -1;
+                cbTag.Text = String.Empty; cbTransactionStatus.SelectedIndex = -1;
                 cbInvestmentProduct.SelectedIndex = -1;
+                cbInvestmentProduct.Text = String.Empty;
                 txtNumShares.Value = null;
                 txtPriceShares.Value = null;
                 cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.eTransactionsTypes.Pending;
