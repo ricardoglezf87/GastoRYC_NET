@@ -8,10 +8,10 @@
     <Authors>Ricardo González Fabelo</Authors>
     <NeutralLanguage>es-ES</NeutralLanguage>
     <PackageIcon>Logo-100.png</PackageIcon>
-    <AssemblyVersion>1.11.0.0</AssemblyVersion>
-    <FileVersion>1.11.0.0</FileVersion>
-    <InformationalVersion>1.11.0-beta.0+Branch.release-V1.11.Sha.56b86b634068fe8ce98507b36ecbb9697cb72962</InformationalVersion>
-    <Version>1.11.0-beta0000</Version>
+    <AssemblyVersion>1.12.0.0</AssemblyVersion>
+    <FileVersion>1.12.0.0</FileVersion>
+    <InformationalVersion>1.12.0-beta.0+Branch.release-V1.12.Sha.06801e3482b1c804ee983ad23798c13282f6d36a</InformationalVersion>
+    <Version>1.12.0-beta0000</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\add-16.png" />
@@ -46,6 +46,8 @@
     <None Remove="Resources\mntTags-94.png" />
     <None Remove="Resources\mntTags.png" />
     <None Remove="Resources\options.png" />
+    <None Remove="Resources\Portfolio-32.png" />
+    <None Remove="Resources\Portfolio-64.png" />
     <None Remove="Resources\register-16.png" />
     <None Remove="Resources\register-32.png" />
     <None Remove="Resources\register-64.png" />
@@ -131,6 +133,12 @@
     <Content Include="Resources\mntTags-94.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Portfolio-32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Portfolio-64.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\register-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -204,6 +212,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Partials\partialHome.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Partials\PartialPortfolio.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Transactions\FrmSplitsListList.xaml.cs">

@@ -32,7 +32,6 @@ namespace BOLib.Services
             tagsManager = new();
         }
 
-
         public List<Tags?>? getAll()
         {
             return tagsManager.getAll()?.toListBO();
