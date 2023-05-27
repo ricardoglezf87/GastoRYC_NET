@@ -46,6 +46,8 @@
     <None Remove="Resources\mntTags-94.png" />
     <None Remove="Resources\mntTags.png" />
     <None Remove="Resources\options.png" />
+    <None Remove="Resources\Portfolio-32.png" />
+    <None Remove="Resources\Portfolio-64.png" />
     <None Remove="Resources\register-16.png" />
     <None Remove="Resources\register-32.png" />
     <None Remove="Resources\register-64.png" />
@@ -131,6 +133,12 @@
     <Content Include="Resources\mntTags-94.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Portfolio-32.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Portfolio-64.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\register-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -204,6 +212,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Partials\partialHome.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Partials\PartialPortfolio.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Transactions\FrmSplitsListList.xaml.cs">

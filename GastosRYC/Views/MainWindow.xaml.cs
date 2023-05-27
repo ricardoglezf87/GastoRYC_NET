@@ -29,7 +29,8 @@ namespace GastosRYC
         {
             Home = 1,
             Transactions = 2,
-            Reminders = 3
+            Reminders = 3,
+            Portfolio = 4
         }
 
         #endregion
@@ -58,6 +59,11 @@ namespace GastosRYC
         private void btnReminders_Click(object sender, RoutedEventArgs e)
         {
             toggleViews(eViews.Reminders);
+        }
+
+        private void btnPortfolio_Click(object sender, RoutedEventArgs e)
+        {
+            toggleViews(eViews.Portfolio);
         }
 
         private void btnHome_Click(object sender, RoutedEventArgs e)
@@ -276,6 +282,10 @@ namespace GastosRYC
                     lvAccounts.SelectedIndex = -1;
                     win = new PartialReminders(this);
                     break;
+                case eViews.Portfolio:
+                    lvAccounts.SelectedIndex = -1;
+                    win = new PartialPortfolio(this);
+                    break;
             }
 
             if (win != null)
@@ -368,5 +378,7 @@ namespace GastosRYC
         }
 
         #endregion
+
+        
     }
 }
