@@ -38,6 +38,7 @@ namespace DAOLib.Managers
                 context.transactionsReminders?.Load();
                 context.expirationsReminders?.Load();
                 context.vBalancebyCategory?.Load();
+                context.vPortfolio?.Load();
             }
         }
 

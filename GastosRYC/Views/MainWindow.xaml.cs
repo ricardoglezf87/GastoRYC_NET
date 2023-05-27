@@ -29,7 +29,8 @@ namespace GastosRYC
         {
             Home = 1,
             Transactions = 2,
-            Reminders = 3
+            Reminders = 3,
+            Portfolio = 4
         }
 
         #endregion
@@ -53,11 +54,22 @@ namespace GastosRYC
         private void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
         {
             updatePrices();
+
+            if (actualPrincipalContent is PartialPortfolio)
+            {
+                ((PartialPortfolio)actualPrincipalContent).loadPortfolio();
+                loadAccounts();
+            }
         }
 
         private void btnReminders_Click(object sender, RoutedEventArgs e)
         {
             toggleViews(eViews.Reminders);
+        }
+
+        private void btnPortfolio_Click(object sender, RoutedEventArgs e)
+        {
+            toggleViews(eViews.Portfolio);
         }
 
         private void btnHome_Click(object sender, RoutedEventArgs e)
@@ -96,6 +108,11 @@ namespace GastosRYC
                     {
                         ((PartialReminders)actualPrincipalContent).loadReminders();
                         await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
+                        loadAccounts();
+                    }
+                    else if (actualPrincipalContent is PartialPortfolio)
+                    {
+                        ((PartialPortfolio)actualPrincipalContent).loadPortfolio();                        
                         loadAccounts();
                     }
                     break;
@@ -180,6 +197,10 @@ namespace GastosRYC
             if (actualPrincipalContent is PartialTransactions)
             {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
+            else if (actualPrincipalContent is PartialPortfolio)
+            {
+                ((PartialPortfolio)actualPrincipalContent).loadPortfolio();
             }
         }
 
@@ -276,6 +297,10 @@ namespace GastosRYC
                     lvAccounts.SelectedIndex = -1;
                     win = new PartialReminders(this);
                     break;
+                case eViews.Portfolio:
+                    lvAccounts.SelectedIndex = -1;
+                    win = new PartialPortfolio(this);
+                    break;
             }
 
             if (win != null)
@@ -368,5 +393,7 @@ namespace GastosRYC
         }
 
         #endregion
+
+        
     }
 }

@@ -47,6 +47,7 @@
                 <syncfusion:RibbonBar  Header="Menú Principal" IsLauncherButtonVisible="False">
                     <syncfusion:RibbonButton Name="btnHome" SizeForm="Large" Label="Inicio" Click="btnHome_Click" LargeIcon="/Resources/home-32.png" />
                     <syncfusion:RibbonButton Name="btnReminders" SizeForm="Large" Label="Recordatorios" Click="btnReminders_Click" LargeIcon="/Resources/reminders-32.png" />
+                    <syncfusion:RibbonButton Name="btnPortfolio" SizeForm="Large" Label="Portfolio" LargeIcon="/Resources/Portfolio-32.png" Click="btnPortfolio_Click" />
                 </syncfusion:RibbonBar>
                 <syncfusion:RibbonBar Header="Mantenimientos" IsLauncherButtonVisible="False">
                     <syncfusion:RibbonButton Name="btnMntAccounts" SizeForm="Large" Label="Cuentas" Click="btnMntAccounts_Click" LargeIcon="/Resources/mntAccounts-32.png"/>
