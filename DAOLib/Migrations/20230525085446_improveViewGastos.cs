@@ -39,9 +39,7 @@ namespace DAOLib.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-
                 drop view vBalancebyCategory;
-
             ");
 
             migrationBuilder.Sql(@"

@@ -54,6 +54,12 @@ namespace GastosRYC
         private void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
         {
             updatePrices();
+
+            if (actualPrincipalContent is PartialPortfolio)
+            {
+                ((PartialPortfolio)actualPrincipalContent).loadPortfolio();
+                loadAccounts();
+            }
         }
 
         private void btnReminders_Click(object sender, RoutedEventArgs e)
@@ -102,6 +108,11 @@ namespace GastosRYC
                     {
                         ((PartialReminders)actualPrincipalContent).loadReminders();
                         await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
+                        loadAccounts();
+                    }
+                    else if (actualPrincipalContent is PartialPortfolio)
+                    {
+                        ((PartialPortfolio)actualPrincipalContent).loadPortfolio();                        
                         loadAccounts();
                     }
                     break;
@@ -186,6 +197,10 @@ namespace GastosRYC
             if (actualPrincipalContent is PartialTransactions)
             {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
+            }
+            else if (actualPrincipalContent is PartialPortfolio)
+            {
+                ((PartialPortfolio)actualPrincipalContent).loadPortfolio();
             }
         }
 
