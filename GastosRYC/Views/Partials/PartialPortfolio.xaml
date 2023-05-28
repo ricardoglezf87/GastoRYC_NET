@@ -7,8 +7,10 @@
         xmlns:chart="clr-namespace:Syncfusion.UI.Xaml.Charts;assembly=Syncfusion.SfChart.WPF"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GastosRYC.Views"
-         xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" xmlns:local1="clr-namespace:GastosRYC.ViewModels" xmlns:local2="clr-namespace:GastosRYC.Styles"
-      syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" 
+        xmlns:local1="clr-namespace:GastosRYC.ViewModels" 
+        xmlns:local2="clr-namespace:GastosRYC.Styles"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
         Title="partialPortfolio" Loaded="Page_Loaded">
     <Page.DataContext>
