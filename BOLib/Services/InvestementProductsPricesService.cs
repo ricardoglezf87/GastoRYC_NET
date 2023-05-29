@@ -77,13 +77,6 @@ namespace BOLib.Services
         {
             try
             {
-                if (investmentProducts == null || String.IsNullOrWhiteSpace(investmentProducts.url)
-                    || !investmentProducts.active.HasValue || !investmentProducts.active.Value)
-                {
-                    return;
-                }
-
-               
                 //Get prices from buy and sell ins transactions
                 foreach (var transactions in TransactionsService.Instance.getByInvestmentProduct(investmentProducts)?
                         .GroupBy(g => g.date)?.Select(x => new { date = x.Key, price = x.Average(y => y.pricesShares) }))
@@ -92,13 +85,19 @@ namespace BOLib.Services
                     {
                         InvestmentProductsPrices productsPrices = new();
                         productsPrices.date = transactions.date;
-                        productsPrices.investmentProductsid = investmentProducts.id;                       
+                        productsPrices.investmentProductsid = investmentProducts.id;
                         productsPrices.prices = transactions.price;
                         investmentProductsPricesManager.update(productsPrices.toDAO());
                     }
                 }
 
                 //Get prices online
+
+                if (investmentProducts == null || String.IsNullOrWhiteSpace(investmentProducts.url)
+                    || !investmentProducts.active.HasValue || !investmentProducts.active.Value)
+                {
+                    return;
+                }
 
                 List<InvestmentProductsPrices> lproductsPrices = new();
 

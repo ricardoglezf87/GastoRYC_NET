@@ -411,7 +411,7 @@ namespace GastosRYC
         {
             try
             {
-                List<InvestmentProducts?>? lInvestmentProducts = InvestmentProductsService.Instance.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
+                List<InvestmentProducts?>? lInvestmentProducts = InvestmentProductsService.Instance.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url) || x.active == true).ToList();
 
                 if (lInvestmentProducts != null)
                 {
