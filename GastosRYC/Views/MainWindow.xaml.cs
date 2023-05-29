@@ -51,6 +51,17 @@ namespace GastosRYC
 
         #region Events
 
+        private void btnUpdateBalances_Click(object sender, RoutedEventArgs e)
+        {
+            updateBalances();
+
+            if (actualPrincipalContent is PartialTransactions)
+            {
+                ((PartialTransactions)actualPrincipalContent).loadTransactions();
+                loadAccounts();
+            }
+        }
+
         private void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
         {
             updatePrices();
@@ -361,6 +372,41 @@ namespace GastosRYC
 
         }
 
+        private async void updateBalances()
+        {
+            try
+            {
+                List<Accounts?>? laccounts = AccountsService.Instance.getAll();
+
+                if (laccounts != null)
+                {
+                    LoadDialog loadDialog = new(laccounts.Count);
+                    loadDialog.Show();
+
+                    foreach (Accounts? accounts in laccounts)
+                    {
+                        Transactions? tFirst = TransactionsService.Instance.getByAccount(accounts)?.FirstOrDefault();
+                        if (tFirst != null)
+                        {
+                            await Task.Run(() => TransactionsService.Instance.refreshBalanceTransactions(tFirst,true));
+                        }
+                        loadDialog.performeStep();
+                    }
+
+                    loadDialog.Close();
+                    MessageBox.Show("Actualizado con exito!", "Actualización de saldos");
+                }
+                else
+                {
+                    MessageBox.Show("No hay productos financieros a actualizar", "Actualización de saldos");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de saldos");
+            }           
+        }
+
         private async void updatePrices()
         {
             try
@@ -392,8 +438,7 @@ namespace GastosRYC
             }
         }
 
-        #endregion
 
-        
+        #endregion        
     }
 }
