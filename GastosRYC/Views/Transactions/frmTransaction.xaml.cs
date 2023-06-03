@@ -1,9 +1,11 @@
 ﻿using BOLib.Models;
 using BOLib.Services;
+using GastosRYC.Views.Common;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 
 namespace GastosRYC.Views
 {
@@ -127,6 +129,9 @@ namespace GastosRYC.Views
                     transaction.investmentCategory = !transaction.investmentCategory ?? false;
                     toggleViews();
                     break;
+                case Key.F4:
+                    calculateSharesByPrice();
+                    break;
                 case Key.Escape:
                     this.Close();
                     break;
@@ -178,6 +183,22 @@ namespace GastosRYC.Views
         #endregion
 
         #region Funtions
+
+        private void calculateSharesByPrice()
+        {
+            if(txtPriceShares.Value == null || txtPriceShares.Value == 0)
+            {
+                MessageBox.Show("No se puede poner un precio de participacion vacio, o 0, coloque una cantidad", "Trasacción");
+                return;
+            }
+
+            String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:","Transacción");
+            if(!String.IsNullOrWhiteSpace(importe))
+            {
+                Decimal? aux = Decimal.Parse(importe.Replace(".",",")) / txtPriceShares.Value;
+                txtNumShares.Value = (double?) aux;
+            }
+        }
 
         private void toggleViews()
         {
