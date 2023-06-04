@@ -46,7 +46,7 @@ namespace GastosRYC.ViewModels
             }
             else
             {
-              item = await Task.Run(() => TransactionsService.Instance.getAllOpennedOrderByOrderDesc());
+                item = await Task.Run(() => TransactionsService.Instance.getAllOpennedOrderByOrderDesc());
             }
             if (item != null)
             {
@@ -55,6 +55,5 @@ namespace GastosRYC.ViewModels
                 IncrementalItemsSource.LoadItems(list);
             }
         }
-
     }
 }
