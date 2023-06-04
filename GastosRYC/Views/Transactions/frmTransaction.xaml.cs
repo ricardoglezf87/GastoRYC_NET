@@ -115,10 +115,12 @@ namespace GastosRYC.Views
                         {
                             previousDate = (DateTime)dtpDate.SelectedDate;
                         }
+                        bool? investmentCategory = transaction.investmentCategory;
 
                         transaction = null;
                         loadTransaction();
 
+                        transaction.investmentCategory = investmentCategory;
                         dtpDate.SelectedDate = previousDate;
                     }
                     break;
@@ -218,6 +220,7 @@ namespace GastosRYC.Views
                 cbTag.Visibility = Visibility.Hidden;
                 Grid.SetRow(lblMemo, 6);
                 Grid.SetRow(txtMemo, 6);
+                calculateValueShares();
             }
             else
             {
@@ -235,7 +238,7 @@ namespace GastosRYC.Views
                 cbTag.Visibility = Visibility.Visible;
                 Grid.SetRow(lblMemo, 4);
                 Grid.SetRow(txtMemo, 4);
-            }
+            }            
         }
 
         private void loadTransaction()
