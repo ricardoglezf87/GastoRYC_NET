@@ -8,6 +8,7 @@ using Syncfusion.Windows.Tools.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -50,6 +51,17 @@ namespace GastosRYC
         #endregion
 
         #region Events
+
+        private void btnUpdateBalances_Click(object sender, RoutedEventArgs e)
+        {
+            updateBalances();
+
+            if (actualPrincipalContent is PartialTransactions)
+            {
+                ((PartialTransactions)actualPrincipalContent).loadTransactions();
+                loadAccounts();
+            }
+        }
 
         private void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
         {
@@ -251,14 +263,21 @@ namespace GastosRYC
 
         public async void refreshBalance()
         {
-            foreach (AccountsView accounts in lvAccounts.ItemsSource)
+            try
             {
-                accounts.balance = await Task.Run(() => AccountsService.Instance.getBalanceByAccount(accounts.id));
+                foreach (AccountsView accounts in lvAccounts.ItemsSource)
+                {
+                    accounts.balance = await Task.Run(() => AccountsService.Instance.getBalanceByAccount(accounts.id));
+                }
+
+                viewAccounts.Refresh();
+
+                autoResizeListView();
             }
-
-            viewAccounts.Refresh();
-
-            autoResizeListView();
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine((DateTime.Now.ToString() + ": Error - " + ex.Message));
+            }
         }
 
 
@@ -361,11 +380,46 @@ namespace GastosRYC
 
         }
 
+        private async void updateBalances()
+        {
+            try
+            {
+                List<Accounts?>? laccounts = AccountsService.Instance.getAll();
+
+                if (laccounts != null)
+                {
+                    LoadDialog loadDialog = new(laccounts.Count);
+                    loadDialog.Show();
+
+                    foreach (Accounts? accounts in laccounts)
+                    {
+                        Transactions? tFirst = TransactionsService.Instance.getByAccount(accounts)?.FirstOrDefault();
+                        if (tFirst != null)
+                        {
+                            await Task.Run(() => TransactionsService.Instance.refreshBalanceTransactions(tFirst,true));
+                        }
+                        loadDialog.performeStep();
+                    }
+
+                    loadDialog.Close();
+                    MessageBox.Show("Actualizado con exito!", "Actualización de saldos");
+                }
+                else
+                {
+                    MessageBox.Show("No hay productos financieros a actualizar", "Actualización de saldos");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de saldos");
+            }           
+        }
+
         private async void updatePrices()
         {
             try
             {
-                List<InvestmentProducts?>? lInvestmentProducts = InvestmentProductsService.Instance.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url)).ToList();
+                List<InvestmentProducts?>? lInvestmentProducts = InvestmentProductsService.Instance.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url) || x.active == true).ToList();
 
                 if (lInvestmentProducts != null)
                 {
@@ -392,8 +446,7 @@ namespace GastosRYC
             }
         }
 
-        #endregion
 
-        
+        #endregion        
     }
 }
