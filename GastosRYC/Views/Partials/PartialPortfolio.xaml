@@ -33,8 +33,7 @@
                                AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
                                AllowDeleting="True"                               
                                ShowRowHeader="True" SelectionMode="Extended"
-                               TableSummaryCellStyleSelector="{StaticResource portfolioSummaryStyleSelector}" 
-                                ItemsSource="{Binding IncrementalItemsSource}">
+                               TableSummaryCellStyleSelector="{StaticResource portfolioSummaryStyleSelector}">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="id" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
