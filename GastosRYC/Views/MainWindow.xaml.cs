@@ -8,6 +8,7 @@ using Syncfusion.Windows.Tools.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -262,14 +263,21 @@ namespace GastosRYC
 
         public async void refreshBalance()
         {
-            foreach (AccountsView accounts in lvAccounts.ItemsSource)
+            try
             {
-                accounts.balance = await Task.Run(() => AccountsService.Instance.getBalanceByAccount(accounts.id));
+                foreach (AccountsView accounts in lvAccounts.ItemsSource)
+                {
+                    accounts.balance = await Task.Run(() => AccountsService.Instance.getBalanceByAccount(accounts.id));
+                }
+
+                viewAccounts.Refresh();
+
+                autoResizeListView();
             }
-
-            viewAccounts.Refresh();
-
-            autoResizeListView();
+            catch (InvalidOperationException ex)
+            {
+                Debug.WriteLine((DateTime.Now.ToString() + ": Error - " + ex.Message));
+            }
         }
 
 
