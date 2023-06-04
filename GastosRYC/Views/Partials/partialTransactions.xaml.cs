@@ -43,7 +43,6 @@ namespace GastosRYC.Views
 
         private void gvTransactions_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-
             if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimiento", MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
@@ -152,7 +151,6 @@ namespace GastosRYC.Views
                 frm.ShowDialog();
                 loadTransactions();
                 parentForm.loadAccounts();
-
             }
         }
 
