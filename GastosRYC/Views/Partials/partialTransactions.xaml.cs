@@ -180,6 +180,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                    transactions.transactionStatus = TransactionsStatusService.Instance.getByID(transactions.transactionStatusid);
                     TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
@@ -197,6 +198,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
+                    transactions.transactionStatus = TransactionsStatusService.Instance.getByID(transactions.transactionStatusid);
                     TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
@@ -214,6 +216,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
+                    transactions.transactionStatus = TransactionsStatusService.Instance.getByID(transactions.transactionStatusid);
                     TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
@@ -230,7 +233,7 @@ namespace GastosRYC.Views
 
         public void loadTransactions()
         {
-            //gvTransactions.ItemsSource = await TransactionsService.Instance.getAllAsync();
+            gvTransactions.View.Refresh();            
             ApplyFilters(TransactionViewModel.accountsSelected);
         }
 
