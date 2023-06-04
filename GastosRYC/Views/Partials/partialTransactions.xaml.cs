@@ -231,7 +231,10 @@ namespace GastosRYC.Views
 
         public void loadTransactions()
         {
-            gvTransactions.View.Refresh();            
+            if (gvTransactions.View != null)
+            {
+                gvTransactions.View.Refresh();
+            }
             ApplyFilters(TransactionViewModel.accountsSelected);
         }
 
