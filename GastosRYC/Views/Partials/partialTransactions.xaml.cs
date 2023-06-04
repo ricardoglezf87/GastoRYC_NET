@@ -43,7 +43,6 @@ namespace GastosRYC.Views
 
         private void gvTransactions_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-
             if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimiento", MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
@@ -152,7 +151,6 @@ namespace GastosRYC.Views
                 frm.ShowDialog();
                 loadTransactions();
                 parentForm.loadAccounts();
-
             }
         }
 
@@ -180,6 +178,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                    transactions.transactionStatus = TransactionsStatusService.Instance.getByID(transactions.transactionStatusid);
                     TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
@@ -197,6 +196,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
+                    transactions.transactionStatus = TransactionsStatusService.Instance.getByID(transactions.transactionStatusid);
                     TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
@@ -214,6 +214,7 @@ namespace GastosRYC.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
+                    transactions.transactionStatus = TransactionsStatusService.Instance.getByID(transactions.transactionStatusid);
                     TransactionsService.Instance.update(transactions);
                 }
                 loadTransactions();
@@ -230,7 +231,10 @@ namespace GastosRYC.Views
 
         public void loadTransactions()
         {
-            //gvTransactions.ItemsSource = await TransactionsService.Instance.getAllAsync();
+            if (gvTransactions.View != null)
+            {
+                gvTransactions.View.Refresh();
+            }
             ApplyFilters(TransactionViewModel.accountsSelected);
         }
 

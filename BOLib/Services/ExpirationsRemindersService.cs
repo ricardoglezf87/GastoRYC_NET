@@ -52,12 +52,12 @@ namespace BOLib.Services
 
         public List<ExpirationsReminders?>? getAllPendingWithGeneration()
         {
-            return getAllWithGeneration()?.Where(x => x.done != true).ToList();
+            return getAllWithGeneration()?.Where(x => x.done == null || x.done != true).ToList();
         }
 
         public List<ExpirationsReminders?>? getAllPendingWithoutFutureWithGeneration()
         {
-            return getAllWithGeneration()?.Where(x => x.done != true && x.groupDate != "Futuro").ToList();
+            return getAllWithGeneration()?.Where(x => (x.done == null || x.done != true) && x.groupDate != "Futuro").ToList();
         }
 
         public async Task<List<ExpirationsReminders?>?> getAllPendingWithoutFutureWithGenerationAsync()

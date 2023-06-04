@@ -57,7 +57,7 @@ namespace BOLib.Models
         public virtual String? personDescripGrid => (investmentCategory.HasValue && investmentCategory.Value == false) ?
             investmentProducts?.description ?? String.Empty : person?.name ?? String.Empty;
 
-        public virtual Decimal? amount => (investmentCategory.HasValue && investmentCategory.Value == false) ? (numShares * pricesShares) : amountIn - amountOut;
+        public virtual Decimal? amount => (investmentCategory.HasValue && investmentCategory.Value == false) ? Math.Round((numShares ?? 0) * (pricesShares ?? 0),2) : amountIn - amountOut;
 
         public virtual Double? orden => Double.Parse(
                     date?.Year.ToString("0000")

@@ -1,9 +1,11 @@
 ﻿using BOLib.Models;
 using BOLib.Services;
+using GastosRYC.Views.Common;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 
 namespace GastosRYC.Views
 {
@@ -113,10 +115,12 @@ namespace GastosRYC.Views
                         {
                             previousDate = (DateTime)dtpDate.SelectedDate;
                         }
+                        bool? investmentCategory = transaction.investmentCategory;
 
                         transaction = null;
                         loadTransaction();
 
+                        transaction.investmentCategory = investmentCategory;
                         dtpDate.SelectedDate = previousDate;
                     }
                     break;
@@ -126,6 +130,9 @@ namespace GastosRYC.Views
                 case Key.F3:
                     transaction.investmentCategory = !transaction.investmentCategory ?? false;
                     toggleViews();
+                    break;
+                case Key.F4:
+                    calculateSharesByPrice();
                     break;
                 case Key.Escape:
                     this.Close();
@@ -179,6 +186,22 @@ namespace GastosRYC.Views
 
         #region Funtions
 
+        private void calculateSharesByPrice()
+        {
+            if(txtPriceShares.Value == null || txtPriceShares.Value == 0)
+            {
+                MessageBox.Show("No se puede poner un precio de participacion vacio, o 0, coloque una cantidad", "Trasacción");
+                return;
+            }
+
+            String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:","Transacción");
+            if(!String.IsNullOrWhiteSpace(importe))
+            {
+                Decimal? aux = Decimal.Parse(importe.Replace(".",",")) / txtPriceShares.Value;
+                txtNumShares.Value = (double?) aux;
+            }
+        }
+
         private void toggleViews()
         {
             if (transaction.investmentCategory == false)
@@ -197,6 +220,7 @@ namespace GastosRYC.Views
                 cbTag.Visibility = Visibility.Hidden;
                 Grid.SetRow(lblMemo, 6);
                 Grid.SetRow(txtMemo, 6);
+                calculateValueShares();
             }
             else
             {
@@ -214,7 +238,7 @@ namespace GastosRYC.Views
                 cbTag.Visibility = Visibility.Visible;
                 Grid.SetRow(lblMemo, 4);
                 Grid.SetRow(txtMemo, 4);
-            }
+            }            
         }
 
         private void loadTransaction()

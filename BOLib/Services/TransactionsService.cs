@@ -138,7 +138,7 @@ namespace BOLib.Services
             refreshBalanceTransactions(transactions);
         }
 
-        public void refreshBalanceTransactions(Transactions tUpdate)
+        public void refreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false)
         {                        
             List<Transactions?>? tList = getByAccount(tUpdate.accountid)?.OrderByDescending(x => x.orden)?.ToList();
             decimal? balanceTotal = 0;
@@ -150,7 +150,7 @@ namespace BOLib.Services
 
             if (tUpdate != null && tUpdate.date != null)
             {
-                foreach (Transactions? t in tList?.Where(x => x.date >= tUpdate?.date.addDay(-1)))
+                foreach (Transactions? t in tList?.Where(x => x.date >= tUpdate?.date.addDay(-1) || dateFilter))
                 {
                     if (t.amount != null)
                     {
@@ -173,6 +173,7 @@ namespace BOLib.Services
                     delete(tContraria);
                 }
                 transactions.tranferid = null;
+                refreshBalanceTransactions(tContraria);
             }
             else if (transactions.tranferid == null &&
                 transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
@@ -196,6 +197,7 @@ namespace BOLib.Services
                 tContraria.transactionStatusid = transactions.transactionStatusid;
 
                 update(tContraria);
+                refreshBalanceTransactions(tContraria);
 
             }
             else if (transactions.tranferid != null &&
@@ -214,6 +216,7 @@ namespace BOLib.Services
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transactionStatusid = transactions.transactionStatusid;
                     update(tContraria);
+                    refreshBalanceTransactions(tContraria);
                 }
             }
         }
