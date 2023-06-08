@@ -4,7 +4,7 @@
 
 namespace DAOLib.Migrations
 {
-    public partial class TransactionSplit : Migration
+    public partial class addTransactionSplit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

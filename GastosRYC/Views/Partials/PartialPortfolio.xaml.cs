@@ -48,7 +48,7 @@ namespace GastosRYC.Views
 
         public async void loadPortfolio()
         {
-            gvPortfolio.ItemsSource = await VPortfolioService.Instance.getAllAsync();            
+            gvPortfolio.ItemsSource = await VPortfolioService.Instance.getAllAsync();
         }
         #endregion       
     }

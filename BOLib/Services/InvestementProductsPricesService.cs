@@ -2,6 +2,7 @@
 
 using BOLib.Models;
 using DAOLib.Managers;
+using DAOLib.Models;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using System;
@@ -74,6 +75,11 @@ namespace BOLib.Services
         public Decimal? getActualPrice(InvestmentProducts investmentProducts)
         {
             return investmentProductsPricesManager.getActualPrice(investmentProducts.toDAO());
+        }
+
+        public DateTime? getLastValueDate(InvestmentProducts investmentProducts)
+        {
+            return investmentProductsPricesManager.getLastValueDate(investmentProducts.toDAO());
         }
 
         public async Task getPricesOnlineAsync(InvestmentProducts? investmentProducts)

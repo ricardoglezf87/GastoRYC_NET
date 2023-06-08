@@ -40,11 +40,6 @@ namespace BOLib.Services
             return accountsManager.getAll()?.toListBO();
         }
 
-        public async Task<List<Accounts?>?> getAllAync()
-        {
-            return await Task.Run(() => getAll());
-        }
-
         public List<Accounts?>? getAllOrderByAccountsTypesId()
         {
             return accountsManager.getAllOrderByAccountsTypesId()?.toListBO();
@@ -64,10 +59,6 @@ namespace BOLib.Services
         {
             return accountsManager.getAllOpened()?.toListViewBO();
         }
-        public async Task<List<AccountsView>?> getAllOpenedListViewAsync()
-        {
-            return await Task.Run(() => getAllOpenedListView());
-        }
 
         public Accounts? getByID(int? id)
         {
@@ -77,11 +68,6 @@ namespace BOLib.Services
         public Accounts? getByCategoryId(int? id)
         {
             return (Accounts?)accountsManager.getByCategoryId(id);
-        }
-
-        public async Task<Accounts?> getByIDAsync(int? id)
-        {
-            return await Task.Run(() => getByID(id));
         }
 
         public void update(Accounts accounts)
@@ -97,11 +83,6 @@ namespace BOLib.Services
         public Decimal getBalanceByAccount(int? id)
         {
             return TransactionsService.Instance.getByAccount(id)?.Sum(x => x.amount) ?? 0;
-        }
-
-        public Task<Decimal> getBalanceByAccountAsync(int? id)
-        {
-            return Task.Run(() => getBalanceByAccount(id));
         }
 
         public Decimal getBalanceByAccount(Accounts? accounts)
