@@ -4,6 +4,8 @@ using DAOLib.Managers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace BOLib.Services
 {
@@ -39,6 +41,36 @@ namespace BOLib.Services
                 portfolio.symbol = investmentProducts.symbol;
                 portfolio.numShares = await getNumShares(investmentProducts);
 
+                List<Transactions?>? lBuy = await getBuyOperations(investmentProducts);
+                List<Transactions?>? lSell = await getSellOperations(investmentProducts);
+
+                foreach(Transactions? sell in lSell) 
+                {
+                    decimal? shares = sell.numShares;
+                    if (shares != null && shares > 0)
+                    {
+                        foreach (Transactions? buy in lBuy)
+                        {
+                            if(buy.numShares != null && buy.numShares != 0 )
+                            {
+                                if (shares >= -buy.numShares)
+                                {
+                                    shares += buy.numShares;
+                                    buy.numShares = 0;
+                                }
+                                else
+                                {
+                                    buy.numShares += shares;
+                                    shares = 0;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                portfolio.costShares = lBuy?.Sum(x => x.pricesShares * -x.numShares);
+                portfolio.date = InvestmentProductsPricesService.Instance.getLastValueDate(investmentProducts);
+                portfolio.prices = InvestmentProductsPricesService.Instance.getActualPrice(investmentProducts);                
 
                 listPortFolio.Add(portfolio);                
             }
@@ -47,7 +79,7 @@ namespace BOLib.Services
 
         public async Task<decimal?> getNumShares(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => TransactionsService.Instance.getByInvestmentProduct(investmentProducts)?.Sum(x => x.numShares));
+            return await Task.Run(() => TransactionsService.Instance.getByInvestmentProduct(investmentProducts)?.Sum(x => -x.numShares));
         }
 
         public async Task<List<Transactions?>?> getBuyOperations(InvestmentProducts? investmentProducts)

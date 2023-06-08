@@ -63,9 +63,9 @@ namespace GastosRYC
             }
         }
 
-        private void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
+        private async void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
         {
-            updatePrices();
+            await updatePrices();
 
             if (actualPrincipalContent is PartialPortfolio)
             {
@@ -415,7 +415,7 @@ namespace GastosRYC
             }           
         }
 
-        private async void updatePrices()
+        private async Task updatePrices()
         {
             try
             {
