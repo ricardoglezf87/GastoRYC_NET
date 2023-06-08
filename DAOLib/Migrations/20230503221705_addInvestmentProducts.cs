@@ -6,7 +6,7 @@ using System;
 namespace DAOLib.Migrations
 {
     /// <inheritdoc />
-    public partial class InvestmentProducts : Migration
+    public partial class addInvestmentProducts : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
