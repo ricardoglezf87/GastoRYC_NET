@@ -33,7 +33,6 @@ namespace DAOLib.Managers
         #region Vistas
 
         public DbSet<VBalancebyCategoryDAO>? vBalancebyCategory { get; set; }
-        public DbSet<VPortfolioDAO>? vPortfolio { get; set; }
 
         #endregion
 
@@ -87,11 +86,6 @@ namespace DAOLib.Managers
             modelBuilder.Entity<VBalancebyCategoryDAO>()
                 .ToView("VBalancebyCategory")
                 .HasKey(t => new { t.year, t.month, t.categoryid });
-
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<VPortfolioDAO>()
-                .ToView("VPortfolio")
-                .HasKey(t => t.id);
         }
 
     }

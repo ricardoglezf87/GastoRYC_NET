@@ -7,19 +7,6 @@ namespace BOLib.Extensions
 {
     public static class ListExtension
     {
-        public static List<VPortfolio?> toListBO(this List<VPortfolioDAO> source)
-        {
-            List<VPortfolio?> list = new();
-            if (source != null)
-            {
-                foreach (VPortfolioDAO obj in source)
-                {
-                    list.Add((VPortfolio?)obj);
-                }
-            }
-            return list;
-        }
-
         public static List<DateCalendar?> toListBO(this List<DateCalendarDAO> source)
         {
             List<DateCalendar?> list = new();
