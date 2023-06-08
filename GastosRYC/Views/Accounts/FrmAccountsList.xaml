@@ -33,7 +33,7 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
                 <syncfusion:GridTextColumn MappingName="description" HeaderText="Descripción" />
-                <syncfusion:GridComboBoxColumn  HeaderText="Tipos"
+                <syncfusion:GridComboBoxColumn  HeaderText="Tipo"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
                     x:Name="cbAccountsTypes" MappingName="accountsTypesid" 
                                                 DisplayMemberPath="description" SelectedValuePath="id"/>

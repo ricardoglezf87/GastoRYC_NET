@@ -9,6 +9,10 @@ namespace DAOLib.Models
     {
         public virtual String? description { set; get; }
 
+        public virtual int? investmentProductsTypesid { set; get; }
+
+        public virtual InvestmentProductsTypesDAO? investmentProductsTypes { set; get; }
+
         public virtual String? symbol { set; get; }
 
         public virtual String? url { set; get; }

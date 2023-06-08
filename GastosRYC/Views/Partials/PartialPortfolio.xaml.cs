@@ -4,6 +4,7 @@ using BOLib.ModelsView;
 using BOLib.Services;
 using GastosRYC.ViewModels;
 using Syncfusion.Data.Extensions;
+using Syncfusion.UI.Xaml.Grid;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -49,7 +50,9 @@ namespace GastosRYC.Views
         public async void loadPortfolio()
         {
             gvPortfolio.ItemsSource = await VPortfolioService.Instance.getAllAsync();
+            gvPortfolio.ExpandAllGroup();
         }
+
         #endregion       
     }
 }

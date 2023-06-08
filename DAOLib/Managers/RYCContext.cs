@@ -27,6 +27,7 @@ namespace DAOLib.Managers
         public DbSet<ExpirationsRemindersDAO>? expirationsReminders { get; set; }
         public DbSet<InvestmentProductsDAO>? investmentProducts { get; set; }
         public DbSet<InvestmentProductsPricesDAO>? investmentProductsPrices { get; set; }
+        public DbSet<InvestmentProductsTypesDAO>? investmentProductsTypes { get; set; }
 
         #endregion
 

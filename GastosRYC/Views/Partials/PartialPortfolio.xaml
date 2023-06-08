@@ -22,7 +22,14 @@
             <Setter Property="BorderThickness" Value="0,1,0,0"/>
             <Setter Property="BorderBrush" Value="#FF7fd0de" />
         </Style>
-        
+
+        <Style x:Key="PorfolioGroupSummaryStyleCenter" TargetType="syncfusion:GridGroupSummaryCell">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <local2:PortfolioGroupSummaryStyleSelector x:Key="portfolioGroupSummaryStyleSelector"
+                             CenterStyle="{StaticResource PorfolioGroupSummaryStyleCenter}" />
+
         <local2:PortfolioSummaryStyleSelector x:Key="portfolioSummaryStyleSelector"
                              CenterStyle="{StaticResource PorfolioSummaryStyleCenter}" />
     </Page.Resources>
@@ -33,13 +40,20 @@
                                AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
                                AllowDeleting="True"                               
                                ShowRowHeader="True" SelectionMode="Extended"
-                               TableSummaryCellStyleSelector="{StaticResource portfolioSummaryStyleSelector}">
+                               TableSummaryCellStyleSelector="{StaticResource portfolioSummaryStyleSelector}"
+                               GroupSummaryCellStyleSelector="{StaticResource portfolioGroupSummaryStyleSelector}">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="id" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
+
+            <syncfusion:SfDataGrid.GroupColumnDescriptions>
+                <syncfusion:GroupColumnDescription ColumnName="investmentProductsTypes.description"/>
+            </syncfusion:SfDataGrid.GroupColumnDescriptions>
+
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
                 <syncfusion:GridTextColumn MappingName="description" HeaderText="Producto"/>
+                <syncfusion:GridTextColumn MappingName="investmentProductsTypes.description" HeaderText="Tipo Producto" IsHidden="True"/>
                 <syncfusion:GridTextColumn MappingName="numShares" HeaderText="Num. Participaciones" TextAlignment="Center"/>
                 <syncfusion:GridCurrencyColumn MappingName="costShares" HeaderText="Coste" TextAlignment="Center"/>
                 <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha Valoración" TextAlignment="Center"/>
@@ -48,6 +62,26 @@
                 <syncfusion:GridCurrencyColumn MappingName="profit" HeaderText="Beneficio" TextAlignment="Center"/>
                 <syncfusion:GridPercentColumn MappingName="profitPorcent" HeaderText="% Beneficio" TextAlignment="Center"/>
             </syncfusion:SfDataGrid.Columns>
+
+            <syncfusion:SfDataGrid.GroupSummaryRows>
+                <syncfusion:GridSummaryRow ShowSummaryInRow="False">
+                    <syncfusion:GridSummaryRow.SummaryColumns>
+                        <syncfusion:GridSummaryColumn Name="tCostShares" 
+                                              Format="'{Sum:c}'"
+                                              MappingName="costShares"
+                                              SummaryType="DoubleAggregate" />
+                        <syncfusion:GridSummaryColumn Name="tMarketValue"
+                                              Format="'{Sum:c}'"
+                                              MappingName="marketValue"
+                                              SummaryType="DoubleAggregate" />
+                        <syncfusion:GridSummaryColumn Name="tProfit"
+                                              Format="'{Sum:c}'"
+                                              MappingName="profit"
+                                              SummaryType="DoubleAggregate" />
+                    </syncfusion:GridSummaryRow.SummaryColumns>
+                </syncfusion:GridSummaryRow>
+            </syncfusion:SfDataGrid.GroupSummaryRows>
+
             <syncfusion:SfDataGrid.TableSummaryRows>
                 <syncfusion:GridTableSummaryRow ShowSummaryInRow="False" Position="Bottom">
                     <syncfusion:GridSummaryRow.SummaryColumns>

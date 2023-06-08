@@ -38,6 +38,8 @@ namespace BOLib.Services
                 VPortfolio portfolio = new();
                 portfolio.id = investmentProducts.id;
                 portfolio.description = investmentProducts.description;
+                portfolio.investmentProductsTypesid = investmentProducts.investmentProductsTypesid;
+                portfolio.investmentProductsTypes = investmentProducts.investmentProductsTypes;
                 portfolio.symbol = investmentProducts.symbol;
                 portfolio.numShares = await getNumShares(investmentProducts);
 

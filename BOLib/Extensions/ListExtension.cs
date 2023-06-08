@@ -137,6 +137,19 @@ namespace BOLib.Extensions
             return list;
         }
 
+        public static List<InvestmentProductsTypes?> toListBO(this List<InvestmentProductsTypesDAO> source)
+        {
+            List<InvestmentProductsTypes?> list = new();
+            if (source != null)
+            {
+                foreach (InvestmentProductsTypesDAO obj in source)
+                {
+                    list.Add((InvestmentProductsTypes?)obj);
+                }
+            }
+            return list;
+        }
+
         public static List<Categories?> toListBO(this List<CategoriesDAO> source)
         {
             List<Categories?> list = new();
