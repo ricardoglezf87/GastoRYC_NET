@@ -7,6 +7,8 @@ namespace BOLib.Models
     public class VPortfolio : ModelBase
     {
         public virtual String? description { set; get; }
+        public virtual int? investmentProductsTypesid { set; get; }
+        public virtual InvestmentProductsTypes? investmentProductsTypes { set; get; }
         public virtual String? symbol { set; get; }
         public virtual DateTime? date { set; get; }
         public virtual Decimal? prices { set; get; }
