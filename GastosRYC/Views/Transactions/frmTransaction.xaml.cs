@@ -132,7 +132,7 @@ namespace GastosRYC.Views
                     toggleViews();
                     break;
                 case Key.F4:
-                    calculateSharesByPrice();
+                    calculateSharesOrPrice();
                     break;
                 case Key.Escape:
                     this.Close();
@@ -186,19 +186,39 @@ namespace GastosRYC.Views
 
         #region Funtions
 
-        private void calculateSharesByPrice()
+        private void calculateSharesOrPrice()
         {
-            if(txtPriceShares.Value == null || txtPriceShares.Value == 0)
+            if (txtNumShares.Value != null)
             {
-                MessageBox.Show("No se puede poner un precio de participacion vacio, o 0, coloque una cantidad", "Trasacción");
-                return;
+                calculatePriceByShares();
             }
+            else if (txtPriceShares.Value != null)
+            {
+                calculateSharesByPrice();
+            }
+            else
+            {
+                MessageBox.Show("debe poner una cantidad de participaciones o un precio", "Trasacción");
+            }
+        }
 
+        private void calculateSharesByPrice()
+        {           
             String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:","Transacción");
             if(!String.IsNullOrWhiteSpace(importe))
             {
                 Decimal? aux = Decimal.Parse(importe.Replace(".",",")) / txtPriceShares.Value;
                 txtNumShares.Value = (double?) aux;
+            }
+        }
+
+        private void calculatePriceByShares()
+        {
+            String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:", "Transacción");
+            if (!String.IsNullOrWhiteSpace(importe))
+            {
+                Decimal? aux = Decimal.Parse(importe.Replace(".", ",")) / txtPriceShares.Value;
+                txtPriceShares.Value = aux;
             }
         }
 
