@@ -3,6 +3,7 @@ using System;
 using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    partial class RYCContextModelSnapshot : ModelSnapshot
+    [Migration("20230608134946_removePortfolioView")]
+    partial class removePortfolioView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
@@ -144,9 +147,6 @@ namespace DAOLib.Migrations
                     b.Property<string>("description")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("investmentProductsTypesid")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("symbol")
                         .HasColumnType("TEXT");
 
@@ -154,8 +154,6 @@ namespace DAOLib.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("id");
-
-                    b.HasIndex("investmentProductsTypesid");
 
                     b.ToTable("InvestmentProducts");
                 });
@@ -180,20 +178,6 @@ namespace DAOLib.Migrations
                     b.HasIndex("investmentProductsid");
 
                     b.ToTable("InvestmentProductsPrices");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.InvestmentProductsTypesDAO", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("description")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("id");
-
-                    b.ToTable("InvestmentProductsTypes");
                 });
 
             modelBuilder.Entity("DAOLib.Models.PeriodsRemindersDAO", b =>
@@ -487,6 +471,37 @@ namespace DAOLib.Migrations
                     b.ToView("VBalancebyCategory", (string)null);
                 });
 
+            modelBuilder.Entity("DAOLib.Models.VPortfolioDAO", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal?>("costShares")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("numShares")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("prices")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("symbol")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("id");
+
+                    b.ToTable("VPortfolio");
+
+                    b.ToView("VPortfolio", (string)null);
+                });
+
             modelBuilder.Entity("DAOLib.Models.AccountsDAO", b =>
                 {
                     b.HasOne("DAOLib.Models.AccountsTypesDAO", "accountsTypes")
@@ -518,15 +533,6 @@ namespace DAOLib.Migrations
                         .HasForeignKey("transactionsRemindersid");
 
                     b.Navigation("transactionsReminders");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.InvestmentProductsDAO", b =>
-                {
-                    b.HasOne("DAOLib.Models.InvestmentProductsTypesDAO", "investmentProductsTypes")
-                        .WithMany()
-                        .HasForeignKey("investmentProductsTypesid");
-
-                    b.Navigation("investmentProductsTypes");
                 });
 
             modelBuilder.Entity("DAOLib.Models.InvestmentProductsPricesDAO", b =>

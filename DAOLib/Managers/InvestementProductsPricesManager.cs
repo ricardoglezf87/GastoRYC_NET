@@ -39,5 +39,14 @@ namespace DAOLib.Managers
                     && x.date.Equals(query.Max(y => y.date))).Select(z => z.prices).FirstOrDefault();
             }
         }
+
+        public DateTime? getLastValueDate(InvestmentProductsDAO investmentProducts)
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<InvestmentProductsPricesDAO>();
+                return getEntyWithInclude(repository)?.Where(x => x.investmentProductsid.Equals(investmentProducts.id))?.Max(x => x.date);
+            }
+        }
     }
 }

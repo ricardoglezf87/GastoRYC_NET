@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    [Migration("20230503221705_InvestmentProducts")]
-    partial class InvestmentProducts
+    [Migration("20230503221705_addInvestmentProducts")]
+    partial class addInvestmentProducts
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

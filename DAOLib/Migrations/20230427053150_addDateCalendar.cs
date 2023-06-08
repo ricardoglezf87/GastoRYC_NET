@@ -6,7 +6,7 @@ using System;
 namespace DAOLib.Migrations
 {
     /// <inheritdoc />
-    public partial class dateCalendar : Migration
+    public partial class addDateCalendar : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

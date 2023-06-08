@@ -20,25 +20,51 @@ namespace GastosRYC.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            cbInvestmentProductsTypes.ItemsSource = InvestmentProductsTypesService.Instance.getAll();
             gvInvestmentProducts.ItemsSource = InvestmentProductsService.Instance.getAll();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            InvestmentProducts InvestmentProducts = (InvestmentProducts)e.RowData;
+            InvestmentProducts investmentProducts = (InvestmentProducts)e.RowData;
 
-            if (InvestmentProducts.description == null)
+            if (investmentProducts.description == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("descrìption", "Tiene que rellenar la descripción");
             }
 
+            if (investmentProducts.investmentProductsTypesid == null)
+            {
+                e.IsValid = false;
+                e.ErrorMessages.Add("investmentProductsTypesid", "Tiene que rellenar el tipo del producto financiero");
+            }
+        }
+
+        private void gvInvestmentProducts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        {
+            InvestmentProducts investmentProducts = (InvestmentProducts)gvInvestmentProducts.SelectedItem;
+            if (investmentProducts != null)
+            {
+                switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
+                {
+                    case "investmentProductsTypesid":
+                        investmentProducts.investmentProductsTypes = InvestmentProductsTypesService.Instance.getByID(investmentProducts.investmentProductsTypesid);
+                        break;
+                }
+            }
         }
 
         private void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            InvestmentProducts InvestmentProducts = (InvestmentProducts)e.RowData;
-            InvestmentProductsService.Instance.update(InvestmentProducts);
+            InvestmentProducts investmentProducts = (InvestmentProducts)e.RowData;
+            
+            if (investmentProducts.investmentProductsTypes == null && investmentProducts.investmentProductsTypesid != null)
+            {
+                investmentProducts.investmentProductsTypes = InvestmentProductsTypesService.Instance.getByID(investmentProducts.investmentProductsTypesid);
+            }
+
+            InvestmentProductsService.Instance.update(investmentProducts);
         }
 
         private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -63,5 +89,7 @@ namespace GastosRYC.Views
             gvInvestmentProducts.SearchHelper.AllowFiltering = true;
             gvInvestmentProducts.SearchHelper.Search(txtSearch.Text);
         }
+
+       
     }
 }

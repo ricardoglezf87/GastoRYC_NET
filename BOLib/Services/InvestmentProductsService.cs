@@ -1,8 +1,10 @@
 ﻿using BOLib.Extensions;
 
 using BOLib.Models;
+using BOLib.ModelsView;
 using DAOLib.Managers;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BOLib.Services
 {
@@ -50,6 +52,11 @@ namespace BOLib.Services
         public void delete(InvestmentProducts investmentProducts)
         {
             investmentProductsManager.delete(investmentProducts?.toDAO());
+        }
+
+        public async Task<List<InvestmentProducts?>?> getAllOpened()
+        {
+            return await Task.Run(() => investmentProductsManager.getAllOpened()?.toListBO());
         }
     }
 }

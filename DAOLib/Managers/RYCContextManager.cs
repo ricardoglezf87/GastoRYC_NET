@@ -29,7 +29,8 @@ namespace DAOLib.Managers
                 context.accounts?.Load();
                 context.transactionsStatus?.Load();
                 context.tags?.Load();
-                context.investmentProducts?.Load();
+                context.investmentProductsTypes?.Load();
+                context.investmentProducts?.Load();                
                 context.investmentProductsPrices?.Load();
                 context.splits?.Load();
                 context.transactions?.Load();
@@ -38,7 +39,6 @@ namespace DAOLib.Managers
                 context.transactionsReminders?.Load();
                 context.expirationsReminders?.Load();
                 context.vBalancebyCategory?.Load();
-                context.vPortfolio?.Load();
             }
         }
 

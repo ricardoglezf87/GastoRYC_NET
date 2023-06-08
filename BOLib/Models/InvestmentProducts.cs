@@ -8,6 +8,10 @@ namespace BOLib.Models
     {
         public virtual String? description { set; get; }
 
+        public virtual int? investmentProductsTypesid { set; get; }
+
+        public virtual InvestmentProductsTypes? investmentProductsTypes { set; get; }
+
         public virtual String? symbol { set; get; }
 
         public virtual String? url { set; get; }
@@ -21,6 +25,8 @@ namespace BOLib.Models
             {
                 id = this.id,
                 description = this.description,
+                investmentProductsTypesid = this.investmentProductsTypesid,
+                investmentProductsTypes = null,
                 symbol = this.symbol,
                 url = this.url,
                 active = this.active
@@ -35,6 +41,8 @@ namespace BOLib.Models
                 {
                     id = v.id,
                     description = v.description,
+                    investmentProductsTypesid = v.investmentProductsTypesid,
+                    investmentProductsTypes = (v.investmentProductsTypes != null) ? (InvestmentProductsTypes?)v.investmentProductsTypes : null,                    
                     symbol = v.symbol,
                     url = v.url,
                     active = v.active

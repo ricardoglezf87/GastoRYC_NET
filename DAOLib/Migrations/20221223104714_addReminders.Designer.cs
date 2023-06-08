@@ -3,6 +3,7 @@ using System;
 using DAOLib.Managers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,14 +11,16 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAOLib.Migrations
 {
     [DbContext(typeof(RYCContext))]
-    partial class RYCContextModelSnapshot : ModelSnapshot
+    [Migration("20221223104714_addReminder")]
+    partial class addReminder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "7.0.5");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
 
-            modelBuilder.Entity("DAOLib.Models.AccountsDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Accounts", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -29,9 +32,6 @@ namespace DAOLib.Migrations
                     b.Property<int?>("categoryid")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool?>("closed")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("description")
                         .HasColumnType("TEXT");
 
@@ -39,12 +39,13 @@ namespace DAOLib.Migrations
 
                     b.HasIndex("accountsTypesid");
 
-                    b.HasIndex("categoryid");
+                    b.HasIndex("categoryid")
+                        .IsUnique();
 
-                    b.ToTable("Accounts");
+                    b.ToTable("accounts");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.AccountsTypesDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.AccountsTypes", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -55,10 +56,10 @@ namespace DAOLib.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("AccountsTypes");
+                    b.ToTable("accountsTypes");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.CategoriesDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Categories", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -74,10 +75,10 @@ namespace DAOLib.Migrations
 
                     b.HasIndex("categoriesTypesid");
 
-                    b.ToTable("Categories");
+                    b.ToTable("categories");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.CategoriesTypesDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.CategoriesTypes", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -88,101 +89,10 @@ namespace DAOLib.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("CategoriesTypes");
+                    b.ToTable("categoriesTypes");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.DateCalendarDAO", b =>
-                {
-                    b.Property<DateTime>("date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("day")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("month")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("year")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("date");
-
-                    b.ToTable("DateCalendar");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.ExpirationsRemindersDAO", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool?>("done")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("transactionsRemindersid")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("transactionsRemindersid");
-
-                    b.ToTable("ExpirationsReminders");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.InvestmentProductsDAO", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool?>("active")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("investmentProductsTypesid")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("symbol")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("url")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("investmentProductsTypesid");
-
-                    b.ToTable("InvestmentProducts");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.InvestmentProductsPricesDAO", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("date")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("investmentProductsid")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal?>("prices")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("investmentProductsid");
-
-                    b.ToTable("InvestmentProductsPrices");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.InvestmentProductsTypesDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.PeriodsReminders", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -193,30 +103,13 @@ namespace DAOLib.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("InvestmentProductsTypes");
+                    b.ToTable("periodsReminders");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.PeriodsRemindersDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Persons", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("description")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("id");
-
-                    b.ToTable("PeriodsReminders");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.PersonsDAO", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("categoryid")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("name")
@@ -224,12 +117,10 @@ namespace DAOLib.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("categoryid");
-
-                    b.ToTable("Persons");
+                    b.ToTable("persons");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.SplitsDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Splits", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -264,10 +155,10 @@ namespace DAOLib.Migrations
 
                     b.HasIndex("transactionid");
 
-                    b.ToTable("Splits");
+                    b.ToTable("splits");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.SplitsRemindersDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.SplitsReminders", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -302,10 +193,10 @@ namespace DAOLib.Migrations
 
                     b.HasIndex("transactionid");
 
-                    b.ToTable("SplitsReminders");
+                    b.ToTable("splitsReminders");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.TagsDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Tags", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -316,10 +207,10 @@ namespace DAOLib.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("tags");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.TransactionsDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Transactions", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -334,32 +225,17 @@ namespace DAOLib.Migrations
                     b.Property<decimal?>("amountOut")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal?>("balance")
-                        .HasColumnType("TEXT");
-
                     b.Property<int?>("categoryid")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("date")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool?>("investmentCategory")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("investmentProductsid")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("memo")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal?>("numShares")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("personid")
                         .HasColumnType("INTEGER");
-
-                    b.Property<decimal?>("pricesShares")
-                        .HasColumnType("TEXT");
 
                     b.Property<int?>("tagid")
                         .HasColumnType("INTEGER");
@@ -379,18 +255,16 @@ namespace DAOLib.Migrations
 
                     b.HasIndex("categoryid");
 
-                    b.HasIndex("investmentProductsid");
-
                     b.HasIndex("personid");
 
                     b.HasIndex("tagid");
 
                     b.HasIndex("transactionStatusid");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("transactions");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.TransactionsRemindersDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.TransactionsReminders", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -405,9 +279,6 @@ namespace DAOLib.Migrations
                     b.Property<decimal?>("amountOut")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool?>("autoRegister")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("categoryid")
                         .HasColumnType("INTEGER");
 
@@ -420,10 +291,19 @@ namespace DAOLib.Migrations
                     b.Property<int?>("periodsRemindersid")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("periodsRemindersid")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("personid")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("tagid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tranferSplitid")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("tranferid")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("transactionStatusid")
@@ -443,10 +323,10 @@ namespace DAOLib.Migrations
 
                     b.HasIndex("transactionStatusid");
 
-                    b.ToTable("TransactionsReminders");
+                    b.ToTable("transactionsReminders");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.TransactionsStatusDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.TransactionsStatus", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -457,107 +337,44 @@ namespace DAOLib.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("TransactionsStatus");
+                    b.ToTable("transactionsStatus");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.VBalancebyCategoryDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Accounts", b =>
                 {
-                    b.Property<int?>("year")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("month")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("categoryid")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal?>("amount")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("categoriesTypesid")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("category")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("year", "month", "categoryid");
-
-                    b.ToTable("VBalancebyCategory");
-
-                    b.ToView("VBalancebyCategory", (string)null);
-                });
-
-            modelBuilder.Entity("DAOLib.Models.AccountsDAO", b =>
-                {
-                    b.HasOne("DAOLib.Models.AccountsTypesDAO", "accountsTypes")
-                        .WithMany()
+                    b.HasOne("DAOLib.Models.AccountsTypes", "accountsTypes")
+                        .WithMany("accounts")
                         .HasForeignKey("accountsTypesid");
 
-                    b.HasOne("DAOLib.Models.CategoriesDAO", "category")
-                        .WithMany()
-                        .HasForeignKey("categoryid");
+                    b.HasOne("DAOLib.Models.Categories", "category")
+                        .WithOne("accounts")
+                        .HasForeignKey("DAOLib.Models.Accounts", "categoryid");
 
                     b.Navigation("accountsTypes");
 
                     b.Navigation("category");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.CategoriesDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Categories", b =>
                 {
-                    b.HasOne("DAOLib.Models.CategoriesTypesDAO", "categoriesTypes")
-                        .WithMany()
+                    b.HasOne("DAOLib.Models.CategoriesTypes", "categoriesTypes")
+                        .WithMany("categories")
                         .HasForeignKey("categoriesTypesid");
 
                     b.Navigation("categoriesTypes");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.ExpirationsRemindersDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Splits", b =>
                 {
-                    b.HasOne("DAOLib.Models.TransactionsRemindersDAO", "transactionsReminders")
-                        .WithMany()
-                        .HasForeignKey("transactionsRemindersid");
-
-                    b.Navigation("transactionsReminders");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.InvestmentProductsDAO", b =>
-                {
-                    b.HasOne("DAOLib.Models.InvestmentProductsTypesDAO", "investmentProductsTypes")
-                        .WithMany()
-                        .HasForeignKey("investmentProductsTypesid");
-
-                    b.Navigation("investmentProductsTypes");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.InvestmentProductsPricesDAO", b =>
-                {
-                    b.HasOne("DAOLib.Models.InvestmentProductsDAO", "investmentProducts")
-                        .WithMany()
-                        .HasForeignKey("investmentProductsid");
-
-                    b.Navigation("investmentProducts");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.PersonsDAO", b =>
-                {
-                    b.HasOne("DAOLib.Models.CategoriesDAO", "category")
+                    b.HasOne("DAOLib.Models.Categories", "category")
                         .WithMany()
                         .HasForeignKey("categoryid");
 
-                    b.Navigation("category");
-                });
-
-            modelBuilder.Entity("DAOLib.Models.SplitsDAO", b =>
-                {
-                    b.HasOne("DAOLib.Models.CategoriesDAO", "category")
-                        .WithMany()
-                        .HasForeignKey("categoryid");
-
-                    b.HasOne("DAOLib.Models.TagsDAO", "tag")
+                    b.HasOne("DAOLib.Models.Tags", "tag")
                         .WithMany()
                         .HasForeignKey("tagid");
 
-                    b.HasOne("DAOLib.Models.TransactionsDAO", "transaction")
+                    b.HasOne("DAOLib.Models.Transactions", "transaction")
                         .WithMany("splits")
                         .HasForeignKey("transactionid");
 
@@ -568,17 +385,17 @@ namespace DAOLib.Migrations
                     b.Navigation("transaction");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.SplitsRemindersDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.SplitsReminders", b =>
                 {
-                    b.HasOne("DAOLib.Models.CategoriesDAO", "category")
+                    b.HasOne("DAOLib.Models.Categories", "category")
                         .WithMany()
                         .HasForeignKey("categoryid");
 
-                    b.HasOne("DAOLib.Models.TagsDAO", "tag")
+                    b.HasOne("DAOLib.Models.Tags", "tag")
                         .WithMany()
                         .HasForeignKey("tagid");
 
-                    b.HasOne("DAOLib.Models.TransactionsRemindersDAO", "transaction")
+                    b.HasOne("DAOLib.Models.TransactionsReminders", "transaction")
                         .WithMany("splits")
                         .HasForeignKey("transactionid");
 
@@ -589,37 +406,31 @@ namespace DAOLib.Migrations
                     b.Navigation("transaction");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.TransactionsDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.Transactions", b =>
                 {
-                    b.HasOne("DAOLib.Models.AccountsDAO", "account")
+                    b.HasOne("DAOLib.Models.Accounts", "account")
                         .WithMany()
                         .HasForeignKey("accountid");
 
-                    b.HasOne("DAOLib.Models.CategoriesDAO", "category")
+                    b.HasOne("DAOLib.Models.Categories", "category")
                         .WithMany()
                         .HasForeignKey("categoryid");
 
-                    b.HasOne("DAOLib.Models.InvestmentProductsDAO", "investmentProducts")
-                        .WithMany()
-                        .HasForeignKey("investmentProductsid");
-
-                    b.HasOne("DAOLib.Models.PersonsDAO", "person")
+                    b.HasOne("DAOLib.Models.Persons", "person")
                         .WithMany()
                         .HasForeignKey("personid");
 
-                    b.HasOne("DAOLib.Models.TagsDAO", "tag")
+                    b.HasOne("DAOLib.Models.Tags", "tag")
                         .WithMany()
                         .HasForeignKey("tagid");
 
-                    b.HasOne("DAOLib.Models.TransactionsStatusDAO", "transactionStatus")
+                    b.HasOne("DAOLib.Models.TransactionsStatus", "transactionStatus")
                         .WithMany()
                         .HasForeignKey("transactionStatusid");
 
                     b.Navigation("account");
 
                     b.Navigation("category");
-
-                    b.Navigation("investmentProducts");
 
                     b.Navigation("person");
 
@@ -628,29 +439,29 @@ namespace DAOLib.Migrations
                     b.Navigation("transactionStatus");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.TransactionsRemindersDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.TransactionsReminders", b =>
                 {
-                    b.HasOne("DAOLib.Models.AccountsDAO", "account")
+                    b.HasOne("DAOLib.Models.Accounts", "account")
                         .WithMany()
                         .HasForeignKey("accountid");
 
-                    b.HasOne("DAOLib.Models.CategoriesDAO", "category")
+                    b.HasOne("DAOLib.Models.Categories", "category")
                         .WithMany()
                         .HasForeignKey("categoryid");
 
-                    b.HasOne("DAOLib.Models.PeriodsRemindersDAO", "periodsReminders")
+                    b.HasOne("DAOLib.Models.PeriodsReminders", "periodsReminders")
                         .WithMany()
                         .HasForeignKey("periodsRemindersid");
 
-                    b.HasOne("DAOLib.Models.PersonsDAO", "person")
+                    b.HasOne("DAOLib.Models.Persons", "person")
                         .WithMany()
                         .HasForeignKey("personid");
 
-                    b.HasOne("DAOLib.Models.TagsDAO", "tag")
+                    b.HasOne("DAOLib.Models.Tags", "tag")
                         .WithMany()
                         .HasForeignKey("tagid");
 
-                    b.HasOne("DAOLib.Models.TransactionsStatusDAO", "transactionStatus")
+                    b.HasOne("DAOLib.Models.TransactionsStatus", "transactionStatus")
                         .WithMany()
                         .HasForeignKey("transactionStatusid");
 
@@ -667,12 +478,27 @@ namespace DAOLib.Migrations
                     b.Navigation("transactionStatus");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.TransactionsDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.AccountsTypes", b =>
+                {
+                    b.Navigation("accounts");
+                });
+
+            modelBuilder.Entity("DAOLib.Models.Categories", b =>
+                {
+                    b.Navigation("accounts");
+                });
+
+            modelBuilder.Entity("DAOLib.Models.CategoriesTypes", b =>
+                {
+                    b.Navigation("categories");
+                });
+
+            modelBuilder.Entity("DAOLib.Models.Transactions", b =>
                 {
                     b.Navigation("splits");
                 });
 
-            modelBuilder.Entity("DAOLib.Models.TransactionsRemindersDAO", b =>
+            modelBuilder.Entity("DAOLib.Models.TransactionsReminders", b =>
                 {
                     b.Navigation("splits");
                 });
