@@ -28,7 +28,7 @@ namespace GastosRYC.ViewModels
 
         public TransactionViewModel()
         {
-            IncrementalItemsSource = new IncrementalList<Transactions>(LoadMoreItems) { MaxItemCount = 50 };
+            IncrementalItemsSource = new IncrementalList<Transactions>(LoadMoreItems) { MaxItemCount = 100 };
         }
 
         /// <summary>
