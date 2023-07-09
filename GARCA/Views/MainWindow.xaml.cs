@@ -3,6 +3,7 @@ using GARCA.BO.ModelsView;
 using GARCA.BO.Services;
 using GARCA.Views;
 using GARCA.Views.Common;
+using GARCA.WebReport;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Windows.Tools.Controls;
 using System;
@@ -71,6 +72,21 @@ namespace GARCA
             {
                 ((PartialPortfolio)actualPrincipalContent).loadPortfolio();
                 loadAccounts();
+            }
+        }
+
+
+        private async void btnUpdateReportWeb_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                clsWebReport webReport = new();
+                await webReport.writeReport();
+                MessageBox.Show("Proceso completado", "Actualizar ReportWeb");
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show("Error mientras actualizaba ReportWeb: " + ex.Message, "Actualizar ReportWeb");
             }
         }
 
@@ -447,6 +463,6 @@ namespace GARCA
         }
 
 
-        #endregion        
+        #endregion
     }
 }
