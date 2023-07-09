@@ -1,0 +1,62 @@
+﻿using GARCA.BO.Extensions;
+
+using GARCA.BO.Models;
+using GARCA.BO.ModelsView;
+using GARCA.DAO.Managers;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace GARCA.BO.Services
+{
+    public class InvestmentProductsService
+    {
+        private readonly InvestmentProductsManager investmentProductsManager;
+        private static InvestmentProductsService? _instance;
+        private static readonly object _lock = new();
+
+        public static InvestmentProductsService Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        _instance ??= new InvestmentProductsService();
+                    }
+                }
+                return _instance;
+            }
+        }
+
+        private InvestmentProductsService()
+        {
+            investmentProductsManager = new();
+        }
+
+        public List<InvestmentProducts?>? getAll()
+        {
+            return investmentProductsManager.getAll()?.toListBO();
+        }
+
+        public InvestmentProducts? getByID(int? id)
+        {
+            return (InvestmentProducts?)investmentProductsManager.getByID(id);
+        }
+
+        public void update(InvestmentProducts investmentProducts)
+        {
+            investmentProductsManager.update(investmentProducts?.toDAO());
+        }
+
+        public void delete(InvestmentProducts investmentProducts)
+        {
+            investmentProductsManager.delete(investmentProducts?.toDAO());
+        }
+
+        public async Task<List<InvestmentProducts?>?> getAllOpened()
+        {
+            return await Task.Run(() => investmentProductsManager.getAllOpened()?.toListBO());
+        }
+    }
+}
