@@ -124,7 +124,7 @@ namespace GastosRYC
                     }
                     else if (actualPrincipalContent is PartialPortfolio)
                     {
-                        ((PartialPortfolio)actualPrincipalContent).loadPortfolio();                        
+                        ((PartialPortfolio)actualPrincipalContent).loadPortfolio();
                         loadAccounts();
                     }
                     break;
@@ -225,7 +225,7 @@ namespace GastosRYC
             {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
             }
-            else if(actualPrincipalContent is PartialHome)
+            else if (actualPrincipalContent is PartialHome)
             {
                 ((PartialHome)actualPrincipalContent).loadCharts();
             }
@@ -344,7 +344,7 @@ namespace GastosRYC
         public void loadAccounts()
         {
             AccountsView? accountsView = null;
-            if(lvAccounts != null && lvAccounts.SelectedItem != null)
+            if (lvAccounts != null && lvAccounts.SelectedItem != null)
             {
                 accountsView = lvAccounts.SelectedValue as AccountsView;
             }
@@ -356,10 +356,10 @@ namespace GastosRYC
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypesid", ListSortDirection.Ascending));
             refreshBalance();
 
-            if(accountsView != null)
+            if (accountsView != null)
             {
                 int index = -1;
-                for(int i=0;i<lvAccounts.Items.Count-1;i++)
+                for (int i = 0; i < lvAccounts.Items.Count - 1; i++)
                 {
                     if (((AccountsView)lvAccounts.Items[i]).id.Equals(accountsView.id))
                     {
@@ -396,7 +396,7 @@ namespace GastosRYC
                         Transactions? tFirst = TransactionsService.Instance.getByAccount(accounts)?.FirstOrDefault();
                         if (tFirst != null)
                         {
-                            await Task.Run(() => TransactionsService.Instance.refreshBalanceTransactions(tFirst,true));
+                            await Task.Run(() => TransactionsService.Instance.refreshBalanceTransactions(tFirst, true));
                         }
                         loadDialog.performeStep();
                     }
@@ -412,37 +412,37 @@ namespace GastosRYC
             catch (Exception ex)
             {
                 MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de saldos");
-            }           
+            }
         }
 
         private async Task updatePrices()
         {
-            try
+
+            List<InvestmentProducts?>? lInvestmentProducts = InvestmentProductsService.Instance.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url) || x.active == true).ToList();
+
+            if (lInvestmentProducts != null)
             {
-                List<InvestmentProducts?>? lInvestmentProducts = InvestmentProductsService.Instance.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url) || x.active == true).ToList();
+                LoadDialog loadDialog = new(lInvestmentProducts.Count);
+                loadDialog.Show();
 
-                if (lInvestmentProducts != null)
+                foreach (InvestmentProducts? investmentProducts in lInvestmentProducts)
                 {
-                    LoadDialog loadDialog = new(lInvestmentProducts.Count);
-                    loadDialog.Show();
-
-                    foreach (InvestmentProducts? investmentProducts in lInvestmentProducts)
+                    try
                     {
                         await InvestmentProductsPricesService.Instance.getPricesOnlineAsync(investmentProducts);
                         loadDialog.performeStep();
                     }
-
-                    loadDialog.Close();
-                    MessageBox.Show("Actualizado con exito!", "Actualización de precios");
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ha un ocurrido un error actualizando {investmentProducts.description} ({investmentProducts.id}): {ex.Message}", "Actualización de precios");
+                    }
                 }
-                else
-                {
-                    MessageBox.Show("No hay productos financieros a actualizar", "Actualización de precios");
-                }
+                loadDialog.Close();
+                MessageBox.Show("Actualizado con exito!", "Actualización de precios");
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de precios");
+                MessageBox.Show("No hay productos financieros a actualizar", "Actualización de precios");
             }
         }
 
