@@ -1,22 +1,17 @@
-﻿using System;
+﻿using GARCA.BO.Models;
+using GARCA.BO.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace GARCA.WebReport
 {
     public class clsWebReport
     {
-        private readonly StringBuilder html;
-        private readonly StringBuilder js;
-
-        public clsWebReport()
-        {
-            html = new();
-            js = new();
-        }
-
         public async Task writeReport()
         {
             await writeData();
@@ -24,23 +19,68 @@ namespace GARCA.WebReport
 
         private async Task writeData()
         {
+            StringBuilder js = new();
             try
             {
-                js.AppendLine(@"
-                                    var chartData = [
-                                            { month: 'Jan', sales: 35 }, { month: 'Feb', sales: 28 },
-                                            { month: 'Mar', sales: 34 }, { month: 'Apr', sales: 32 },
-                                            { month: 'May', sales: 40 }, { month: 'Jun', sales: 32 },
-                                            { month: 'Jul', sales: 35 }, { month: 'Aug', sales: 55 },
-                                            { month: 'Sep', sales: 38 }, { month: 'Oct', sales: 30 },
-                                            { month: 'Nov', sales: 25 }, { month: 'Dec', sales: 32 }
-                                    ];                                   
-                              ");
-                File.WriteAllText("..\\Web\\data.js", js.ToString());
+                js.AppendLine("var chartData = [");
+
+                var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpennedWithoutTransOrderByDateAsc());
+
+                for (int i = 0; i < transactions.Count; i++)
+                {
+                    Transactions? trans = transactions[i];
+                    js.Append(@"{ date: '" + dateToStringJS(trans.date) + "', datenum: " + dateNumberToStringJS(trans.date)
+                        + ", category: '" + trans.categoryDescripGrid + "', categoryid: " + (trans.categoryid == null ? -99 : trans.categoryid) +
+                        ", amount: " + decimalToStringJS(trans.amount) + " }");
+
+                    if (i < transactions.Count - 1)
+                    {
+                        js.AppendLine(",");
+                    }
+                }
+                js.Append("\n];");
+
+                File.WriteAllText("..\\Web\\Resources\\js\\data.js", js.ToString());
             }
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        private string decimalToStringJS(decimal? amount)
+        {
+            if (amount == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return amount.ToString().Replace(".", "").Replace(",", ".");
+            }
+        }
+
+        private string dateToStringJS(DateTime? date)
+        {
+            if (date == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return $"{date.Value.Year.ToString("0000")}-{date.Value.Month.ToString("00")}-{date.Value.Day.ToString("00")}";
+            }
+        }
+
+        private string dateNumberToStringJS(DateTime? date)
+        {
+            if (date == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return $"{date.Value.Year.ToString("0000") + date.Value.Month.ToString("00") + date.Value.Day.ToString("00")}";
             }
         }
     }

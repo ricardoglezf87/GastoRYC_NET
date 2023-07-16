@@ -53,6 +53,15 @@ namespace GARCA.BO.Services
         {
             return transactionsManager.getAllOpennedOrderByDateDesc()?.toListBO();
         }
+        public List<Transactions?>? getAllOpennedOrderByDateAsc()
+        {
+            return transactionsManager.getAllOpennedOrderByDateAsc()?.toListBO();
+        }
+
+        public List<Transactions?>? getAllOpennedWithoutTransOrderByDateAsc()
+        {
+            return transactionsManager.getAllOpennedWithoutTransOrderByDateAsc()?.toListBO();
+        }
 
         public List<Transactions?>? getAllOpennedOrderByOrderDesc()
         {

@@ -73,6 +73,30 @@ namespace GARCA.DAO.Managers
             }
         }
 
+        public List<TransactionsDAO>? getAllOpennedOrderByDateAsc()
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?
+                    .Where(x => !x.account.closed.HasValue || !x.account.closed.Value)?
+                    .OrderBy(x => x.date)?.ToList();
+            }
+        }
+
+        public List<TransactionsDAO>? getAllOpennedWithoutTransOrderByDateAsc()
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?
+                    .Where(x => (!x.account.closed.HasValue || !x.account.closed.Value) 
+                        && x.category.categoriesTypesid != (int)CategoriesTypesManager.eCategoriesTypes.Transfers
+                        && x.category.categoriesTypesid != (int)CategoriesTypesManager.eCategoriesTypes.Specials)?
+                    .OrderBy(x => x.date)?.ToList();
+            }
+        }
+
         public List<TransactionsDAO>? getByPerson(PersonsDAO? persons)
         {
             return getByPerson(persons?.id);
