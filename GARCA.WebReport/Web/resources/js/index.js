@@ -1,9 +1,6 @@
 
 
 ej.base.registerLicense("Ngo9BigBOggjHTQxAR8/V1NGaF5cXmtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdgWXhfdnRcRmBcVkN2XkY=");
-var summaryData = generateSummary();
-
-
 
 var ele = document.getElementById('container');
 if (ele) {
@@ -21,7 +18,7 @@ var chart = new ej.charts.Chart({
         labelFormat: '${value}'
     },
     series: [{
-        dataSource: summaryData,
+        dataSource: null,
         name: 'Sales',
         xName: 'category',
         yName: 'amount',
@@ -43,14 +40,12 @@ var piechart = new ej.charts.AccumulationChart({
     },
 	series: [
         {
-            dataSource: summaryData,
+            dataSource: null,
             xName: 'category',
             yName: 'amount'			
         }
     ]
 }, '#elementPie');
-
-filterChart('2023/03');
 
 var daterangepicker = new ej.calendars.DateRangePicker({
         placeholder: 'Select a range',
@@ -61,9 +56,11 @@ var daterangepicker = new ej.calendars.DateRangePicker({
     });
     daterangepicker.appendTo('#elementDate');
 	
-function filterChart(selectedMonth) 
+filterChart();
+	
+function filterChart() 
 {
-    var filteredData = filterData(summaryData,selectedMonth);
+    var filteredData = generateSummaryWithData(filterDataExpenses(20230601,20230630),-1);
     
 	chart.series[0].dataSource = filteredData;
     chart.refresh();
