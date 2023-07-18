@@ -38,34 +38,46 @@ var piechart = new ej.charts.AccumulationChart({
     tooltip: {
         enable: true
     },
-	series: [
+    series: [
         {
             dataSource: null,
             xName: 'category',
-            yName: 'amount'			
+            yName: 'amount'
         }
     ]
 }, '#elementPie');
 
 var daterangepicker = new ej.calendars.DateRangePicker({
-        placeholder: 'Select a range',
-        //sets the start date in the range
-        startDate: new Date("11/9/2017"),
-        //sets the end date in the range
-        endDate: new Date("11/21/2017")
-    });
-    daterangepicker.appendTo('#elementDate');
-	
+
+    placeholder: 'Selecciona un rango',
+    format: 'dd/MM/yyyy',
+    startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    endDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+    presets: [
+        { label: 'Hoy', start: new Date(), end: new Date() },
+        { label: 'Este mes', start: new Date(new Date().setDate(1)), end: new Date() },
+        { label: 'Mes anterior', start: new Date(new Date(new Date().setMonth(new Date().getMonth() - 1)).setDate(1)), end: new Date() },
+        { label: 'Año Actual', start: new Date(new Date().getFullYear(), 0, 1), end: new Date() },
+        { label: 'Año Anterior', start: new Date(new Date().getFullYear() - 1, 0, 1), end: new Date() },
+
+    ],
+    change: dateChange
+});
+daterangepicker.appendTo('#elementDate');
+
 filterChart();
-	
-function filterChart() 
-{
-    var filteredData = generateSummaryWithData(filterDataExpenses(20230601,20230630),-1);
-    
-	chart.series[0].dataSource = filteredData;
+
+function dateChange(args) {
+    filterChart();
+}
+
+function filterChart() {
+    var filteredData = generateSummaryWithData(filterDataExpenses(daterangepicker.startDate, daterangepicker.endDate), -1);
+
+    chart.series[0].dataSource = filteredData;
     chart.refresh();
-	
-	piechart.series[0].dataSource = filteredData;
+
+    piechart.series[0].dataSource = filteredData;
     piechart.refresh();
 }
 
