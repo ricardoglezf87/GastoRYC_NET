@@ -80,8 +80,8 @@ namespace GARCA
         {
             try
             {
-                clsWebReport webReport = new();
-                await webReport.writeReport();
+                GoogleSheetsUpdater googleSheetsUpdater = new();
+                await googleSheetsUpdater.ActualizarHoja();
                 MessageBox.Show("Proceso completado", "Actualizar ReportWeb");
             }
             catch (Exception ex) 
