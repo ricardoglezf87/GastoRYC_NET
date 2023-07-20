@@ -36,18 +36,20 @@ namespace GARCA.WebReport
                 var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpenned());
                 List<string[]> filasDeDatos = new()
                 {
-                    new string[] { "Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid" }
+                    new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid" }
                 };
 
                 for (int i = 0; i < transactions.Count; i++)
                 {
                     Transactions? trans = transactions[i];
 
-                    if (trans.splits != null && trans.splits.Count > 0)
+                    List<Splits?>? splits = await Task.Run(() => SplitsService.Instance.getbyTransactionid(trans.id));
+
+                    if (splits != null && splits.Count > 0)
                     {
-                        foreach (var spl in trans.splits)
+                        foreach (var spl in splits)
                         {
-                            if (spl.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                            if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
                             {
                                 filasDeDatos.Add(
                                    new string[] {
@@ -78,9 +80,9 @@ namespace GARCA.WebReport
                                 (trans.personid ?? -99).ToString(),
                                 trans.categoryDescripGrid ?? "Sin Categoria",
                                 (trans.categoryid??-99).ToString(),
+                                decimalToStringJS(trans.amount),
                                 trans.tag?.description ?? "Sin Tag",
-                                (trans.tagid??-99).ToString(),
-                                decimalToStringJS(trans.amount)
+                                (trans.tagid??-99).ToString(),                                
                             });
                     }
                 }
