@@ -33,23 +33,56 @@ namespace GARCA.WebReport
 
             try
             {
-                var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpennedWithoutTransOrderByDateAsc());
+                var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpenned());
                 List<string[]> filasDeDatos = new()
                 {
-                    new string[] { "Date", "Category", "Categoryid", "Amount" }
+                    new string[] { "Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid" }
                 };
 
                 for (int i = 0; i < transactions.Count; i++)
                 {
                     Transactions? trans = transactions[i];
 
-                    filasDeDatos.Add(
-                        new string[] {
-                            dateToStringJS(trans.date),
-                            trans.categoryDescripGrid ?? "Sin Categoria",
-                            (trans.categoryid??-99).ToString(),
-                            decimalToStringJS(trans.amount)
-                        });
+                    if (trans.splits != null && trans.splits.Count > 0)
+                    {
+                        foreach (var spl in trans.splits)
+                        {
+                            if (spl.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                            {
+                                filasDeDatos.Add(
+                                   new string[] {
+                                        trans.id.ToString(),
+                                        dateToStringJS(trans.date),
+                                        trans.account?.description ?? "Sin Cuenta",
+                                        (trans.accountid ?? -99).ToString(),
+                                        trans.personDescripGrid ?? "Sin Persona",
+                                        (trans.personid ?? -99).ToString(),
+                                        spl.category?.description ?? "Sin Categoria",
+                                        (spl.categoryid??-99).ToString(),
+                                        decimalToStringJS(spl.amount),
+                                        trans.tag?.description ?? "Sin Tag",
+                                        (trans.tagid??-99).ToString()
+                                   });
+                            }
+                        }
+                    }
+                    else if (trans.category == null || trans.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                    {
+                        filasDeDatos.Add(
+                            new string[] {
+                                trans.id.ToString(),
+                                dateToStringJS(trans.date),
+                                trans.account?.description ?? "Sin Cuenta",
+                                (trans.accountid ?? -99).ToString(),
+                                trans.personDescripGrid ?? "Sin Persona",
+                                (trans.personid ?? -99).ToString(),
+                                trans.categoryDescripGrid ?? "Sin Categoria",
+                                (trans.categoryid??-99).ToString(),
+                                trans.tag?.description ?? "Sin Tag",
+                                (trans.tagid??-99).ToString(),
+                                decimalToStringJS(trans.amount)
+                            });
+                    }
                 }
 
                 await writeSheet(service, filasDeDatos);

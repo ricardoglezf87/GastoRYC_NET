@@ -25,6 +25,9 @@ namespace GARCA.BO.Models
 
         public virtual int? tranferid { set; get; }
 
+        public virtual Decimal? amount => amountIn - amountOut;
+
+
         internal SplitsDAO toDAO()
         {
             return new SplitsDAO()
