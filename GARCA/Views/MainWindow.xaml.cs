@@ -80,12 +80,15 @@ namespace GARCA
         {
             try
             {
+                Mouse.OverrideCursor = Cursors.Wait;
                 GoogleSheetsUpdater googleSheetsUpdater = new();
-                await googleSheetsUpdater.ActualizarHoja();
+                await googleSheetsUpdater.UpdateSheet();
+                Mouse.OverrideCursor = null;
                 MessageBox.Show("Proceso completado", "Actualizar ReportWeb");
             }
             catch (Exception ex) 
             {
+                Mouse.OverrideCursor = null;
                 MessageBox.Show("Error mientras actualizaba ReportWeb: " + ex.Message, "Actualizar ReportWeb");
             }
         }

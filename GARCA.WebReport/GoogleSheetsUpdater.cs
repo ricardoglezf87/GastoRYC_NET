@@ -2,7 +2,8 @@
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Sheets.v4;
-
+using GARCA.BO.Models;
+using GARCA.BO.Services;
 
 namespace GARCA.WebReport
 {
@@ -26,32 +27,113 @@ namespace GARCA.WebReport
                                         }
                                         ";
 
-        public async Task ActualizarHoja()
+        public async Task UpdateSheet()
         {
-            // Cargar las credenciales desde el archivo JSON
-            GoogleCredential credential;
+            var service = await getSheetsService();
 
-            credential = GoogleCredential.FromJson(jsonKey)
-                .CreateScoped(SheetsService.Scope.Spreadsheets);
+            try
+            {
+                var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpennedWithoutTransOrderByDateAsc());
+                List<string[]> filasDeDatos = new()
+                {
+                    new string[] { "Date", "Category", "Categoryid", "Amount" }
+                };
 
+                for (int i = 0; i < transactions.Count; i++)
+                {
+                    Transactions? trans = transactions[i];
+
+                    filasDeDatos.Add(
+                        new string[] {
+                            dateToStringJS(trans.date),
+                            trans.categoryDescripGrid ?? "Sin Categoria",
+                            (trans.categoryid??-99).ToString(),
+                            decimalToStringJS(trans.amount)
+                        });
+                }
+
+                await writeSheet(service, filasDeDatos);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private string decimalToStringJS(decimal? amount)
+        {
+            if (amount == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return amount.ToString().Replace(".", "").Replace(",", ".");
+            }
+        }
+
+        private string dateToStringJS(DateTime? date)
+        {
+            if (date == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return $"{date.Value.Year.ToString("0000")}-{date.Value.Month.ToString("00")}-{date.Value.Day.ToString("00")}";
+            }
+        }
+
+        private string dateNumberToStringJS(DateTime? date)
+        {
+            if (date == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return $"{date.Value.Year.ToString("0000") + date.Value.Month.ToString("00") + date.Value.Day.ToString("00")}";
+            }
+        }
+
+        public async Task<SheetsService> getSheetsService()
+        {
             // Crear el servicio de Google Sheets
             var service = new SheetsService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = credential,
+                HttpClientInitializer = await getCredentials(),
                 ApplicationName = "GARCA"
             });
 
-            // Crear los datos que se actualizarán
-            string[] valores = { "Prueba", "Prueba2","85","12.5" };
-            var valueRange = new ValueRange
-            {
-                Values = new List<IList<object>> { valores }
-            };
+            return service;
+        }
 
-            // Realizar la actualización
-            var request = service.Spreadsheets.Values.Update(valueRange, SpreadsheetId, $"{SheetName}!A2");
-            request.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.RAW;
-            request.Execute();
+        public async Task<GoogleCredential> getCredentials()
+        {
+            return await Task.Run(() => GoogleCredential.FromJson(jsonKey)
+                .CreateScoped(SheetsService.Scope.Spreadsheets));
+        }
+
+        public async Task writeSheet(SheetsService service, List<string[]> dataRows)
+        {
+            var valueRanges = new List<ValueRange>();
+            for (int i = 0; i < dataRows.Count; i++)
+            {
+                var valueRange = new ValueRange
+                {
+                    Range = $"{SheetName}!A{i + 1}",
+                    Values = new List<IList<object>> { dataRows[i] }
+                };
+                valueRanges.Add(valueRange);
+            }
+
+            var batchUpdateRequest = new BatchUpdateValuesRequest
+            {
+                ValueInputOption = "RAW",
+                Data = valueRanges
+            };
+            var request = service.Spreadsheets.Values.BatchUpdate(batchUpdateRequest, SpreadsheetId);
+            await Task.Run(() => request.Execute());
         }
     }
 }
