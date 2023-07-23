@@ -36,7 +36,7 @@ namespace GARCA.WebReport
                 var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpenned());
                 List<string[]> filasDeDatos = new()
                 {
-                    new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid" }
+                    new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
                 };
 
                 for (int i = 0; i < transactions.Count; i++)
@@ -47,10 +47,12 @@ namespace GARCA.WebReport
 
                     if (splits != null && splits.Count > 0)
                     {
+                        Decimal? balance = trans.balance ?? 0 - trans.amount ?? 0;
                         foreach (var spl in splits)
                         {
                             if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
                             {
+                                balance += spl.amount ?? 0;
                                 filasDeDatos.Add(
                                    new string[] {
                                         trans.id.ToString(),
@@ -63,7 +65,9 @@ namespace GARCA.WebReport
                                         (spl.categoryid??-99).ToString(),
                                         decimalToStringJS(spl.amount),
                                         trans.tag?.description ?? "Sin Tag",
-                                        (trans.tagid??-99).ToString()
+                                        (trans.tagid??-99).ToString(),
+                                        trans.memo?.ToString() ?? String.Empty,
+                                        decimalToStringJS(balance)
                                    });
                             }
                         }
@@ -82,7 +86,9 @@ namespace GARCA.WebReport
                                 (trans.categoryid??-99).ToString(),
                                 decimalToStringJS(trans.amount),
                                 trans.tag?.description ?? "Sin Tag",
-                                (trans.tagid??-99).ToString(),                                
+                                (trans.tagid??-99).ToString(),
+                                trans.memo?.ToString() ?? String.Empty,
+                                decimalToStringJS(trans.balance)
                             });
                     }
                 }
