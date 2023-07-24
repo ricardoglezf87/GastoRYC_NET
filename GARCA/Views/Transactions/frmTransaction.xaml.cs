@@ -202,23 +202,23 @@ namespace GARCA.Views
             }
         }
 
-        private void calculateSharesByPrice()
+        private void calculatePriceByShares()
         {           
             String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:","Transacción");
             if(!String.IsNullOrWhiteSpace(importe))
             {
-                Decimal? aux = Decimal.Parse(importe.Replace(".",",")) / txtPriceShares.Value;
-                txtNumShares.Value = (double?) aux;
+                Double? aux = Double.Parse(importe.Replace(".",",")) / txtNumShares.Value;
+                txtPriceShares.Value = (decimal?) aux;
             }
         }
 
-        private void calculatePriceByShares()
+        private void calculateSharesByPrice()
         {
             String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:", "Transacción");
             if (!String.IsNullOrWhiteSpace(importe))
             {
                 Decimal? aux = Decimal.Parse(importe.Replace(".", ",")) / txtPriceShares.Value;
-                txtPriceShares.Value = aux;
+                txtNumShares.Value = (double?) aux;
             }
         }
 
