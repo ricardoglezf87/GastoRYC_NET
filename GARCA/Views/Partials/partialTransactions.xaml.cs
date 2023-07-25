@@ -231,26 +231,19 @@ namespace GARCA.Views
 
         public void loadTransactions()
         {
+            setColumnVisibility(TransactionViewModel.accountsSelected);
+        }
+
+        public void setColumnVisibility(AccountsView? _accountSelected = null)
+        {
+            TransactionViewModel.accountsSelected = _accountSelected;
+            
             if (gvTransactions.View != null)
             {
                 gvTransactions.View.Refresh();
-            }
-            ApplyFilters(TransactionViewModel.accountsSelected);
-        }
-
-        public bool accountFilter(object? o)
-        {
-            return o is Transactions p && p.account?.id == TransactionViewModel.accountsSelected?.id;
-        }
-
-        public void ApplyFilters(AccountsView? _accountSelected = null)
-        {
-            TransactionViewModel.accountsSelected = _accountSelected;
-            if (gvTransactions.View != null)
-            {
+            
                 if (_accountSelected != null)
                 {
-                    gvTransactions.View.Filter = accountFilter;
                     gvTransactions.Columns["account.description"].IsHidden = true;
 
                     if (TransactionViewModel.accountsSelected.accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
@@ -270,7 +263,6 @@ namespace GARCA.Views
                 }
                 else
                 {
-                    gvTransactions.View.Filter = null;
                     gvTransactions.Columns["account.description"].IsHidden = false;
                 }                
             }

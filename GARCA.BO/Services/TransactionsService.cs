@@ -65,7 +65,12 @@ namespace GARCA.BO.Services
 
         public List<Transactions?>? getAllOpennedOrderByOrderDesc()
         {
-            return transactionsManager.getAllOpennedOrderByDateDesc()?.toListBO()?.OrderByDescending(x => x.orden)?.ToList();
+            return transactionsManager.getAllOpenned()?.toListBO()?.OrderByDescending(x => x.orden)?.ToList();
+        }
+
+        public List<Transactions?>? getAllOpennedOrderByOrderDesc(int startIndex, int nPage)
+        {
+            return getAllOpennedOrderByOrderDesc()?.Skip(startIndex)?.Take(nPage)?.ToList();
         }
 
         public async Task<List<Transactions?>?> getAllAsync()
@@ -113,6 +118,13 @@ namespace GARCA.BO.Services
         {
             return transactionsManager.getByAccount(id)?.toListBO()?.OrderByDescending(x => x.orden)?.ToList();
         }
+
+        public List<Transactions?>? getByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
+        {
+            return getByAccountOrderByOrderDesc(id)?.Skip(startIndex)?.Take(nPage)?.ToList();
+        }
+
+        
 
         public List<Transactions?>? getByAccount(Accounts? accounts)
         {

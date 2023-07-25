@@ -42,6 +42,12 @@ namespace GARCA.DAO.Managers
                 return getEntyWithInclude(repository)?.Where(x => id.Equals(x.accountid))?.ToList();
             }
         }
+
+        public List<TransactionsDAO>? getByAccount(int? id, int startIndex, int nPage)
+        {
+            return getByAccount(id)?.Skip(startIndex)?.Take(nPage)?.ToList();
+        }
+
         public List<TransactionsDAO>? getByAccountOrderByDateDesc(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
@@ -71,6 +77,11 @@ namespace GARCA.DAO.Managers
                     .Where(x => !x.account.closed.HasValue || !x.account.closed.Value)?
                     .OrderByDescending(x => x.date)?.ToList();
             }
+        }
+
+        public List<TransactionsDAO>? getAllOpennedOrderByDateDesc(int startIndex, int nPage)
+        {
+           return getAllOpennedOrderByDateDesc()?.Skip(startIndex)?.Take(nPage)?.ToList();
         }
 
         public List<TransactionsDAO>? getAllOpennedOrderByDateAsc()

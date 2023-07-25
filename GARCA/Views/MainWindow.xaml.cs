@@ -171,7 +171,7 @@ namespace GARCA
 
                 if (actualPrincipalContent is PartialTransactions)
                 {
-                    ((PartialTransactions)actualPrincipalContent).ApplyFilters((AccountsView?)lvAccounts.SelectedValue);
+                    ((PartialTransactions)actualPrincipalContent).setColumnVisibility((AccountsView?)lvAccounts.SelectedValue);
                 }
             }
         }
@@ -184,7 +184,7 @@ namespace GARCA
 
             if (actualPrincipalContent is PartialTransactions)
             {
-                ((PartialTransactions)actualPrincipalContent).ApplyFilters();
+                ((PartialTransactions)actualPrincipalContent).setColumnVisibility();
             }
         }
 
