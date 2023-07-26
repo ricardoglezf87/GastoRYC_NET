@@ -59,13 +59,7 @@ namespace GARCA.BO.Models
 
         public virtual Decimal? amount => (investmentCategory.HasValue && investmentCategory.Value == false) ? Math.Round((numShares ?? 0) * (pricesShares ?? 0),2) : amountIn - amountOut;
 
-        public virtual Double? orden => Convert.ToDouble(
-                    date?.Year.ToString("0000")
-                    + date?.Month.ToString("00")
-                    + date?.Day.ToString("00")
-                    + id.ToString("000000")
-                    + (amountIn != 0 ? "1" : "0"));
-
+        public virtual Double? orden { set; get; }
         
         public virtual Decimal? balance { set; get; }
 
@@ -95,7 +89,8 @@ namespace GARCA.BO.Models
                 pricesShares = this.pricesShares,
                 tagid = this.tagid,
                 tag = null,
-                balance = this.balance
+                balance = this.balance,
+                orden = this.orden
             };
         }
 
@@ -128,7 +123,8 @@ namespace GARCA.BO.Models
                     pricesShares = v.pricesShares,
                     tagid = v.tagid,
                     tag = (v.tag != null) ? (Tags?)v.tag : null,
-                    balance = v.balance
+                    balance = v.balance,
+                    orden = v.orden
                 };
         }
     }

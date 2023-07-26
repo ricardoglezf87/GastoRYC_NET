@@ -1,6 +1,8 @@
 ﻿using GARCA.BO.Extensions;
 using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.DAO.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,14 +65,9 @@ namespace GARCA.BO.Services
             return transactionsManager.getAllOpennedWithoutTransOrderByDateAsc()?.toListBO();
         }
 
-        public List<Transactions?>? getAllOpennedOrderByOrderDesc()
-        {
-            return transactionsManager.getAllOpenned()?.toListBO()?.OrderByDescending(x => x.orden)?.ToList();
-        }
-
         public List<Transactions?>? getAllOpennedOrderByOrderDesc(int startIndex, int nPage)
         {
-            return getAllOpennedOrderByOrderDesc()?.Skip(startIndex)?.Take(nPage)?.ToList();
+            return transactionsManager.getAllOpennedOrderByOrdenDesc(startIndex,nPage)?.toListBO();
         }
 
         public async Task<List<Transactions?>?> getAllAsync()
@@ -96,6 +93,7 @@ namespace GARCA.BO.Services
         public Transactions? update(Transactions transactions)
         {
             transactions.date = transactions.date.removeTime();
+            transactions.orden = createOrden(transactions);
             return (Transactions?)transactionsManager.update(transactions?.toDAO());
         }
 
@@ -116,15 +114,13 @@ namespace GARCA.BO.Services
 
         public List<Transactions?>? getByAccountOrderByOrderDesc(int? id)
         {
-            return transactionsManager.getByAccount(id)?.toListBO()?.OrderByDescending(x => x.orden)?.ToList();
+            return transactionsManager.getByAccountOrderByOrdenDesc(id)?.toListBO();
         }
 
         public List<Transactions?>? getByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
         {
-            return getByAccountOrderByOrderDesc(id)?.Skip(startIndex)?.Take(nPage)?.ToList();
+            return transactionsManager.getByAccountOrderByOrdenDesc(id,startIndex,nPage)?.toListBO();
         }
-
-        
 
         public List<Transactions?>? getByAccount(Accounts? accounts)
         {
@@ -144,6 +140,16 @@ namespace GARCA.BO.Services
         public int getNextID()
         {
             return transactionsManager.getNextID();
+        }
+
+        public double createOrden(Transactions transactions)
+        {
+            return Convert.ToDouble(
+                    transactions.date?.Year.ToString("0000")
+                    + transactions.date?.Month.ToString("00")
+                    + transactions.date?.Day.ToString("00")
+                    + transactions.id.ToString("000000")
+                    + (transactions.amountIn != 0 ? "1" : "0"));
         }
 
         public void saveChanges(ref Transactions? transactions)

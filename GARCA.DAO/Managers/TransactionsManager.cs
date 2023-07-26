@@ -59,6 +59,21 @@ namespace GARCA.DAO.Managers
             }
         }
 
+        public List<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id)
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?
+                    .Where(x => id.Equals(x.accountid))?
+                    .OrderByDescending(x => x.orden)?.ToList();
+            }
+        }
+        public List<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id,int startIndex, int nPage)
+        {
+            return getByAccountOrderByOrdenDesc(id)?.Skip(startIndex)?.Take(nPage)?.ToList();
+        }
+
         public List<TransactionsDAO>? getAllOpenned()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
@@ -79,9 +94,20 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public List<TransactionsDAO>? getAllOpennedOrderByDateDesc(int startIndex, int nPage)
+        public List<TransactionsDAO>? getAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
         {
-           return getAllOpennedOrderByDateDesc()?.Skip(startIndex)?.Take(nPage)?.ToList();
+            return getAllOpennedOrderByOrdenDesc()?.Skip(startIndex)?.Take(nPage)?.ToList();
+        }
+
+        public List<TransactionsDAO>? getAllOpennedOrderByOrdenDesc()
+        {
+            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                return getEntyWithInclude(repository)?
+                    .Where(x => !x.account.closed.HasValue || !x.account.closed.Value)?
+                    .OrderByDescending(x => x.orden)?.ToList();
+            }
         }
 
         public List<TransactionsDAO>? getAllOpennedOrderByDateAsc()
