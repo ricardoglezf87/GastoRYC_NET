@@ -1,7 +1,6 @@
 ﻿using GARCA.BO.Extensions;
 
 using GARCA.BO.Models;
-using GARCA.BO.ModelsView;
 using GARCA.DAO.Managers;
 using System.Collections.Generic;
 using System.Threading.Tasks;

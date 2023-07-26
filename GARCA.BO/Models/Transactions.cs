@@ -1,7 +1,6 @@
 ﻿using GARCA.DAO.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GARCA.BO.Models
 {
@@ -57,10 +56,10 @@ namespace GARCA.BO.Models
         public virtual String? personDescripGrid => (investmentCategory.HasValue && investmentCategory.Value == false) ?
             investmentProducts?.description ?? String.Empty : person?.name ?? String.Empty;
 
-        public virtual Decimal? amount => (investmentCategory.HasValue && investmentCategory.Value == false) ? Math.Round((numShares ?? 0) * (pricesShares ?? 0),2) : amountIn - amountOut;
+        public virtual Decimal? amount => (investmentCategory.HasValue && investmentCategory.Value == false) ? Math.Round((numShares ?? 0) * (pricesShares ?? 0), 2) : amountIn - amountOut;
 
         public virtual Double? orden { set; get; }
-        
+
         public virtual Decimal? balance { set; get; }
 
         internal TransactionsDAO toDAO()

@@ -58,7 +58,7 @@ namespace GARCA.Views
         private void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             InvestmentProducts investmentProducts = (InvestmentProducts)e.RowData;
-            
+
             if (investmentProducts.investmentProductsTypes == null && investmentProducts.investmentProductsTypesid != null)
             {
                 investmentProducts.investmentProductsTypes = InvestmentProductsTypesService.Instance.getByID(investmentProducts.investmentProductsTypesid);
@@ -90,6 +90,6 @@ namespace GARCA.Views
             gvInvestmentProducts.SearchHelper.Search(txtSearch.Text);
         }
 
-       
+
     }
 }

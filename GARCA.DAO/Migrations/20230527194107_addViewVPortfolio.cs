@@ -44,7 +44,7 @@ namespace GARCA.DAO.Migrations
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
-        {            
+        {
             migrationBuilder.Sql(@"
                 drop view VPortfolio;
             ");

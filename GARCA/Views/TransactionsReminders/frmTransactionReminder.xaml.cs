@@ -102,7 +102,7 @@ namespace GARCA.Views
 
         private void dtpDate_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Tab || e.Key == Key.Enter)
+            if (e.Key is Key.Tab or Key.Enter)
             {
                 if (dtpDate.Text.Length == 4)
                 {

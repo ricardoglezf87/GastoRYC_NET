@@ -9,7 +9,7 @@ namespace GARCA.DAO.Migrations
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
-        {            
+        {
             migrationBuilder.AddColumn<decimal>(
                 name: "balance",
                 table: "Transactions",
@@ -19,7 +19,7 @@ namespace GARCA.DAO.Migrations
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
-        {           
+        {
             migrationBuilder.DropColumn(
                 name: "balance",
                 table: "Transactions");

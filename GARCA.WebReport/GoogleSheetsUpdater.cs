@@ -1,9 +1,9 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Apis.Services;
-using Google.Apis.Sheets.v4.Data;
-using Google.Apis.Sheets.v4;
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Google.Apis.Sheets.v4;
+using Google.Apis.Sheets.v4.Data;
 
 namespace GARCA.WebReport
 {
@@ -30,9 +30,9 @@ namespace GARCA.WebReport
 
             try
             {
-               await updateTransactions(service);
-               await updateInvest(service);
-               await updateForecast(service);
+                await updateTransactions(service);
+                await updateInvest(service);
+                await updateForecast(service);
             }
             catch (Exception)
             {
@@ -236,38 +236,21 @@ namespace GARCA.WebReport
 
         private string decimalToStringJS(decimal? amount)
         {
-            if (amount == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return amount.ToString().Replace(".", "").Replace(",", ".");
-            }
+            return amount == null ? string.Empty : amount.ToString().Replace(".", "").Replace(",", ".");
         }
 
         private string dateToStringJS(DateTime? date)
         {
-            if (date == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return $"{date.Value.Year.ToString("0000")}-{date.Value.Month.ToString("00")}-{date.Value.Day.ToString("00")}";
-            }
+            return date == null
+                ? string.Empty
+                : $"{date.Value.Year.ToString("0000")}-{date.Value.Month.ToString("00")}-{date.Value.Day.ToString("00")}";
         }
 
         private string dateNumberToStringJS(DateTime? date)
         {
-            if (date == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return $"{date.Value.Year.ToString("0000") + date.Value.Month.ToString("00") + date.Value.Day.ToString("00")}";
-            }
+            return date == null
+                ? string.Empty
+                : $"{date.Value.Year.ToString("0000") + date.Value.Month.ToString("00") + date.Value.Day.ToString("00")}";
         }
 
         public async Task<SheetsService> getSheetsService()
@@ -288,7 +271,7 @@ namespace GARCA.WebReport
                 .CreateScoped(SheetsService.Scope.Spreadsheets));
         }
 
-        public async Task writeSheet(SheetsService service, List<string[]> dataRows,string spreadsheetId, string sheetName)
+        public async Task writeSheet(SheetsService service, List<string[]> dataRows, string spreadsheetId, string sheetName)
         {
             var valueRanges = new List<ValueRange>();
             for (int i = 0; i < dataRows.Count; i++)

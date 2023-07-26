@@ -3,9 +3,7 @@ using GARCA.BO.Models;
 using GARCA.BO.ModelsView;
 using GARCA.BO.Services;
 using GARCA.ViewModels;
-using Syncfusion.Data.Extensions;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.BO.Extensions.WindowsExtension;
@@ -108,7 +106,7 @@ namespace GARCA.Views
                             splitsReminders.memo = splits.memo;
                             splitsReminders.amountIn = splits.amountIn;
                             splitsReminders.amountOut = splits.amountOut;
-                            splitsReminders.tagid = splits.tagid; 
+                            splitsReminders.tagid = splits.tagid;
                             SplitsRemindersService.Instance.update(splitsReminders);
                         }
 
@@ -237,11 +235,11 @@ namespace GARCA.Views
         public void setColumnVisibility(AccountsView? _accountSelected = null)
         {
             TransactionViewModel.accountsSelected = _accountSelected;
-            
+
             if (gvTransactions.View != null)
             {
                 gvTransactions.View.Refresh();
-            
+
                 if (_accountSelected != null)
                 {
                     gvTransactions.Columns["account.description"].IsHidden = true;
@@ -264,7 +262,7 @@ namespace GARCA.Views
                 else
                 {
                     gvTransactions.Columns["account.description"].IsHidden = false;
-                }                
+                }
             }
         }
 

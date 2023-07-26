@@ -72,7 +72,7 @@ namespace GARCA.DAO.Managers
                 using (var unitOfWork = new UnitOfWork(new RYCContext()))
                 {
                     var repository = unitOfWork.GetRepositoryModelBase<T>();
-                    var entity = repository.Update(obj);                    
+                    var entity = repository.Update(obj);
                     repository.saveChanges();
                     return entity;
                 }

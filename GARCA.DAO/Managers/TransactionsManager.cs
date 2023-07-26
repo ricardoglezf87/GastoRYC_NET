@@ -6,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Transactions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace GARCA.DAO.Managers
 {
@@ -69,7 +67,7 @@ namespace GARCA.DAO.Managers
                     .OrderByDescending(x => x.orden)?.ToList();
             }
         }
-        public List<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id,int startIndex, int nPage)
+        public List<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id, int startIndex, int nPage)
         {
             return getByAccountOrderByOrdenDesc(id)?.Skip(startIndex)?.Take(nPage)?.ToList();
         }
@@ -127,7 +125,7 @@ namespace GARCA.DAO.Managers
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
                 return getEntyWithInclude(repository)?
-                    .Where(x => (!x.account.closed.HasValue || !x.account.closed.Value) 
+                    .Where(x => (!x.account.closed.HasValue || !x.account.closed.Value)
                         && x.category.categoriesTypesid != (int)CategoriesTypesManager.eCategoriesTypes.Transfers
                         && x.category.categoriesTypesid != (int)CategoriesTypesManager.eCategoriesTypes.Specials)?
                     .OrderBy(x => x.date)?.ToList();

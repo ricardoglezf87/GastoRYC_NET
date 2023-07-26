@@ -52,7 +52,7 @@ namespace GARCA.BO.Services
 
         public List<ExpirationsReminders?>? getAllPendingWithGeneration()
         {
-            return getAllWithGeneration()?.Where(x => x.done == null || x.done != true).ToList();
+            return getAllWithGeneration()?.Where(x => x.done is null or not true).ToList();
         }
 
         public List<ExpirationsReminders?>? getAllPendingWithoutFutureWithGeneration()
@@ -127,8 +127,8 @@ namespace GARCA.BO.Services
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
                     TransactionsService.Instance.saveChanges(ref transactions);
-                   
-                    foreach (SplitsReminders? splitsReminders in 
+
+                    foreach (SplitsReminders? splitsReminders in
                         SplitsRemindersService.Instance.getbyTransactionid(expirationsReminders.transactionsReminders.id))
                     {
                         Splits splits = new();

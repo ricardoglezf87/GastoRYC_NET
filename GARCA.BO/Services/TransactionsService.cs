@@ -1,7 +1,6 @@
 ﻿using GARCA.BO.Extensions;
 using GARCA.BO.Models;
 using GARCA.DAO.Managers;
-using GARCA.DAO.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +66,7 @@ namespace GARCA.BO.Services
 
         public List<Transactions?>? getAllOpennedOrderByOrderDesc(int startIndex, int nPage)
         {
-            return transactionsManager.getAllOpennedOrderByOrdenDesc(startIndex,nPage)?.toListBO();
+            return transactionsManager.getAllOpennedOrderByOrdenDesc(startIndex, nPage)?.toListBO();
         }
 
         public async Task<List<Transactions?>?> getAllAsync()
@@ -119,7 +118,7 @@ namespace GARCA.BO.Services
 
         public List<Transactions?>? getByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
         {
-            return transactionsManager.getByAccountOrderByOrdenDesc(id,startIndex,nPage)?.toListBO();
+            return transactionsManager.getByAccountOrderByOrdenDesc(id, startIndex, nPage)?.toListBO();
         }
 
         public List<Transactions?>? getByAccount(Accounts? accounts)
@@ -166,13 +165,13 @@ namespace GARCA.BO.Services
         }
 
         public void refreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false)
-        {                        
+        {
             List<Transactions?>? tList = getByAccount(tUpdate.accountid)?.OrderByDescending(x => x.orden)?.ToList();
             decimal? balanceTotal = 0;
 
-            if(tList != null)
+            if (tList != null)
             {
-                balanceTotal = tList.Sum(x=>x.amount);
+                balanceTotal = tList.Sum(x => x.amount);
             }
 
             if (tUpdate != null && tUpdate.date != null)

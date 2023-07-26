@@ -86,7 +86,7 @@ namespace GARCA
                 Mouse.OverrideCursor = null;
                 MessageBox.Show("Proceso completado", "Actualizar ReportWeb");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 Mouse.OverrideCursor = null;
                 MessageBox.Show("Error mientras actualizaba ReportWeb: " + ex.Message, "Actualizar ReportWeb");
@@ -143,7 +143,7 @@ namespace GARCA
                     }
                     else if (actualPrincipalContent is PartialPortfolio)
                     {
-                        ((PartialPortfolio)actualPrincipalContent).loadPortfolio();                        
+                        ((PartialPortfolio)actualPrincipalContent).loadPortfolio();
                         loadAccounts();
                     }
                     break;
@@ -244,7 +244,7 @@ namespace GARCA
             {
                 ((PartialTransactions)actualPrincipalContent).loadTransactions();
             }
-            else if(actualPrincipalContent is PartialHome)
+            else if (actualPrincipalContent is PartialHome)
             {
                 ((PartialHome)actualPrincipalContent).loadCharts();
             }
@@ -363,7 +363,7 @@ namespace GARCA
         public void loadAccounts()
         {
             AccountsView? accountsView = null;
-            if(lvAccounts != null && lvAccounts.SelectedItem != null)
+            if (lvAccounts != null && lvAccounts.SelectedItem != null)
             {
                 accountsView = lvAccounts.SelectedValue as AccountsView;
             }
@@ -375,10 +375,10 @@ namespace GARCA
             viewAccounts.SortDescriptions.Add(new SortDescription("accountsTypesid", ListSortDirection.Ascending));
             refreshBalance();
 
-            if(accountsView != null)
+            if (accountsView != null)
             {
                 int index = -1;
-                for(int i=0;i<lvAccounts.Items.Count-1;i++)
+                for (int i = 0; i < lvAccounts.Items.Count - 1; i++)
                 {
                     if (((AccountsView)lvAccounts.Items[i]).id.Equals(accountsView.id))
                     {
@@ -415,7 +415,7 @@ namespace GARCA
                         Transactions? tFirst = TransactionsService.Instance.getByAccount(accounts)?.FirstOrDefault();
                         if (tFirst != null)
                         {
-                            await Task.Run(() => TransactionsService.Instance.refreshBalanceTransactions(tFirst,true));
+                            await Task.Run(() => TransactionsService.Instance.refreshBalanceTransactions(tFirst, true));
                         }
                         loadDialog.performeStep();
                     }
@@ -431,7 +431,7 @@ namespace GARCA
             catch (Exception ex)
             {
                 MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de saldos");
-            }           
+            }
         }
 
         private async Task updatePrices()

@@ -1,11 +1,9 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
-using GARCA.Views.Common;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
 
 namespace GARCA.Views
 {
@@ -154,7 +152,7 @@ namespace GARCA.Views
 
         private void dtpDate_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Tab || e.Key == Key.Enter)
+            if (e.Key is Key.Tab or Key.Enter)
             {
                 if (dtpDate.Text.Length == 4)
                 {
@@ -165,7 +163,7 @@ namespace GARCA.Views
                     dtpDate.Text = dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2) + "/" + dtpDate.Text.Substring(4, 2);
                 }
 
-                if(e.Key == Key.Enter)
+                if (e.Key == Key.Enter)
                 {
                     cbAccount.Focus();
                 }
@@ -203,12 +201,12 @@ namespace GARCA.Views
         }
 
         private void calculatePriceByShares()
-        {           
-            String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:","Transacción");
-            if(!String.IsNullOrWhiteSpace(importe))
+        {
+            String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:", "Transacción");
+            if (!String.IsNullOrWhiteSpace(importe))
             {
-                Double? aux = Double.Parse(importe.Replace(".",",")) / txtNumShares.Value;
-                txtPriceShares.Value = (decimal?) aux;
+                Double? aux = Double.Parse(importe.Replace(".", ",")) / txtNumShares.Value;
+                txtPriceShares.Value = (decimal?)aux;
             }
         }
 
@@ -218,7 +216,7 @@ namespace GARCA.Views
             if (!String.IsNullOrWhiteSpace(importe))
             {
                 Decimal? aux = Decimal.Parse(importe.Replace(".", ",")) / txtPriceShares.Value;
-                txtNumShares.Value = (double?) aux;
+                txtNumShares.Value = (double?)aux;
             }
         }
 
@@ -258,7 +256,7 @@ namespace GARCA.Views
                 cbTag.Visibility = Visibility.Visible;
                 Grid.SetRow(lblMemo, 4);
                 Grid.SetRow(txtMemo, 4);
-            }            
+            }
         }
 
         private void loadTransaction()

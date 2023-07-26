@@ -30,7 +30,7 @@ namespace GARCA.DAO.Managers
                 context.transactionsStatus?.Load();
                 context.tags?.Load();
                 context.investmentProductsTypes?.Load();
-                context.investmentProducts?.Load();                
+                context.investmentProducts?.Load();
                 context.investmentProductsPrices?.Load();
                 context.splits?.Load();
                 context.transactions?.Load();

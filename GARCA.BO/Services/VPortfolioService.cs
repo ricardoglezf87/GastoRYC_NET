@@ -1,11 +1,7 @@
-﻿using GARCA.BO.Extensions;
-using GARCA.BO.Models;
-using GARCA.DAO.Managers;
+﻿using GARCA.BO.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Interop;
 
 namespace GARCA.BO.Services
 {
@@ -32,9 +28,10 @@ namespace GARCA.BO.Services
         public async Task<List<VPortfolio?>?> getAllAsync()
         {
             List<VPortfolio?>? listPortFolio = new();
-            foreach (InvestmentProducts? investmentProducts in 
-                await InvestmentProductsService.Instance.getAllOpened()) {
-                
+            foreach (InvestmentProducts? investmentProducts in
+                await InvestmentProductsService.Instance.getAllOpened())
+            {
+
                 VPortfolio portfolio = new();
                 portfolio.id = investmentProducts.id;
                 portfolio.description = investmentProducts.description;
@@ -46,14 +43,14 @@ namespace GARCA.BO.Services
                 List<Transactions?>? lBuy = await getBuyOperations(investmentProducts);
                 List<Transactions?>? lSell = await getSellOperations(investmentProducts);
 
-                foreach(Transactions? sell in lSell) 
+                foreach (Transactions? sell in lSell)
                 {
                     decimal? shares = sell.numShares;
-                    if (shares != null && shares > 0)
+                    if (shares is not null and > 0)
                     {
                         foreach (Transactions? buy in lBuy)
                         {
-                            if(buy.numShares != null && buy.numShares != 0 )
+                            if (buy.numShares is not null and not 0)
                             {
                                 if (shares >= -buy.numShares)
                                 {
@@ -72,9 +69,9 @@ namespace GARCA.BO.Services
                 }
                 portfolio.costShares = lBuy?.Sum(x => x.pricesShares * -x.numShares);
                 portfolio.date = InvestmentProductsPricesService.Instance.getLastValueDate(investmentProducts);
-                portfolio.prices = InvestmentProductsPricesService.Instance.getActualPrice(investmentProducts);                
+                portfolio.prices = InvestmentProductsPricesService.Instance.getActualPrice(investmentProducts);
 
-                listPortFolio.Add(portfolio);                
+                listPortFolio.Add(portfolio);
             }
             return listPortFolio;
         }
