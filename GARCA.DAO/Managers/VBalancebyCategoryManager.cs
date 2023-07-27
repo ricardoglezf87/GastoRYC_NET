@@ -7,7 +7,7 @@ namespace GARCA.DAO.Managers
 {
     public class VBalancebyCategoryManager
     {
-        public List<VBalancebyCategoryDAO>? getAll()
+        public HashSet<VBalancebyCategoryDAO>? getAll()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {

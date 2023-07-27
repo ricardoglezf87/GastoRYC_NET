@@ -35,9 +35,9 @@ namespace GARCA.BO.Services
             initDate = new DateTime(2001, 01, 01);
         }
 
-        public List<DateCalendar?>? getAll()
+        public HashSet<DateCalendar?>? getAll()
         {
-            return dateCalendarManager.getAll()?.toListBO();
+            return dateCalendarManager.getAll()?.toHashSetBO();
         }
 
         public DateCalendar? getByID(DateTime? id)

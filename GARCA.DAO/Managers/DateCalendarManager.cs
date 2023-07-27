@@ -10,7 +10,7 @@ namespace GARCA.DAO.Managers
     {
         private readonly DateTime initDate = new(2001, 01, 01);
 
-        public List<DateCalendarDAO>? getAll()
+        public HashSet<DateCalendarDAO>? getAll()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {

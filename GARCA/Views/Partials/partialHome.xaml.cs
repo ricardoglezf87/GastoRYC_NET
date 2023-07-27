@@ -292,7 +292,7 @@ namespace GARCA.Views
 
             //Series
 
-            List<VBalancebyCategory?>? lExpensesCharts = await VBalancebyCategoryService.Instance.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
+            HashSet<VBalancebyCategory?>? lExpensesCharts = await VBalancebyCategoryService.Instance.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new()

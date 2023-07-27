@@ -28,9 +28,9 @@ namespace GARCA.DAO.Repositories
             return _entities.Find(id);
         }
 
-        public List<TEntity> GetAll()
+        public HashSet<TEntity> GetAll()
         {
-            return _entities.ToList();
+            return _entities.ToHashSet();
         }
 
         public void Add(TEntity entity)
