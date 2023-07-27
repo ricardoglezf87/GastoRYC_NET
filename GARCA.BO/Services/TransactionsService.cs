@@ -96,6 +96,14 @@ namespace GARCA.BO.Services
             return (Transactions?)transactionsManager.update(transactions?.toDAO());
         }
 
+        public void updateList(List<Transactions?>? lObj)
+        {
+            if (lObj != null)
+            {
+                transactionsManager.updateList(lObj?.toListDAO());
+            }
+        }
+
         public void delete(Transactions? transactions)
         {
             transactionsManager.delete(transactions?.toDAO());
@@ -166,7 +174,7 @@ namespace GARCA.BO.Services
 
         public void refreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false)
         {
-            List<Transactions?>? tList = getByAccount(tUpdate.accountid)?.OrderByDescending(x => x.orden)?.ToList();
+            var tList = getByAccountOrderByOrderDesc(tUpdate.accountid);
             decimal? balanceTotal = 0;
 
             if (tList != null)
@@ -176,15 +184,16 @@ namespace GARCA.BO.Services
 
             if (tUpdate != null && tUpdate.date != null)
             {
-                foreach (Transactions? t in tList?.Where(x => x.date >= tUpdate?.date.addDay(-1) || dateFilter))
+                List<Transactions?>? aux = tList?.Where(x => x.date >= tUpdate?.date.addDay(-1) || dateFilter).ToList();
+                for (int i = 0; i < aux.Count; i++)
                 {
-                    if (t.amount != null)
+                    if (aux[i].amount != null)
                     {
-                        t.balance = balanceTotal;
-                        balanceTotal -= t.amount;
+                        aux[i].balance = balanceTotal;
+                        balanceTotal -= aux[i].amount;
                     }
-                    update(t);
                 }
+                updateList(aux);
             }
         }
 

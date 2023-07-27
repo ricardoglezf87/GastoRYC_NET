@@ -80,6 +80,25 @@ namespace GARCA.DAO.Managers
             return null;
         }
 
+        public void updateList(List<T?>? lObj)
+        {
+            if (lObj != null)
+            {
+                using (var unitOfWork = new UnitOfWork(new RYCContext()))
+                {
+                    var repository = unitOfWork.GetRepositoryModelBase<T>();
+                    foreach (T? item in lObj)
+                    {
+                        if (item != null)
+                        {
+                            repository.Update(item);
+                        }
+                    }
+                    repository.saveChanges();
+                }
+            }
+        }
+
         public void delete(T? obj)
         {
             if (obj != null)

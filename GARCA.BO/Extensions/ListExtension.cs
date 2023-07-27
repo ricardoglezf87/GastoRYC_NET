@@ -7,6 +7,19 @@ namespace GARCA.BO.Extensions
 {
     public static class ListExtension
     {
+        public static List<TransactionsDAO?>? toListDAO(this List<Transactions?>? source)
+        {
+            List<TransactionsDAO?> list = new();
+            if (source != null)
+            {
+                foreach (Transactions obj in source)
+                {
+                    list.Add(obj.toDAO());
+                }
+            }
+            return list;
+        }
+
         public static List<DateCalendar?> toListBO(this List<DateCalendarDAO> source)
         {
             List<DateCalendar?> list = new();
