@@ -16,32 +16,7 @@ namespace GARCA.DAO.Managers
         {
             getContext().Database.Migrate();
         }
-
-        public void loadContext()
-        {
-            using (RYCContext context = getContext())
-            {
-                context.dateCalendar?.Load();
-                context.categoriesTypes?.Load();
-                context.categories?.Load();
-                context.persons?.Load();
-                context.accountsTypes?.Load();
-                context.accounts?.Load();
-                context.transactionsStatus?.Load();
-                context.tags?.Load();
-                context.investmentProductsTypes?.Load();
-                context.investmentProducts?.Load();
-                context.investmentProductsPrices?.Load();
-                context.splits?.Load();
-                context.transactions?.Load();
-                context.periodsReminders?.Load();
-                context.splitsReminders?.Load();
-                context.transactionsReminders?.Load();
-                context.expirationsReminders?.Load();
-                context.vBalancebyCategory?.Load();
-            }
-        }
-
+        
         public void makeBackup()
         {
             string path = string.Empty;

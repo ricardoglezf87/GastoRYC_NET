@@ -30,23 +30,7 @@ namespace GARCA.DAO.Managers
             return query;
         }
 
-        public IQueryable<T>? getEntyWithInclude()
-        {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<T>();
-                var query = repository.entities.AsQueryable();
-
-                foreach (var include in getIncludes())
-                {
-                    query = query?.Include(include);
-                }
-
-                return query;
-            }
-        }
-
-        public List<T>? getAll()
+        public HashSet<T>? getAll()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {

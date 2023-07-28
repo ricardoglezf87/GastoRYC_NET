@@ -39,34 +39,9 @@ namespace GARCA.BO.Services
             investmentProductsPricesManager = new();
         }
 
-        public List<InvestmentProductsPrices?>? getAll()
-        {
-            return investmentProductsPricesManager.getAll()?.toListBO();
-        }
-
-        public InvestmentProductsPrices? getByID(int? id)
-        {
-            return (InvestmentProductsPrices?)investmentProductsPricesManager.getByID(id);
-        }
-
         public bool exists(int? investmentProductId, DateTime? date)
         {
             return investmentProductsPricesManager.exists(investmentProductId, date);
-        }
-
-        public void update(InvestmentProductsPrices investmentProductsPrices)
-        {
-            investmentProductsPricesManager.update(investmentProductsPrices.toDAO());
-        }
-
-        public void delete(InvestmentProductsPrices investmentProductsPrices)
-        {
-            investmentProductsPricesManager.delete(investmentProductsPrices.toDAO());
-        }
-
-        public void saveChanges()
-        {
-            investmentProductsPricesManager.saveChanges();
         }
 
         public Decimal? getActualPrice(InvestmentProducts investmentProducts)

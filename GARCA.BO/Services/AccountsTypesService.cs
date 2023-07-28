@@ -43,9 +43,9 @@ namespace GARCA.BO.Services
             Savings = 7
         }
 
-        public List<AccountsTypes?>? getAll()
+        public HashSet<AccountsTypes?>? getAll()
         {
-            return accountsTypesManager.getAll()?.toListBO();
+            return accountsTypesManager.getAll()?.toHashSetBO();
         }
 
         public AccountsTypes? getByID(int? id)

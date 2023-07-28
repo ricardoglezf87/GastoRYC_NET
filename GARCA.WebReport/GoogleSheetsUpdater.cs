@@ -245,14 +245,7 @@ namespace GARCA.WebReport
                 ? string.Empty
                 : $"{date.Value.Year.ToString("0000")}-{date.Value.Month.ToString("00")}-{date.Value.Day.ToString("00")}";
         }
-
-        private string dateNumberToStringJS(DateTime? date)
-        {
-            return date == null
-                ? string.Empty
-                : $"{date.Value.Year.ToString("0000") + date.Value.Month.ToString("00") + date.Value.Day.ToString("00")}";
-        }
-
+        
         public async Task<SheetsService> getSheetsService()
         {
             // Crear el servicio de Google Sheets

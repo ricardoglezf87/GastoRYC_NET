@@ -39,11 +39,6 @@ namespace GARCA.BO.Services
             categoriesTypesManager = new();
         }
 
-        public List<CategoriesTypes?>? getAll()
-        {
-            return categoriesTypesManager.getAll()?.toListBO();
-        }
-
         public List<CategoriesTypes?>? getAllWithoutSpecialTransfer()
         {
             return categoriesTypesManager.getAllWithoutSpecialTransfer()?.toListBO();

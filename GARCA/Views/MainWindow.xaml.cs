@@ -403,7 +403,7 @@ namespace GARCA
         {
             try
             {
-                List<Accounts?>? laccounts = AccountsService.Instance.getAll();
+                HashSet<Accounts?>? laccounts = AccountsService.Instance.getAll();
 
                 if (laccounts != null)
                 {

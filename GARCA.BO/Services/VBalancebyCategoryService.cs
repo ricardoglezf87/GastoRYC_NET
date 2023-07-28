@@ -39,11 +39,6 @@ namespace GARCA.BO.Services
             return vBalancebyCategoryManager.getAll()?.toHashSetBO();
         }
 
-        public HashSet<VBalancebyCategory?>? getbyYearMonth(int month, int year)
-        {
-            return getAll()?.Where(x => x.year == year && x.month == month).ToHashSet();
-        }
-
         public HashSet<VBalancebyCategory?>? getExpensesbyYearMonth(int month, int year)
         {
             return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToHashSet();

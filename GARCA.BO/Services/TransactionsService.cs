@@ -40,9 +40,9 @@ namespace GARCA.BO.Services
 
         #region TransactionsActions
 
-        public List<Transactions?>? getAll()
+        public HashSet<Transactions?>? getAll()
         {
-            return transactionsManager.getAll()?.toListBO();
+            return transactionsManager.getAll()?.toHashSetBO();
         }
 
         public List<Transactions?>? getAllOpenned()
@@ -50,28 +50,9 @@ namespace GARCA.BO.Services
             return transactionsManager.getAllOpenned()?.toListBO();
         }
 
-        public List<Transactions?>? getAllOpennedOrderByDateDesc()
-        {
-            return transactionsManager.getAllOpennedOrderByDateDesc()?.toListBO();
-        }
-        public List<Transactions?>? getAllOpennedOrderByDateAsc()
-        {
-            return transactionsManager.getAllOpennedOrderByDateAsc()?.toListBO();
-        }
-
-        public List<Transactions?>? getAllOpennedWithoutTransOrderByDateAsc()
-        {
-            return transactionsManager.getAllOpennedWithoutTransOrderByDateAsc()?.toListBO();
-        }
-
         public List<Transactions?>? getAllOpennedOrderByOrderDesc(int startIndex, int nPage)
         {
             return transactionsManager.getAllOpennedOrderByOrdenDesc(startIndex, nPage)?.toListBO();
-        }
-
-        public async Task<List<Transactions?>?> getAllAsync()
-        {
-            return await Task.Run(() => getAll());
         }
 
         public Transactions? getByID(int? id)
@@ -112,11 +93,6 @@ namespace GARCA.BO.Services
         public List<Transactions?>? getByAccount(int? id)
         {
             return transactionsManager.getByAccount(id)?.toListBO();
-        }
-
-        public List<Transactions?>? getByAccountOrderByDateDesc(int? id)
-        {
-            return transactionsManager.getByAccountOrderByDateDesc(id)?.toListBO();
         }
 
         public List<Transactions?>? getByAccountOrderByOrderDesc(int? id)

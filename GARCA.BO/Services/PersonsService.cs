@@ -33,9 +33,9 @@ namespace GARCA.BO.Services
             personsManager = new();
         }
 
-        public List<Persons?>? getAll()
+        public HashSet<Persons?>? getAll()
         {
-            return personsManager.getAll()?.toListBO();
+            return personsManager.getAll()?.toHashSetBO();
         }
 
         public Persons? getByID(int? id)

@@ -32,11 +32,6 @@ namespace GARCA.BO.Services
             splitsRemindersManager = new();
         }
 
-        public List<SplitsReminders?>? getAll()
-        {
-            return splitsRemindersManager.getAll()?.toListBO();
-        }
-
         public List<SplitsReminders?>? getbyTransactionidNull()
         {
             return splitsRemindersManager.getbyTransactionidNull()?.toListBO();
@@ -47,11 +42,6 @@ namespace GARCA.BO.Services
             return splitsRemindersManager.getbyTransactionid(transactionid)?.toListBO();
         }
 
-        public SplitsReminders? getByID(int? id)
-        {
-            return (SplitsReminders?)splitsRemindersManager.getByID(id);
-        }
-
         public void update(SplitsReminders splitsReminders)
         {
             splitsRemindersManager.update(splitsReminders.toDAO());
@@ -60,11 +50,6 @@ namespace GARCA.BO.Services
         public void delete(SplitsReminders splitsReminders)
         {
             splitsRemindersManager.delete(splitsReminders.toDAO());
-        }
-
-        public int getNextID()
-        {
-            return splitsRemindersManager.getNextID();
         }
     }
 }

@@ -32,9 +32,9 @@ namespace GARCA.BO.Services
             investementProductsTypesManager = new();
         }
 
-        public List<InvestmentProductsTypes?>? getAll()
+        public HashSet<InvestmentProductsTypes?>? getAll()
         {
-            return investementProductsTypesManager.getAll()?.toListBO();
+            return investementProductsTypesManager.getAll()?.toHashSetBO();
         }
 
         public InvestmentProductsTypes? getByID(int? id)

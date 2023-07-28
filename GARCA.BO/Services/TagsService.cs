@@ -32,9 +32,9 @@ namespace GARCA.BO.Services
             tagsManager = new();
         }
 
-        public List<Tags?>? getAll()
+        public HashSet<Tags?>? getAll()
         {
-            return tagsManager.getAll()?.toListBO();
+            return tagsManager.getAll()?.toHashSetBO();
         }
 
         public Tags? getByID(int? id)
