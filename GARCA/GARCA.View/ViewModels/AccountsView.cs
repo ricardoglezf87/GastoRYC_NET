@@ -19,7 +19,7 @@ namespace GARCA.View.ViewModels
 
         public static explicit operator AccountsView(AccountsDAO v)
         {
-            return new AccountsView()
+            return new AccountsView
             {
                 id = v.id,
                 description = v.description,

@@ -19,7 +19,7 @@ namespace GARCA.BO.Models
 
         internal ExpirationsRemindersDAO toDAO()
         {
-            return new ExpirationsRemindersDAO()
+            return new ExpirationsRemindersDAO
             {
                 id = this.id,
                 date = this.date,
@@ -33,7 +33,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new ExpirationsReminders()
+                : new ExpirationsReminders
                 {
                     id = v.id,
                     date = v.date,

@@ -9,7 +9,7 @@ namespace GARCA.BO.Models
 
         public AccountsTypesDAO toDAO()
         {
-            return new AccountsTypesDAO()
+            return new AccountsTypesDAO
             {
                 id = this.id,
                 description = this.description
@@ -20,7 +20,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new AccountsTypes()
+                : new AccountsTypes
                 {
                     id = v.id,
                     description = v.description

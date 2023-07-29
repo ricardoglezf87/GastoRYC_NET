@@ -75,7 +75,7 @@ namespace GARCA.View.Views
 
             };
 
-            textBlock.Effect = new DropShadowEffect()
+            textBlock.Effect = new DropShadowEffect
             {
 
                 Color = Colors.Black,
@@ -90,7 +90,7 @@ namespace GARCA.View.Views
 
             //Legend
 
-            chForecast.Legend = new ChartLegend()
+            chForecast.Legend = new ChartLegend
             {
                 IconHeight = 10,
                 IconWidth = 10,
@@ -182,7 +182,7 @@ namespace GARCA.View.Views
                     TooltipTemplate = tooltip,
                     EnableAnimation = true,
                     AnimationDuration = new TimeSpan(0, 0, 3),
-                    AdornmentsInfo = new ChartAdornmentInfo()
+                    AdornmentsInfo = new ChartAdornmentInfo
                     {
                         ShowMarker = true,
                         SymbolStroke = new SolidColorBrush(Colors.Blue),
@@ -227,7 +227,7 @@ namespace GARCA.View.Views
 
             };
 
-            textBlock.Effect = new DropShadowEffect()
+            textBlock.Effect = new DropShadowEffect
             {
 
                 Color = Colors.Black,

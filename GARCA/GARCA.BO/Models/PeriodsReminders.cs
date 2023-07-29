@@ -9,7 +9,7 @@ namespace GARCA.BO.Models
 
         internal PeriodsRemindersDAO toDAO()
         {
-            return new PeriodsRemindersDAO()
+            return new PeriodsRemindersDAO
             {
                 id = this.id,
                 description = this.description
@@ -20,7 +20,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new PeriodsReminders()
+                : new PeriodsReminders
                 {
                     id = v.id,
                     description = v.description

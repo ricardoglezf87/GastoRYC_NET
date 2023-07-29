@@ -9,7 +9,7 @@ namespace GARCA.BO.Models
 
         internal TransactionsStatusDAO toDAO()
         {
-            return new TransactionsStatusDAO()
+            return new TransactionsStatusDAO
             {
                 id = this.id,
                 description = this.description
@@ -20,7 +20,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new TransactionsStatus()
+                : new TransactionsStatus
                 {
                     id = v.id,
                     description = v.description

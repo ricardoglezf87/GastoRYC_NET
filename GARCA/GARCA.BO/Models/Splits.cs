@@ -30,7 +30,7 @@ namespace GARCA.BO.Models
 
         internal SplitsDAO toDAO()
         {
-            return new SplitsDAO()
+            return new SplitsDAO
             {
                 id = this.id,
                 transactionid = this.transactionid,
@@ -50,7 +50,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new Splits()
+                : new Splits
                 {
                     id = v.id,
                     transactionid = v.transactionid,

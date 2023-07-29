@@ -9,7 +9,7 @@ namespace GARCA.BO.Models
 
         internal TagsDAO toDAO()
         {
-            return new TagsDAO()
+            return new TagsDAO
             {
                 id = this.id,
                 description = this.description
@@ -20,7 +20,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new Tags()
+                : new Tags
                 {
                     id = v.id,
                     description = v.description

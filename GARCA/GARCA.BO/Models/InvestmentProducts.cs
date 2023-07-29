@@ -21,7 +21,7 @@ namespace GARCA.BO.Models
 
         internal InvestmentProductsDAO toDAO()
         {
-            return new InvestmentProductsDAO()
+            return new InvestmentProductsDAO
             {
                 id = this.id,
                 description = this.description,
@@ -37,7 +37,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new InvestmentProducts()
+                : new InvestmentProducts
                 {
                     id = v.id,
                     description = v.description,

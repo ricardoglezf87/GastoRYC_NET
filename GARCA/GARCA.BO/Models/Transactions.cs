@@ -64,7 +64,7 @@ namespace GARCA.BO.Models
 
         internal TransactionsDAO toDAO()
         {
-            return new TransactionsDAO()
+            return new TransactionsDAO
             {
                 id = this.id,
                 date = this.date,
@@ -98,7 +98,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new Transactions()
+                : new Transactions
                 {
                     id = v.id,
                     date = v.date,

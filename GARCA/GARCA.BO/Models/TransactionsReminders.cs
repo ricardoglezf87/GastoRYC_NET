@@ -47,7 +47,7 @@ namespace GARCA.BO.Models
 
         internal TransactionsRemindersDAO toDAO()
         {
-            return new TransactionsRemindersDAO()
+            return new TransactionsRemindersDAO
             {
                 id = this.id,
                 date = this.date,
@@ -75,7 +75,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new TransactionsReminders()
+                : new TransactionsReminders
                 {
                     id = v.id,
                     date = v.date,

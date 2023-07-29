@@ -27,7 +27,7 @@ namespace GARCA.BO.Models
 
         public SplitsRemindersDAO toDAO()
         {
-            return new SplitsRemindersDAO()
+            return new SplitsRemindersDAO
             {
                 id = this.id,
                 transactionid = this.transactionid,
@@ -47,7 +47,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new SplitsReminders()
+                : new SplitsReminders
                 {
                     id = v.id,
                     transactionid = v.transactionid,

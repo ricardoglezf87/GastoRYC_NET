@@ -15,7 +15,7 @@ namespace GARCA.BO.Models
 
         internal VBalancebyCategoryDAO toDAO()
         {
-            return new VBalancebyCategoryDAO()
+            return new VBalancebyCategoryDAO
             {
                 year = this.year,
                 month = this.month,
@@ -30,7 +30,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new VBalancebyCategory()
+                : new VBalancebyCategory
                 {
                     year = v.year,
                     month = v.month,

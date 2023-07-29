@@ -11,7 +11,7 @@ namespace GARCA.BO.Models
 
         internal PersonsDAO toDAO()
         {
-            return new PersonsDAO()
+            return new PersonsDAO
             {
                 id = this.id,
                 name = this.name,
@@ -24,7 +24,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new Persons()
+                : new Persons
                 {
                     id = v.id,
                     name = v.name,

@@ -9,7 +9,7 @@ namespace GARCA.BO.Models
 
         internal CategoriesTypesDAO toDAO()
         {
-            return new CategoriesTypesDAO()
+            return new CategoriesTypesDAO
             {
                 id = this.id,
                 description = this.description
@@ -20,7 +20,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new CategoriesTypes()
+                : new CategoriesTypes
                 {
                     id = v.id,
                     description = v.description

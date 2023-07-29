@@ -14,7 +14,7 @@ namespace GARCA.BO.Models
 
         internal DateCalendarDAO toDAO()
         {
-            return new DateCalendarDAO()
+            return new DateCalendarDAO
             {
                 date = this.date,
                 day = this.day,
@@ -27,7 +27,7 @@ namespace GARCA.BO.Models
         {
             return v == null
                 ? null
-                : new DateCalendar()
+                : new DateCalendar
                 {
                     date = v.date,
                     day = v.day,

@@ -255,7 +255,7 @@ namespace GARCA.WebReport
         public async Task<SheetsService> getSheetsService()
         {
             // Crear el servicio de Google Sheets
-            var service = new SheetsService(new BaseClientService.Initializer()
+            var service = new SheetsService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = await getCredentials(),
                 ApplicationName = "GARCA"
