@@ -9,7 +9,7 @@ using static GARCA.Utlis.Extensions.WindowsExtension;
 using GARCA.View.ViewModels;
 using GARCA.Utils.IOC;
 
-namespace GARCA.Views
+namespace GARCA.View.Views
 {
     /// <summary>
     /// Lógica de interacción para partialTransactions.xaml

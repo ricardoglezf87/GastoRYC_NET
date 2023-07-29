@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using GARCA.Utils.IOC;
 
-namespace GARCA.Views
+namespace GARCA.View.Views
 {
     /// <summary>
     /// Lógica de interacción para Persons.xaml

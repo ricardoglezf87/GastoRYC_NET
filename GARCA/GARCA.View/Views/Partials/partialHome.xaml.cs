@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Effects;
 
 
-namespace GARCA.Views
+namespace GARCA.View.Views
 {
     /// <summary>
     /// Lógica de interacción para partialTransactions.xaml

@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using static GARCA.Utlis.Extensions.WindowsExtension;
 
-namespace GARCA.Views
+namespace GARCA.View.Views
 {
     /// <summary>
     /// Lógica de interacción para FrmTransaction.xaml

@@ -8,7 +8,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using GARCA.Utils.IOC;
 
-namespace GARCA.Views
+namespace GARCA.View.Views
 {
     /// <summary>
     /// Lógica de interacción para partialTransactions.xaml

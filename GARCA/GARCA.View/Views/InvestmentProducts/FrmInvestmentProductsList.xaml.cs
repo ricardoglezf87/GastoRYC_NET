@@ -6,7 +6,7 @@ using GARCA.Utils.IOC;
 
 //TODO: En esta version de syncfusion no permite guardar los checkbox al perder foco, tienes que saltar a un texbox antes de saltar de linea
 
-namespace GARCA.Views
+namespace GARCA.View.Views
 {
     /// <summary>
     /// Lógica de interacción para InvestmentProducts.xaml

@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows;
 
-namespace GARCA.Views
+namespace GARCA.View.Views
 {
     /// <summary>
     /// Lógica de interacción para SpashForm.xaml

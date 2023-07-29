@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace GARCA.Views.Common
+namespace GARCA.View.Views.Common
 {
     /// <summary>
     /// Lógica de interacción para LoadDialog.xaml

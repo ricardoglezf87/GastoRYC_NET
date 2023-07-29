@@ -3,7 +3,7 @@ using GARCA.BO.Services;
 using System.Windows;
 using GARCA.Utils.IOC;
 
-namespace GARCA.Views
+namespace GARCA.View.Views
 {
     /// <summary>
     /// Lógica de interacción para Splits.xaml

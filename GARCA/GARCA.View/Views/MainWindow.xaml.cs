@@ -2,8 +2,8 @@
 using GARCA.View.ViewModels;
 using GARCA.BO.Services;
 using GARCA.Utils.IOC;
-using GARCA.Views;
-using GARCA.Views.Common;
+using GARCA.View.Views;
+using GARCA.View.Views.Common;
 using GARCA.WebReport;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Windows.Tools.Controls;
