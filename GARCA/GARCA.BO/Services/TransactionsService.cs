@@ -220,7 +220,7 @@ namespace GARCA.BO.Services
 
         #region SplitsActions
 
-        private void updateTranferFromSplit(Transactions transactions)
+        public void updateTranferFromSplit(Transactions transactions)
         {
             if (transactions.tranferSplitid != null &&
                 transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)

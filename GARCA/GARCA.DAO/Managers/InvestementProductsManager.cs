@@ -19,9 +19,9 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public List<InvestmentProductsDAO>? getAllOpened()
+        public IEnumerable<InvestmentProductsDAO>? getAllOpened()
         {
-            return getAll()?.Where(x => x.active.HasValue && x.active.Value).ToList();
+            return getAll()?.Where(x => x.active.HasValue && x.active.Value);
         }
     }
 }

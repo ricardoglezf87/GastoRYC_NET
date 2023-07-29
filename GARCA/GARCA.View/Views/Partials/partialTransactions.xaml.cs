@@ -3,6 +3,7 @@ using GARCA.BO.Models;
 using GARCA.View.ViewModels;
 using GARCA.BO.Services;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Utlis.Extensions.WindowsExtension;
@@ -278,7 +279,7 @@ namespace GARCA.View.Views
             {
                 if (transactions.splits != null)
                 {
-                    var lSplits = transactions.splits;
+                    var lSplits = transactions.splits.ToList();
                     for (var i = 0; i < lSplits.Count; i++)
                     {
                         var splits = lSplits[i];

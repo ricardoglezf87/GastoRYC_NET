@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GARCA.DAO.Managers
 {
@@ -21,14 +22,22 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public List<CategoriesDAO>? getAllWithoutSpecialTransfer()
+        public IEnumerable<CategoriesDAO>? getAllWithoutSpecialTransfer()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<CategoriesDAO>();
-                return getEntyWithInclude(repository)?
+                var query =  getEntyWithInclude(repository)?
                 .Where(x => !x.categoriesTypesid.Equals((int)CategoriesTypesManager.eCategoriesTypes.Transfers) &&
-                !x.categoriesTypesid.Equals((int)CategoriesTypesManager.eCategoriesTypes.Specials)).ToList();
+                !x.categoriesTypesid.Equals((int)CategoriesTypesManager.eCategoriesTypes.Specials));
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
 

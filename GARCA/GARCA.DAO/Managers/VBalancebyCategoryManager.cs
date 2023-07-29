@@ -2,17 +2,26 @@
 using GARCA.DAO.Repositories;
 
 using System.Collections.Generic;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GARCA.DAO.Managers
 {
     public class VBalancebyCategoryManager
     {
-        public HashSet<VBalancebyCategoryDAO>? getAll()
+        public IEnumerable<VBalancebyCategoryDAO>? getAll()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryGeneral<VBalancebyCategoryDAO>();
-                return repository.GetAll();
+                var query = repository.GetAll();
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
     }

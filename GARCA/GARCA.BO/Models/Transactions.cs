@@ -42,7 +42,7 @@ namespace GARCA.BO.Models
 
         public virtual InvestmentProducts? investmentProducts { set; get; }
 
-        public virtual List<Splits?>? splits { set; get; }
+        public virtual HashSet<Splits?>? splits { set; get; }
 
         public virtual Decimal? numShares { set; get; }
 

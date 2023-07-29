@@ -39,7 +39,7 @@ namespace GARCA.BO.Models
 
         public virtual TransactionsStatus? transactionStatus { set; get; }
 
-        public virtual List<SplitsReminders?>? splits { set; get; }
+        public virtual HashSet<SplitsReminders?>? splits { set; get; }
 
         public virtual String? personDescripGrid => person?.name ?? String.Empty;
 

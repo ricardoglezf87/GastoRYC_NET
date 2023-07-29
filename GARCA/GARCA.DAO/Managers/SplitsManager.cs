@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GARCA.DAO.Managers
 {
@@ -23,21 +24,37 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public List<SplitsDAO>? getbyTransactionidNull()
+        public IEnumerable<SplitsDAO>? getbyTransactionidNull()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<SplitsDAO>();
-                return getEntyWithInclude(repository)?.Where(x => x.transactionid == null).ToList();
+                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == null);
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
 
-        public List<SplitsDAO>? getbyTransactionid(int transactionid)
+        public IEnumerable<SplitsDAO>? getbyTransactionid(int transactionid)
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<SplitsDAO>();
-                return getEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid).ToList();
+                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid);
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
     }

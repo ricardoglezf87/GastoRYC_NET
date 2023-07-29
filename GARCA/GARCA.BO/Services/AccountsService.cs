@@ -24,19 +24,19 @@ namespace GARCA.BO.Services
             return accountsManager.getAll()?.toHashSetBO();
         }
 
-        public List<Accounts?>? getAllOpened()
+        public HashSet<Accounts?>? getAllOpened()
         {
-            return accountsManager.getAllOpened()?.toListBO();
+            return accountsManager.getAllOpened()?.toHashSetBO();
         }
 
-        public async Task<List<Accounts?>?> getAllOpenedAync()
+        public async Task<HashSet<Accounts?>?> getAllOpenedAync()
         {
             return await Task.Run(() => getAllOpened());
         }
 
-        public List<AccountsView>? getAllOpenedListView()
+        public HashSet<AccountsView>? getAllOpenedListView()
         {
-            return accountsManager.getAllOpened()?.toListViewBO();
+            return accountsManager.getAllOpened()?.toHashSetViewBO();
         }
 
         public Accounts? getByID(int? id)

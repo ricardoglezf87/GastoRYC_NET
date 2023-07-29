@@ -58,7 +58,7 @@ namespace GARCA.BO.Services
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            var lSplitsReminders = transactionsReminders.splits ?? DependencyConfig.iSplitsRemindersService.getbyTransactionid(transactionsReminders.id);
+            var lSplitsReminders = DependencyConfig.iSplitsRemindersService.getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {

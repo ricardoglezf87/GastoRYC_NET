@@ -18,14 +18,14 @@ namespace GARCA.BO.Services
             splitsManager = new SplitsManager();
         }
 
-        public List<Splits?>? getbyTransactionidNull()
+        public HashSet<Splits?>? getbyTransactionidNull()
         {
-            return splitsManager.getbyTransactionidNull()?.toListBO();
+            return splitsManager.getbyTransactionidNull()?.toHashSetBO();
         }
 
-        public List<Splits?>? getbyTransactionid(int transactionid)
+        public HashSet<Splits?>? getbyTransactionid(int transactionid)
         {
-            return splitsManager.getbyTransactionid(transactionid)?.toListBO();
+            return splitsManager.getbyTransactionid(transactionid)?.toHashSetBO();
         }
 
         public Splits? getByID(int? id)

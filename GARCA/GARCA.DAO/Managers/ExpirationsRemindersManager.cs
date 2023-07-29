@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GARCA.DAO.Managers
 {
@@ -33,12 +34,20 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public List<ExpirationsRemindersDAO>? getByTransactionReminderid(int? id)
+        public IEnumerable<ExpirationsRemindersDAO>? getByTransactionReminderid(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<ExpirationsRemindersDAO>();
-                return getEntyWithInclude(repository)?.Where(x => id.Equals(x.transactionsRemindersid)).ToList();
+                var query = getEntyWithInclude(repository)?.Where(x => id.Equals(x.transactionsRemindersid));
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
     }

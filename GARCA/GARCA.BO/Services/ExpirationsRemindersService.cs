@@ -224,9 +224,9 @@ namespace GARCA.BO.Services
             return (ExpirationsReminders?)expirationsRemindersManager.getByID(id);
         }
 
-        private List<ExpirationsReminders?>? getByTransactionReminderid(int? id)
+        private HashSet<ExpirationsReminders?>? getByTransactionReminderid(int? id)
         {
-            return expirationsRemindersManager.getByTransactionReminderid(id)?.toListBO();
+            return expirationsRemindersManager.getByTransactionReminderid(id)?.toHashSetBO();
         }
 
         public void update(ExpirationsReminders expirationsReminders)

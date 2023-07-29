@@ -36,9 +36,9 @@ namespace GARCA.BO.Services
             investmentProductsManager.delete(investmentProducts?.toDAO());
         }
 
-        public async Task<List<InvestmentProducts?>?> getAllOpened()
+        public async Task<HashSet<InvestmentProducts?>?> getAllOpened()
         {
-            return await Task.Run(() => investmentProductsManager.getAllOpened()?.toListBO());
+            return await Task.Run(() => investmentProductsManager.getAllOpened()?.toHashSetBO());
         }
     }
 }

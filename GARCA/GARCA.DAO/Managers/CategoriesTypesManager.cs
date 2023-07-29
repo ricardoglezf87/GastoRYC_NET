@@ -3,6 +3,7 @@ using GARCA.DAO.Repositories;
 
 using System.Collections.Generic;
 using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GARCA.DAO.Managers
 {
@@ -16,14 +17,22 @@ namespace GARCA.DAO.Managers
             Specials = 4
         }
 
-        public List<CategoriesTypesDAO>? getAllWithoutSpecialTransfer()
+        public IEnumerable<CategoriesTypesDAO>? getAllWithoutSpecialTransfer()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<CategoriesTypesDAO>();
-                return repository.GetAll()?
+                var query = repository.GetAll()?
                     .Where(x => x.id is not (int)eCategoriesTypes.Specials and
                     not (int)eCategoriesTypes.Transfers).ToList();
+                
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
     }

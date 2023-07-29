@@ -15,14 +15,14 @@ namespace GARCA.BO.Services
             splitsRemindersManager = new SplitsRemindersManager();
         }
 
-        public List<SplitsReminders?>? getbyTransactionidNull()
+        public HashSet<SplitsReminders?>? getbyTransactionidNull()
         {
-            return splitsRemindersManager.getbyTransactionidNull()?.toListBO();
+            return splitsRemindersManager.getbyTransactionidNull()?.toHashSetBO();
         }
 
-        public List<SplitsReminders?>? getbyTransactionid(int transactionid)
+        public HashSet<SplitsReminders?>? getbyTransactionid(int transactionid)
         {
-            return splitsRemindersManager.getbyTransactionid(transactionid)?.toListBO();
+            return splitsRemindersManager.getbyTransactionid(transactionid)?.toHashSetBO();
         }
 
         public void update(SplitsReminders splitsReminders)

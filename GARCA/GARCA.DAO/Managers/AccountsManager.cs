@@ -21,12 +21,20 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public List<AccountsDAO>? getAllOpened()
+        public IEnumerable<AccountsDAO>? getAllOpened()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<AccountsDAO>();
-                return getEntyWithInclude(repository)?.Where(x => !x.closed.HasValue || !x.closed.Value).ToList();
+                var query = getEntyWithInclude(repository)?.Where(x => !x.closed.HasValue || !x.closed.Value);
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
 
