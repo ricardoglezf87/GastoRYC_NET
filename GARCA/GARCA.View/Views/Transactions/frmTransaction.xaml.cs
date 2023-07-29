@@ -155,13 +155,14 @@ namespace GARCA.View.Views
         {
             if (e.Key is Key.Tab or Key.Enter)
             {
-                dtpDate.Text = dtpDate.Text.Length switch
+                if (dtpDate.Text.Length == 4)
                 {
-                    4 => dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2),
-                    6 => dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2) + "/" +
-                         dtpDate.Text.Substring(4, 2),
-                    _ => dtpDate.Text
-                };
+                    dtpDate.Text = dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2);
+                }
+                else if (dtpDate.Text.Length == 6)
+                {
+                    dtpDate.Text = dtpDate.Text.Substring(0, 2) + "/" + dtpDate.Text.Substring(2, 2) + "/" + dtpDate.Text.Substring(4, 2);
+                }
 
                 if (e.Key == Key.Enter)
                 {
