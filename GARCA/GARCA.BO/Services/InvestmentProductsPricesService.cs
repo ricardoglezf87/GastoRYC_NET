@@ -1,4 +1,4 @@
-﻿using GARCA.BO.Extensions;
+﻿using GARCA.Utlis.Extensions;
 
 using GARCA.BO.Models;
 using GARCA.DAO.Managers;
@@ -10,7 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using GARCA.IOC;
+using GARCA.Utils.IOC;
 
 namespace GARCA.BO.Services
 {

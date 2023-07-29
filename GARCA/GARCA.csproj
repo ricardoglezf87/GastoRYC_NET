@@ -12,6 +12,7 @@
     <FileVersion>2.0.0.0</FileVersion>
     <InformationalVersion>1.15.0-alpha.20+Branch.develop.Sha.8d9baf05d1a98e110b323f45bc61576368e67add</InformationalVersion>
     <Version>1.15.0-alpha0020</Version>
+    <RootNamespace />
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Resources\add-32.png">
@@ -163,68 +164,23 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\FrmSplitsRemindersList.xaml.cs">
+    <Compile Update="GARCA.View\Views\InvestmentProducts\FrmInvestmentProductsList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\InvestmentProducts\FrmInvestmentProductsList.xaml.cs">
+    <Compile Update="GARCA.View\Views\Partials\PartialReminders.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Partials\PartialReminders.xaml.cs">
+    <Compile Update="GARCA.View\Views\Partials\partialHome.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Partials\partialHome.xaml.cs">
+    <Compile Update="GARCA.View\Views\Partials\PartialPortfolio.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Partials\PartialPortfolio.xaml.cs">
+    <Compile Update="GARCA.View\Views\Tags\frmTagsList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Transactions\FrmSplitsListList.xaml.cs">
+    <Compile Update="GARCA.View\Views\TransactionsReminders\frmTransactionReminderList.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Tags\FrmTagsList.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\Persons\FrmPersonsListFrmPersonsList.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\Categories\FrmCategoriesListList.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\FrmTransactionReminders.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\TransactionsReminders\FrmTransactionReminderList.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\FrmSplitsRemindersList.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Transactions\FrmSplitsListList.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Tags\FrmTagsListFrmTagsList.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Persons\FrmPersonsListFrmPersonsList.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\Categories\FrmCategoriesListList.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\FrmTransactionReminders.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\TransactionsReminders\FrmTransactionReminderListFrmTransaction.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
 </Project>

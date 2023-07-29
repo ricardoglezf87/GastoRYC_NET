@@ -3,8 +3,8 @@ using GARCA.BO.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GARCA.IOC;
 using static GARCA.BO.Services.AccountsTypesService;
+using GARCA.Utils.IOC;
 
 namespace GARCA.BO.Services
 {
