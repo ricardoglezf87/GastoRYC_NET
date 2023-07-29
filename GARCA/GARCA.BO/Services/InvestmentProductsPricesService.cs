@@ -64,7 +64,7 @@ namespace GARCA.BO.Services
                     return;
                 }
 
-                List<InvestmentProductsPrices> lproductsPrices = new();
+                HashSet<InvestmentProductsPrices> lproductsPrices = new();
 
                 if (investmentProducts.url.Contains("investing.com"))
                 {
@@ -91,9 +91,9 @@ namespace GARCA.BO.Services
             }
         }
 
-        private async Task<List<InvestmentProductsPrices>> getPricesOnlineYahoo(InvestmentProducts investmentProducts)
+        private async Task<HashSet<InvestmentProductsPrices>> getPricesOnlineYahoo(InvestmentProducts investmentProducts)
         {
-            List<InvestmentProductsPrices> lproductsPrices = new();
+            HashSet<InvestmentProductsPrices> lproductsPrices = new();
 
             using (HttpClient client = new())
             {
@@ -136,9 +136,9 @@ namespace GARCA.BO.Services
             return lproductsPrices;
         }
 
-        private async Task<List<InvestmentProductsPrices>> getPricesOnlineInvesting(InvestmentProducts investmentProducts)
+        private async Task<HashSet<InvestmentProductsPrices>> getPricesOnlineInvesting(InvestmentProducts investmentProducts)
         {
-            List<InvestmentProductsPrices> lproductsPrices = new();
+            HashSet<InvestmentProductsPrices> lproductsPrices = new();
 
             using (var httpClient = new HttpClient())
             {

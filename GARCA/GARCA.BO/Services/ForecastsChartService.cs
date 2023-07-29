@@ -12,7 +12,7 @@ namespace GARCA.BO.Services
     {
         #region Functions
 
-        public List<ForecastsChart> getMonthForecast()
+        public HashSet<ForecastsChart> getMonthForecast()
         {
             Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
             Dictionary<int, Decimal> saldos = new();
@@ -68,7 +68,7 @@ namespace GARCA.BO.Services
                 }
             }
 
-            List<ForecastsChart> lChart = new();
+            HashSet<ForecastsChart> lChart = new();
 
             foreach (var key in dChart.Keys)
             {

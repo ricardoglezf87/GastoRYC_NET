@@ -47,7 +47,7 @@ namespace GARCA.DAO.Managers
 
         public IEnumerable<TransactionsDAO>? getByAccount(int? id, int startIndex, int nPage)
         {
-            return getByAccount(id)?.Skip(startIndex)?.Take(nPage)?.ToList();
+            return getByAccount(id)?.Skip(startIndex).Take(nPage);
         }
 
         public IEnumerable<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id)
@@ -70,7 +70,7 @@ namespace GARCA.DAO.Managers
         }
         public IEnumerable<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id, int startIndex, int nPage)
         {
-            return getByAccountOrderByOrdenDesc(id)?.Skip(startIndex)?.Take(nPage)?.ToList();
+            return getByAccountOrderByOrdenDesc(id)?.Skip(startIndex).Take(nPage);
         }
 
         public IEnumerable<TransactionsDAO>? getAllOpenned()
@@ -93,7 +93,7 @@ namespace GARCA.DAO.Managers
 
         public IEnumerable<TransactionsDAO>? getAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
         {
-            return getAllOpennedOrderByOrdenDesc()?.Skip(startIndex)?.Take(nPage)?.ToList();
+            return getAllOpennedOrderByOrdenDesc()?.Skip(startIndex).Take(nPage);
         }
 
         private IEnumerable<TransactionsDAO>? getAllOpennedOrderByOrdenDesc()

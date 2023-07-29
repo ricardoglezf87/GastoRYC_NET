@@ -50,7 +50,7 @@ namespace GARCA.BO.Services
                           {
                               categoryid = g.Key,
                               count = g.Count()
-                          })?.ToList();
+                          });
 
             if (result != null)
             {

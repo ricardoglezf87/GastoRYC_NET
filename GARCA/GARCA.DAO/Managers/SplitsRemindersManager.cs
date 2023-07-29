@@ -29,7 +29,7 @@ namespace GARCA.DAO.Managers
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<SplitsRemindersDAO>();
-                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == null).ToList();
+                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == null);
 
                 if (query != null)
                 {
@@ -46,7 +46,7 @@ namespace GARCA.DAO.Managers
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<SplitsRemindersDAO>();
-                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid).ToList();
+                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid);
 
                 if (query != null)
                 {

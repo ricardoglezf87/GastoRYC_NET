@@ -20,7 +20,7 @@ namespace GARCA.DAO.Repositories
             _entities = context.Set<TEntity>();
         }
         
-        public List<TEntity> GetAll()
+        public IEnumerable<TEntity> GetAll()
         {
             return _entities.ToList();
         }

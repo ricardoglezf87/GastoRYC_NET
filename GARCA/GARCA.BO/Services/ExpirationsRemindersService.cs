@@ -34,14 +34,15 @@ namespace GARCA.BO.Services
             return expirationsRemindersManager.existsExpiration(transactionsReminder.toDAO(), date);
         }
 
-        private List<ExpirationsReminders?>? getAllPendingWithGeneration()
+        private HashSet<ExpirationsReminders?>? getAllPendingWithGeneration()
         {
-            return getAllWithGeneration()?.Where(x => x.done is null or not true).ToList();
+            return getAllWithGeneration()?.Where(x => x.done is null or not true).ToHashSet();
         }
 
-        public List<ExpirationsReminders?>? getAllPendingWithoutFutureWithGeneration()
+        public HashSet<ExpirationsReminders?>? getAllPendingWithoutFutureWithGeneration()
         {
-            return getAllWithGeneration()?.Where(x => (x.done == null || x.done != true) && x.groupDate != "Futuro").ToList();
+            return getAllWithGeneration()?
+                .Where(x => (x.done == null || x.done != true) && x.groupDate != "Futuro").ToHashSet();
         }
 
         private void GenerationAllExpirations()
@@ -129,9 +130,9 @@ namespace GARCA.BO.Services
             return null;
         }
 
-        public List<Transactions> registerTransactionfromReminderSimulation(ExpirationsReminders exp)
+        public HashSet<Transactions> registerTransactionfromReminderSimulation(ExpirationsReminders exp)
         {
-            List<Transactions>? lTransactions = new();
+            HashSet<Transactions>? lTransactions = new();
             var expirationsReminders = exp;
             if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
             {

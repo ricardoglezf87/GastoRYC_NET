@@ -1,6 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -78,7 +79,7 @@ namespace GARCA.View.Views
 
         public async void loadReminders()
         {
-            var expirationsReminders = await Task.Run(() => DependencyConfig.iExpirationsRemindersService.getAllPendingWithoutFutureWithGeneration());
+            var expirationsReminders = await Task.Run(() => DependencyConfig.iExpirationsRemindersService.getAllPendingWithoutFutureWithGeneration()?.ToList());
 
             cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 

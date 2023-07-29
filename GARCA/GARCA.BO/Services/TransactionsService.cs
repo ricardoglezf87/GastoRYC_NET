@@ -63,10 +63,7 @@ namespace GARCA.BO.Services
 
         private void updateList(List<Transactions?>? lObj)
         {
-            if (lObj != null)
-            {
-                transactionsManager.updateList(lObj?.toListDAO());
-            }
+                transactionsManager.updateList(lObj.toListDAO());
         }
 
         public void delete(Transactions? transactions)

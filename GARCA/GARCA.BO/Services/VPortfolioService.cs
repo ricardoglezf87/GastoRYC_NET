@@ -8,9 +8,9 @@ namespace GARCA.BO.Services
 {
     public class VPortfolioService
     {
-        public async Task<List<VPortfolio?>?> getAllAsync()
+        public async Task<HashSet<VPortfolio?>?> getAllAsync()
         {
-            List<VPortfolio?>? listPortFolio = new();
+            HashSet<VPortfolio?>? listPortFolio = new();
             foreach (var investmentProducts in
                 await DependencyConfig.iInvestmentProductsService.getAllOpened())
             {
@@ -64,14 +64,14 @@ namespace GARCA.BO.Services
             return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Sum(x => -x.numShares));
         }
 
-        private async Task<List<Transactions?>?> getBuyOperations(InvestmentProducts? investmentProducts)
+        private async Task<HashSet<Transactions?>?> getBuyOperations(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares < 0).OrderBy(x => x.date).ToList());
+            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares < 0).OrderBy(x => x.date).ToHashSet());
         }
 
-        private async Task<List<Transactions?>?> getSellOperations(InvestmentProducts? investmentProducts)
+        private async Task<HashSet<Transactions?>?> getSellOperations(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares > 0).OrderBy(x => x.date).ToList());
+            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares > 0).OrderBy(x => x.date).ToHashSet());
         }
     }
 }

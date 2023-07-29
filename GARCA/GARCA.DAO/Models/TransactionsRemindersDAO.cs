@@ -40,6 +40,6 @@ namespace GARCA.DAO.Models
 
         public virtual TransactionsStatusDAO? transactionStatus { set; get; }
 
-        public virtual List<SplitsRemindersDAO>? splits { set; get; }
+        public virtual HashSet<SplitsRemindersDAO>? splits { set; get; }
     }
 }

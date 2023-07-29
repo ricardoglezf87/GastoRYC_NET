@@ -25,7 +25,7 @@ namespace GARCA.DAO.Models
         public virtual TransactionsStatusDAO? transactionStatus { set; get; }
         public virtual int? investmentProductsid { set; get; }
         public virtual InvestmentProductsDAO? investmentProducts { set; get; }
-        public virtual List<SplitsDAO>? splits { set; get; }
+        public virtual HashSet<SplitsDAO>? splits { set; get; }
         public virtual Decimal? numShares { set; get; }
         public virtual Decimal? pricesShares { set; get; }
         public virtual bool? investmentCategory { set; get; }
