@@ -141,9 +141,9 @@
     <PackageReference Include="Google.Apis.Core" Version="1.61.0" />
     <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.61.0.1869" />
     <PackageReference Include="Google.Apis.Sheets.v4" Version="1.61.0.3113" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.50" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.9">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -151,12 +151,12 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SimpleInjector" Version="5.4.1" />
-    <PackageReference Include="Syncfusion.SfChart.WPF" Version="21.2.4" />
-    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="21.2.4" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="21.2.4" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="21.2.4" />
-    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="21.2.4" />
-    <PackageReference Include="Syncfusion.Tools.WPF" Version="21.2.5" />
+    <PackageReference Include="Syncfusion.SfChart.WPF" Version="22.2.5" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="22.2.5" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="22.2.5" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="22.2.5" />
+    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="22.2.5" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="22.2.5" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\options.png">
