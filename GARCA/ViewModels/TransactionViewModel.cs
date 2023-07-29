@@ -5,6 +5,7 @@ using Syncfusion.UI.Xaml.Grid;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using GARCA.IOC;
 
 namespace GARCA.ViewModels
 {
@@ -32,8 +33,8 @@ namespace GARCA.ViewModels
         async void LoadMoreItems(uint count, int baseIndex)
         {
             List<Transactions?>? item = accountsSelected != null
-                ? await Task.Run(() => TransactionsService.Instance.getByAccountOrderByOrderDesc(accountsSelected.id, baseIndex, 50))
-                : await Task.Run(() => TransactionsService.Instance.getAllOpennedOrderByOrderDesc(baseIndex, 50));
+                ? await Task.Run(() => DependencyConfig.iTransactionsService.getByAccountOrderByOrderDesc(accountsSelected.id, baseIndex, 50))
+                : await Task.Run(() => DependencyConfig.iTransactionsService.getAllOpennedOrderByOrderDesc(baseIndex, 50));
             if (item != null)
             {
                 var transactions = new ObservableCollection<Transactions?>(item);

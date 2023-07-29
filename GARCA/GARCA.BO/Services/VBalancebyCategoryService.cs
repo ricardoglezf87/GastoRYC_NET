@@ -11,25 +11,8 @@ namespace GARCA.BO.Services
     public class VBalancebyCategoryService
     {
         private readonly VBalancebyCategoryManager vBalancebyCategoryManager;
-        private static VBalancebyCategoryService? _instance;
-        private static readonly object _lock = new();
-
-        public static VBalancebyCategoryService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new VBalancebyCategoryService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private VBalancebyCategoryService()
+       
+        public VBalancebyCategoryService()
         {
             vBalancebyCategoryManager = new();
         }

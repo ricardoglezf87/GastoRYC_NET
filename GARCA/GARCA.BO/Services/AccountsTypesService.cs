@@ -9,25 +9,8 @@ namespace GARCA.BO.Services
     public class AccountsTypesService
     {
         private readonly AccountsTypesManager accountsTypesManager;
-        private static AccountsTypesService? _instance;
-        private static readonly object _lock = new();
 
-        public static AccountsTypesService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new AccountsTypesService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private AccountsTypesService()
+        public AccountsTypesService()
         {
             accountsTypesManager = new();
         }

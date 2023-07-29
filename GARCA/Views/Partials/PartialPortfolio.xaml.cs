@@ -1,6 +1,7 @@
 ﻿using GARCA.BO.Services;
 using System.Windows;
 using System.Windows.Controls;
+using GARCA.IOC;
 
 namespace GARCA.Views
 {
@@ -39,7 +40,7 @@ namespace GARCA.Views
 
         public async void loadPortfolio()
         {
-            gvPortfolio.ItemsSource = await VPortfolioService.Instance.getAllAsync();
+            gvPortfolio.ItemsSource = await DependencyConfig.iVPortfolioService.getAllAsync();
             gvPortfolio.ExpandAllGroup();
         }
 

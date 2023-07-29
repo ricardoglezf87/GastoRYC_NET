@@ -2,6 +2,7 @@
 using GARCA.BO.Services;
 using System.Windows;
 using System.Windows.Controls;
+using GARCA.IOC;
 
 namespace GARCA.Views
 {
@@ -24,7 +25,7 @@ namespace GARCA.Views
         {
             foreach (TransactionsReminders transactionsReminders in e.Items)
             {
-                TransactionsRemindersService.Instance.delete(transactionsReminders);
+                DependencyConfig.iTransactionsRemindersService.delete(transactionsReminders);
             }
         }
 
@@ -54,7 +55,7 @@ namespace GARCA.Views
 
         private void loadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = TransactionsRemindersService.Instance.getAll();
+            gvTransactionsReminders.ItemsSource = DependencyConfig.iTransactionsRemindersService.getAll();
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)

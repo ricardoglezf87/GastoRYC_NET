@@ -1,5 +1,6 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
+using GARCA.IOC;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -97,7 +98,7 @@ namespace GARCA.Views
 
             FrmSplitsList frm = new(transaction);
             frm.ShowDialog();
-            TransactionsService.Instance.updateTransactionAfterSplits(transaction);
+            DependencyConfig.iTransactionsService.updateTransactionAfterSplits(transaction);
             loadTransaction();
         }
 
@@ -306,12 +307,12 @@ namespace GARCA.Views
 
             transaction.date = dtpDate.SelectedDate;
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = AccountsService.Instance.getByID(transaction.accountid);
+            transaction.account = DependencyConfig.iAccountsService.getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = PersonsService.Instance.getByID(transaction.personid);
+                transaction.person = DependencyConfig.iPersonsService.getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
@@ -324,13 +325,13 @@ namespace GARCA.Views
             if (cbCategory.SelectedValue != null)
             {
                 transaction.categoryid = (int)cbCategory.SelectedValue;
-                transaction.category = CategoriesService.Instance.getByID(transaction.categoryid);
+                transaction.category = DependencyConfig.iCategoriesService.getByID(transaction.categoryid);
             }
 
             if (cbInvestmentProduct.SelectedValue != null)
             {
                 transaction.investmentProductsid = (int)cbInvestmentProduct.SelectedValue;
-                transaction.investmentProducts = InvestmentProductsService.Instance.getByID(transaction.investmentProductsid);
+                transaction.investmentProducts = DependencyConfig.iInvestmentProductsService.getByID(transaction.investmentProductsid);
             }
 
             transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value) ?? 0;
@@ -350,21 +351,21 @@ namespace GARCA.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = TagsService.Instance.getByID(transaction.tagid);
+                transaction.tag = DependencyConfig.iTagsService.getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = TransactionsStatusService.Instance.getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = DependencyConfig.iTransactionsStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = AccountsService.Instance.getAll();
-            cbPerson.ItemsSource = PersonsService.Instance.getAll();
-            cbCategory.ItemsSource = CategoriesService.Instance.getAll();
-            cbInvestmentProduct.ItemsSource = InvestmentProductsService.Instance.getAll();
-            cbTag.ItemsSource = TagsService.Instance.getAll();
-            cbTransactionStatus.ItemsSource = TransactionsStatusService.Instance.getAll();
+            cbAccount.ItemsSource = DependencyConfig.iAccountsService.getAll();
+            cbPerson.ItemsSource = DependencyConfig.iPersonsService.getAll();
+            cbCategory.ItemsSource = DependencyConfig.iCategoriesService.getAll();
+            cbInvestmentProduct.ItemsSource = DependencyConfig.iInvestmentProductsService.getAll();
+            cbTag.ItemsSource = DependencyConfig.iTagsService.getAll();
+            cbTransactionStatus.ItemsSource = DependencyConfig.iTransactionsStatusService.getAll();
         }
 
         private bool isTransactionValid()
@@ -445,7 +446,7 @@ namespace GARCA.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        TransactionsService.Instance.saveChanges(ref transaction);
+                        DependencyConfig.iTransactionsService.saveChanges(ref transaction);
                     }
                     return true;
                 }

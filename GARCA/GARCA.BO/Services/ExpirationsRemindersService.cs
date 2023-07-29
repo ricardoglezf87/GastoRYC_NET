@@ -1,6 +1,7 @@
 ﻿using GARCA.BO.Extensions;
 using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.IOC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,25 +12,8 @@ namespace GARCA.BO.Services
     public class ExpirationsRemindersService
     {
         private readonly ExpirationsRemindersManager expirationsRemindersManager;
-        private static ExpirationsRemindersService? _instance;
-        private static readonly object _lock = new();
 
-        public static ExpirationsRemindersService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new ExpirationsRemindersService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private ExpirationsRemindersService()
+        public ExpirationsRemindersService()
         {
             expirationsRemindersManager = new();
         }
@@ -62,7 +46,7 @@ namespace GARCA.BO.Services
 
         public void GenerationAllExpirations()
         {
-            foreach (TransactionsReminders? transactionsReminders in TransactionsRemindersService.Instance.getAll())
+            foreach (TransactionsReminders? transactionsReminders in DependencyConfig.iTransactionsRemindersService.getAll())
             {
                 generationExpirations(transactionsReminders);
             }
@@ -97,7 +81,7 @@ namespace GARCA.BO.Services
                         update(expirationsReminders);
                     }
 
-                    date = PeriodsRemindersService.Instance.getNextDate(date, PeriodsRemindersService.Instance.toEnum(transactionsReminders.periodsReminders));
+                    date = DependencyConfig.iPeriodsReminderService.getNextDate(date, DependencyConfig.iPeriodsReminderService.toEnum(transactionsReminders.periodsReminders));
 
                 }
             }
@@ -121,10 +105,10 @@ namespace GARCA.BO.Services
                     transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    TransactionsService.Instance.saveChanges(ref transactions);
+                    DependencyConfig.iTransactionsService.saveChanges(ref transactions);
 
                     foreach (SplitsReminders? splitsReminders in
-                        SplitsRemindersService.Instance.getbyTransactionid(expirationsReminders.transactionsReminders.id))
+                        DependencyConfig.iSplitsRemindersService.getbyTransactionid(expirationsReminders.transactionsReminders.id))
                     {
                         Splits splits = new();
                         splits.transactionid = transactions.id;
@@ -133,8 +117,8 @@ namespace GARCA.BO.Services
                         splits.amountIn = splitsReminders.amountIn;
                         splits.amountOut = splitsReminders.amountOut;
                         splits.tagid = splitsReminders.tagid;
-                        SplitsService.Instance.saveChanges(transactions, splits);
-                        TransactionsService.Instance.updateTranferSplits(transactions, splits);
+                        DependencyConfig.iSplitsService.saveChanges(transactions, splits);
+                        DependencyConfig.iTransactionsService.updateTranferSplits(transactions, splits);
                     }
 
                     return transactions;
@@ -199,12 +183,12 @@ namespace GARCA.BO.Services
             Transactions? tContraria = new()
             {
                 date = transactions.date,
-                accountid = AccountsService.Instance.getByCategoryId(splits.categoryid)?.id,
-                account = AccountsService.Instance.getByCategoryId(splits.categoryid),
+                accountid = DependencyConfig.iAccountsService.getByCategoryId(splits.categoryid)?.id,
+                account = DependencyConfig.iAccountsService.getByCategoryId(splits.categoryid),
                 personid = transactions.personid,
                 person = transactions.person,
                 categoryid = transactions.account.categoryid,
-                category = CategoriesService.Instance.getByID(transactions.account.categoryid),
+                category = DependencyConfig.iCategoriesService.getByID(transactions.account.categoryid),
                 memo = splits.memo,
                 tagid = transactions.tagid,
                 amountIn = splits.amountOut,
@@ -220,12 +204,12 @@ namespace GARCA.BO.Services
             Transactions? tContraria = new()
             {
                 date = transactions.date.removeTime(),
-                accountid = AccountsService.Instance.getByCategoryId(transactions.categoryid)?.id,
-                account = AccountsService.Instance.getByCategoryId(transactions.categoryid),
+                accountid = DependencyConfig.iAccountsService.getByCategoryId(transactions.categoryid)?.id,
+                account = DependencyConfig.iAccountsService.getByCategoryId(transactions.categoryid),
                 personid = transactions.personid,
                 person = transactions.person,
                 categoryid = transactions.account?.categoryid,
-                category = CategoriesService.Instance.getByID(transactions.account?.categoryid),
+                category = DependencyConfig.iCategoriesService.getByID(transactions.account?.categoryid),
                 memo = transactions.memo,
                 tagid = transactions.tagid,
                 tag = transactions.tag,

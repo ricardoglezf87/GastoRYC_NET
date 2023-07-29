@@ -1,6 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.ModelsView;
 using GARCA.BO.Services;
+using GARCA.IOC;
 using GARCA.Views;
 using GARCA.Views.Common;
 using GARCA.WebReport;
@@ -45,8 +46,8 @@ namespace GARCA
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
             SfSkinManager.ApplyStylesOnApplication = true;
 
-            RYCContextService.Instance.makeBackup();
-            RYCContextService.Instance.migrateDataBase();
+            DependencyConfig.iRYCContextService.makeBackup();
+            DependencyConfig.iRYCContextService.migrateDataBase();
         }
 
         #endregion
@@ -138,7 +139,7 @@ namespace GARCA
                     else if (actualPrincipalContent is PartialReminders)
                     {
                         ((PartialReminders)actualPrincipalContent).loadReminders();
-                        await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
+                        await Task.Run(() => DependencyConfig.iExpirationsRemindersService.generateAutoregister());
                         loadAccounts();
                     }
                     else if (actualPrincipalContent is PartialPortfolio)
@@ -153,7 +154,7 @@ namespace GARCA
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             loadCalendar();
-            await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
+            await Task.Run(() => DependencyConfig.iExpirationsRemindersService.generateAutoregister());
             loadAccounts();
             toggleViews(eViews.Home);
         }
@@ -271,7 +272,7 @@ namespace GARCA
                 ((PartialReminders)actualPrincipalContent).loadReminders();
             }
 
-            await Task.Run(() => ExpirationsRemindersService.Instance.generateAutoregister());
+            await Task.Run(() => DependencyConfig.iExpirationsRemindersService.generateAutoregister());
             loadAccounts();
         }
 
@@ -286,7 +287,7 @@ namespace GARCA
             {
                 foreach (AccountsView accounts in lvAccounts.ItemsSource)
                 {
-                    accounts.balance = await Task.Run(() => AccountsService.Instance.getBalanceByAccount(accounts.id));
+                    accounts.balance = await Task.Run(() => DependencyConfig.iAccountsService.getBalanceByAccount(accounts.id));
                 }
 
                 viewAccounts.Refresh();
@@ -314,7 +315,7 @@ namespace GARCA
 
         private void loadCalendar()
         {
-            DateCalendarService.Instance.fillCalendar();
+            DependencyConfig.iDateCalendarService.fillCalendar();
         }
 
         private void toggleViews(eViews views)
@@ -368,7 +369,7 @@ namespace GARCA
                 accountsView = lvAccounts.SelectedValue as AccountsView;
             }
 
-            List<AccountsView>? accountsViews = AccountsService.Instance.getAllOpenedListView();
+            List<AccountsView>? accountsViews = DependencyConfig.iAccountsService.getAllOpenedListView();
             viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypesdescription"));
@@ -403,7 +404,7 @@ namespace GARCA
         {
             try
             {
-                HashSet<Accounts?>? laccounts = AccountsService.Instance.getAll();
+                HashSet<Accounts?>? laccounts = DependencyConfig.iAccountsService.getAll();
 
                 if (laccounts != null)
                 {
@@ -412,10 +413,10 @@ namespace GARCA
 
                     foreach (Accounts? accounts in laccounts)
                     {
-                        Transactions? tFirst = TransactionsService.Instance.getByAccount(accounts)?.FirstOrDefault();
+                        Transactions? tFirst = DependencyConfig.iTransactionsService.getByAccount(accounts)?.FirstOrDefault();
                         if (tFirst != null)
                         {
-                            await Task.Run(() => TransactionsService.Instance.refreshBalanceTransactions(tFirst, true));
+                            await Task.Run(() => DependencyConfig.iTransactionsService.refreshBalanceTransactions(tFirst, true));
                         }
                         loadDialog.performeStep();
                     }
@@ -438,7 +439,7 @@ namespace GARCA
         {
             try
             {
-                List<InvestmentProducts?>? lInvestmentProducts = InvestmentProductsService.Instance.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url) || x.active == true).ToList();
+                List<InvestmentProducts?>? lInvestmentProducts = DependencyConfig.iInvestmentProductsService.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url) || x.active == true).ToList();
 
                 if (lInvestmentProducts != null)
                 {
@@ -447,7 +448,7 @@ namespace GARCA
 
                     foreach (InvestmentProducts? investmentProducts in lInvestmentProducts)
                     {
-                        await InvestmentProductsPricesService.Instance.getPricesOnlineAsync(investmentProducts);
+                        await DependencyConfig.iInvestmentProductsPricesService.getPricesOnlineAsync(investmentProducts);
                         loadDialog.performeStep();
                     }
 

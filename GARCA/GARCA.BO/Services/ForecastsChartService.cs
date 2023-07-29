@@ -3,36 +3,13 @@ using GARCA.BO.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GARCA.IOC;
 using static GARCA.BO.Services.AccountsTypesService;
 
 namespace GARCA.BO.Services
 {
     public class ForecastsChartService
     {
-
-        #region Propiedades y Contructor
-
-        private static ForecastsChartService? _instance;
-        private static readonly object _lock = new();
-
-        public static ForecastsChartService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new ForecastsChartService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-
-        #endregion Propiedades y Contructor
-
         #region Functions
 
         public List<ForecastsChart> getMonthForecast()
@@ -42,7 +19,7 @@ namespace GARCA.BO.Services
 
             DateTime now = DateTime.Now;
 
-            foreach (var g in AccountsService.Instance.getAllOpened()?.Where(x => (x.closed == false || x.closed == null)
+            foreach (var g in DependencyConfig.iAccountsService.getAllOpened()?.Where(x => (x.closed == false || x.closed == null)
                                                             && (x.accountsTypesid == (int)eAccountsTypes.Cash ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Banks ||
                                                             x.accountsTypesid == (int)eAccountsTypes.Cards)))
@@ -52,15 +29,15 @@ namespace GARCA.BO.Services
 
             List<Transactions> remTransactions = new();
 
-            foreach (ExpirationsReminders? exp in ExpirationsRemindersService.Instance.getAllPendingWithoutFutureWithGeneration())
+            foreach (ExpirationsReminders? exp in DependencyConfig.iExpirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
             {
                 if (exp != null)
                 {
-                    remTransactions.AddRange(ExpirationsRemindersService.Instance.registerTransactionfromReminderSimulation(exp));
+                    remTransactions.AddRange(DependencyConfig.iExpirationsRemindersService.registerTransactionfromReminderSimulation(exp));
                 }
             }
 
-            List<Transactions?>? transactions = TransactionsService.Instance.getAll()?.ToList();
+            List<Transactions?>? transactions = DependencyConfig.iTransactionsService.getAll()?.ToList();
 
             if (transactions != null)
             {
@@ -96,7 +73,7 @@ namespace GARCA.BO.Services
             foreach (Tuple<DateTime, int?> key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    AccountsService.Instance.getByID(key.Item2)?.description,
+                    DependencyConfig.iAccountsService.getByID(key.Item2)?.description,
                     key.Item2, dChart[key]));
             }
             return lChart;

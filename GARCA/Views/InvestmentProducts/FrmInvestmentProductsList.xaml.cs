@@ -2,6 +2,7 @@
 using GARCA.BO.Services;
 using System.Windows;
 using System.Windows.Controls;
+using GARCA.IOC;
 
 //TODO: En esta version de syncfusion no permite guardar los checkbox al perder foco, tienes que saltar a un texbox antes de saltar de linea
 
@@ -20,8 +21,8 @@ namespace GARCA.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbInvestmentProductsTypes.ItemsSource = InvestmentProductsTypesService.Instance.getAll();
-            gvInvestmentProducts.ItemsSource = InvestmentProductsService.Instance.getAll();
+            cbInvestmentProductsTypes.ItemsSource = DependencyConfig.iInvestmentProductsTypesService.getAll();
+            gvInvestmentProducts.ItemsSource = DependencyConfig.iInvestmentProductsService.getAll();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -49,7 +50,7 @@ namespace GARCA.Views
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "investmentProductsTypesid":
-                        investmentProducts.investmentProductsTypes = InvestmentProductsTypesService.Instance.getByID(investmentProducts.investmentProductsTypesid);
+                        investmentProducts.investmentProductsTypes = DependencyConfig.iInvestmentProductsTypesService.getByID(investmentProducts.investmentProductsTypesid);
                         break;
                 }
             }
@@ -61,17 +62,17 @@ namespace GARCA.Views
 
             if (investmentProducts.investmentProductsTypes == null && investmentProducts.investmentProductsTypesid != null)
             {
-                investmentProducts.investmentProductsTypes = InvestmentProductsTypesService.Instance.getByID(investmentProducts.investmentProductsTypesid);
+                investmentProducts.investmentProductsTypes = DependencyConfig.iInvestmentProductsTypesService.getByID(investmentProducts.investmentProductsTypesid);
             }
 
-            InvestmentProductsService.Instance.update(investmentProducts);
+            DependencyConfig.iInvestmentProductsService.update(investmentProducts);
         }
 
         private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (InvestmentProducts InvestmentProducts in e.Items)
             {
-                InvestmentProductsService.Instance.delete(InvestmentProducts);
+                DependencyConfig.iInvestmentProductsService.delete(InvestmentProducts);
             }
         }
 

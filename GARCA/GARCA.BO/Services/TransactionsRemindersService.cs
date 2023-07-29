@@ -3,31 +3,15 @@
 using GARCA.BO.Models;
 using GARCA.DAO.Managers;
 using System.Collections.Generic;
+using GARCA.IOC;
 
 namespace GARCA.BO.Services
 {
     public class TransactionsRemindersService
     {
         private readonly TransactionsRemindersManager transactionsRemindersManager;
-        private static TransactionsRemindersService? _instance;
-        private static readonly object _lock = new();
-
-        public static TransactionsRemindersService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new TransactionsRemindersService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private TransactionsRemindersService()
+        
+        public TransactionsRemindersService()
         {
             transactionsRemindersManager = new();
         }
@@ -46,7 +30,7 @@ namespace GARCA.BO.Services
 
         public TransactionsReminders? update(TransactionsReminders transactionsReminders)
         {
-            ExpirationsRemindersService.Instance.deleteByTransactionReminderid(transactionsReminders.id);
+            DependencyConfig.iExpirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
             return (TransactionsReminders?)transactionsRemindersManager.update(transactionsReminders.toDAO());
         }
 
@@ -54,7 +38,7 @@ namespace GARCA.BO.Services
         {
             if (transactionsReminders != null)
             {
-                ExpirationsRemindersService.Instance.deleteByTransactionReminderid(transactionsReminders.id);
+                DependencyConfig.iExpirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
                 transactionsRemindersManager.delete(transactionsReminders.toDAO());
             }
         }
@@ -74,7 +58,7 @@ namespace GARCA.BO.Services
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            List<SplitsReminders?>? lSplitsReminders = transactionsReminders.splits ?? SplitsRemindersService.Instance.getbyTransactionid(transactionsReminders.id);
+            List<SplitsReminders?>? lSplitsReminders = transactionsReminders.splits ?? DependencyConfig.iSplitsRemindersService.getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
@@ -88,13 +72,13 @@ namespace GARCA.BO.Services
                 }
 
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactionsReminders.category = CategoriesService.Instance.getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactionsReminders.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
             else if (transactionsReminders.categoryid is not null
                 and ((int)CategoriesService.eSpecialCategories.Split))
             {
                 transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactionsReminders.category = CategoriesService.Instance.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactionsReminders.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.id == 0)
@@ -103,7 +87,7 @@ namespace GARCA.BO.Services
                 foreach (SplitsReminders? splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.transactionid = transactionsReminders.id;
-                    SplitsRemindersService.Instance.update(splitsReminders);
+                    DependencyConfig.iSplitsRemindersService.update(splitsReminders);
                 }
             }
             else

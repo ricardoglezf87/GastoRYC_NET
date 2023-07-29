@@ -9,25 +9,8 @@ namespace GARCA.BO.Services
     public class InvestmentProductsTypesService
     {
         private readonly InvestmentProductsTypesManager investementProductsTypesManager;
-        private static InvestmentProductsTypesService? _instance;
-        private static readonly object _lock = new();
 
-        public static InvestmentProductsTypesService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new InvestmentProductsTypesService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private InvestmentProductsTypesService()
+        public InvestmentProductsTypesService()
         {
             investementProductsTypesManager = new();
         }

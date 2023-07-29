@@ -2,6 +2,7 @@
 using GARCA.BO.Services;
 using System.Windows;
 using System.Windows.Controls;
+using GARCA.IOC;
 
 namespace GARCA.Views
 {
@@ -17,7 +18,7 @@ namespace GARCA.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvPersons.ItemsSource = PersonsService.Instance.getAll();
+            gvPersons.ItemsSource = DependencyConfig.iPersonsService.getAll();
         }
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -35,14 +36,14 @@ namespace GARCA.Views
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             Persons persons = (Persons)e.RowData;
-            PersonsService.Instance.update(persons);
+            DependencyConfig.iPersonsService.update(persons);
         }
 
         private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Persons persons in e.Items)
             {
-                PersonsService.Instance.delete(persons);
+                DependencyConfig.iPersonsService.delete(persons);
             }
         }
 

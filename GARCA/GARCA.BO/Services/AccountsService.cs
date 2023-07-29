@@ -6,31 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GARCA.IOC;
 
 namespace GARCA.BO.Services
 {
     public class AccountsService
     {
         private readonly AccountsManager accountsManager;
-        private static AccountsService? _instance;
-        private static readonly object _lock = new();
-
-        public static AccountsService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new AccountsService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private AccountsService()
+        
+        public AccountsService()
         {
             accountsManager = new();
         }
@@ -77,7 +61,7 @@ namespace GARCA.BO.Services
 
         public Decimal getBalanceByAccount(int? id)
         {
-            return TransactionsService.Instance.getByAccount(id)?.Sum(x => x.amount) ?? 0;
+            return DependencyConfig.iTransactionsService.getByAccount(id)?.Sum(x => x.amount) ?? 0;
         }
     }
 }

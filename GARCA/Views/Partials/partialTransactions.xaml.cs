@@ -6,6 +6,7 @@ using GARCA.ViewModels;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using GARCA.IOC;
 using static GARCA.BO.Extensions.WindowsExtension;
 
 namespace GARCA.Views
@@ -53,7 +54,7 @@ namespace GARCA.Views
             Transactions transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
-            TransactionsService.Instance.updateTransactionAfterSplits(transactions);
+            DependencyConfig.iTransactionsService.updateTransactionAfterSplits(transactions);
             loadTransactions();
             parentForm.loadAccounts();
         }
@@ -96,9 +97,9 @@ namespace GARCA.Views
                         transactionsReminders.tagid = transactions.tagid;
                         transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
 
-                        transactionsReminders = TransactionsRemindersService.Instance.update(transactionsReminders);
+                        transactionsReminders = DependencyConfig.iTransactionsRemindersService.update(transactionsReminders);
 
-                        foreach (Splits? splits in SplitsService.Instance.getbyTransactionid(transactions.id))
+                        foreach (Splits? splits in DependencyConfig.iSplitsService.getbyTransactionid(transactions.id))
                         {
                             SplitsReminders splitsReminders = new();
                             splitsReminders.transactionid = transactionsReminders.id;
@@ -107,7 +108,7 @@ namespace GARCA.Views
                             splitsReminders.amountIn = splits.amountIn;
                             splitsReminders.amountOut = splits.amountOut;
                             splitsReminders.tagid = splits.tagid;
-                            SplitsRemindersService.Instance.update(splitsReminders);
+                            DependencyConfig.iSplitsRemindersService.update(splitsReminders);
                         }
 
                         FrmTransactionReminders frm = new(transactionsReminders);
@@ -176,8 +177,8 @@ namespace GARCA.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    transactions.transactionStatus = TransactionsStatusService.Instance.getByID(transactions.transactionStatusid);
-                    TransactionsService.Instance.update(transactions);
+                    transactions.transactionStatus = DependencyConfig.iTransactionsStatusService.getByID(transactions.transactionStatusid);
+                    DependencyConfig.iTransactionsService.update(transactions);
                 }
                 loadTransactions();
             }
@@ -194,8 +195,8 @@ namespace GARCA.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
-                    transactions.transactionStatus = TransactionsStatusService.Instance.getByID(transactions.transactionStatusid);
-                    TransactionsService.Instance.update(transactions);
+                    transactions.transactionStatus = DependencyConfig.iTransactionsStatusService.getByID(transactions.transactionStatusid);
+                    DependencyConfig.iTransactionsService.update(transactions);
                 }
                 loadTransactions();
             }
@@ -212,8 +213,8 @@ namespace GARCA.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
-                    transactions.transactionStatus = TransactionsStatusService.Instance.getByID(transactions.transactionStatusid);
-                    TransactionsService.Instance.update(transactions);
+                    transactions.transactionStatus = DependencyConfig.iTransactionsStatusService.getByID(transactions.transactionStatusid);
+                    DependencyConfig.iTransactionsService.update(transactions);
                 }
                 loadTransactions();
             }
@@ -283,19 +284,19 @@ namespace GARCA.Views
                         Splits? splits = lSplits[i];
                         if (splits.tranferid != null)
                         {
-                            TransactionsService.Instance.delete(TransactionsService.Instance.getByID(splits.tranferid));
+                            DependencyConfig.iTransactionsService.delete(DependencyConfig.iTransactionsService.getByID(splits.tranferid));
                         }
 
-                        SplitsService.Instance.delete(splits);
+                        DependencyConfig.iSplitsService.delete(splits);
                     }
                 }
 
                 if (transactions.tranferid != null)
                 {
-                    TransactionsService.Instance.delete(TransactionsService.Instance.getByID(transactions.tranferid));
+                    DependencyConfig.iTransactionsService.delete(DependencyConfig.iTransactionsService.getByID(transactions.tranferid));
                 }
 
-                TransactionsService.Instance.delete(transactions);
+                DependencyConfig.iTransactionsService.delete(transactions);
             }
         }
 

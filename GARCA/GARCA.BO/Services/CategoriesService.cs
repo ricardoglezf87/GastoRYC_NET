@@ -10,31 +10,14 @@ namespace GARCA.BO.Services
     {
 
         private readonly CategoriesManager categoriesManager;
-        private static CategoriesService? _instance;
-        private static readonly object _lock = new();
-
-        public static CategoriesService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new CategoriesService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
+        
         public enum eSpecialCategories : int
         {
             Split = -1,
             WithoutCategory = 0
         }
 
-        private CategoriesService()
+        public CategoriesService()
         {
             categoriesManager = new();
         }

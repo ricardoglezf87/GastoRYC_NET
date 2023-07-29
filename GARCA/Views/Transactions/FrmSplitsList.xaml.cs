@@ -1,6 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
 using System.Windows;
+using GARCA.IOC;
 
 namespace GARCA.Views
 {
@@ -25,10 +26,10 @@ namespace GARCA.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = CategoriesService.Instance.getAll();
+            cbCategories.ItemsSource = DependencyConfig.iCategoriesService.getAll();
             gvSplits.ItemsSource = transactions != null && transactions.id > 0
-                ? SplitsService.Instance.getbyTransactionid(transactions.id)
-                : (object?)SplitsService.Instance.getbyTransactionidNull();
+                ? DependencyConfig.iSplitsService.getbyTransactionid(transactions.id)
+                : (object?)DependencyConfig.iSplitsService.getbyTransactionidNull();
         }
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -39,7 +40,7 @@ namespace GARCA.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.category = CategoriesService.Instance.getByID(splits.categoryid);
+                        splits.category = DependencyConfig.iCategoriesService.getByID(splits.categoryid);
                         break;
                 }
             }
@@ -73,8 +74,8 @@ namespace GARCA.Views
         {
             Splits splits = (Splits)e.RowData;
 
-            SplitsService.Instance.saveChanges(transactions, splits);
-            TransactionsService.Instance.updateTranferSplits(transactions, splits);
+            DependencyConfig.iSplitsService.saveChanges(transactions, splits);
+            DependencyConfig.iTransactionsService.updateTranferSplits(transactions, splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -83,9 +84,9 @@ namespace GARCA.Views
             {
                 if (splits.tranferid != null)
                 {
-                    TransactionsService.Instance.delete(TransactionsService.Instance.getByID(splits.tranferid));
+                    DependencyConfig.iTransactionsService.delete(DependencyConfig.iTransactionsService.getByID(splits.tranferid));
                 }
-                SplitsService.Instance.delete(splits);
+                DependencyConfig.iSplitsService.delete(splits);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
+using GARCA.IOC;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -19,8 +20,8 @@ namespace GARCA.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = AccountsTypesService.Instance.getAll();
-            gvAccounts.ItemsSource = AccountsService.Instance.getAll();
+            cbAccountsTypes.ItemsSource = DependencyConfig.iAccountsTypesService.getAll();
+            gvAccounts.ItemsSource = DependencyConfig.iAccountsService.getAll();
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -31,7 +32,7 @@ namespace GARCA.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.accountsTypes = AccountsTypesService.Instance.getByID(accounts.accountsTypesid);
+                        accounts.accountsTypes = DependencyConfig.iAccountsTypesService.getByID(accounts.accountsTypesid);
                         break;
                 }
             }
@@ -61,17 +62,17 @@ namespace GARCA.Views
 
             if (accounts.categoryid != null)
             {
-                categories = CategoriesService.Instance.getByID(accounts.categoryid);
+                categories = DependencyConfig.iCategoriesService.getByID(accounts.categoryid);
                 if (categories != null)
                 {
                     categories.description = "[" + accounts.description + "]";
-                    CategoriesService.Instance.update(categories);
+                    DependencyConfig.iCategoriesService.update(categories);
                 }
             }
             else
             {
                 categories = new Categories();
-                accounts.categoryid = CategoriesService.Instance.getNextID(); ;
+                accounts.categoryid = DependencyConfig.iCategoriesService.getNextID(); ;
                 categories.description = "[" + accounts.description + "]";
                 categories.categoriesTypesid = (int)CategoriesTypesService.eCategoriesTypes.Transfers;
 
@@ -79,7 +80,7 @@ namespace GARCA.Views
 
             if (categories != null)
             {
-                CategoriesService.Instance.update(categories);
+                DependencyConfig.iCategoriesService.update(categories);
             }
         }
 
@@ -89,24 +90,24 @@ namespace GARCA.Views
 
             if (accounts.accountsTypes == null && accounts.accountsTypesid != null)
             {
-                accounts.accountsTypes = AccountsTypesService.Instance.getByID(accounts.accountsTypesid);
+                accounts.accountsTypes = DependencyConfig.iAccountsTypesService.getByID(accounts.accountsTypesid);
             }
 
             updateCategory(accounts);
-            AccountsService.Instance.update(accounts);
+            DependencyConfig.iAccountsService.update(accounts);
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items)
             {
-                Categories? categories = CategoriesService.Instance.getByID(accounts.categoryid);
+                Categories? categories = DependencyConfig.iCategoriesService.getByID(accounts.categoryid);
                 if (categories != null)
                 {
-                    CategoriesService.Instance.delete(categories);
+                    DependencyConfig.iCategoriesService.delete(categories);
                 }
 
-                AccountsService.Instance.delete(accounts);
+                DependencyConfig.iAccountsService.delete(accounts);
             }
         }
 

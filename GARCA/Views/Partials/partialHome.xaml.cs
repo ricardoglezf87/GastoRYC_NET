@@ -1,5 +1,6 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
+using GARCA.IOC;
 using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Collections.Generic;
@@ -167,13 +168,13 @@ namespace GARCA.Views
 
             chForecast.Series.Clear();
 
-            foreach (Accounts? accounts in (await AccountsService.Instance.getAllOpenedAync())?
-                .Where(x => AccountsTypesService.Instance.accountExpensives(x.accountsTypesid)))
+            foreach (Accounts? accounts in (await DependencyConfig.iAccountsService.getAllOpenedAync())?
+                .Where(x => DependencyConfig.iAccountsTypesService.accountExpensives(x.accountsTypesid)))
             {
 
                 LineSeries series = new()
                 {
-                    ItemsSource = (await Task.Run(() => ForecastsChartService.Instance.getMonthForecast()))?.Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
+                    ItemsSource = (await Task.Run(() => DependencyConfig.iForecastsChartService.getMonthForecast()))?.Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
                     Label = accounts.description,
                     XBindingPath = "date",
                     YBindingPath = "amount",
@@ -292,7 +293,7 @@ namespace GARCA.Views
 
             //Series
 
-            HashSet<VBalancebyCategory?>? lExpensesCharts = await VBalancebyCategoryService.Instance.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
+            HashSet<VBalancebyCategory?>? lExpensesCharts = await DependencyConfig.iVBalancebyCategoryService.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new()

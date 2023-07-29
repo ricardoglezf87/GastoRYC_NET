@@ -1,5 +1,6 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
+using GARCA.IOC;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -76,7 +77,7 @@ namespace GARCA.Views
 
             FrmSplitsRemindersList frm = new(transaction);
             frm.ShowDialog();
-            TransactionsRemindersService.Instance.updateSplitsReminders(transaction);
+            DependencyConfig.iTransactionsRemindersService.updateSplitsReminders(transaction);
             loadTransaction();
         }
 
@@ -128,7 +129,7 @@ namespace GARCA.Views
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = ExpirationsRemindersService.Instance.getNextReminder(transaction.id) ?? transaction.date;
+                dtpDate.SelectedDate = DependencyConfig.iExpirationsRemindersService.getNextReminder(transaction.id) ?? transaction.date;
                 cbPeriodTransaction.SelectedValue = transaction.periodsRemindersid;
                 cbAccount.SelectedValue = transaction.accountid;
                 cbPerson.SelectedValue = transaction.personid;
@@ -164,21 +165,21 @@ namespace GARCA.Views
             transaction.date = dtpDate.SelectedDate;
 
             transaction.periodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
-            transaction.periodsReminders = PeriodsRemindersService.Instance.getByID(transaction.periodsRemindersid);
+            transaction.periodsReminders = DependencyConfig.iPeriodsReminderService.getByID(transaction.periodsRemindersid);
 
             transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = AccountsService.Instance.getByID(transaction.accountid);
+            transaction.account = DependencyConfig.iAccountsService.getByID(transaction.accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = PersonsService.Instance.getByID(transaction.personid);
+                transaction.person = DependencyConfig.iPersonsService.getByID(transaction.personid);
             }
 
             transaction.memo = txtMemo.Text;
 
             transaction.categoryid = (int)cbCategory.SelectedValue;
-            transaction.category = CategoriesService.Instance.getByID(transaction.categoryid);
+            transaction.category = DependencyConfig.iCategoriesService.getByID(transaction.categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -194,24 +195,24 @@ namespace GARCA.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = TagsService.Instance.getByID(transaction.tagid);
+                transaction.tag = DependencyConfig.iTagsService.getByID(transaction.tagid);
             }
 
             transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
 
             transaction.autoRegister = chkAutoregister.IsChecked ?? false;
 
-            transaction.transactionStatus = TransactionsStatusService.Instance.getByID(transaction.transactionStatusid);
+            transaction.transactionStatus = DependencyConfig.iTransactionsStatusService.getByID(transaction.transactionStatusid);
         }
 
         private void loadComboBox()
         {
-            cbAccount.ItemsSource = AccountsService.Instance.getAll();
-            cbPerson.ItemsSource = PersonsService.Instance.getAll();
-            cbCategory.ItemsSource = CategoriesService.Instance.getAll();
-            cbTag.ItemsSource = TagsService.Instance.getAll();
-            cbTransactionStatus.ItemsSource = TransactionsStatusService.Instance.getAll();
-            cbPeriodTransaction.ItemsSource = PeriodsRemindersService.Instance.getAll();
+            cbAccount.ItemsSource = DependencyConfig.iAccountsService.getAll();
+            cbPerson.ItemsSource = DependencyConfig.iPersonsService.getAll();
+            cbCategory.ItemsSource = DependencyConfig.iCategoriesService.getAll();
+            cbTag.ItemsSource = DependencyConfig.iTagsService.getAll();
+            cbTransactionStatus.ItemsSource = DependencyConfig.iTransactionsStatusService.getAll();
+            cbPeriodTransaction.ItemsSource = DependencyConfig.iPeriodsReminderService.getAll();
         }
 
         private bool saveTransaction()
@@ -224,7 +225,7 @@ namespace GARCA.Views
                     updateTransaction();
                     if (transaction != null)
                     {
-                        TransactionsRemindersService.Instance.saveChanges(transaction);
+                        DependencyConfig.iTransactionsRemindersService.saveChanges(transaction);
                     }
                     return true;
                 }

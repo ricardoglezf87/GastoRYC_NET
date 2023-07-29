@@ -2,6 +2,7 @@
 using GARCA.BO.Services;
 using System.Windows;
 using System.Windows.Controls;
+using GARCA.IOC;
 
 namespace GARCA.Views
 {
@@ -17,8 +18,8 @@ namespace GARCA.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategoriesTypes.ItemsSource = CategoriesTypesService.Instance.getAllWithoutSpecialTransfer();
-            gvCategories.ItemsSource = CategoriesService.Instance.getAllWithoutSpecialTransfer();
+            cbCategoriesTypes.ItemsSource = DependencyConfig.iCategoriesTypesService.getAllWithoutSpecialTransfer();
+            gvCategories.ItemsSource = DependencyConfig.iCategoriesService.getAllWithoutSpecialTransfer();
         }
 
         private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -29,7 +30,7 @@ namespace GARCA.Views
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
                 {
                     case "categoriesTypesid":
-                        categories.categoriesTypes = CategoriesTypesService.Instance.getByID(categories.categoriesTypesid);
+                        categories.categoriesTypes = DependencyConfig.iCategoriesTypesService.getByID(categories.categoriesTypesid);
                         break;
                 }
             }
@@ -59,17 +60,17 @@ namespace GARCA.Views
 
             if (categories.categoriesTypes == null && categories.categoriesTypesid != null)
             {
-                categories.categoriesTypes = CategoriesTypesService.Instance.getByID(categories.categoriesTypesid);
+                categories.categoriesTypes = DependencyConfig.iCategoriesTypesService.getByID(categories.categoriesTypesid);
             }
 
-            CategoriesService.Instance.update(categories);
+            DependencyConfig.iCategoriesService.update(categories);
         }
 
         private void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Categories categories in e.Items)
             {
-                CategoriesService.Instance.delete(categories);
+                DependencyConfig.iCategoriesService.delete(categories);
             }
         }
 

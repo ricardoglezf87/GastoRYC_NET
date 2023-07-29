@@ -4,31 +4,14 @@ using GARCA.BO.Models;
 using GARCA.DAO.Managers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+  
 namespace GARCA.BO.Services
 {
     public class InvestmentProductsService
     {
         private readonly InvestmentProductsManager investmentProductsManager;
-        private static InvestmentProductsService? _instance;
-        private static readonly object _lock = new();
 
-        public static InvestmentProductsService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new InvestmentProductsService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private InvestmentProductsService()
+        public InvestmentProductsService()
         {
             investmentProductsManager = new();
         }

@@ -149,6 +149,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SimpleInjector" Version="5.4.1" />
     <PackageReference Include="Syncfusion.SfChart.WPF" Version="21.2.4" />
     <PackageReference Include="Syncfusion.SfGrid.WPF" Version="21.2.4" />
     <PackageReference Include="Syncfusion.SfInput.WPF" Version="21.2.4" />

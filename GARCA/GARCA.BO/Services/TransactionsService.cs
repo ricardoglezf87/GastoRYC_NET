@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GARCA.IOC;
 
 namespace GARCA.BO.Services
 {
@@ -13,25 +14,8 @@ namespace GARCA.BO.Services
         #region Propiedades y Contructor
 
         private readonly TransactionsManager transactionsManager;
-        private static TransactionsService? _instance;
-        private static readonly object _lock = new();
-
-        public static TransactionsService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new TransactionsService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private TransactionsService()
+        
+        public TransactionsService()
         {
             transactionsManager = new();
         }
@@ -144,7 +128,7 @@ namespace GARCA.BO.Services
             updateTranfer(transactions);
             updateTranferFromSplit(transactions);
             transactions = update(transactions);
-            PersonsService.Instance.setCategoryDefault(transactions.person);
+            DependencyConfig.iPersonsService.setCategoryDefault(transactions.person);
             refreshBalanceTransactions(transactions);
         }
 
@@ -194,9 +178,9 @@ namespace GARCA.BO.Services
                 Transactions? tContraria = new()
                 {
                     date = transactions.date,
-                    accountid = AccountsService.Instance.getByCategoryId(transactions.categoryid)?.id,
+                    accountid = DependencyConfig.iAccountsService.getByCategoryId(transactions.categoryid)?.id,
                     personid = transactions.personid,
-                    categoryid = AccountsService.Instance.getByID(transactions.accountid)?.categoryid,
+                    categoryid = DependencyConfig.iAccountsService.getByID(transactions.accountid)?.categoryid,
                     memo = transactions.memo,
                     tagid = transactions.tagid,
                     amountIn = transactions.amountOut,
@@ -218,9 +202,9 @@ namespace GARCA.BO.Services
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;
-                    tContraria.accountid = AccountsService.Instance.getByCategoryId(transactions.categoryid)?.id;
+                    tContraria.accountid = DependencyConfig.iAccountsService.getByCategoryId(transactions.categoryid)?.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = AccountsService.Instance.getByID(transactions.accountid)?.categoryid;
+                    tContraria.categoryid = DependencyConfig.iAccountsService.getByID(transactions.accountid)?.categoryid;
                     tContraria.memo = transactions.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = transactions.amountOut;
@@ -241,7 +225,7 @@ namespace GARCA.BO.Services
             if (transactions.tranferSplitid != null &&
                 transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Splits? tContraria = SplitsService.Instance.getByID(transactions.tranferSplitid);
+                Splits? tContraria = DependencyConfig.iSplitsService.getByID(transactions.tranferSplitid);
                 if (tContraria != null)
                 {
                     tContraria.transaction.date = transactions.date;
@@ -252,14 +236,14 @@ namespace GARCA.BO.Services
                     tContraria.amountIn = transactions.amountOut;
                     tContraria.amountOut = transactions.amountIn;
                     tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
-                    SplitsService.Instance.update(tContraria);
+                    DependencyConfig.iSplitsService.update(tContraria);
                 }
             }
         }
 
         public void updateTransactionAfterSplits(Transactions? transactions)
         {
-            List<Splits?>? lSplits = transactions.splits ?? SplitsService.Instance.getbyTransactionid(transactions.id);
+            List<Splits?>? lSplits = transactions.splits ?? DependencyConfig.iSplitsService.getbyTransactionid(transactions.id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
@@ -273,13 +257,13 @@ namespace GARCA.BO.Services
                 }
 
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactions.category = CategoriesService.Instance.getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactions.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
             else if (transactions.categoryid is not null
                 and ((int)CategoriesService.eSpecialCategories.Split))
             {
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactions.category = CategoriesService.Instance.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactions.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
             }
 
             if (transactions.id == 0)
@@ -288,7 +272,7 @@ namespace GARCA.BO.Services
                 foreach (Splits? splits in lSplits)
                 {
                     splits.transactionid = transactions.id;
-                    SplitsService.Instance.update(splits);
+                    DependencyConfig.iSplitsService.update(splits);
                 }
             }
             else
@@ -317,9 +301,9 @@ namespace GARCA.BO.Services
                 Transactions? tContraria = new()
                 {
                     date = transactions.date,
-                    accountid = AccountsService.Instance.getByCategoryId(splits.categoryid)?.id,
+                    accountid = DependencyConfig.iAccountsService.getByCategoryId(splits.categoryid)?.id,
                     personid = transactions.personid,
-                    categoryid = AccountsService.Instance.getByID(transactions.accountid).categoryid,
+                    categoryid = DependencyConfig.iAccountsService.getByID(transactions.accountid).categoryid,
                     memo = splits.memo,
                     tagid = transactions.tagid,
                     amountIn = splits.amountOut,
@@ -338,9 +322,9 @@ namespace GARCA.BO.Services
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;
-                    tContraria.accountid = AccountsService.Instance.getByCategoryId(splits.categoryid)?.id;
+                    tContraria.accountid = DependencyConfig.iAccountsService.getByCategoryId(splits.categoryid)?.id;
                     tContraria.personid = transactions.personid;
-                    tContraria.categoryid = AccountsService.Instance.getByID(transactions.accountid).categoryid;
+                    tContraria.categoryid = DependencyConfig.iAccountsService.getByID(transactions.accountid).categoryid;
                     tContraria.memo = splits.memo;
                     tContraria.tagid = transactions.tagid;
                     tContraria.amountIn = splits.amountOut ?? 0;

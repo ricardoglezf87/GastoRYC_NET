@@ -11,25 +11,8 @@ namespace GARCA.BO.Services
     {
         private readonly DateCalendarManager dateCalendarManager;
         private readonly DateTime initDate;
-        private static DateCalendarService? _instance;
-        private static readonly object _lock = new();
-
-        public static DateCalendarService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new DateCalendarService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private DateCalendarService()
+        
+        public DateCalendarService()
         {
             dateCalendarManager = new();
             initDate = new DateTime(2001, 01, 01);

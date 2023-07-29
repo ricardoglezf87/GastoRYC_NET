@@ -4,31 +4,15 @@ using GARCA.BO.Models;
 using GARCA.DAO.Managers;
 using System.Collections.Generic;
 using System.Linq;
+using GARCA.IOC;
 
 namespace GARCA.BO.Services
 {
     public class PersonsService
     {
         private readonly PersonsManager personsManager;
-        private static PersonsService? _instance;
-        private static readonly object _lock = new();
-
-        public static PersonsService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new PersonsService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private PersonsService()
+        
+        public PersonsService()
         {
             personsManager = new();
         }
@@ -60,7 +44,7 @@ namespace GARCA.BO.Services
                 return;
             }
 
-            var result = (from x in TransactionsService.Instance.getByPerson(persons)
+            var result = (from x in DependencyConfig.iTransactionsService.getByPerson(persons)
                           group x by x.categoryid into g
                           select new
                           {

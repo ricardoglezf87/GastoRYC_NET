@@ -8,23 +8,6 @@ namespace GARCA.BO.Services
     public class CategoriesTypesService
     {
         private readonly CategoriesTypesManager categoriesTypesManager;
-        private static CategoriesTypesService? _instance;
-        private static readonly object _lock = new();
-
-        public static CategoriesTypesService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new CategoriesTypesService();
-                    }
-                }
-                return _instance;
-            }
-        }
 
         public enum eCategoriesTypes : int
         {
@@ -34,7 +17,7 @@ namespace GARCA.BO.Services
             Specials = 4
         }
 
-        private CategoriesTypesService()
+        public CategoriesTypesService()
         {
             categoriesTypesManager = new();
         }

@@ -2,34 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GARCA.IOC;
 
 namespace GARCA.BO.Services
 {
     public class VPortfolioService
     {
-        private static VPortfolioService? _instance;
-        private static readonly object _lock = new();
-
-        public static VPortfolioService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new VPortfolioService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
         public async Task<List<VPortfolio?>?> getAllAsync()
         {
             List<VPortfolio?>? listPortFolio = new();
             foreach (InvestmentProducts? investmentProducts in
-                await InvestmentProductsService.Instance.getAllOpened())
+                await DependencyConfig.iInvestmentProductsService.getAllOpened())
             {
 
                 VPortfolio portfolio = new();
@@ -68,8 +51,8 @@ namespace GARCA.BO.Services
                     }
                 }
                 portfolio.costShares = lBuy?.Sum(x => x.pricesShares * -x.numShares);
-                portfolio.date = InvestmentProductsPricesService.Instance.getLastValueDate(investmentProducts);
-                portfolio.prices = InvestmentProductsPricesService.Instance.getActualPrice(investmentProducts);
+                portfolio.date = DependencyConfig.iInvestmentProductsPricesService.getLastValueDate(investmentProducts);
+                portfolio.prices = DependencyConfig.iInvestmentProductsPricesService.getActualPrice(investmentProducts);
 
                 listPortFolio.Add(portfolio);
             }
@@ -78,17 +61,17 @@ namespace GARCA.BO.Services
 
         public async Task<decimal?> getNumShares(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => TransactionsService.Instance.getByInvestmentProduct(investmentProducts)?.Sum(x => -x.numShares));
+            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Sum(x => -x.numShares));
         }
 
         public async Task<List<Transactions?>?> getBuyOperations(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => TransactionsService.Instance.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares < 0).OrderBy(x => x.date).ToList());
+            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares < 0).OrderBy(x => x.date).ToList());
         }
 
         public async Task<List<Transactions?>?> getSellOperations(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => TransactionsService.Instance.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares > 0).OrderBy(x => x.date).ToList());
+            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares > 0).OrderBy(x => x.date).ToList());
         }
     }
 }

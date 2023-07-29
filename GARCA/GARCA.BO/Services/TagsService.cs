@@ -9,25 +9,8 @@ namespace GARCA.BO.Services
     public class TagsService
     {
         private readonly TagsManager tagsManager;
-        private static TagsService? _instance;
-        private static readonly object _lock = new();
-
-        public static TagsService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new TagsService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private TagsService()
+        
+        public TagsService()
         {
             tagsManager = new();
         }

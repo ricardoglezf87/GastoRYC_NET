@@ -10,31 +10,15 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using GARCA.IOC;
 
 namespace GARCA.BO.Services
 {
     public class InvestmentProductsPricesService
     {
         private readonly InvestmentProductsPricesManager investmentProductsPricesManager;
-        private static InvestmentProductsPricesService? _instance;
-        private static readonly object _lock = new();
 
-        public static InvestmentProductsPricesService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new InvestmentProductsPricesService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private InvestmentProductsPricesService()
+        public InvestmentProductsPricesService()
         {
             investmentProductsPricesManager = new();
         }
@@ -59,7 +43,7 @@ namespace GARCA.BO.Services
             try
             {
                 //Get prices from buy and sell ins transactions
-                foreach (var transactions in TransactionsService.Instance.getByInvestmentProduct(investmentProducts)?
+                foreach (var transactions in DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?
                         .GroupBy(g => g.date)?.Select(x => new { date = x.Key, price = x.Average(y => y.pricesShares) }))
                 {
                     if (!exists(investmentProducts.id, transactions.date))

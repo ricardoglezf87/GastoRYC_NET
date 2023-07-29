@@ -5,25 +5,8 @@ namespace GARCA.BO.Services
     public class RYCContextService
     {
         private readonly RYCContextManager contextManager;
-        private static RYCContextService? _instance;
-        private static readonly object _lock = new();
 
-        public static RYCContextService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new RYCContextService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-        private RYCContextService()
+        public RYCContextService()
         {
             contextManager = new();
         }

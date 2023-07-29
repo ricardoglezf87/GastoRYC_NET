@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using GARCA.IOC;
 
 namespace GARCA.Views
 {
@@ -77,7 +78,7 @@ namespace GARCA.Views
 
         public async void loadReminders()
         {
-            List<ExpirationsReminders?>? expirationsReminders = await Task.Run(() => ExpirationsRemindersService.Instance.getAllPendingWithoutFutureWithGeneration());
+            List<ExpirationsReminders?>? expirationsReminders = await Task.Run(() => DependencyConfig.iExpirationsRemindersService.getAllPendingWithoutFutureWithGeneration());
 
             cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 
@@ -91,11 +92,11 @@ namespace GARCA.Views
 
         private void putDoneReminder(int? id)
         {
-            ExpirationsReminders? expirationsReminders = ExpirationsRemindersService.Instance.getByID(id);
+            ExpirationsReminders? expirationsReminders = DependencyConfig.iExpirationsRemindersService.getByID(id);
             if (expirationsReminders != null)
             {
                 expirationsReminders.done = true;
-                ExpirationsRemindersService.Instance.update(expirationsReminders);
+                DependencyConfig.iExpirationsRemindersService.update(expirationsReminders);
             }
 
             loadReminders();
@@ -103,7 +104,7 @@ namespace GARCA.Views
 
         private void makeTransactionFromReminder(int? id)
         {
-            Transactions? transaction = ExpirationsRemindersService.Instance.registerTransactionfromReminder(id);
+            Transactions? transaction = DependencyConfig.iExpirationsRemindersService.registerTransactionfromReminder(id);
             if (transaction != null)
             {
                 FrmTransaction frm = new(transaction);

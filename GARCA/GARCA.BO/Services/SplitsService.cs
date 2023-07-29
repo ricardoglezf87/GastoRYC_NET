@@ -4,6 +4,7 @@ using GARCA.BO.Models;
 using GARCA.DAO.Managers;
 using System;
 using System.Collections.Generic;
+using GARCA.IOC;
 
 namespace GARCA.BO.Services
 {
@@ -11,26 +12,8 @@ namespace GARCA.BO.Services
     {
 
         private readonly SplitsManager splitsManager;
-        private static SplitsService? _instance;
-        private static readonly object _lock = new();
-
-        public static SplitsService Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        _instance ??= new SplitsService();
-                    }
-                }
-                return _instance;
-            }
-        }
-
-
-        private SplitsService()
+        
+        public SplitsService()
         {
             splitsManager = new();
         }
@@ -64,7 +47,7 @@ namespace GARCA.BO.Services
         {
             if (splits.category == null && splits.categoryid != null)
             {
-                splits.category = CategoriesService.Instance.getByID(splits.categoryid);
+                splits.category = DependencyConfig.iCategoriesService.getByID(splits.categoryid);
             }
 
             splits.amountIn ??= 0;
