@@ -51,15 +51,16 @@ namespace GARCA.View.Views
         {
             var splits = (Splits)e.RowData;
 
-            if (splits.categoryid == null)
+            switch (splits.categoryid)
             {
-                e.IsValid = false;
-                e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
-            }
-            else if (splits.categoryid == (int)CategoriesService.eSpecialCategories.Split)
-            {
-                e.IsValid = false;
-                e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
+                case null:
+                    e.IsValid = false;
+                    e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
+                    break;
+                case (int)CategoriesService.eSpecialCategories.Split:
+                    e.IsValid = false;
+                    e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
+                    break;
             }
 
             if (splits.amountIn == null && splits.amountOut == null)

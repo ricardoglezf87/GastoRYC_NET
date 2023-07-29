@@ -10,9 +10,7 @@ namespace GARCA.BO.Models
 
         public int CompareTo(object? obj)
         {
-            if (obj == null) return 0;
-
-            return this.id.CompareTo(((ModelBase)obj).id);
+            return obj == null ? 0 : this.id.CompareTo(((ModelBase)obj).id);
         }
     }
 }

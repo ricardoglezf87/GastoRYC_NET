@@ -127,25 +127,24 @@ namespace GARCA
                     openNewTransaction();
                     break;
                 case Key.F5:
-                    if (actualPrincipalContent is PartialHome)
+                    switch (actualPrincipalContent)
                     {
-                        ((PartialHome)actualPrincipalContent).loadCharts();
-                    }
-                    else if (actualPrincipalContent is PartialTransactions)
-                    {
-                        loadAccounts();
-                        ((PartialTransactions)actualPrincipalContent).loadTransactions();
-                    }
-                    else if (actualPrincipalContent is PartialReminders)
-                    {
-                        ((PartialReminders)actualPrincipalContent).loadReminders();
-                        await Task.Run(() => DependencyConfig.iExpirationsRemindersService.generateAutoregister());
-                        loadAccounts();
-                    }
-                    else if (actualPrincipalContent is PartialPortfolio)
-                    {
-                        ((PartialPortfolio)actualPrincipalContent).loadPortfolio();
-                        loadAccounts();
+                        case PartialHome home:
+                            home.loadCharts();
+                            break;
+                        case PartialTransactions:
+                            loadAccounts();
+                            ((PartialTransactions)actualPrincipalContent).loadTransactions();
+                            break;
+                        case PartialReminders reminders:
+                            reminders.loadReminders();
+                            await Task.Run(() => DependencyConfig.iExpirationsRemindersService.generateAutoregister());
+                            loadAccounts();
+                            break;
+                        case PartialPortfolio portfolio:
+                            portfolio.loadPortfolio();
+                            loadAccounts();
+                            break;
                     }
                     break;
             }
@@ -165,14 +164,14 @@ namespace GARCA
             {
                 toggleViews(eViews.Transactions);
 
-                if (actualPrincipalContent is PartialReminders)
+                switch (actualPrincipalContent)
                 {
-                    ((PartialReminders)actualPrincipalContent).loadReminders();
-                }
-
-                if (actualPrincipalContent is PartialTransactions)
-                {
-                    ((PartialTransactions)actualPrincipalContent).setColumnVisibility((AccountsView?)lvAccounts.SelectedValue);
+                    case PartialReminders reminders:
+                        reminders.loadReminders();
+                        break;
+                    case PartialTransactions transactions:
+                        transactions.setColumnVisibility((AccountsView?)lvAccounts.SelectedValue);
+                        break;
                 }
             }
         }
@@ -200,13 +199,14 @@ namespace GARCA
             frm.ShowDialog();
             loadAccounts();
 
-            if (actualPrincipalContent is PartialTransactions)
+            switch (actualPrincipalContent)
             {
-                ((PartialTransactions)actualPrincipalContent).loadTransactions();
-            }
-            else if (actualPrincipalContent is PartialHome)
-            {
-                ((PartialHome)actualPrincipalContent).loadCharts();
+                case PartialTransactions transactions:
+                    transactions.loadTransactions();
+                    break;
+                case PartialHome home:
+                    home.loadCharts();
+                    break;
             }
         }
 
@@ -226,13 +226,14 @@ namespace GARCA
             FrmInvestmentProductsList frm = new();
             frm.ShowDialog();
 
-            if (actualPrincipalContent is PartialTransactions)
+            switch (actualPrincipalContent)
             {
-                ((PartialTransactions)actualPrincipalContent).loadTransactions();
-            }
-            else if (actualPrincipalContent is PartialPortfolio)
-            {
-                ((PartialPortfolio)actualPrincipalContent).loadPortfolio();
+                case PartialTransactions transactions:
+                    transactions.loadTransactions();
+                    break;
+                case PartialPortfolio portfolio:
+                    portfolio.loadPortfolio();
+                    break;
             }
         }
 
@@ -241,13 +242,14 @@ namespace GARCA
             FrmCategoriesList frm = new();
             frm.ShowDialog();
 
-            if (actualPrincipalContent is PartialTransactions)
+            switch (actualPrincipalContent)
             {
-                ((PartialTransactions)actualPrincipalContent).loadTransactions();
-            }
-            else if (actualPrincipalContent is PartialHome)
-            {
-                ((PartialHome)actualPrincipalContent).loadCharts();
+                case PartialTransactions transactions:
+                    transactions.loadTransactions();
+                    break;
+                case PartialHome home:
+                    home.loadCharts();
+                    break;
             }
         }
 
