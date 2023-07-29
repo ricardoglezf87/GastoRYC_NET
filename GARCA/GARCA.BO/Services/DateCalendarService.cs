@@ -14,18 +14,18 @@ namespace GARCA.BO.Services
         
         public DateCalendarService()
         {
-            dateCalendarManager = new();
+            dateCalendarManager = new DateCalendarManager();
             initDate = new DateTime(2001, 01, 01);
         }
 
-        public DateCalendar? getByID(DateTime? id)
+        private DateCalendar? getByID(DateTime? id)
         {
             return (DateCalendar?)dateCalendarManager.getByID(id);
         }
 
         public void fillCalendar()
         {
-            DateTime ini = initDate;
+            var ini = initDate;
             while (ini < DateTime.Now.AddYears(1))
             {
                 if (getByID(ini) == null)

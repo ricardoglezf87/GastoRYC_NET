@@ -20,10 +20,10 @@ namespace GARCA.BO.Services
 
         public InvestmentProductsPricesService()
         {
-            investmentProductsPricesManager = new();
+            investmentProductsPricesManager = new InvestmentProductsPricesManager();
         }
 
-        public bool exists(int? investmentProductId, DateTime? date)
+        private bool exists(int? investmentProductId, DateTime? date)
         {
             return investmentProductsPricesManager.exists(investmentProductId, date);
         }
@@ -75,7 +75,7 @@ namespace GARCA.BO.Services
                     lproductsPrices = await getPricesOnlineYahoo(investmentProducts);
                 }
 
-                foreach (InvestmentProductsPrices productsPrices in lproductsPrices)
+                foreach (var productsPrices in lproductsPrices)
                 {
                     if (!exists(productsPrices.investmentProductsid, productsPrices.date))
                     {
@@ -97,23 +97,23 @@ namespace GARCA.BO.Services
 
             using (HttpClient client = new())
             {
-                HttpResponseMessage response = await client.GetAsync(investmentProducts.url);
+                var response = await client.GetAsync(investmentProducts.url);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string jsonString = await response.Content.ReadAsStringAsync();
+                    var jsonString = await response.Content.ReadAsStringAsync();
 
-                    JObject json = JObject.Parse(jsonString);
-                    JArray? timestamps = json["chart"]?["result"]?[0]?["timestamp"]?.ToObject<JArray>();
-                    JArray? prices = json["chart"]?["result"]?[0]?["indicators"]?["quote"]?[0]?["close"]?.ToObject<JArray>();
+                    var json = JObject.Parse(jsonString);
+                    var timestamps = json["chart"]?["result"]?[0]?["timestamp"]?.ToObject<JArray>();
+                    var prices = json["chart"]?["result"]?[0]?["indicators"]?["quote"]?[0]?["close"]?.ToObject<JArray>();
                     if (prices != null && timestamps != null)
                     {
-                        for (int i = 0; i < timestamps.Count; i++)
+                        for (var i = 0; i < timestamps.Count; i++)
                         {
                             if (timestamps[i] != null && !String.IsNullOrEmpty(timestamps[i].ToString()) &&
                                 prices[i] != null && !String.IsNullOrEmpty(prices[i].ToString()))
                             {
-                                long timestamp = (long)timestamps[i];
+                                var timestamp = (long)timestamps[i];
 
                                 InvestmentProductsPrices productsPrices = new();
                                 productsPrices.investmentProductsid = investmentProducts.id;

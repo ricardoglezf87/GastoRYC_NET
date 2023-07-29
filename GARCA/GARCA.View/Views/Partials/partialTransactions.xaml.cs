@@ -51,7 +51,7 @@ namespace GARCA.View.Views
 
         private void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
-            Transactions transactions = (Transactions)gvTransactions.SelectedItem;
+            var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
             DependencyConfig.iTransactionsService.updateTransactionAfterSplits(transactions);
@@ -99,7 +99,7 @@ namespace GARCA.View.Views
 
                         transactionsReminders = DependencyConfig.iTransactionsRemindersService.update(transactionsReminders);
 
-                        foreach (Splits? splits in DependencyConfig.iSplitsService.getbyTransactionid(transactions.id))
+                        foreach (var splits in DependencyConfig.iSplitsService.getbyTransactionid(transactions.id))
                         {
                             SplitsReminders splitsReminders = new();
                             splitsReminders.transactionid = transactionsReminders.id;
@@ -278,10 +278,10 @@ namespace GARCA.View.Views
             {
                 if (transactions.splits != null)
                 {
-                    List<Splits?>? lSplits = transactions.splits;
-                    for (int i = 0; i < lSplits.Count; i++)
+                    var lSplits = transactions.splits;
+                    for (var i = 0; i < lSplits.Count; i++)
                     {
-                        Splits? splits = lSplits[i];
+                        var splits = lSplits[i];
                         if (splits.tranferid != null)
                         {
                             DependencyConfig.iTransactionsService.delete(DependencyConfig.iTransactionsService.getByID(splits.tranferid));

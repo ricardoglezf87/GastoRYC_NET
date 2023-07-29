@@ -33,7 +33,7 @@ namespace GARCA.View.Views
 
         private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
-            SplitsReminders splitsReminders = (SplitsReminders)gvSplitsReminders.SelectedItem;
+            var splitsReminders = (SplitsReminders)gvSplitsReminders.SelectedItem;
             if (splitsReminders != null)
             {
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
@@ -47,7 +47,7 @@ namespace GARCA.View.Views
 
         private void gvSplitsReminders_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            SplitsReminders splitsReminders = (SplitsReminders)e.RowData;
+            var splitsReminders = (SplitsReminders)e.RowData;
 
             if (splitsReminders.categoryid == null)
             {
@@ -70,7 +70,7 @@ namespace GARCA.View.Views
 
         private void gvSplitsReminders_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            SplitsReminders splitsReminders = (SplitsReminders)e.RowData;
+            var splitsReminders = (SplitsReminders)e.RowData;
 
             saveChanges(splitsReminders);
         }
@@ -111,7 +111,7 @@ namespace GARCA.View.Views
 
         private void gvSplitsReminders_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
         {
-            SplitsReminders splitsReminders = (SplitsReminders)e.NewObject;
+            var splitsReminders = (SplitsReminders)e.NewObject;
             splitsReminders.transactionid = transactionsReminders.id;
             splitsReminders.transaction = transactionsReminders;
         }

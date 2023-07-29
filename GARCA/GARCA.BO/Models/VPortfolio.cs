@@ -14,6 +14,6 @@ namespace GARCA.BO.Models
         public virtual Decimal? costShares { set; get; }
         public virtual Decimal? marketValue => (numShares == null ? 0 : numShares) * (prices == null ? 0 : prices);
         public virtual Decimal? profit => (marketValue == null ? 0 : marketValue) - (costShares == null ? 0 : costShares);
-        public virtual Decimal? profitPorcent => (costShares is null or 0) ? 0 : ((marketValue / costShares) - 1) * 100;
+        public virtual Decimal? profitPorcent => costShares is null or 0 ? 0 : (marketValue / costShares - 1) * 100;
     }
 }

@@ -242,8 +242,8 @@ namespace GARCA.View.Views
 
         private bool isTransactionValid()
         {
-            String errorMessage = "";
-            bool valid = true;
+            var errorMessage = "";
+            var valid = true;
 
             if (dtpDate.SelectedDate == null)
             {

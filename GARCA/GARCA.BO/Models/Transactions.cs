@@ -50,13 +50,13 @@ namespace GARCA.BO.Models
 
         public virtual bool? investmentCategory { set; get; }
 
-        public virtual String? categoryDescripGrid => (investmentCategory.HasValue && investmentCategory.Value == false) ?
-            (numShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra") : category?.description ?? String.Empty;
+        public virtual String? categoryDescripGrid => investmentCategory.HasValue && investmentCategory.Value == false ?
+            numShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra" : category?.description ?? String.Empty;
 
-        public virtual String? personDescripGrid => (investmentCategory.HasValue && investmentCategory.Value == false) ?
+        public virtual String? personDescripGrid => investmentCategory.HasValue && investmentCategory.Value == false ?
             investmentProducts?.description ?? String.Empty : person?.name ?? String.Empty;
 
-        public virtual Decimal? amount => (investmentCategory.HasValue && investmentCategory.Value == false) ? Math.Round((numShares ?? 0) * (pricesShares ?? 0), 2) : amountIn - amountOut;
+        public virtual Decimal? amount => investmentCategory.HasValue && investmentCategory.Value == false ? Math.Round((numShares ?? 0) * (pricesShares ?? 0), 2) : amountIn - amountOut;
 
         public virtual Double? orden { set; get; }
 
@@ -103,25 +103,25 @@ namespace GARCA.BO.Models
                     id = v.id,
                     date = v.date,
                     accountid = v.accountid,
-                    account = (v.account != null) ? (Accounts?)v.account : null,
+                    account = v.account != null ? (Accounts?)v.account : null,
                     personid = v.personid,
-                    person = (v.person != null) ? (Persons?)v.person : null,
+                    person = v.person != null ? (Persons?)v.person : null,
                     categoryid = v.categoryid,
-                    category = (v.category != null) ? (Categories?)v.category : null,
+                    category = v.category != null ? (Categories?)v.category : null,
                     amountIn = v.amountIn,
                     amountOut = v.amountOut,
                     memo = v.memo,
                     investmentCategory = v.investmentCategory,
-                    investmentProducts = (v.investmentProducts != null) ? (InvestmentProducts?)v.investmentProducts : null,
+                    investmentProducts = v.investmentProducts != null ? (InvestmentProducts?)v.investmentProducts : null,
                     investmentProductsid = v.investmentProductsid,
                     tranferid = v.tranferid,
                     tranferSplitid = v.tranferSplitid,
-                    transactionStatus = (v.transactionStatus != null) ? (TransactionsStatus?)v.transactionStatus : null,
+                    transactionStatus = v.transactionStatus != null ? (TransactionsStatus?)v.transactionStatus : null,
                     transactionStatusid = v.transactionStatusid,
                     numShares = v.numShares,
                     pricesShares = v.pricesShares,
                     tagid = v.tagid,
-                    tag = (v.tag != null) ? (Tags?)v.tag : null,
+                    tag = v.tag != null ? (Tags?)v.tag : null,
                     balance = v.balance,
                     orden = v.orden
                 };

@@ -22,8 +22,8 @@ namespace GARCA.DAO.Managers
             {
                 var repository = unitOfWork.GetRepositoryModelBase<CategoriesTypesDAO>();
                 return repository.GetAll()?
-                    .Where(x => x.id is not ((int)eCategoriesTypes.Specials) and
-                    not ((int)eCategoriesTypes.Transfers)).ToList();
+                    .Where(x => x.id is not (int)eCategoriesTypes.Specials and
+                    not (int)eCategoriesTypes.Transfers).ToList();
             }
         }
     }

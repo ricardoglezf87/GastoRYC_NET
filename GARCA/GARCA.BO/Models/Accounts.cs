@@ -42,9 +42,9 @@ namespace GARCA.BO.Models
                     id = v.id,
                     description = v.description,
                     categoryid = v.categoryid,
-                    category = (v.category != null) ? (Categories?)v.category : null,
+                    category = v.category != null ? (Categories?)v.category : null,
                     accountsTypesid = v.accountsTypesid,
-                    accountsTypes = (v.accountsTypes != null) ? (AccountsTypes?)v.accountsTypes : null,
+                    accountsTypes = v.accountsTypes != null ? (AccountsTypes?)v.accountsTypes : null,
                     closed = v.closed
                 };
         }

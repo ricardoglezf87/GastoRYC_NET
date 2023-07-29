@@ -19,7 +19,7 @@ namespace GARCA.BO.Services
 
         public CategoriesService()
         {
-            categoriesManager = new();
+            categoriesManager = new CategoriesManager();
         }
 
         public HashSet<Categories?>? getAll()

@@ -168,7 +168,7 @@ namespace GARCA.View.Views
 
             chForecast.Series.Clear();
 
-            foreach (Accounts? accounts in (await DependencyConfig.iAccountsService.getAllOpenedAync())?
+            foreach (var accounts in (await DependencyConfig.iAccountsService.getAllOpenedAync())?
                 .Where(x => DependencyConfig.iAccountsTypesService.accountExpensives(x.accountsTypesid)))
             {
 
@@ -293,7 +293,7 @@ namespace GARCA.View.Views
 
             //Series
 
-            HashSet<VBalancebyCategory?>? lExpensesCharts = await DependencyConfig.iVBalancebyCategoryService.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
+            var lExpensesCharts = await DependencyConfig.iVBalancebyCategoryService.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new()

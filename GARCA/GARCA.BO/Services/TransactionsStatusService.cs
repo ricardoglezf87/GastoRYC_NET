@@ -11,7 +11,7 @@ namespace GARCA.BO.Services
         
         public TransactionsStatusService()
         {
-            transactionsStatusManager = new();
+            transactionsStatusManager = new TransactionsStatusManager();
         }
 
         public enum eTransactionsTypes : int

@@ -17,7 +17,7 @@ namespace GARCA.BO.Services
             Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
             Dictionary<int, Decimal> saldos = new();
 
-            DateTime now = DateTime.Now;
+            var now = DateTime.Now;
 
             foreach (var g in DependencyConfig.iAccountsService.getAllOpened()?.Where(x => (x.closed == false || x.closed == null)
                                                             && (x.accountsTypesid == (int)eAccountsTypes.Cash ||
@@ -29,7 +29,7 @@ namespace GARCA.BO.Services
 
             List<Transactions> remTransactions = new();
 
-            foreach (ExpirationsReminders? exp in DependencyConfig.iExpirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
+            foreach (var exp in DependencyConfig.iExpirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
             {
                 if (exp != null)
                 {
@@ -37,7 +37,7 @@ namespace GARCA.BO.Services
                 }
             }
 
-            List<Transactions?>? transactions = DependencyConfig.iTransactionsService.getAll()?.ToList();
+            var transactions = DependencyConfig.iTransactionsService.getAll()?.ToList();
 
             if (transactions != null)
             {
@@ -46,9 +46,9 @@ namespace GARCA.BO.Services
                     transactions.AddRange(remTransactions);
                 }
 
-                for (int i = 0; i < 30; i++)
+                for (var i = 0; i < 30; i++)
                 {
-                    DateTime d = now.AddDays(i);
+                    var d = now.AddDays(i);
                     foreach (var g in transactions
                                     .Where(x => x.category != null && x.date <= d
                                        && (x.account?.closed == false || x.account?.closed == null)
@@ -57,7 +57,7 @@ namespace GARCA.BO.Services
                                         x.account?.accountsTypesid == (int)eAccountsTypes.Cards))
                                     .GroupBy(g => g.accountid))
                     {
-                        Decimal saldo_act = g.Sum(x => x.amount) ?? 0;
+                        var saldo_act = g.Sum(x => x.amount) ?? 0;
 
                         if (g.Key != null && (saldos[g.Key.Value] != saldo_act || i == 29))
                         {
@@ -70,7 +70,7 @@ namespace GARCA.BO.Services
 
             List<ForecastsChart> lChart = new();
 
-            foreach (Tuple<DateTime, int?> key in dChart.Keys)
+            foreach (var key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
                     DependencyConfig.iAccountsService.getByID(key.Item2)?.description,

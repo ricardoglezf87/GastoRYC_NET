@@ -16,7 +16,7 @@ namespace GARCA.BO.Services
         
         public AccountsService()
         {
-            accountsManager = new();
+            accountsManager = new AccountsManager();
         }
 
         public HashSet<Accounts?>? getAll()

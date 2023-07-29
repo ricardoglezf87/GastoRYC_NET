@@ -29,7 +29,7 @@ namespace GARCA.BO.Models
                     id = v.id,
                     name = v.name,
                     categoryid = v.categoryid,
-                    category = (v.category != null) ? (Categories?)v.category : null
+                    category = v.category != null ? (Categories?)v.category : null
                 };
         }
     }

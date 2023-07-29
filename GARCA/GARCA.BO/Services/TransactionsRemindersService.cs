@@ -58,14 +58,14 @@ namespace GARCA.BO.Services
 
         public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            List<SplitsReminders?>? lSplitsReminders = transactionsReminders.splits ?? DependencyConfig.iSplitsRemindersService.getbyTransactionid(transactionsReminders.id);
+            var lSplitsReminders = transactionsReminders.splits ?? DependencyConfig.iSplitsRemindersService.getbyTransactionid(transactionsReminders.id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
                 transactionsReminders.amountIn = 0;
                 transactionsReminders.amountOut = 0;
 
-                foreach (SplitsReminders? splitsReminders in lSplitsReminders)
+                foreach (var splitsReminders in lSplitsReminders)
                 {
                     transactionsReminders.amountIn += splitsReminders.amountIn == null ? 0 : splitsReminders.amountIn;
                     transactionsReminders.amountOut += splitsReminders.amountOut == null ? 0 : splitsReminders.amountOut;
@@ -84,7 +84,7 @@ namespace GARCA.BO.Services
             if (transactionsReminders.id == 0)
             {
                 update(transactionsReminders);
-                foreach (SplitsReminders? splitsReminders in lSplitsReminders)
+                foreach (var splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.transactionid = transactionsReminders.id;
                     DependencyConfig.iSplitsRemindersService.update(splitsReminders);

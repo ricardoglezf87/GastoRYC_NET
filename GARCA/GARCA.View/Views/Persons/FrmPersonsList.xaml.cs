@@ -23,7 +23,7 @@ namespace GARCA.View.Views
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            Persons persons = (Persons)e.RowData;
+            var persons = (Persons)e.RowData;
 
             if (persons.name == null)
             {
@@ -35,7 +35,7 @@ namespace GARCA.View.Views
 
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            Persons persons = (Persons)e.RowData;
+            var persons = (Persons)e.RowData;
             DependencyConfig.iPersonsService.update(persons);
         }
 

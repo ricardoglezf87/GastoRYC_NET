@@ -8,7 +8,7 @@ namespace GARCA.BO.Services
 
         public RYCContextService()
         {
-            contextManager = new();
+            contextManager = new RYCContextManager();
         }
 
         public void migrateDataBase()

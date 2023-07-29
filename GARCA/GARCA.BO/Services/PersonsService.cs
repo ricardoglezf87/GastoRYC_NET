@@ -14,7 +14,7 @@ namespace GARCA.BO.Services
         
         public PersonsService()
         {
-            personsManager = new();
+            personsManager = new PersonsManager();
         }
 
         public HashSet<Persons?>? getAll()
@@ -54,8 +54,8 @@ namespace GARCA.BO.Services
 
             if (result != null)
             {
-                int maxCount = result.Max(c => c.count);
-                int? maxCounts = (from c in result
+                var maxCount = result.Max(c => c.count);
+                var maxCounts = (from c in result
                                   where c.count == maxCount
                                   select c.categoryid).FirstOrDefault();
 

@@ -15,7 +15,7 @@ namespace GARCA.BO.Services
         
         public SplitsService()
         {
-            splitsManager = new();
+            splitsManager = new SplitsManager();
         }
 
         public List<Splits?>? getbyTransactionidNull()
@@ -43,7 +43,7 @@ namespace GARCA.BO.Services
             splitsManager.delete(splits?.toDAO());
         }
 
-        public void saveChanges(Transactions? transactions, Splits splits)
+        public void saveChanges(Splits splits)
         {
             if (splits.category == null && splits.categoryid != null)
             {

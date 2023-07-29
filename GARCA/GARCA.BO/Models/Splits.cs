@@ -54,15 +54,15 @@ namespace GARCA.BO.Models
                 {
                     id = v.id,
                     transactionid = v.transactionid,
-                    transaction = (v.transaction != null) ? (Transactions?)v.transaction : null,
+                    transaction = v.transaction != null ? (Transactions?)v.transaction : null,
                     categoryid = v.categoryid,
-                    category = (v.category != null) ? (Categories?)v.category : null,
+                    category = v.category != null ? (Categories?)v.category : null,
                     amountOut = v.amountOut,
                     amountIn = v.amountIn,
                     memo = v.memo,
                     tranferid = v.tranferid,
                     tagid = v.tagid,
-                    tag = (v.tag != null) ? (Tags?)v.tag : null
+                    tag = v.tag != null ? (Tags?)v.tag : null
                 };
         }
     }

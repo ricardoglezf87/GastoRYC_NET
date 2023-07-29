@@ -12,7 +12,7 @@ namespace GARCA.BO.Services
 
         public SplitsRemindersService()
         {
-            splitsRemindersManager = new();
+            splitsRemindersManager = new SplitsRemindersManager();
         }
 
         public List<SplitsReminders?>? getbyTransactionidNull()

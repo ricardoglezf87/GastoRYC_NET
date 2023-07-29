@@ -17,7 +17,7 @@ namespace GARCA.BO.Services
         
         public TransactionsService()
         {
-            transactionsManager = new();
+            transactionsManager = new TransactionsManager();
         }
 
         #endregion Propiedades y Contructor
@@ -44,7 +44,7 @@ namespace GARCA.BO.Services
             return (Transactions?)transactionsManager.getByID(id);
         }
 
-        public HashSet<Transactions?>? getByInvestmentProduct(int? id)
+        private HashSet<Transactions?>? getByInvestmentProduct(int? id)
         {
             return transactionsManager.getByInvestmentProduct(id)?.toHashSetBO();
         }
@@ -61,7 +61,7 @@ namespace GARCA.BO.Services
             return (Transactions?)transactionsManager.update(transactions?.toDAO());
         }
 
-        public void updateList(List<Transactions?>? lObj)
+        private void updateList(List<Transactions?>? lObj)
         {
             if (lObj != null)
             {
@@ -79,7 +79,7 @@ namespace GARCA.BO.Services
             return transactionsManager.getByAccount(id)?.toHashSetBO();
         }
 
-        public SortedSet<Transactions?>? getByAccountOrderByOrderDesc(int? id)
+        private SortedSet<Transactions?>? getByAccountOrderByOrderDesc(int? id)
         {
             return transactionsManager.getByAccountOrderByOrdenDesc(id)?.toSortedSetBO();
         }
@@ -94,7 +94,7 @@ namespace GARCA.BO.Services
             return getByAccount(accounts?.id);
         }
 
-        public HashSet<Transactions?>? getByPerson(int? id)
+        private HashSet<Transactions?>? getByPerson(int? id)
         {
             return transactionsManager.getByPerson(id)?.toHashSetBO();
         }
@@ -104,12 +104,12 @@ namespace GARCA.BO.Services
             return getByPerson(person?.id);
         }
 
-        public int getNextID()
+        private int getNextID()
         {
             return transactionsManager.getNextID();
         }
 
-        public double createOrden(Transactions transactions)
+        private double createOrden(Transactions transactions)
         {
             return Convert.ToDouble(
                     transactions.date?.Year.ToString("0000")
@@ -144,8 +144,8 @@ namespace GARCA.BO.Services
 
             if (tUpdate != null && tUpdate.date != null)
             {
-                List<Transactions?>? aux = tList?.Where(x => x.date >= tUpdate?.date.addDay(-1) || dateFilter).ToList();
-                for (int i = 0; i < aux.Count; i++)
+                var aux = tList?.Where(x => x.date >= tUpdate?.date.addDay(-1) || dateFilter).ToList();
+                for (var i = 0; i < aux.Count; i++)
                 {
                     if (aux[i].amount != null)
                     {
@@ -157,12 +157,12 @@ namespace GARCA.BO.Services
             }
         }
 
-        public void updateTranfer(Transactions transactions)
+        private void updateTranfer(Transactions transactions)
         {
             if (transactions.tranferid != null &&
                 transactions.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Transactions? tContraria = getByID(transactions.tranferid);
+                var tContraria = getByID(transactions.tranferid);
                 if (tContraria != null)
                 {
                     delete(tContraria);
@@ -198,7 +198,7 @@ namespace GARCA.BO.Services
             else if (transactions.tranferid != null &&
                 transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Transactions? tContraria = getByID(transactions.tranferid);
+                var tContraria = getByID(transactions.tranferid);
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;
@@ -220,12 +220,12 @@ namespace GARCA.BO.Services
 
         #region SplitsActions
 
-        public void updateTranferFromSplit(Transactions transactions)
+        private void updateTranferFromSplit(Transactions transactions)
         {
             if (transactions.tranferSplitid != null &&
                 transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Splits? tContraria = DependencyConfig.iSplitsService.getByID(transactions.tranferSplitid);
+                var tContraria = DependencyConfig.iSplitsService.getByID(transactions.tranferSplitid);
                 if (tContraria != null)
                 {
                     tContraria.transaction.date = transactions.date;
@@ -243,14 +243,14 @@ namespace GARCA.BO.Services
 
         public void updateTransactionAfterSplits(Transactions? transactions)
         {
-            List<Splits?>? lSplits = transactions.splits ?? DependencyConfig.iSplitsService.getbyTransactionid(transactions.id);
+            var lSplits = transactions.splits ?? DependencyConfig.iSplitsService.getbyTransactionid(transactions.id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
                 transactions.amountIn = 0;
                 transactions.amountOut = 0;
 
-                foreach (Splits? splits in lSplits)
+                foreach (var splits in lSplits)
                 {
                     transactions.amountIn += splits.amountIn == null ? 0 : splits.amountIn;
                     transactions.amountOut += splits.amountOut == null ? 0 : splits.amountOut;
@@ -260,7 +260,7 @@ namespace GARCA.BO.Services
                 transactions.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
             }
             else if (transactions.categoryid is not null
-                and ((int)CategoriesService.eSpecialCategories.Split))
+                and (int)CategoriesService.eSpecialCategories.Split)
             {
                 transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
                 transactions.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
@@ -269,7 +269,7 @@ namespace GARCA.BO.Services
             if (transactions.id == 0)
             {
                 update(transactions);
-                foreach (Splits? splits in lSplits)
+                foreach (var splits in lSplits)
                 {
                     splits.transactionid = transactions.id;
                     DependencyConfig.iSplitsService.update(splits);
@@ -286,7 +286,7 @@ namespace GARCA.BO.Services
             if (splits.tranferid != null &&
                 splits.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Transactions? tContraria = getByID(splits.tranferid);
+                var tContraria = getByID(splits.tranferid);
                 if (tContraria != null)
                 {
                     delete(tContraria);
@@ -318,7 +318,7 @@ namespace GARCA.BO.Services
             else if (splits.tranferid != null &&
                 splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             {
-                Transactions? tContraria = getByID(splits.tranferid);
+                var tContraria = getByID(splits.tranferid);
                 if (tContraria != null)
                 {
                     tContraria.date = transactions.date;

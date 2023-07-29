@@ -31,7 +31,7 @@ namespace GARCA.BO.Models
                     id = v.id,
                     description = v.description,
                     categoriesTypesid = v.categoriesTypesid,
-                    categoriesTypes = (v.categoriesTypes != null) ? (CategoriesTypes?)v.categoriesTypes : null
+                    categoriesTypes = v.categoriesTypes != null ? (CategoriesTypes?)v.categoriesTypes : null
                 };
         }
     }

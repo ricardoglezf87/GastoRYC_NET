@@ -12,7 +12,7 @@ namespace GARCA.Utlis.Extensions
             List<TransactionsDAO?> list = new();
             if (source != null)
             {
-                foreach (Transactions obj in source)
+                foreach (var obj in source)
                 {
                     list.Add(obj.toDAO());
                 }
@@ -25,7 +25,7 @@ namespace GARCA.Utlis.Extensions
             List<DateCalendar?> list = new();
             if (source != null)
             {
-                foreach (DateCalendarDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((DateCalendar?)obj);
                 }
@@ -38,7 +38,7 @@ namespace GARCA.Utlis.Extensions
             List<PeriodsReminders?> list = new();
             if (source != null)
             {
-                foreach (PeriodsRemindersDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((PeriodsReminders?)obj);
                 }
@@ -51,7 +51,7 @@ namespace GARCA.Utlis.Extensions
             List<ExpirationsReminders?> list = new();
             if (source != null)
             {
-                foreach (ExpirationsRemindersDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((ExpirationsReminders?)obj);
                 }
@@ -64,7 +64,7 @@ namespace GARCA.Utlis.Extensions
             List<VBalancebyCategory?> list = new();
             if (source != null)
             {
-                foreach (VBalancebyCategoryDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((VBalancebyCategory?)obj);
                 }
@@ -77,7 +77,7 @@ namespace GARCA.Utlis.Extensions
             List<SplitsReminders?> list = new();
             if (source != null)
             {
-                foreach (SplitsRemindersDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((SplitsReminders?)obj);
                 }
@@ -90,7 +90,7 @@ namespace GARCA.Utlis.Extensions
             List<Splits?> list = new();
             if (source != null)
             {
-                foreach (SplitsDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((Splits?)obj);
                 }
@@ -103,7 +103,7 @@ namespace GARCA.Utlis.Extensions
             List<TransactionsReminders?> list = new();
             if (source != null)
             {
-                foreach (TransactionsRemindersDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((TransactionsReminders?)obj);
                 }
@@ -116,7 +116,7 @@ namespace GARCA.Utlis.Extensions
             List<Transactions?> list = new();
             if (source != null)
             {
-                foreach (TransactionsDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((Transactions?)obj);
                 }
@@ -129,7 +129,7 @@ namespace GARCA.Utlis.Extensions
             List<InvestmentProductsPrices?> list = new();
             if (source != null)
             {
-                foreach (InvestmentProductsPricesDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((InvestmentProductsPrices?)obj);
                 }
@@ -142,7 +142,7 @@ namespace GARCA.Utlis.Extensions
             List<InvestmentProducts?> list = new();
             if (source != null)
             {
-                foreach (InvestmentProductsDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((InvestmentProducts?)obj);
                 }
@@ -155,7 +155,7 @@ namespace GARCA.Utlis.Extensions
             List<InvestmentProductsTypes?> list = new();
             if (source != null)
             {
-                foreach (InvestmentProductsTypesDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((InvestmentProductsTypes?)obj);
                 }
@@ -168,7 +168,7 @@ namespace GARCA.Utlis.Extensions
             List<Categories?> list = new();
             if (source != null)
             {
-                foreach (CategoriesDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((Categories?)obj);
                 }
@@ -181,7 +181,7 @@ namespace GARCA.Utlis.Extensions
             List<CategoriesTypes?> list = new();
             if (source != null)
             {
-                foreach (CategoriesTypesDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((CategoriesTypes?)obj);
                 }
@@ -194,7 +194,7 @@ namespace GARCA.Utlis.Extensions
             List<Persons?> list = new();
             if (source != null)
             {
-                foreach (PersonsDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((Persons?)obj);
                 }
@@ -207,7 +207,7 @@ namespace GARCA.Utlis.Extensions
             List<Tags?> list = new();
             if (source != null)
             {
-                foreach (TagsDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((Tags?)obj);
                 }
@@ -220,7 +220,7 @@ namespace GARCA.Utlis.Extensions
             List<TransactionsStatus?> list = new();
             if (source != null)
             {
-                foreach (TransactionsStatusDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((TransactionsStatus?)obj);
                 }
@@ -233,7 +233,7 @@ namespace GARCA.Utlis.Extensions
             List<Accounts?> list = new();
             if (source != null)
             {
-                foreach (AccountsDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((Accounts?)obj);
                 }
@@ -246,7 +246,7 @@ namespace GARCA.Utlis.Extensions
             List<AccountsView> list = new();
             if (source != null)
             {
-                foreach (AccountsDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((AccountsView)obj);
                 }
@@ -259,7 +259,7 @@ namespace GARCA.Utlis.Extensions
             List<AccountsTypes?> list = new();
             if (source != null)
             {
-                foreach (AccountsTypesDAO obj in source)
+                foreach (var obj in source)
                 {
                     list.Add((AccountsTypes?)obj);
                 }

@@ -36,7 +36,7 @@ namespace GARCA.DAO.Managers
 
         #endregion
 
-        public RYCContext() : base()
+        public RYCContext()
         {
             if (!Directory.Exists("Data\\"))
             {
@@ -47,7 +47,7 @@ namespace GARCA.DAO.Managers
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            string nameDDBB = string.Empty;
+            var nameDDBB = string.Empty;
 
 #if DEBUG
             nameDDBB = "rycBBDD_PRE.db";

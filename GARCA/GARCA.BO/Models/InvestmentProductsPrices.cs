@@ -30,7 +30,7 @@ namespace GARCA.BO.Models
                 {
                     id = v.id,
                     date = v.date,
-                    investmentProducts = (v.investmentProducts != null) ? (InvestmentProducts?)v.investmentProducts : null,
+                    investmentProducts = v.investmentProducts != null ? (InvestmentProducts?)v.investmentProducts : null,
                     investmentProductsid = v.investmentProductsid,
                     prices = v.prices
                 };

@@ -19,7 +19,7 @@ namespace GARCA.BO.Services
 
         public CategoriesTypesService()
         {
-            categoriesTypesManager = new();
+            categoriesTypesManager = new CategoriesTypesManager();
         }
 
         public List<CategoriesTypes?>? getAllWithoutSpecialTransfer()

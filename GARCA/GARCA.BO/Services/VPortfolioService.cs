@@ -11,7 +11,7 @@ namespace GARCA.BO.Services
         public async Task<List<VPortfolio?>?> getAllAsync()
         {
             List<VPortfolio?>? listPortFolio = new();
-            foreach (InvestmentProducts? investmentProducts in
+            foreach (var investmentProducts in
                 await DependencyConfig.iInvestmentProductsService.getAllOpened())
             {
 
@@ -23,15 +23,15 @@ namespace GARCA.BO.Services
                 portfolio.symbol = investmentProducts.symbol;
                 portfolio.numShares = await getNumShares(investmentProducts);
 
-                List<Transactions?>? lBuy = await getBuyOperations(investmentProducts);
-                List<Transactions?>? lSell = await getSellOperations(investmentProducts);
+                var lBuy = await getBuyOperations(investmentProducts);
+                var lSell = await getSellOperations(investmentProducts);
 
-                foreach (Transactions? sell in lSell)
+                foreach (var sell in lSell)
                 {
-                    decimal? shares = sell.numShares;
+                    var shares = sell.numShares;
                     if (shares is not null and > 0)
                     {
-                        foreach (Transactions? buy in lBuy)
+                        foreach (var buy in lBuy)
                         {
                             if (buy.numShares is not null and not 0)
                             {
@@ -59,17 +59,17 @@ namespace GARCA.BO.Services
             return listPortFolio;
         }
 
-        public async Task<decimal?> getNumShares(InvestmentProducts? investmentProducts)
+        private async Task<decimal?> getNumShares(InvestmentProducts? investmentProducts)
         {
             return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Sum(x => -x.numShares));
         }
 
-        public async Task<List<Transactions?>?> getBuyOperations(InvestmentProducts? investmentProducts)
+        private async Task<List<Transactions?>?> getBuyOperations(InvestmentProducts? investmentProducts)
         {
             return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares < 0).OrderBy(x => x.date).ToList());
         }
 
-        public async Task<List<Transactions?>?> getSellOperations(InvestmentProducts? investmentProducts)
+        private async Task<List<Transactions?>?> getSellOperations(InvestmentProducts? investmentProducts)
         {
             return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares > 0).OrderBy(x => x.date).ToList());
         }

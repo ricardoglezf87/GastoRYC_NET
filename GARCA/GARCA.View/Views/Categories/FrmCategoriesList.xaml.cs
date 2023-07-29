@@ -24,7 +24,7 @@ namespace GARCA.View.Views
 
         private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
-            Categories categories = (Categories)gvCategories.SelectedItem;
+            var categories = (Categories)gvCategories.SelectedItem;
             if (categories != null)
             {
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
@@ -39,7 +39,7 @@ namespace GARCA.View.Views
 
         private void gvCategories_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            Categories categories = (Categories)e.RowData;
+            var categories = (Categories)e.RowData;
 
             if (categories.description == null)
             {
@@ -56,7 +56,7 @@ namespace GARCA.View.Views
 
         private void gvCategories_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            Categories categories = (Categories)e.RowData;
+            var categories = (Categories)e.RowData;
 
             if (categories.categoriesTypes == null && categories.categoriesTypesid != null)
             {

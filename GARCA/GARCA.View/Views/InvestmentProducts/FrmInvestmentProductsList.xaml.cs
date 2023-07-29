@@ -27,7 +27,7 @@ namespace GARCA.View.Views
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            InvestmentProducts investmentProducts = (InvestmentProducts)e.RowData;
+            var investmentProducts = (InvestmentProducts)e.RowData;
 
             if (investmentProducts.description == null)
             {
@@ -44,7 +44,7 @@ namespace GARCA.View.Views
 
         private void gvInvestmentProducts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
-            InvestmentProducts investmentProducts = (InvestmentProducts)gvInvestmentProducts.SelectedItem;
+            var investmentProducts = (InvestmentProducts)gvInvestmentProducts.SelectedItem;
             if (investmentProducts != null)
             {
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
@@ -58,7 +58,7 @@ namespace GARCA.View.Views
 
         private void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            InvestmentProducts investmentProducts = (InvestmentProducts)e.RowData;
+            var investmentProducts = (InvestmentProducts)e.RowData;
 
             if (investmentProducts.investmentProductsTypes == null && investmentProducts.investmentProductsTypesid != null)
             {

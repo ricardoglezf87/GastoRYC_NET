@@ -34,7 +34,7 @@ namespace GARCA.View.Views
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
-            Splits splits = (Splits)gvSplits.SelectedItem;
+            var splits = (Splits)gvSplits.SelectedItem;
             if (splits != null)
             {
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
@@ -49,7 +49,7 @@ namespace GARCA.View.Views
 
         private void gvSplits_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            Splits splits = (Splits)e.RowData;
+            var splits = (Splits)e.RowData;
 
             if (splits.categoryid == null)
             {
@@ -72,9 +72,9 @@ namespace GARCA.View.Views
 
         private void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            Splits splits = (Splits)e.RowData;
+            var splits = (Splits)e.RowData;
 
-            DependencyConfig.iSplitsService.saveChanges(transactions, splits);
+            DependencyConfig.iSplitsService.saveChanges(splits);
             DependencyConfig.iTransactionsService.updateTranferSplits(transactions, splits);
         }
 
@@ -101,7 +101,7 @@ namespace GARCA.View.Views
 
         private void gvSplits_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
         {
-            Splits splits = (Splits)e.NewObject;
+            var splits = (Splits)e.NewObject;
             splits.transactionid = transactions.id;
             splits.transaction = transactions;
         }

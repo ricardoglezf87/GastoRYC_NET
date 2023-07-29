@@ -42,7 +42,7 @@ namespace GARCA.BO.Models
                     id = v.id,
                     description = v.description,
                     investmentProductsTypesid = v.investmentProductsTypesid,
-                    investmentProductsTypes = (v.investmentProductsTypes != null) ? (InvestmentProductsTypes?)v.investmentProductsTypes : null,
+                    investmentProductsTypes = v.investmentProductsTypes != null ? (InvestmentProductsTypes?)v.investmentProductsTypes : null,
                     symbol = v.symbol,
                     url = v.url,
                     active = v.active

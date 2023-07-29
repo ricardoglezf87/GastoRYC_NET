@@ -281,7 +281,7 @@ namespace GARCA
 
         #region Functions
 
-        public async void refreshBalance()
+        private async void refreshBalance()
         {
             try
             {
@@ -296,14 +296,14 @@ namespace GARCA
             }
             catch (InvalidOperationException ex)
             {
-                Debug.WriteLine((DateTime.Now.ToString() + ": Error - " + ex.Message));
+                Debug.WriteLine(DateTime.Now.ToString() + ": Error - " + ex.Message);
             }
         }
 
 
         private void openNewTransaction()
         {
-            FrmTransaction frm = lvAccounts.SelectedItem == null ? new FrmTransaction() : new FrmTransaction(((AccountsView)lvAccounts.SelectedItem).id);
+            var frm = lvAccounts.SelectedItem == null ? new FrmTransaction() : new FrmTransaction(((AccountsView)lvAccounts.SelectedItem).id);
             frm.ShowDialog();
             loadAccounts();
 
@@ -351,8 +351,8 @@ namespace GARCA
 
         private void autoResizeListView()
         {
-            double remainingSpace = lvAccounts.ActualWidth * .93;
-            GridView? gv = lvAccounts.View as GridView;
+            var remainingSpace = lvAccounts.ActualWidth * .93;
+            var gv = lvAccounts.View as GridView;
 
             if (remainingSpace > 0)
             {
@@ -369,7 +369,7 @@ namespace GARCA
                 accountsView = lvAccounts.SelectedValue as AccountsView;
             }
 
-            List<AccountsView>? accountsViews = DependencyConfig.iAccountsService.getAllOpenedListView();
+            var accountsViews = DependencyConfig.iAccountsService.getAllOpenedListView();
             viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("accountsTypesdescription"));
@@ -378,8 +378,8 @@ namespace GARCA
 
             if (accountsView != null)
             {
-                int index = -1;
-                for (int i = 0; i < lvAccounts.Items.Count - 1; i++)
+                var index = -1;
+                for (var i = 0; i < lvAccounts.Items.Count - 1; i++)
                 {
                     if (((AccountsView)lvAccounts.Items[i]).id.Equals(accountsView.id))
                     {
@@ -404,16 +404,16 @@ namespace GARCA
         {
             try
             {
-                HashSet<Accounts?>? laccounts = DependencyConfig.iAccountsService.getAll();
+                var laccounts = DependencyConfig.iAccountsService.getAll();
 
                 if (laccounts != null)
                 {
                     LoadDialog loadDialog = new(laccounts.Count);
                     loadDialog.Show();
 
-                    foreach (Accounts? accounts in laccounts)
+                    foreach (var accounts in laccounts)
                     {
-                        Transactions? tFirst = DependencyConfig.iTransactionsService.getByAccount(accounts)?.FirstOrDefault();
+                        var tFirst = DependencyConfig.iTransactionsService.getByAccount(accounts)?.FirstOrDefault();
                         if (tFirst != null)
                         {
                             await Task.Run(() => DependencyConfig.iTransactionsService.refreshBalanceTransactions(tFirst, true));
@@ -439,14 +439,14 @@ namespace GARCA
         {
             try
             {
-                List<InvestmentProducts?>? lInvestmentProducts = DependencyConfig.iInvestmentProductsService.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url) || x.active == true).ToList();
+                var lInvestmentProducts = DependencyConfig.iInvestmentProductsService.getAll()?.Where(x => !String.IsNullOrWhiteSpace(x.url) || x.active == true).ToList();
 
                 if (lInvestmentProducts != null)
                 {
                     LoadDialog loadDialog = new(lInvestmentProducts.Count);
                     loadDialog.Show();
 
-                    foreach (InvestmentProducts? investmentProducts in lInvestmentProducts)
+                    foreach (var investmentProducts in lInvestmentProducts)
                     {
                         await DependencyConfig.iInvestmentProductsPricesService.getPricesOnlineAsync(investmentProducts);
                         loadDialog.performeStep();

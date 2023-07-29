@@ -48,17 +48,17 @@ namespace GARCA.WebReport
 
         private async Task updateTransactions(SheetsService service)
         {
-            List<Transactions?>? transactions = await Task.Run(() => DependencyConfig.iTransactionsService.getAllOpenned()?.ToList());
+            var transactions = await Task.Run(() => DependencyConfig.iTransactionsService.getAllOpenned()?.ToList());
             List<string[]> filasDeDatos = new()
                 {
                     new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
                 };
 
-            for (int i = 0; i < transactions.Count; i++)
+            for (var i = 0; i < transactions.Count; i++)
             {
-                Transactions? trans = transactions[i];
+                var trans = transactions[i];
 
-                List<Splits?>? splits = await Task.Run(() => DependencyConfig.iSplitsService.getbyTransactionid(trans.id));
+                var splits = await Task.Run(() => DependencyConfig.iSplitsService.getbyTransactionid(trans.id));
 
                 if (splits != null && splits.Count > 0)
                 {
@@ -251,8 +251,8 @@ namespace GARCA.WebReport
                 ? string.Empty
                 : $"{date.Value.Year.ToString("0000")}-{date.Value.Month.ToString("00")}-{date.Value.Day.ToString("00")}";
         }
-        
-        public async Task<SheetsService> getSheetsService()
+
+        private async Task<SheetsService> getSheetsService()
         {
             // Crear el servicio de Google Sheets
             var service = new SheetsService(new BaseClientService.Initializer
@@ -264,16 +264,16 @@ namespace GARCA.WebReport
             return service;
         }
 
-        public async Task<GoogleCredential> getCredentials()
+        private async Task<GoogleCredential> getCredentials()
         {
             return await Task.Run(() => GoogleCredential.FromJson(jsonKey)
                 .CreateScoped(SheetsService.Scope.Spreadsheets));
         }
 
-        public async Task writeSheet(SheetsService service, List<string[]> dataRows, string spreadsheetId, string sheetName)
+        private async Task writeSheet(SheetsService service, List<string[]> dataRows, string spreadsheetId, string sheetName)
         {
             var valueRanges = new List<ValueRange>();
-            for (int i = 0; i < dataRows.Count; i++)
+            for (var i = 0; i < dataRows.Count; i++)
             {
                 var valueRange = new ValueRange
                 {

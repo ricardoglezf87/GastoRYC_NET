@@ -13,7 +13,7 @@ namespace GARCA.BO.Services
 
         public InvestmentProductsService()
         {
-            investmentProductsManager = new();
+            investmentProductsManager = new InvestmentProductsManager();
         }
 
         public HashSet<InvestmentProducts?>? getAll()

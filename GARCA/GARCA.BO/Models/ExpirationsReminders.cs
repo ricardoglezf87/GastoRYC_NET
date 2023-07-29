@@ -37,7 +37,7 @@ namespace GARCA.BO.Models
                 {
                     id = v.id,
                     date = v.date,
-                    transactionsReminders = (v.transactionsReminders != null) ? (TransactionsReminders?)v.transactionsReminders : null,
+                    transactionsReminders = v.transactionsReminders != null ? (TransactionsReminders?)v.transactionsReminders : null,
                     transactionsRemindersid = v.transactionsRemindersid,
                     done = v.done
                 };

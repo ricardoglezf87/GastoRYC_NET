@@ -23,7 +23,7 @@ namespace GARCA.View.Views
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            Tags tags = (Tags)e.RowData;
+            var tags = (Tags)e.RowData;
 
             if (tags.description == null)
             {
@@ -35,7 +35,7 @@ namespace GARCA.View.Views
 
         private void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            Tags tags = (Tags)e.RowData;
+            var tags = (Tags)e.RowData;
             DependencyConfig.iTagsService.update(tags);
         }
 

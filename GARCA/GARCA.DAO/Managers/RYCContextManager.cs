@@ -6,7 +6,7 @@ namespace GARCA.DAO.Managers
 {
     public class RYCContextManager
     {
-        public RYCContext getContext()
+        private RYCContext getContext()
         {
             return new RYCContext();
         }
@@ -18,8 +18,8 @@ namespace GARCA.DAO.Managers
         
         public void makeBackup()
         {
-            string path = string.Empty;
-            string nameDDBB = string.Empty;
+            var path = string.Empty;
+            var nameDDBB = string.Empty;
 
             path =  "Data\\";
 

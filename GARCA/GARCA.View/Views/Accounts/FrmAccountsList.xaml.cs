@@ -26,7 +26,7 @@ namespace GARCA.View.Views
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
-            Accounts accounts = (Accounts)gvAccounts.SelectedItem;
+            var accounts = (Accounts)gvAccounts.SelectedItem;
             if (accounts != null)
             {
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
@@ -41,7 +41,7 @@ namespace GARCA.View.Views
 
         private void gvAccounts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
-            Accounts accounts = (Accounts)e.RowData;
+            var accounts = (Accounts)e.RowData;
 
             if (accounts.description == null)
             {
@@ -72,7 +72,7 @@ namespace GARCA.View.Views
             else
             {
                 categories = new Categories();
-                accounts.categoryid = DependencyConfig.iCategoriesService.getNextID(); ;
+                accounts.categoryid = DependencyConfig.iCategoriesService.getNextID();
                 categories.description = "[" + accounts.description + "]";
                 categories.categoriesTypesid = (int)CategoriesTypesService.eCategoriesTypes.Transfers;
 
@@ -86,7 +86,7 @@ namespace GARCA.View.Views
 
         private void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            Accounts accounts = (Accounts)e.RowData;
+            var accounts = (Accounts)e.RowData;
 
             if (accounts.accountsTypes == null && accounts.accountsTypesid != null)
             {
@@ -101,7 +101,7 @@ namespace GARCA.View.Views
         {
             foreach (Accounts accounts in e.Items)
             {
-                Categories? categories = DependencyConfig.iCategoriesService.getByID(accounts.categoryid);
+                var categories = DependencyConfig.iCategoriesService.getByID(accounts.categoryid);
                 if (categories != null)
                 {
                     DependencyConfig.iCategoriesService.delete(categories);

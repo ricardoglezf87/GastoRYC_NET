@@ -71,7 +71,7 @@ namespace GARCA.DAO.Managers
                 using (var unitOfWork = new UnitOfWork(new RYCContext()))
                 {
                     var repository = unitOfWork.GetRepositoryModelBase<T>();
-                    foreach (T? item in lObj)
+                    foreach (var item in lObj)
                     {
                         if (item != null)
                         {

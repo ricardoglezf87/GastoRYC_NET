@@ -76,7 +76,7 @@ namespace GARCA.View.Views
 
         private void btnSplit_Click(object sender, RoutedEventArgs e)
         {
-            if ((cbCategory.SelectedValue == null) && (txtAmount.Value == null))
+            if (cbCategory.SelectedValue == null && txtAmount.Value == null)
             {
                 if (MessageBox.Show("Para hacer una división se tiene que asignar una categoría especial, ¿Esta de acuerdo?", "inserción movimiento", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
@@ -109,12 +109,12 @@ namespace GARCA.View.Views
                 case Key.F1:
                     if (saveTransaction())
                     {
-                        DateTime previousDate = DateTime.Now;
+                        var previousDate = DateTime.Now;
                         if (dtpDate.SelectedDate != null)
                         {
                             previousDate = (DateTime)dtpDate.SelectedDate;
                         }
-                        bool? investmentCategory = transaction.investmentCategory;
+                        var investmentCategory = transaction.investmentCategory;
 
                         transaction = null;
                         loadTransaction();
@@ -143,7 +143,7 @@ namespace GARCA.View.Views
         {
             if (cbPerson.SelectedItem != null)
             {
-                Persons p = (Persons)cbPerson.SelectedItem;
+                var p = (Persons)cbPerson.SelectedItem;
                 if (p?.categoryid != null)
                 {
                     cbCategory.SelectedValue = p.categoryid;
@@ -203,20 +203,20 @@ namespace GARCA.View.Views
 
         private void calculatePriceByShares()
         {
-            String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:", "Transacción");
+            var importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:", "Transacción");
             if (!String.IsNullOrWhiteSpace(importe))
             {
-                Double? aux = Double.Parse(importe.Replace(".", ",")) / txtNumShares.Value;
+                var aux = Double.Parse(importe.Replace(".", ",")) / txtNumShares.Value;
                 txtPriceShares.Value = (decimal?)aux;
             }
         }
 
         private void calculateSharesByPrice()
         {
-            String? importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:", "Transacción");
+            var importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:", "Transacción");
             if (!String.IsNullOrWhiteSpace(importe))
             {
-                Decimal? aux = Decimal.Parse(importe.Replace(".", ",")) / txtPriceShares.Value;
+                var aux = Decimal.Parse(importe.Replace(".", ",")) / txtPriceShares.Value;
                 txtNumShares.Value = (double?)aux;
             }
         }
@@ -334,7 +334,7 @@ namespace GARCA.View.Views
                 transaction.investmentProducts = DependencyConfig.iInvestmentProductsService.getByID(transaction.investmentProductsid);
             }
 
-            transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value) ?? 0;
+            transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value);
             transaction.pricesShares = txtPriceShares.Value ?? 0;
 
             if (txtAmount.Value > 0)
@@ -370,8 +370,8 @@ namespace GARCA.View.Views
 
         private bool isTransactionValid()
         {
-            String errorMessage = "";
-            bool valid = true;
+            var errorMessage = "";
+            var valid = true;
 
             if (dtpDate.SelectedDate == null)
             {
@@ -384,7 +384,7 @@ namespace GARCA.View.Views
                 errorMessage += "- Cuenta\n";
                 valid = false;
             }
-            else if ((((Accounts)cbAccount.SelectedItem).accountsTypesid != (int)AccountsTypesService.eAccountsTypes.Invests) &&
+            else if (((Accounts)cbAccount.SelectedItem).accountsTypesid != (int)AccountsTypesService.eAccountsTypes.Invests &&
                     transaction.investmentCategory == false)
             {
                 errorMessage += "- No se puede realizar una transacción de inversión en una cuenta que no sea de inversión\n";

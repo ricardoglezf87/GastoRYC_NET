@@ -21,11 +21,7 @@ namespace GARCA.DAO.Managers
 
         public List<InvestmentProductsDAO>? getAllOpened()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<InvestmentProductsDAO>();
-                return getAll()?.Where(x => x.active.HasValue && x.active.Value).ToList();
-            }
+            return getAll()?.Where(x => x.active.HasValue && x.active.Value).ToList();
         }
     }
 }

@@ -30,9 +30,9 @@ namespace GARCA.View.ViewModels
         /// </summary>
         /// <param name="count"></param>
         /// <param name="baseIndex"></param>
-        async void LoadMoreItems(uint count, int baseIndex)
+        private async void LoadMoreItems(uint count, int baseIndex)
         {
-            SortedSet<Transactions?>? item = accountsSelected != null
+            var item = accountsSelected != null
                 ? await Task.Run(() => DependencyConfig.iTransactionsService.getByAccountOrderByOrderDesc(accountsSelected.id, baseIndex, 50))
                 : await Task.Run(() => DependencyConfig.iTransactionsService.getAllOpennedOrderByOrderDesc(baseIndex, 50));
             if (item != null)

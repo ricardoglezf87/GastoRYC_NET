@@ -14,15 +14,15 @@ namespace GARCA.BO.Services
        
         public VBalancebyCategoryService()
         {
-            vBalancebyCategoryManager = new();
+            vBalancebyCategoryManager = new VBalancebyCategoryManager();
         }
 
-        public HashSet<VBalancebyCategory?>? getAll()
+        private HashSet<VBalancebyCategory?>? getAll()
         {
             return vBalancebyCategoryManager.getAll()?.toHashSetBO();
         }
 
-        public HashSet<VBalancebyCategory?>? getExpensesbyYearMonth(int month, int year)
+        private HashSet<VBalancebyCategory?>? getExpensesbyYearMonth(int month, int year)
         {
             return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToHashSet();
         }

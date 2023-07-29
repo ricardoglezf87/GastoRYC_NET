@@ -12,7 +12,7 @@ namespace GARCA.BO.Services
         
         public TagsService()
         {
-            tagsManager = new();
+            tagsManager = new TagsManager();
         }
 
         public HashSet<Tags?>? getAll()

@@ -43,7 +43,7 @@ namespace GARCA.DAO.Managers
                 unitOfWork.getDataBase().OpenConnection();
                 var result = cmd.ExecuteReader();
                 result.Read();
-                int id = Convert.ToInt32(result[0]);
+                var id = Convert.ToInt32(result[0]);
                 result.Close();
 
                 return id;

@@ -15,26 +15,26 @@ namespace GARCA.BO.Services
 
         public ExpirationsRemindersService()
         {
-            expirationsRemindersManager = new();
+            expirationsRemindersManager = new ExpirationsRemindersManager();
         }
 
-        public HashSet<ExpirationsReminders?>? getAll()
+        private HashSet<ExpirationsReminders?>? getAll()
         {
             return expirationsRemindersManager.getAll()?.toHashSetBO();
         }
 
-        public HashSet<ExpirationsReminders?>? getAllWithGeneration()
+        private HashSet<ExpirationsReminders?>? getAllWithGeneration()
         {
             GenerationAllExpirations();
             return getAll();
         }
 
-        public bool existsExpiration(TransactionsReminders? transactionsReminder, DateTime? date)
+        private bool existsExpiration(TransactionsReminders? transactionsReminder, DateTime? date)
         {
             return expirationsRemindersManager.existsExpiration(transactionsReminder.toDAO(), date);
         }
 
-        public List<ExpirationsReminders?>? getAllPendingWithGeneration()
+        private List<ExpirationsReminders?>? getAllPendingWithGeneration()
         {
             return getAllWithGeneration()?.Where(x => x.done is null or not true).ToList();
         }
@@ -44,9 +44,9 @@ namespace GARCA.BO.Services
             return getAllWithGeneration()?.Where(x => (x.done == null || x.done != true) && x.groupDate != "Futuro").ToList();
         }
 
-        public void GenerationAllExpirations()
+        private void GenerationAllExpirations()
         {
-            foreach (TransactionsReminders? transactionsReminders in DependencyConfig.iTransactionsRemindersService.getAll())
+            foreach (var transactionsReminders in DependencyConfig.iTransactionsRemindersService.getAll())
             {
                 generationExpirations(transactionsReminders);
             }
@@ -54,7 +54,7 @@ namespace GARCA.BO.Services
 
         public void generateAutoregister()
         {
-            foreach (ExpirationsReminders? exp in getAllPendingWithGeneration()?
+            foreach (var exp in getAllPendingWithGeneration()?
                 .Where(x => x.date <= DateTime.Now && //x.transactionsReminders != null &&
                     x.transactionsReminders.autoRegister.HasValue && x.transactionsReminders.autoRegister.Value))
             {
@@ -64,11 +64,11 @@ namespace GARCA.BO.Services
             }
         }
 
-        public void generationExpirations(TransactionsReminders? transactionsReminders)
+        private void generationExpirations(TransactionsReminders? transactionsReminders)
         {
             if (transactionsReminders != null)
             {
-                DateTime? date = transactionsReminders.date;
+                var date = transactionsReminders.date;
 
                 while (date <= DateTime.Now.AddYears(1))
                 {
@@ -91,7 +91,7 @@ namespace GARCA.BO.Services
         {
             if (id != null)
             {
-                ExpirationsReminders? expirationsReminders = getByID(id);
+                var expirationsReminders = getByID(id);
                 if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
                 {
                     Transactions? transactions = new();
@@ -107,7 +107,7 @@ namespace GARCA.BO.Services
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
                     DependencyConfig.iTransactionsService.saveChanges(ref transactions);
 
-                    foreach (SplitsReminders? splitsReminders in
+                    foreach (var splitsReminders in
                         DependencyConfig.iSplitsRemindersService.getbyTransactionid(expirationsReminders.transactionsReminders.id))
                     {
                         Splits splits = new();
@@ -117,7 +117,7 @@ namespace GARCA.BO.Services
                         splits.amountIn = splitsReminders.amountIn;
                         splits.amountOut = splitsReminders.amountOut;
                         splits.tagid = splitsReminders.tagid;
-                        DependencyConfig.iSplitsService.saveChanges(transactions, splits);
+                        DependencyConfig.iSplitsService.saveChanges(splits);
                         DependencyConfig.iTransactionsService.updateTranferSplits(transactions, splits);
                     }
 
@@ -132,7 +132,7 @@ namespace GARCA.BO.Services
         public List<Transactions> registerTransactionfromReminderSimulation(ExpirationsReminders exp)
         {
             List<Transactions>? lTransactions = new();
-            ExpirationsReminders? expirationsReminders = exp;
+            var expirationsReminders = exp;
             if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
             {
                 Transactions transactions = new();
@@ -157,7 +157,7 @@ namespace GARCA.BO.Services
                 if (expirationsReminders.transactionsReminders.splits != null)
                 {
 
-                    foreach (SplitsReminders? splitsReminders in expirationsReminders.transactionsReminders.splits)
+                    foreach (var splitsReminders in expirationsReminders.transactionsReminders.splits)
                     {
                         Splits splits = new();
                         splits.transactionid = transactions.id;
@@ -177,8 +177,8 @@ namespace GARCA.BO.Services
             }
             return lTransactions;
         }
-        
-        public Transactions updateTranferSplitsSimulation(Transactions? transactions, Splits splits)
+
+        private Transactions updateTranferSplitsSimulation(Transactions? transactions, Splits splits)
         {
             Transactions? tContraria = new()
             {
@@ -199,7 +199,7 @@ namespace GARCA.BO.Services
         }
 
 
-        public Transactions updateTranferSimulation(Transactions transactions)
+        private Transactions updateTranferSimulation(Transactions transactions)
         {
             Transactions? tContraria = new()
             {
@@ -224,7 +224,7 @@ namespace GARCA.BO.Services
             return (ExpirationsReminders?)expirationsRemindersManager.getByID(id);
         }
 
-        public List<ExpirationsReminders?>? getByTransactionReminderid(int? id)
+        private List<ExpirationsReminders?>? getByTransactionReminderid(int? id)
         {
             return expirationsRemindersManager.getByTransactionReminderid(id)?.toListBO();
         }
@@ -234,14 +234,14 @@ namespace GARCA.BO.Services
             expirationsRemindersManager.update(expirationsReminders?.toDAO());
         }
 
-        public void delete(ExpirationsReminders? expirationsReminders)
+        private void delete(ExpirationsReminders? expirationsReminders)
         {
             expirationsRemindersManager.delete(expirationsReminders?.toDAO());
         }
 
         public void deleteByTransactionReminderid(int id)
         {
-            foreach (ExpirationsReminders? expirationsReminder in getByTransactionReminderid(id))
+            foreach (var expirationsReminder in getByTransactionReminderid(id))
             {
                 delete(expirationsReminder);
             }
