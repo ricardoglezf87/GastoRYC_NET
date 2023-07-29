@@ -29,14 +29,14 @@ namespace GARCA.BO.Services
             return transactionsManager.getAll()?.toHashSetBO();
         }
 
-        public List<Transactions?>? getAllOpenned()
+        public HashSet<Transactions?>? getAllOpenned()
         {
-            return transactionsManager.getAllOpenned()?.toListBO();
+            return transactionsManager.getAllOpenned()?.toHashSetBO();
         }
 
-        public List<Transactions?>? getAllOpennedOrderByOrderDesc(int startIndex, int nPage)
+        public SortedSet<Transactions?>? getAllOpennedOrderByOrderDesc(int startIndex, int nPage)
         {
-            return transactionsManager.getAllOpennedOrderByOrdenDesc(startIndex, nPage)?.toListBO();
+            return transactionsManager.getAllOpennedOrderByOrdenDesc(startIndex, nPage)?.toSortedSetBO();
         }
 
         public Transactions? getByID(int? id)
@@ -44,12 +44,12 @@ namespace GARCA.BO.Services
             return (Transactions?)transactionsManager.getByID(id);
         }
 
-        public List<Transactions?>? getByInvestmentProduct(int? id)
+        public HashSet<Transactions?>? getByInvestmentProduct(int? id)
         {
-            return transactionsManager.getByInvestmentProduct(id)?.toListBO();
+            return transactionsManager.getByInvestmentProduct(id)?.toHashSetBO();
         }
 
-        public List<Transactions?>? getByInvestmentProduct(InvestmentProducts? investment)
+        public HashSet<Transactions?>? getByInvestmentProduct(InvestmentProducts? investment)
         {
             return getByInvestmentProduct(investment.id);
         }
@@ -74,32 +74,32 @@ namespace GARCA.BO.Services
             transactionsManager.delete(transactions?.toDAO());
         }
 
-        public List<Transactions?>? getByAccount(int? id)
+        public HashSet<Transactions?>? getByAccount(int? id)
         {
-            return transactionsManager.getByAccount(id)?.toListBO();
+            return transactionsManager.getByAccount(id)?.toHashSetBO();
         }
 
-        public List<Transactions?>? getByAccountOrderByOrderDesc(int? id)
+        public SortedSet<Transactions?>? getByAccountOrderByOrderDesc(int? id)
         {
-            return transactionsManager.getByAccountOrderByOrdenDesc(id)?.toListBO();
+            return transactionsManager.getByAccountOrderByOrdenDesc(id)?.toSortedSetBO();
         }
 
-        public List<Transactions?>? getByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
+        public SortedSet<Transactions?>? getByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
         {
-            return transactionsManager.getByAccountOrderByOrdenDesc(id, startIndex, nPage)?.toListBO();
+            return transactionsManager.getByAccountOrderByOrdenDesc(id, startIndex, nPage)?.toSortedSetBO();
         }
 
-        public List<Transactions?>? getByAccount(Accounts? accounts)
+        public HashSet<Transactions?>? getByAccount(Accounts? accounts)
         {
             return getByAccount(accounts?.id);
         }
 
-        public List<Transactions?>? getByPerson(int? id)
+        public HashSet<Transactions?>? getByPerson(int? id)
         {
-            return transactionsManager.getByPerson(id)?.toListBO();
+            return transactionsManager.getByPerson(id)?.toHashSetBO();
         }
 
-        public List<Transactions?>? getByPerson(Persons? person)
+        public HashSet<Transactions?>? getByPerson(Persons? person)
         {
             return getByPerson(person?.id);
         }

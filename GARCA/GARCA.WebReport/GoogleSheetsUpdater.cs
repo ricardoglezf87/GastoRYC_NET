@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GARCA.BO.Models;
 using GARCA.BO.Services;
 using Google.Apis.Auth.OAuth2;
@@ -8,6 +9,7 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using System.Threading.Tasks;
 using GARCA.Utils.IOC;
+using Syncfusion.Data.Extensions;
 
 namespace GARCA.WebReport
 {
@@ -46,7 +48,7 @@ namespace GARCA.WebReport
 
         private async Task updateTransactions(SheetsService service)
         {
-            var transactions = await Task.Run(() => DependencyConfig.iTransactionsService.getAllOpenned());
+            List<Transactions?>? transactions = await Task.Run(() => DependencyConfig.iTransactionsService.getAllOpenned()?.ToList());
             List<string[]> filasDeDatos = new()
                 {
                     new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }

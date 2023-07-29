@@ -27,75 +27,127 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public List<TransactionsDAO>? getByAccount(int? id)
+        public IEnumerable<TransactionsDAO>? getByAccount(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                return getEntyWithInclude(repository)?.Where(x => id.Equals(x.accountid))?.ToList();
+                var query = getEntyWithInclude(repository)?
+                    .Where(x => id.Equals(x.accountid));
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
 
-        public List<TransactionsDAO>? getByAccount(int? id, int startIndex, int nPage)
+        public IEnumerable<TransactionsDAO>? getByAccount(int? id, int startIndex, int nPage)
         {
             return getByAccount(id)?.Skip(startIndex)?.Take(nPage)?.ToList();
         }
 
-        public List<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id)
+        public IEnumerable<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                return getEntyWithInclude(repository)?
+                var query = getEntyWithInclude(repository)?
                     .Where(x => id.Equals(x.accountid))?
-                    .OrderByDescending(x => x.orden)?.ToList();
+                    .OrderByDescending(x => x.orden);
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
-        public List<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id, int startIndex, int nPage)
+        public IEnumerable<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id, int startIndex, int nPage)
         {
             return getByAccountOrderByOrdenDesc(id)?.Skip(startIndex)?.Take(nPage)?.ToList();
         }
 
-        public List<TransactionsDAO>? getAllOpenned()
+        public IEnumerable<TransactionsDAO>? getAllOpenned()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                return getEntyWithInclude(repository)?.Where(x => !x.account.closed.HasValue || !x.account.closed.Value)?.ToList();
+                var query = getEntyWithInclude(repository)?
+                    .Where(x => !x.account.closed.HasValue || !x.account.closed.Value);
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
 
-        public List<TransactionsDAO>? getAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
+        public IEnumerable<TransactionsDAO>? getAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
         {
             return getAllOpennedOrderByOrdenDesc()?.Skip(startIndex)?.Take(nPage)?.ToList();
         }
 
-        public List<TransactionsDAO>? getAllOpennedOrderByOrdenDesc()
+        public IEnumerable<TransactionsDAO>? getAllOpennedOrderByOrdenDesc()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                return getEntyWithInclude(repository)?
+                var query = getEntyWithInclude(repository)?
                     .Where(x => !x.account.closed.HasValue || !x.account.closed.Value)?
-                    .OrderByDescending(x => x.orden)?.ToList();
+                    .OrderByDescending(x => x.orden);
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
 
-        public List<TransactionsDAO>? getByPerson(int? id)
+        public IEnumerable<TransactionsDAO>? getByPerson(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                return getEntyWithInclude(repository)?.Where(x => id.Equals(x.personid))?.ToList();
+                var query = getEntyWithInclude(repository)?
+                    .Where(x => id.Equals(x.personid));
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
         
-        public List<TransactionsDAO>? getByInvestmentProduct(int? id)
+        public IEnumerable<TransactionsDAO>? getByInvestmentProduct(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                return getEntyWithInclude(repository)?.Where(x => id.Equals(x.investmentProductsid))?.ToList();
+                var query = getEntyWithInclude(repository)?
+                    .Where(x => id.Equals(x.investmentProductsid));
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
 
