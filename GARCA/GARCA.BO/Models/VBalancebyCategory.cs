@@ -12,20 +12,7 @@ namespace GARCA.BO.Models
         public virtual string? category { set; get; }
         public virtual Decimal? amount { set; get; }
         public virtual Decimal? neg_amount => -amount;
-
-        internal VBalancebyCategoryDAO toDAO()
-        {
-            return new VBalancebyCategoryDAO
-            {
-                year = this.year,
-                month = this.month,
-                categoriesTypesid = this.categoriesTypesid,
-                categoryid = this.categoryid,
-                category = this.category,
-                amount = this.amount
-            };
-        }
-
+        
         public static explicit operator VBalancebyCategory?(VBalancebyCategoryDAO? v)
         {
             return v == null
