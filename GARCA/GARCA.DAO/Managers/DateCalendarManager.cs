@@ -2,7 +2,6 @@
 using GARCA.DAO.Repositories;
 
 using System;
-using System.Collections.Generic;
 
 namespace GARCA.DAO.Managers
 {

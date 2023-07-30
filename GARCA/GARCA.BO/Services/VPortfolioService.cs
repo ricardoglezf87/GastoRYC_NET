@@ -1,8 +1,8 @@
 ﻿using GARCA.BO.Models;
+using GARCA.Utils.IOC;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GARCA.Utils.IOC;
 
 namespace GARCA.BO.Services
 {
@@ -10,7 +10,7 @@ namespace GARCA.BO.Services
     {
         public async Task<HashSet<VPortfolio?>?> GetAllAsync()
         {
-            HashSet<VPortfolio?>? listPortFolio = new();
+            HashSet<VPortfolio?> listPortFolio = new();
             foreach (var investmentProducts in
                 await DependencyConfig.IInvestmentProductsService.GetAllOpened())
             {

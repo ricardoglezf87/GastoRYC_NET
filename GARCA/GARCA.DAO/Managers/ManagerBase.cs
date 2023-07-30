@@ -12,7 +12,7 @@ namespace GARCA.DAO.Managers
     public class ManagerBase<T> where T : ModelBaseDAO
     {
 #pragma warning disable CS8603
-        public virtual Expression<Func<T, object>>[] GetIncludes()
+        protected virtual Expression<Func<T, object>>[] GetIncludes()
         {
             return null;
         }
@@ -36,13 +36,10 @@ namespace GARCA.DAO.Managers
             {
                 var repository = unitOfWork.GetRepositoryModelBase<T>();
                 var query = repository.GetAllWithInclude(GetIncludes());
-                
-                if (query != null)
+
+                foreach (var item in query)
                 {
-                    foreach (var item in query)
-                    {
-                        yield return item;
-                    }
+                    yield return item;
                 }
             }
         }

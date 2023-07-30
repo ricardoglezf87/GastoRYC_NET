@@ -1,10 +1,10 @@
 ﻿
 using GARCA.BO.Models;
+using GARCA.Utils.IOC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using static GARCA.BO.Services.AccountsTypesService;
-using GARCA.Utils.IOC;
 
 namespace GARCA.BO.Services
 {
@@ -41,7 +41,7 @@ namespace GARCA.BO.Services
 
             if (transactions != null)
             {
-                if (remTransactions != null && remTransactions.Count > 0)
+                if (remTransactions.Count > 0)
                 {
                     transactions.AddRange(remTransactions);
                 }

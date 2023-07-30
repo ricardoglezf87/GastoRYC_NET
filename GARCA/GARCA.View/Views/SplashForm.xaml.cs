@@ -12,7 +12,7 @@ namespace GARCA.View.Views
         public SplashForm()
         {
             InitializeComponent();
-            lblVersion.Content = "Version: " + Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString();
+            lblVersion.Content = "Version: " + Assembly.GetExecutingAssembly().GetName().Version;
         }
 
         private void Window_ContentRendered(object sender, EventArgs e)

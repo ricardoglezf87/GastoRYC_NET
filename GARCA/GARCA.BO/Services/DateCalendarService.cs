@@ -1,9 +1,6 @@
-﻿using GARCA.Utlis.Extensions;
-
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
 using System;
-using System.Collections.Generic;
 
 namespace GARCA.BO.Services
 {
@@ -11,7 +8,7 @@ namespace GARCA.BO.Services
     {
         private readonly DateCalendarManager dateCalendarManager;
         private readonly DateTime initDate;
-        
+
         public DateCalendarService()
         {
             dateCalendarManager = new DateCalendarManager();

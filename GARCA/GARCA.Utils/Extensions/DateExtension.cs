@@ -11,7 +11,7 @@ namespace GARCA.Utlis.Extensions
 
         public static DateTime? AddDay(this DateTime? date)
         {
-            return  date?.Date.AddDays(1) ;
+            return date?.Date.AddDays(1);
         }
 
         public static DateTime? AddDay(this DateTime? date, int n)

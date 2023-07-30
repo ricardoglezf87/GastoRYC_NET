@@ -1,11 +1,10 @@
-﻿using GARCA.Utlis.Extensions;
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
 using GARCA.Utils.IOC;
+using GARCA.Utlis.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {
@@ -132,23 +131,25 @@ namespace GARCA.BO.Services
 
         public HashSet<Transactions> RegisterTransactionfromReminderSimulation(ExpirationsReminders exp)
         {
-            HashSet<Transactions>? lTransactions = new();
+            HashSet<Transactions> lTransactions = new();
             var expirationsReminders = exp;
-            if (expirationsReminders != null && expirationsReminders.TransactionsReminders != null)
+            if (expirationsReminders.TransactionsReminders != null)
             {
-                Transactions transactions = new();
-                transactions.Date = expirationsReminders.Date.RemoveTime();
-                transactions.Accountid = expirationsReminders.TransactionsReminders.Accountid;
-                transactions.Account = expirationsReminders.TransactionsReminders.Account;
-                transactions.Personid = expirationsReminders.TransactionsReminders.Personid;
-                transactions.Person = expirationsReminders.TransactionsReminders.Person;
-                transactions.Categoryid = expirationsReminders.TransactionsReminders.Categoryid;
-                transactions.Category = expirationsReminders.TransactionsReminders.Category;
-                transactions.Memo = expirationsReminders.TransactionsReminders.Memo;
-                transactions.AmountIn = expirationsReminders.TransactionsReminders.AmountIn ?? 0;
-                transactions.AmountOut = expirationsReminders.TransactionsReminders.AmountOut ?? 0;
-                transactions.Tag = expirationsReminders.TransactionsReminders.Tag;
-                transactions.Tagid = expirationsReminders.TransactionsReminders.Tagid;
+                Transactions transactions = new()
+                {
+                    Date = expirationsReminders.Date.RemoveTime(),
+                    Accountid = expirationsReminders.TransactionsReminders.Accountid,
+                    Account = expirationsReminders.TransactionsReminders.Account,
+                    Personid = expirationsReminders.TransactionsReminders.Personid,
+                    Person = expirationsReminders.TransactionsReminders.Person,
+                    Categoryid = expirationsReminders.TransactionsReminders.Categoryid,
+                    Category = expirationsReminders.TransactionsReminders.Category,
+                    Memo = expirationsReminders.TransactionsReminders.Memo,
+                    AmountIn = expirationsReminders.TransactionsReminders.AmountIn ?? 0,
+                    AmountOut = expirationsReminders.TransactionsReminders.AmountOut ?? 0,
+                    Tag = expirationsReminders.TransactionsReminders.Tag,
+                    Tagid = expirationsReminders.TransactionsReminders.Tagid
+                };
 
                 if (transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
                 {
@@ -160,14 +161,16 @@ namespace GARCA.BO.Services
 
                     foreach (var splitsReminders in expirationsReminders.TransactionsReminders.Splits)
                     {
-                        Splits splits = new();
-                        splits.Transactionid = transactions.Id;
-                        splits.Categoryid = splitsReminders.Categoryid;
-                        splits.Category = splitsReminders.Category;
-                        splits.Memo = splitsReminders.Memo;
-                        splits.AmountIn = splitsReminders.AmountIn ?? 0;
-                        splits.AmountOut = splitsReminders.AmountOut ?? 0;
-                        splits.Tagid = splitsReminders.Tagid;
+                        Splits splits = new()
+                        {
+                            Transactionid = transactions.Id,
+                            Categoryid = splitsReminders.Categoryid,
+                            Category = splitsReminders.Category,
+                            Memo = splitsReminders.Memo,
+                            AmountIn = splitsReminders.AmountIn ?? 0,
+                            AmountOut = splitsReminders.AmountOut ?? 0,
+                            Tagid = splitsReminders.Tagid
+                        };
                         if (splits.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
                         {
                             lTransactions.Add(UpdateTranferSplitsSimulation(transactions, splits));
@@ -181,7 +184,7 @@ namespace GARCA.BO.Services
 
         private Transactions UpdateTranferSplitsSimulation(Transactions? transactions, Splits splits)
         {
-            Transactions? tContraria = new()
+            Transactions tContraria = new()
             {
                 Date = transactions.Date,
                 Accountid = DependencyConfig.IAccountsService.GetByCategoryId(splits.Categoryid)?.Id,
@@ -202,7 +205,7 @@ namespace GARCA.BO.Services
 
         private Transactions UpdateTranferSimulation(Transactions transactions)
         {
-            Transactions? tContraria = new()
+            Transactions tContraria = new()
             {
                 Date = transactions.Date.RemoveTime(),
                 Accountid = DependencyConfig.IAccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
@@ -232,7 +235,7 @@ namespace GARCA.BO.Services
 
         public void Update(ExpirationsReminders expirationsReminders)
         {
-            expirationsRemindersManager.Update(expirationsReminders?.ToDao());
+            expirationsRemindersManager.Update(expirationsReminders.ToDao());
         }
 
         private void Delete(ExpirationsReminders? expirationsReminders)

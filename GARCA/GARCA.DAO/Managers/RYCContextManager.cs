@@ -15,13 +15,13 @@ namespace GARCA.DAO.Managers
         {
             GetContext().Database.Migrate();
         }
-        
+
         public void MakeBackup()
         {
             var path = string.Empty;
             var nameDdbb = string.Empty;
 
-            path =  "Data\\";
+            path = "Data\\";
 
             if (!Directory.Exists(path + "Backup\\"))
             {
@@ -37,7 +37,7 @@ namespace GARCA.DAO.Managers
             if (File.Exists(path + nameDdbb))
             {
                 File.Copy(path + nameDdbb, path + "Backup\\" +
-                    nameDdbb + "." + DateTime.Now.Ticks.ToString() + ".bk", true);
+                    nameDdbb + "." + DateTime.Now.Ticks + ".bk", true);
             }
         }
     }

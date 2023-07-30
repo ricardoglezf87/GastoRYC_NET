@@ -16,10 +16,10 @@ namespace GARCA.BO.Models
         {
             return new DateCalendarDAO
             {
-                date = this.Date,
-                day = this.Day,
-                month = this.Month,
-                year = this.Year
+                date = Date,
+                day = Day,
+                month = Month,
+                year = Year
             };
         }
 

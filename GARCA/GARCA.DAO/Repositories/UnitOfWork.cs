@@ -30,7 +30,7 @@ namespace GARCA.DAO.Repositories
             return context.Database;
         }
 
-        public virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposed)
             {

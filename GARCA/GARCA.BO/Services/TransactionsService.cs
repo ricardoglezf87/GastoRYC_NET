@@ -1,11 +1,10 @@
-﻿using GARCA.Utlis.Extensions;
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utils.IOC;
+using GARCA.Utlis.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using GARCA.Utils.IOC;
 
 namespace GARCA.BO.Services
 {
@@ -14,7 +13,7 @@ namespace GARCA.BO.Services
         #region Propiedades y Contructor
 
         private readonly TransactionsManager transactionsManager;
-        
+
         public TransactionsService()
         {
             transactionsManager = new TransactionsManager();
@@ -34,7 +33,7 @@ namespace GARCA.BO.Services
             return transactionsManager.GetAllOpenned()?.ToHashSetBo();
         }
 
-        public SortedSet<Transactions?>? GetAllOpennedOrderByOrderDesc(int startIndex, int nPage)
+        public IEnumerable<Transactions>? GetAllOpennedOrderByOrderDesc(int startIndex, int nPage)
         {
             return transactionsManager.GetAllOpennedOrderByOrdenDesc(startIndex, nPage)?.ToSortedSetBo();
         }
@@ -58,12 +57,12 @@ namespace GARCA.BO.Services
         {
             transactions.Date = transactions.Date.RemoveTime();
             transactions.Orden = CreateOrden(transactions);
-            return (Transactions?)transactionsManager.Update(transactions?.ToDao());
+            return (Transactions?)transactionsManager.Update(transactions.ToDao());
         }
 
         private void UpdateList(List<Transactions?>? lObj)
         {
-                transactionsManager.UpdateList(lObj.ToListDao());
+            transactionsManager.UpdateList(lObj.ToListDao());
         }
 
         public void Delete(Transactions? transactions)
@@ -76,12 +75,12 @@ namespace GARCA.BO.Services
             return transactionsManager.GetByAccount(id)?.ToHashSetBo();
         }
 
-        private SortedSet<Transactions?>? GetByAccountOrderByOrderDesc(int? id)
+        private IEnumerable<Transactions?>? GetByAccountOrderByOrderDesc(int? id)
         {
             return transactionsManager.GetByAccountOrderByOrdenDesc(id)?.ToSortedSetBo();
         }
 
-        public SortedSet<Transactions?>? GetByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
+        public IEnumerable<Transactions>? GetByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
         {
             return transactionsManager.GetByAccountOrderByOrdenDesc(id, startIndex, nPage)?.ToSortedSetBo();
         }
@@ -133,15 +132,15 @@ namespace GARCA.BO.Services
         {
             var tList = GetByAccountOrderByOrderDesc(tUpdate.Accountid);
             decimal? balanceTotal = 0;
-            
+
             if (tList != null)
             {
                 balanceTotal = tList.Sum(x => x.Amount);
             }
 
-            if (tUpdate != null && tUpdate.Date != null)
+            if (tUpdate.Date != null)
             {
-                var aux = tList?.Where(x => x.Date >= tUpdate?.Date.AddDay(-1) || dateFilter).ToList();
+                var aux = tList?.Where(x => x.Date >= tUpdate.Date.AddDay(-1) || dateFilter).ToList();
                 for (var i = 0; i < aux.Count; i++)
                 {
                     if (aux[i].Amount != null)
@@ -172,7 +171,7 @@ namespace GARCA.BO.Services
             {
                 transactions.Tranferid = GetNextId();
 
-                Transactions? tContraria = new()
+                Transactions tContraria = new()
                 {
                     Date = transactions.Date,
                     Accountid = DependencyConfig.IAccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
@@ -217,7 +216,7 @@ namespace GARCA.BO.Services
 
         #region SplitsActions
 
-        public void UpdateTranferFromSplit(Transactions transactions)
+        private void UpdateTranferFromSplit(Transactions transactions)
         {
             if (transactions.TranferSplitid != null &&
                 transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
@@ -249,8 +248,8 @@ namespace GARCA.BO.Services
 
                 foreach (var splits in lSplits)
                 {
-                    transactions.AmountIn += splits.AmountIn == null ? 0 : splits.AmountIn;
-                    transactions.AmountOut += splits.AmountOut == null ? 0 : splits.AmountOut;
+                    transactions.AmountIn += splits.AmountIn ?? 0;
+                    transactions.AmountOut += splits.AmountOut ?? 0;
                 }
 
                 transactions.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
@@ -295,7 +294,7 @@ namespace GARCA.BO.Services
             {
                 splits.Tranferid = GetNextId();
 
-                Transactions? tContraria = new()
+                Transactions tContraria = new()
                 {
                     Date = transactions.Date,
                     Accountid = DependencyConfig.IAccountsService.GetByCategoryId(splits.Categoryid)?.Id,

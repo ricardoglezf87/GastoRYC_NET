@@ -1,10 +1,9 @@
-﻿using GARCA.Utlis.Extensions;
-
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utlis.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-  
+
 namespace GARCA.BO.Services
 {
     public class InvestmentProductsService
@@ -28,12 +27,12 @@ namespace GARCA.BO.Services
 
         public void Update(InvestmentProducts investmentProducts)
         {
-            investmentProductsManager.Update(investmentProducts?.ToDao());
+            investmentProductsManager.Update(investmentProducts.ToDao());
         }
 
         public void Delete(InvestmentProducts investmentProducts)
         {
-            investmentProductsManager.Delete(investmentProducts?.ToDao());
+            investmentProductsManager.Delete(investmentProducts.ToDao());
         }
 
         public async Task<HashSet<InvestmentProducts?>?> GetAllOpened()

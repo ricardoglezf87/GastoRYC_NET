@@ -23,13 +23,13 @@ namespace GARCA.BO.Models
         {
             return new AccountsDAO
             {
-                id = this.Id,
-                description = this.Description,
-                categoryid = this.Categoryid,
+                id = Id,
+                description = Description,
+                categoryid = Categoryid,
                 category = null,
-                accountsTypesid = this.AccountsTypesid,
+                accountsTypesid = AccountsTypesid,
                 accountsTypes = null,
-                closed = this.Closed
+                closed = Closed
             };
         }
 

@@ -1,6 +1,6 @@
-﻿using GARCA.Utlis.Extensions;
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utlis.Extensions;
 using System.Collections.Generic;
 
 namespace GARCA.BO.Services
@@ -8,13 +8,13 @@ namespace GARCA.BO.Services
     public class TransactionsStatusService
     {
         private readonly TransactionsStatusManager transactionsStatusManager;
-        
+
         public TransactionsStatusService()
         {
             transactionsStatusManager = new TransactionsStatusManager();
         }
 
-        public enum ETransactionsTypes : int
+        public enum ETransactionsTypes
         {
             Pending = 1,
             Provisional = 2,

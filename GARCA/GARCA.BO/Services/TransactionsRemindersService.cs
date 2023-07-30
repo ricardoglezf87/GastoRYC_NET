@@ -1,16 +1,15 @@
-﻿using GARCA.Utlis.Extensions;
-
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
-using System.Collections.Generic;
 using GARCA.Utils.IOC;
+using GARCA.Utlis.Extensions;
+using System.Collections.Generic;
 
 namespace GARCA.BO.Services
 {
     public class TransactionsRemindersService
     {
         private readonly TransactionsRemindersManager transactionsRemindersManager;
-        
+
         public TransactionsRemindersService()
         {
             transactionsRemindersManager = new();
@@ -67,8 +66,8 @@ namespace GARCA.BO.Services
 
                 foreach (var splitsReminders in lSplitsReminders)
                 {
-                    transactionsReminders.AmountIn += splitsReminders.AmountIn == null ? 0 : splitsReminders.AmountIn;
-                    transactionsReminders.AmountOut += splitsReminders.AmountOut == null ? 0 : splitsReminders.AmountOut;
+                    transactionsReminders.AmountIn += splitsReminders.AmountIn ?? 0;
+                    transactionsReminders.AmountOut += splitsReminders.AmountOut ?? 0;
                 }
 
                 transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.Split;

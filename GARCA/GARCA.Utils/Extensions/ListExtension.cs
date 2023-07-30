@@ -1,5 +1,4 @@
 ﻿using GARCA.BO.Models;
-using GARCA.View.ViewModels;
 using GARCA.DAO.Models;
 using System.Collections.Generic;
 
@@ -7,7 +6,7 @@ namespace GARCA.Utlis.Extensions
 {
     public static class ListExtension
     {
-        public static List<TransactionsDAO?>? ToListDao(this List<Transactions?>? source)
+        public static List<TransactionsDAO?> ToListDao(this List<Transactions?>? source)
         {
             List<TransactionsDAO?> list = new();
             if (source != null)
@@ -20,6 +19,6 @@ namespace GARCA.Utlis.Extensions
             return list;
         }
 
-       
+
     }
 }

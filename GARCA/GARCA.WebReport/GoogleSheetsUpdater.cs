@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GARCA.BO.Models;
-using GARCA.BO.Services;
+﻿using GARCA.BO.Services;
+using GARCA.Utils.IOC;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using GARCA.Utils.IOC;
-using Syncfusion.Data.Extensions;
 
 namespace GARCA.WebReport
 {
@@ -34,16 +32,9 @@ namespace GARCA.WebReport
         {
             var service = await GetSheetsService();
 
-            try
-            {
-                await UpdateTransactions(service);
-                await UpdateInvest(service);
-                await UpdateForecast(service);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            await UpdateTransactions(service);
+            await UpdateInvest(service);
+            await UpdateForecast(service);
         }
 
         private async Task UpdateTransactions(SheetsService service)
@@ -51,7 +42,7 @@ namespace GARCA.WebReport
             var transactions = await Task.Run(() => DependencyConfig.ITransactionsService.GetAllOpenned()?.ToList());
             List<string[]> filasDeDatos = new()
                 {
-                    new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
+                    new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
                 };
 
             for (var i = 0; i < transactions.Count; i++)
@@ -69,7 +60,7 @@ namespace GARCA.WebReport
                         {
                             balance += spl.Amount ?? 0;
                             filasDeDatos.Add(
-                               new string[] {
+                               new[] {
                                         trans.Id.ToString(),
                                         DateToStringJs(trans.Date),
                                         trans.Account?.Description ?? "Sin Cuenta",
@@ -81,7 +72,7 @@ namespace GARCA.WebReport
                                         DecimalToStringJs(spl.Amount),
                                         trans.Tag?.Description ?? "Sin Tag",
                                         (trans.Tagid??-99).ToString(),
-                                        trans.Memo?.ToString() ?? String.Empty,
+                                        trans.Memo ?? String.Empty,
                                         DecimalToStringJs(balance)
                                });
                         }
@@ -90,7 +81,7 @@ namespace GARCA.WebReport
                 else if (trans.Category == null || trans.Category?.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
                 {
                     filasDeDatos.Add(
-                        new string[] {
+                        new[] {
                                 trans.Id.ToString(),
                                 DateToStringJs(trans.Date),
                                 trans.Account?.Description ?? "Sin Cuenta",
@@ -102,7 +93,7 @@ namespace GARCA.WebReport
                                 DecimalToStringJs(trans.Amount),
                                 trans.Tag?.Description ?? "Sin Tag",
                                 (trans.Tagid??-99).ToString(),
-                                trans.Memo?.ToString() ?? String.Empty,
+                                trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance)
                         });
                 }
@@ -113,6 +104,7 @@ namespace GARCA.WebReport
 
         private async Task UpdateInvest(SheetsService service)
         {
+            await Task.Run(() => new Exception("Funcion no implementada"));
             //var transactions = await Task.Run(() => DependencyConfig.iTransactionsService.getAllOpenned());
             //List<string[]> filasDeDatos = new()
             //    {
@@ -177,6 +169,7 @@ namespace GARCA.WebReport
         }
         private async Task UpdateForecast(SheetsService service)
         {
+            await Task.Run(() => new Exception("Funcion no implementada"));
             //var transactions = await Task.Run(() => DependencyConfig.iTransactionsService.getAllOpenned());
             //List<string[]> filasDeDatos = new()
             //    {
@@ -249,7 +242,7 @@ namespace GARCA.WebReport
         {
             return date == null
                 ? string.Empty
-                : $"{date.Value.Year.ToString("0000")}-{date.Value.Month.ToString("00")}-{date.Value.Day.ToString("00")}";
+                : $"{date.Value.Year:0000}-{date.Value.Month:00}-{date.Value.Day:00}";
         }
 
         private async Task<SheetsService> GetSheetsService()

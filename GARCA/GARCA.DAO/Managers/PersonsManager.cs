@@ -8,7 +8,7 @@ namespace GARCA.DAO.Managers
     public class PersonsManager : ManagerBase<PersonsDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<PersonsDAO, object>>[] GetIncludes()
+        protected override Expression<Func<PersonsDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<PersonsDAO, object>>[]
             {

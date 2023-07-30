@@ -1,19 +1,16 @@
 ﻿using GARCA.DAO.Models;
 using GARCA.DAO.Repositories;
-
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GARCA.DAO.Managers
 {
     public class SplitsManager : ManagerBase<SplitsDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<SplitsDAO, object>>[] GetIncludes()
+        protected override Expression<Func<SplitsDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<SplitsDAO, object>>[]
             {

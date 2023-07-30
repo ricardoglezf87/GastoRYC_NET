@@ -1,7 +1,7 @@
 ﻿using GARCA.DAO.Models;
+using GARCA.Utlis.Extensions;
 using System;
 using System.Collections.Generic;
-using GARCA.Utlis.Extensions;
 
 namespace GARCA.BO.Models
 {
@@ -51,10 +51,10 @@ namespace GARCA.BO.Models
 
         public virtual bool? InvestmentCategory { set; get; }
 
-        public virtual String? CategoryDescripGrid => InvestmentCategory.HasValue && InvestmentCategory.Value == false ?
+        public virtual String CategoryDescripGrid => InvestmentCategory.HasValue && InvestmentCategory.Value == false ?
             NumShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra" : Category?.Description ?? String.Empty;
 
-        public virtual String? PersonDescripGrid => InvestmentCategory.HasValue && InvestmentCategory.Value == false ?
+        public virtual String PersonDescripGrid => InvestmentCategory.HasValue && InvestmentCategory.Value == false ?
             InvestmentProducts?.Description ?? String.Empty : Person?.Name ?? String.Empty;
 
         public virtual Decimal? Amount => InvestmentCategory.HasValue && InvestmentCategory.Value == false ? Math.Round((NumShares ?? 0) * (PricesShares ?? 0), 2) : AmountIn - AmountOut;
@@ -63,36 +63,36 @@ namespace GARCA.BO.Models
 
         public virtual Decimal? Balance { set; get; }
 
-        
+
 
         internal TransactionsDAO ToDao()
         {
             return new TransactionsDAO
             {
-                id = this.Id,
-                date = this.Date,
-                accountid = this.Accountid,
+                id = Id,
+                date = Date,
+                accountid = Accountid,
                 account = null,
-                personid = this.Personid,
+                personid = Personid,
                 person = null,
-                categoryid = this.Categoryid,
+                categoryid = Categoryid,
                 category = null,
-                amountIn = this.AmountIn,
-                amountOut = this.AmountOut,
-                memo = this.Memo,
-                investmentCategory = this.InvestmentCategory,
+                amountIn = AmountIn,
+                amountOut = AmountOut,
+                memo = Memo,
+                investmentCategory = InvestmentCategory,
                 investmentProducts = null,
-                investmentProductsid = this.InvestmentProductsid,
-                tranferid = this.Tranferid,
-                tranferSplitid = this.TranferSplitid,
+                investmentProductsid = InvestmentProductsid,
+                tranferid = Tranferid,
+                tranferSplitid = TranferSplitid,
                 transactionStatus = null,
-                transactionStatusid = this.TransactionStatusid,
-                numShares = this.NumShares,
-                pricesShares = this.PricesShares,
-                tagid = this.Tagid,
+                transactionStatusid = TransactionStatusid,
+                numShares = NumShares,
+                pricesShares = PricesShares,
+                tagid = Tagid,
                 tag = null,
-                balance = this.Balance,
-                orden = this.Orden
+                balance = Balance,
+                orden = Orden
             };
         }
 
@@ -132,17 +132,11 @@ namespace GARCA.BO.Models
 
         public override int CompareTo(object? obj)
         {
-            if (obj == null)
-            {
-                return 1; 
-            }
-
-            if (obj is not Transactions otherTransaction)
-            {
-                throw new ArgumentException("El objeto proporcionado no es de tipo Transactions.");
-            }
-
-            return otherTransaction.Orden.CompareTo(this.Orden);
+            return obj == null
+                ? 1
+                : obj is not Transactions otherTransaction
+                ? throw new ArgumentException("El objeto proporcionado no es de tipo Transactions.")
+                : otherTransaction.Orden.CompareTo(Orden);
         }
     }
 }

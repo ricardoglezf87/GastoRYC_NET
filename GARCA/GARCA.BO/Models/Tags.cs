@@ -11,8 +11,8 @@ namespace GARCA.BO.Models
         {
             return new TagsDAO
             {
-                id = this.Id,
-                description = this.Description
+                id = Id,
+                description = Description
             };
         }
 

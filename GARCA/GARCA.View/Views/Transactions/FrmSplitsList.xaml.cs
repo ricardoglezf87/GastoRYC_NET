@@ -1,7 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
-using System.Windows;
 using GARCA.Utils.IOC;
+using System.Windows;
 
 namespace GARCA.View.Views
 {

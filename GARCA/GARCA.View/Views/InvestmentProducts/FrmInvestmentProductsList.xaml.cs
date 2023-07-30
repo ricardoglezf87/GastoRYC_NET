@@ -1,8 +1,7 @@
 ﻿using GARCA.BO.Models;
-using GARCA.BO.Services;
+using GARCA.Utils.IOC;
 using System.Windows;
 using System.Windows.Controls;
-using GARCA.Utils.IOC;
 
 //TODO: En esta version de syncfusion no permite guardar los checkbox al perder foco, tienes que saltar a un texbox antes de saltar de linea
 

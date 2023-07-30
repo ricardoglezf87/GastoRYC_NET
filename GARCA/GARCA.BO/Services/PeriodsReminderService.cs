@@ -1,6 +1,6 @@
-﻿using GARCA.Utlis.Extensions;
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utlis.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -9,8 +9,8 @@ namespace GARCA.BO.Services
     public class PeriodsRemindersService
     {
         private PeriodsRemindersManager periodsRemindersManager;
-        
-        public enum EPeriodsReminders : int
+
+        public enum EPeriodsReminders
         {
             Diary = 1,
             Weekly = 2,

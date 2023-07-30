@@ -6,7 +6,7 @@ namespace GARCA.BO.Models
     public class TransactionsStatus : ModelBase
     {
         public virtual String? Description { set; get; }
-        
+
         public static explicit operator TransactionsStatus?(TransactionsStatusDAO? v)
         {
             return v == null

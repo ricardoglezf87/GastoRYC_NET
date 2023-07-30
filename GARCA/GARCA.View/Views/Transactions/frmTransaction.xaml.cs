@@ -70,7 +70,7 @@ namespace GARCA.View.Views
         {
             if (SaveTransaction())
             {
-                this.Close();
+                Close();
             }
         }
 
@@ -134,7 +134,7 @@ namespace GARCA.View.Views
                     CalculateSharesOrPrice();
                     break;
                 case Key.Escape:
-                    this.Close();
+                    Close();
                     break;
             }
         }
@@ -441,7 +441,7 @@ namespace GARCA.View.Views
             if (IsTransactionValid())
             {
                 if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
-                MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     UpdateTransaction();
                     if (transaction != null)
@@ -450,15 +450,11 @@ namespace GARCA.View.Views
                     }
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
+
                 return false;
             }
+
+            return false;
         }
 
         private void CalculateValueShares()

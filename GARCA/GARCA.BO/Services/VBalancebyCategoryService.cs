@@ -1,7 +1,6 @@
-﻿using GARCA.Utlis.Extensions;
-
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utlis.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ namespace GARCA.BO.Services
     public class VBalancebyCategoryService
     {
         private readonly VBalancebyCategoryManager vBalancebyCategoryManager;
-       
+
         public VBalancebyCategoryService()
         {
             vBalancebyCategoryManager = new VBalancebyCategoryManager();

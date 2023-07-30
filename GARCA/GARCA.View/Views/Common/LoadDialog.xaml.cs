@@ -12,13 +12,13 @@ namespace GARCA.View.Views.Common
             InitializeComponent();
             pbProgreso.Value = 0;
             pbProgreso.Maximum = max;
-            lblProgreso.Content = "(0 / " + max.ToString() + ") Elementos procesados";
+            lblProgreso.Content = "(0 / " + max + ") Elementos procesados";
         }
 
         public void PerformeStep()
         {
             pbProgreso.Value += 1;
-            lblProgreso.Content = "(" + pbProgreso.Value.ToString() + " / " + pbProgreso.Maximum.ToString() + ") Elementos procesados";
+            lblProgreso.Content = "(" + pbProgreso.Value + " / " + pbProgreso.Maximum + ") Elementos procesados";
         }
 
     }

@@ -116,7 +116,7 @@
                               Width="auto" Grid.Column="1" Grid.Row="2" Grid.RowSpan="2"/>
 
 
-        <Frame x:Name="principalContent" Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="9" Grid.RowSpan="2" NavigationUIVisibility="Hidden" />
+        <Frame x:Name="principalContent" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" NavigationUIVisibility="Hidden" />
 
     </Grid>
 </syncfusion:RibbonWindow>

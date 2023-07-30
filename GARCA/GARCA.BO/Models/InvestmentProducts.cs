@@ -23,13 +23,13 @@ namespace GARCA.BO.Models
         {
             return new InvestmentProductsDAO
             {
-                id = this.Id,
-                description = this.Description,
-                investmentProductsTypesid = this.InvestmentProductsTypesid,
+                id = Id,
+                description = Description,
+                investmentProductsTypesid = InvestmentProductsTypesid,
                 investmentProductsTypes = null,
-                symbol = this.Symbol,
-                url = this.Url,
-                active = this.Active
+                symbol = Symbol,
+                url = Url,
+                active = Active
             };
         }
 

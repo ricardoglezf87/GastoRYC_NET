@@ -1,7 +1,6 @@
-﻿using GARCA.Utlis.Extensions;
-
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utils.IOC;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,7 +9,6 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using GARCA.Utils.IOC;
 
 namespace GARCA.BO.Services
 {
@@ -40,55 +38,48 @@ namespace GARCA.BO.Services
 
         public async Task getPricesOnlineAsync(InvestmentProducts? investmentProducts)
         {
-            try
+            //Get prices from buy and sell ins transactions
+            foreach (var transactions in DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?
+                         .GroupBy(g => g.Date).Select(x => new { date = x.Key, price = x.Average(y => y.PricesShares) }))
             {
-                //Get prices from buy and sell ins transactions
-                foreach (var transactions in DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?
-                        .GroupBy(g => g.Date)?.Select(x => new { date = x.Key, price = x.Average(y => y.PricesShares) }))
+                if (!Exists(investmentProducts.Id, transactions.date))
                 {
-                    if (!Exists(investmentProducts.Id, transactions.date))
-                    {
-                        InvestmentProductsPrices productsPrices = new();
-                        productsPrices.Date = transactions.date;
-                        productsPrices.InvestmentProductsid = investmentProducts.Id;
-                        productsPrices.Prices = transactions.price;
-                        investmentProductsPricesManager.Update(productsPrices.ToDao());
-                    }
+                    InvestmentProductsPrices productsPrices = new();
+                    productsPrices.Date = transactions.date;
+                    productsPrices.InvestmentProductsid = investmentProducts.Id;
+                    productsPrices.Prices = transactions.price;
+                    investmentProductsPricesManager.Update(productsPrices.ToDao());
                 }
-
-                //Get prices online
-
-                if (investmentProducts == null || String.IsNullOrWhiteSpace(investmentProducts.Url)
-                    || !investmentProducts.Active.HasValue || !investmentProducts.Active.Value)
-                {
-                    return;
-                }
-
-                HashSet<InvestmentProductsPrices> lproductsPrices = new();
-
-                if (investmentProducts.Url.Contains("investing.com"))
-                {
-                    lproductsPrices = await getPricesOnlineInvesting(investmentProducts);
-                }
-                else if (investmentProducts.Url.Contains("yahoo.com"))
-                {
-                    lproductsPrices = await getPricesOnlineYahoo(investmentProducts);
-                }
-
-                foreach (var productsPrices in lproductsPrices)
-                {
-                    if (!Exists(productsPrices.InvestmentProductsid, productsPrices.Date))
-                    {
-                        investmentProductsPricesManager.Update(productsPrices.ToDao());
-                    }
-                }
-
-                investmentProductsPricesManager.SaveChanges();
             }
-            catch (Exception)
+
+            //Get prices online
+
+            if (investmentProducts == null || String.IsNullOrWhiteSpace(investmentProducts.Url)
+                                           || !investmentProducts.Active.HasValue || !investmentProducts.Active.Value)
             {
-                throw;
+                return;
             }
+
+            HashSet<InvestmentProductsPrices> lproductsPrices = new();
+
+            if (investmentProducts.Url.Contains("investing.com"))
+            {
+                lproductsPrices = await getPricesOnlineInvesting(investmentProducts);
+            }
+            else if (investmentProducts.Url.Contains("yahoo.com"))
+            {
+                lproductsPrices = await getPricesOnlineYahoo(investmentProducts);
+            }
+
+            foreach (var productsPrices in lproductsPrices)
+            {
+                if (!Exists(productsPrices.InvestmentProductsid, productsPrices.Date))
+                {
+                    investmentProductsPricesManager.Update(productsPrices.ToDao());
+                }
+            }
+
+            investmentProductsPricesManager.SaveChanges();
         }
 
         private async Task<HashSet<InvestmentProductsPrices>> getPricesOnlineYahoo(InvestmentProducts investmentProducts)
@@ -110,15 +101,16 @@ namespace GARCA.BO.Services
                     {
                         for (var i = 0; i < timestamps.Count; i++)
                         {
-                            if (timestamps[i] != null && !String.IsNullOrEmpty(timestamps[i].ToString()) &&
-                                prices[i] != null && !String.IsNullOrEmpty(prices[i].ToString()))
+                            if (!String.IsNullOrEmpty(timestamps[i].ToString()) && !String.IsNullOrEmpty(prices[i].ToString()))
                             {
                                 var timestamp = (long)timestamps[i];
 
-                                InvestmentProductsPrices productsPrices = new();
-                                productsPrices.InvestmentProductsid = investmentProducts.Id;
-                                productsPrices.Date = DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
-                                productsPrices.Prices = (decimal)prices[i];
+                                InvestmentProductsPrices productsPrices = new()
+                                {
+                                    InvestmentProductsid = investmentProducts.Id,
+                                    Date = DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime,
+                                    Prices = (decimal)prices[i]
+                                };
                                 lproductsPrices.Add(productsPrices);
                             }
                         }

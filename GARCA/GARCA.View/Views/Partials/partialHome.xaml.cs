@@ -1,9 +1,6 @@
-﻿using GARCA.BO.Models;
-using GARCA.BO.Services;
-using GARCA.Utils.IOC;
+﻿using GARCA.Utils.IOC;
 using Syncfusion.UI.Xaml.Charts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -39,9 +36,9 @@ namespace GARCA.View.Views
         #region Events
 
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadCharts();
+           await LoadCharts();
         }
 
         #endregion
@@ -57,7 +54,7 @@ namespace GARCA.View.Views
 
                 BorderThickness = new Thickness(0.5),
 
-                BorderBrush = new System.Windows.Media.SolidColorBrush(Colors.Black),
+                BorderBrush = new SolidColorBrush(Colors.Black),
 
                 Margin = new Thickness(10),
 
@@ -131,18 +128,18 @@ namespace GARCA.View.Views
             FrameworkElementFactory textblock = new(typeof(TextBlock));
             textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.Account"));
             textblock.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
+            textblock.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textblock.SetValue(VerticalAlignmentProperty, VerticalAlignment.Center);
+            textblock.SetValue(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.Black));
 
             stackpanel.AppendChild(textblock);
 
             FrameworkElementFactory textblock1 = new(typeof(TextBlock));
             textblock1.SetValue(TextBlock.TextProperty, " : ");
             textblock1.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock1.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock1.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock1.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
+            textblock1.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textblock1.SetValue(VerticalAlignmentProperty, VerticalAlignment.Center);
+            textblock1.SetValue(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.Black));
 
             stackpanel.AppendChild(textblock1);
 
@@ -155,9 +152,9 @@ namespace GARCA.View.Views
                 });
 
             textblock2.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock2.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock2.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock2.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
+            textblock2.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textblock2.SetValue(VerticalAlignmentProperty, VerticalAlignment.Center);
+            textblock2.SetValue(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.Black));
 
             stackpanel.AppendChild(textblock2);
             tooltip.VisualTree = stackpanel;
@@ -172,7 +169,7 @@ namespace GARCA.View.Views
 
                 LineSeries series = new()
                 {
-                    ItemsSource = (await Task.Run(() => DependencyConfig.IForecastsChartService.GetMonthForecast()))?.Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
+                    ItemsSource = (await Task.Run(() => DependencyConfig.IForecastsChartService.GetMonthForecast())).Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
                     Label = accounts.Description,
                     XBindingPath = "Date",
                     YBindingPath = "Amount",
@@ -206,7 +203,7 @@ namespace GARCA.View.Views
 
                 BorderThickness = new Thickness(0.5),
 
-                BorderBrush = new System.Windows.Media.SolidColorBrush(Colors.Black),
+                BorderBrush = new SolidColorBrush(Colors.Black),
 
                 Margin = new Thickness(10),
 
@@ -258,18 +255,18 @@ namespace GARCA.View.Views
             FrameworkElementFactory textblock = new(typeof(TextBlock));
             textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.Category"));
             textblock.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
+            textblock.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textblock.SetValue(VerticalAlignmentProperty, VerticalAlignment.Center);
+            textblock.SetValue(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.Black));
 
             stackpanel.AppendChild(textblock);
 
             FrameworkElementFactory textblock1 = new(typeof(TextBlock));
             textblock1.SetValue(TextBlock.TextProperty, " : ");
             textblock1.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock1.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock1.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock1.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
+            textblock1.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textblock1.SetValue(VerticalAlignmentProperty, VerticalAlignment.Center);
+            textblock1.SetValue(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.Black));
 
             stackpanel.AppendChild(textblock1);
 
@@ -282,9 +279,9 @@ namespace GARCA.View.Views
                 });
 
             textblock2.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
-            textblock2.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            textblock2.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
-            textblock2.SetValue(TextBlock.ForegroundProperty, new System.Windows.Media.SolidColorBrush(Colors.Black));
+            textblock2.SetValue(HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            textblock2.SetValue(VerticalAlignmentProperty, VerticalAlignment.Center);
+            textblock2.SetValue(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.Black));
 
             stackpanel.AppendChild(textblock2);
             tooltip.VisualTree = stackpanel;
@@ -313,10 +310,10 @@ namespace GARCA.View.Views
             gvExpenses.ItemsSource = lExpensesCharts?.OrderByDescending(x => x.NegAmount);
         }
 
-        public void LoadCharts()
+        public async Task LoadCharts()
         {
-            LoadChartForecast();
-            LoadChartExpenses();
+            await LoadChartForecast();
+            await LoadChartExpenses();
         }
 
         #endregion

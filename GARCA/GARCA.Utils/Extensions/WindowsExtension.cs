@@ -2,7 +2,7 @@
 {
     public static class WindowsExtension
     {
-        public enum EWindowsResult : int
+        public enum EWindowsResult
         {
             Error = -1,
             Close = 0,

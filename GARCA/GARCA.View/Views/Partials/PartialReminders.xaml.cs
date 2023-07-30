@@ -1,13 +1,11 @@
 ﻿using GARCA.BO.Models;
-using GARCA.BO.Services;
-using System.Collections.Generic;
+using GARCA.Utils.IOC;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using GARCA.Utils.IOC;
 
 namespace GARCA.View.Views
 {
@@ -44,7 +42,7 @@ namespace GARCA.View.Views
             if (MessageBox.Show("Esta seguro de querer saltar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
                    MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
             {
-                if (sender != null && ((Button)sender)?.Tag != null)
+                if (((Button)sender).Tag != null)
                 {
                     PutDoneReminder((int?)((Button)sender).Tag);
                 }
@@ -55,7 +53,7 @@ namespace GARCA.View.Views
             if (MessageBox.Show("Esta seguro de querer registrar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
                MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
             {
-                if (sender != null && ((Button)sender)?.Tag != null)
+                if (((Button)sender).Tag != null)
                 {
                     MakeTransactionFromReminder((int?)((Button)sender).Tag);
                     PutDoneReminder((int?)((Button)sender).Tag);

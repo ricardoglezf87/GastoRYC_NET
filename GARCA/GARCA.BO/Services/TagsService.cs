@@ -1,7 +1,6 @@
-﻿using GARCA.Utlis.Extensions;
-
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utlis.Extensions;
 using System.Collections.Generic;
 
 namespace GARCA.BO.Services
@@ -9,7 +8,7 @@ namespace GARCA.BO.Services
     public class TagsService
     {
         private readonly TagsManager tagsManager;
-        
+
         public TagsService()
         {
             tagsManager = new TagsManager();
@@ -27,12 +26,12 @@ namespace GARCA.BO.Services
 
         public void Update(Tags tags)
         {
-            tagsManager.Update(tags?.ToDao());
+            tagsManager.Update(tags.ToDao());
         }
 
         public void Delete(Tags tags)
         {
-            tagsManager.Delete(tags?.ToDao());
+            tagsManager.Delete(tags.ToDao());
         }
     }
 }

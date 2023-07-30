@@ -10,7 +10,7 @@ namespace GARCA.DAO.Managers
     public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPricesDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<InvestmentProductsPricesDAO, object>>[] GetIncludes()
+        protected override Expression<Func<InvestmentProductsPricesDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<InvestmentProductsPricesDAO, object>>[]
             {
@@ -45,7 +45,7 @@ namespace GARCA.DAO.Managers
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<InvestmentProductsPricesDAO>();
-                return GetEntyWithInclude(repository)?.Where(x => x.investmentProductsid.Equals(investmentProducts.id))?.Max(x => x.date);
+                return GetEntyWithInclude(repository)?.Where(x => x.investmentProductsid.Equals(investmentProducts.id)).Max(x => x.date);
             }
         }
     }

@@ -15,9 +15,9 @@ namespace GARCA.BO.Models
         {
             return new CategoriesDAO
             {
-                id = this.Id,
-                description = this.Description,
-                categoriesTypesid = this.CategoriesTypesid,
+                id = Id,
+                description = Description,
+                categoriesTypesid = CategoriesTypesid,
                 categoriesTypes = null
             };
         }

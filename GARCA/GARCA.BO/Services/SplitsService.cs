@@ -1,10 +1,8 @@
-﻿using GARCA.Utlis.Extensions;
-
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
-using System;
-using System.Collections.Generic;
 using GARCA.Utils.IOC;
+using GARCA.Utlis.Extensions;
+using System.Collections.Generic;
 
 namespace GARCA.BO.Services
 {
@@ -12,7 +10,7 @@ namespace GARCA.BO.Services
     {
 
         private readonly SplitsManager splitsManager;
-        
+
         public SplitsService()
         {
             splitsManager = new SplitsManager();
@@ -35,12 +33,12 @@ namespace GARCA.BO.Services
 
         public void Update(Splits splits)
         {
-            splitsManager.Update(splits?.ToDao());
+            splitsManager.Update(splits.ToDao());
         }
 
         public void Delete(Splits splits)
         {
-            splitsManager.Delete(splits?.ToDao());
+            splitsManager.Delete(splits.ToDao());
         }
 
         public void SaveChanges(Splits splits)

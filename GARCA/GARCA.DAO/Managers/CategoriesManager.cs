@@ -6,14 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GARCA.DAO.Managers
 {
     public class CategoriesManager : ManagerBase<CategoriesDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<CategoriesDAO, object>>[] GetIncludes()
+        protected override Expression<Func<CategoriesDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<CategoriesDAO, object>>[]
             {
@@ -27,7 +26,7 @@ namespace GARCA.DAO.Managers
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<CategoriesDAO>();
-                var query =  GetEntyWithInclude(repository)?
+                var query = GetEntyWithInclude(repository)?
                 .Where(x => !x.categoriesTypesid.Equals((int)CategoriesTypesManager.ECategoriesTypes.Transfers) &&
                 !x.categoriesTypesid.Equals((int)CategoriesTypesManager.ECategoriesTypes.Specials));
 

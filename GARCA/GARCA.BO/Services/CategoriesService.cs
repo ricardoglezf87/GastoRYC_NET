@@ -1,7 +1,6 @@
-﻿using GARCA.Utlis.Extensions;
-
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utlis.Extensions;
 using System.Collections.Generic;
 
 namespace GARCA.BO.Services
@@ -10,8 +9,8 @@ namespace GARCA.BO.Services
     {
 
         private readonly CategoriesManager categoriesManager;
-        
-        public enum ESpecialCategories : int
+
+        public enum ESpecialCategories
         {
             Split = -1,
             WithoutCategory = 0
@@ -29,7 +28,7 @@ namespace GARCA.BO.Services
 
         public HashSet<Categories?>? GetAllWithoutSpecialTransfer()
         {
-            return categoriesManager?.GetAllWithoutSpecialTransfer()?.ToHashSetBo();
+            return categoriesManager.GetAllWithoutSpecialTransfer()?.ToHashSetBo();
         }
 
         public Categories? GetById(int? id)
@@ -39,12 +38,12 @@ namespace GARCA.BO.Services
 
         public void Update(Categories categories)
         {
-            categoriesManager.Update(categories?.ToDao());
+            categoriesManager.Update(categories.ToDao());
         }
 
         public void Delete(Categories categories)
         {
-            categoriesManager.Delete(categories?.ToDao());
+            categoriesManager.Delete(categories.ToDao());
         }
 
         public int GetNextId()

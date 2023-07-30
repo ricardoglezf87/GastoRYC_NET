@@ -13,7 +13,7 @@ namespace GARCA.BO.Models
 
         public virtual bool? Done { set; get; }
 
-        public virtual String? GroupDate => Date != null
+        public virtual String GroupDate => Date != null
                     ? Date < DateTime.Now ? "Vencido" : Date > DateTime.Now.AddMonths(1) ? "Futuro" : Date.Value.Day + "/" + Date.Value.Month
                     : String.Empty;
 
@@ -21,11 +21,11 @@ namespace GARCA.BO.Models
         {
             return new ExpirationsRemindersDAO
             {
-                id = this.Id,
-                date = this.Date,
+                id = Id,
+                date = Date,
                 transactionsReminders = null,
-                transactionsRemindersid = this.TransactionsRemindersid,
-                done = this.Done
+                transactionsRemindersid = TransactionsRemindersid,
+                done = Done
             };
         }
 

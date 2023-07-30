@@ -9,13 +9,13 @@ namespace GARCA.DAO.Repositories
     {
         private readonly DbContext context;
         private readonly DbSet<TEntity> entities;
-        
+
         public RepositoryGeneral(DbContext dbContext)
         {
             context = dbContext;
             entities = context.Set<TEntity>();
         }
-        
+
         public TEntity? GetById(DateTime? id)
         {
             return entities.Find(id);

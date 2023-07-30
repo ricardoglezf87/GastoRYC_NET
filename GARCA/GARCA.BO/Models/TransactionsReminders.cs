@@ -41,7 +41,7 @@ namespace GARCA.BO.Models
 
         public virtual HashSet<SplitsReminders?>? Splits { set; get; }
 
-        public virtual String? PersonDescripGrid => Person?.Name ?? String.Empty;
+        public virtual String PersonDescripGrid => Person?.Name ?? String.Empty;
 
         public virtual Decimal? Amount => AmountIn - AmountOut;
 
@@ -49,24 +49,24 @@ namespace GARCA.BO.Models
         {
             return new TransactionsRemindersDAO
             {
-                id = this.Id,
-                date = this.Date,
-                periodsRemindersid = this.PeriodsRemindersid,
+                id = Id,
+                date = Date,
+                periodsRemindersid = PeriodsRemindersid,
                 periodsReminders = null,
-                accountid = this.Accountid,
+                accountid = Accountid,
                 account = null,
-                personid = this.Personid,
+                personid = Personid,
                 person = null,
-                categoryid = this.Categoryid,
+                categoryid = Categoryid,
                 category = null,
-                amountIn = this.AmountIn,
-                amountOut = this.AmountOut,
-                memo = this.Memo,
+                amountIn = AmountIn,
+                amountOut = AmountOut,
+                memo = Memo,
                 transactionStatus = null,
-                transactionStatusid = this.TransactionStatusid,
-                tagid = this.Tagid,
+                transactionStatusid = TransactionStatusid,
+                tagid = Tagid,
                 tag = null,
-                autoRegister = this.AutoRegister
+                autoRegister = AutoRegister
             };
         }
 

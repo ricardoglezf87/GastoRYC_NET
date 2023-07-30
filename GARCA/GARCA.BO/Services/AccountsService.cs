@@ -1,19 +1,19 @@
-﻿using GARCA.Utlis.Extensions;
-using GARCA.BO.Models;
-using GARCA.View.ViewModels;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utils.IOC;
+using GARCA.Utlis.Extensions;
+using GARCA.View.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GARCA.Utils.IOC;
 
 namespace GARCA.BO.Services
 {
     public class AccountsService
     {
         private readonly AccountsManager accountsManager;
-        
+
         public AccountsService()
         {
             accountsManager = new AccountsManager();
@@ -51,12 +51,12 @@ namespace GARCA.BO.Services
 
         public void Update(Accounts accounts)
         {
-            accountsManager.Update(accounts?.ToDao());
+            accountsManager.Update(accounts.ToDao());
         }
 
         public void Delete(Accounts accounts)
         {
-            accountsManager.Delete(accounts?.ToDao());
+            accountsManager.Delete(accounts.ToDao());
         }
 
         public Decimal GetBalanceByAccount(int? id)

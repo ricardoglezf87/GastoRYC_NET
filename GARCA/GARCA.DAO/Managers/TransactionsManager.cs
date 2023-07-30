@@ -13,7 +13,7 @@ namespace GARCA.DAO.Managers
     {
 
 #pragma warning disable CS8603
-        public override Expression<Func<TransactionsDAO, object>>[] GetIncludes()
+        protected override Expression<Func<TransactionsDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<TransactionsDAO, object>>[]
             {
@@ -45,18 +45,13 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<TransactionsDAO>? GetByAccount(int? id, int startIndex, int nPage)
-        {
-            return GetByAccount(id)?.Skip(startIndex).Take(nPage);
-        }
-
         public IEnumerable<TransactionsDAO>? GetByAccountOrderByOrdenDesc(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
                 var query = GetEntyWithInclude(repository)?
-                    .Where(x => id.Equals(x.accountid))?
+                    .Where(x => id.Equals(x.accountid))
                     .OrderByDescending(x => x.orden);
 
                 if (query != null)
@@ -102,7 +97,7 @@ namespace GARCA.DAO.Managers
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
                 var query = GetEntyWithInclude(repository)?
-                    .Where(x => !x.account.closed.HasValue || !x.account.closed.Value)?
+                    .Where(x => !x.account.closed.HasValue || !x.account.closed.Value)
                     .OrderByDescending(x => x.orden);
 
                 if (query != null)
@@ -132,7 +127,7 @@ namespace GARCA.DAO.Managers
                 }
             }
         }
-        
+
         public IEnumerable<TransactionsDAO>? GetByInvestmentProduct(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))

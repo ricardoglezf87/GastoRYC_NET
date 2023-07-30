@@ -12,18 +12,18 @@ namespace GARCA.DAO.Repositories
         private readonly DbContext context;
 
         public DbSet<TEntity> Entities { get; }
-    
+
         public Repository(DbContext dbContext)
         {
             context = dbContext;
             Entities = context.Set<TEntity>();
         }
-        
+
         public IEnumerable<TEntity> GetAll()
         {
             return Entities;
         }
-        
+
         public TEntity Update(TEntity entity)
         {
             return Entities.Update(entity).Entity;
@@ -42,12 +42,9 @@ namespace GARCA.DAO.Repositories
         public TEntity? GetWithInclude(int? id, params Expression<Func<TEntity, object>>[] includes)
         {
             var query = Entities.AsQueryable();
-            if (includes != null)
+            foreach (var include in includes)
             {
-                foreach (var include in includes)
-                {
-                    query = query.Include(include);
-                }
+                query = query.Include(include);
             }
             return query.FirstOrDefault(e => e.id == id);
         }
@@ -56,12 +53,9 @@ namespace GARCA.DAO.Repositories
         {
             var query = Entities.AsQueryable();
 
-            if (includes != null)
+            foreach (var include in includes)
             {
-                foreach (var include in includes)
-                {
-                    query = query.Include(include);
-                }
+                query = query.Include(include);
             }
             return query.ToHashSet();
         }

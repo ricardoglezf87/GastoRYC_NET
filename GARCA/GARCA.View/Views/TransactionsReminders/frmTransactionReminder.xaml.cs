@@ -18,7 +18,7 @@ namespace GARCA.View.Views
         private TransactionsReminders? transaction;
         private readonly int? accountidDefault;
 
-        public EWindowsResult WindowsResult { set; get; }
+        public EWindowsResult WindowsResult { private set; get; }
 
         #endregion
 
@@ -29,23 +29,10 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        public FrmTransactionReminders(TransactionsReminders transaction, int accountidDefault) :
-            this()
-        {
-            this.transaction = transaction;
-            this.accountidDefault = accountidDefault;
-        }
-
         public FrmTransactionReminders(TransactionsReminders? transaction) :
             this()
         {
             this.transaction = transaction;
-        }
-
-        public FrmTransactionReminders(int accountidDefault) :
-            this()
-        {
-            this.accountidDefault = accountidDefault;
         }
 
         #endregion
@@ -63,7 +50,7 @@ namespace GARCA.View.Views
             if (SaveTransaction())
             {
                 WindowsResult = EWindowsResult.Sucess;
-                this.Close();
+                Close();
             }
         }
 
@@ -96,7 +83,7 @@ namespace GARCA.View.Views
                     SaveTransaction();
                     break;
                 case Key.Escape:
-                    this.Close();
+                    Close();
                     break;
             }
         }
@@ -220,7 +207,7 @@ namespace GARCA.View.Views
             if (IsTransactionValid())
             {
                 if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
-                MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     UpdateTransaction();
                     if (transaction != null)
@@ -229,15 +216,11 @@ namespace GARCA.View.Views
                     }
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
+
                 return false;
             }
+
+            return false;
         }
 
         private bool IsTransactionValid()

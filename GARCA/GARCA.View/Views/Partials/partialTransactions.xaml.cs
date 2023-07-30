@@ -1,14 +1,12 @@
-﻿using GARCA.Utlis.Extensions;
-using GARCA.BO.Models;
-using GARCA.View.ViewModels;
+﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
-using System.Collections.Generic;
+using GARCA.Utils.IOC;
+using GARCA.Utlis.Extensions;
+using GARCA.View.ViewModels;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Utlis.Extensions.WindowsExtension;
-using GARCA.View.ViewModels;
-using GARCA.Utils.IOC;
 
 namespace GARCA.View.Views
 {
@@ -272,7 +270,7 @@ namespace GARCA.View.Views
         {
             if (transactions.TranferSplitid != null)
             {
-                MessageBox.Show("El movimiento Id: " + transactions.Id.ToString() +
+                MessageBox.Show("El movimiento Id: " + transactions.Id +
                     " de fecha: " + transactions.Date.ToShortDateString() + " viene de una transferencia desde split, para borrar diríjase al split que lo generó.", "Eliminación movimiento");
             }
             else

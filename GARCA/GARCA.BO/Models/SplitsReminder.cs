@@ -29,16 +29,16 @@ namespace GARCA.BO.Models
         {
             return new SplitsRemindersDAO
             {
-                id = this.Id,
-                transactionid = this.Transactionid,
+                id = Id,
+                transactionid = Transactionid,
                 transaction = null,
-                categoryid = this.Categoryid,
+                categoryid = Categoryid,
                 category = null,
-                amountOut = this.AmountOut,
-                amountIn = this.AmountIn,
-                memo = this.Memo,
-                tranferid = this.Tranferid,
-                tagid = this.Tagid,
+                amountOut = AmountOut,
+                amountIn = AmountIn,
+                memo = Memo,
+                tranferid = Tranferid,
+                tagid = Tagid,
                 tag = null
             };
         }

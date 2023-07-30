@@ -10,15 +10,15 @@ namespace GARCA.BO.Models
         public virtual InvestmentProducts? InvestmentProducts { set; get; }
         public virtual Decimal? Prices { set; get; }
 
-        internal InvestmentProductsPricesDAO? ToDao()
+        internal InvestmentProductsPricesDAO ToDao()
         {
             return new InvestmentProductsPricesDAO
             {
-                id = this.Id,
-                date = this.Date,
+                id = Id,
+                date = Date,
                 investmentProducts = null,
-                investmentProductsid = this.InvestmentProductsid,
-                prices = this.Prices
+                investmentProductsid = InvestmentProductsid,
+                prices = Prices
             };
         }
 

@@ -6,7 +6,7 @@ namespace GARCA.BO.Models
     public class PeriodsReminders : ModelBase
     {
         public virtual String? Description { set; get; }
-        
+
         public static explicit operator PeriodsReminders?(PeriodsRemindersDAO? v)
         {
             return v == null

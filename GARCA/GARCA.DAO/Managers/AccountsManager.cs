@@ -11,7 +11,7 @@ namespace GARCA.DAO.Managers
     public class AccountsManager : ManagerBase<AccountsDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<AccountsDAO, object>>[] GetIncludes()
+        protected override Expression<Func<AccountsDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<AccountsDAO, object>>[]
             {
@@ -43,7 +43,7 @@ namespace GARCA.DAO.Managers
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<AccountsDAO>();
-                return repository?.Entities?.FirstOrDefault(x => id.Equals(x.categoryid));
+                return repository.Entities.FirstOrDefault(x => id.Equals(x.categoryid));
             }
         }
     }

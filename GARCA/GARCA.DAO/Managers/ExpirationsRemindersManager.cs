@@ -4,14 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace GARCA.DAO.Managers
 {
     public class ExpirationsRemindersManager : ManagerBase<ExpirationsRemindersDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<ExpirationsRemindersDAO, object>>[] GetIncludes()
+        protected override Expression<Func<ExpirationsRemindersDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<ExpirationsRemindersDAO, object>>[]
             {

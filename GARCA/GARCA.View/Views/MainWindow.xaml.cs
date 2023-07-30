@@ -1,14 +1,11 @@
-﻿using GARCA.BO.Models;
+﻿using GARCA.Utils.IOC;
 using GARCA.View.ViewModels;
-using GARCA.BO.Services;
-using GARCA.Utils.IOC;
 using GARCA.View.Views;
 using GARCA.View.Views.Common;
 using GARCA.WebReport;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Windows.Tools.Controls;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -28,7 +25,7 @@ namespace GARCA
         private ICollectionView? viewAccounts;
         private Page? actualPrincipalContent;
 
-        private enum EViews : int
+        private enum EViews
         {
             Home = 1,
             Transactions = 2,
@@ -58,9 +55,9 @@ namespace GARCA
         {
             UpdateBalances();
 
-            if (actualPrincipalContent is PartialTransactions)
+            if (actualPrincipalContent is PartialTransactions transactions)
             {
-                ((PartialTransactions)actualPrincipalContent).LoadTransactions();
+                transactions.LoadTransactions();
                 LoadAccounts();
             }
         }
@@ -69,9 +66,9 @@ namespace GARCA
         {
             await UpdatePrices();
 
-            if (actualPrincipalContent is PartialPortfolio)
+            if (actualPrincipalContent is PartialPortfolio portfolio)
             {
-                ((PartialPortfolio)actualPrincipalContent).LoadPortfolio();
+                portfolio.LoadPortfolio();
                 LoadAccounts();
             }
         }
@@ -119,7 +116,7 @@ namespace GARCA
             OpenNewTransaction();
         }
 
-        private async void frmInicio_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private async void frmInicio_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
@@ -130,7 +127,7 @@ namespace GARCA
                     switch (actualPrincipalContent)
                     {
                         case PartialHome home:
-                            home.LoadCharts();
+                            await home.LoadCharts();
                             break;
                         case PartialTransactions:
                             LoadAccounts();
@@ -182,9 +179,9 @@ namespace GARCA
 
             ToggleViews(EViews.Transactions);
 
-            if (actualPrincipalContent is PartialTransactions)
+            if (actualPrincipalContent is PartialTransactions transactions)
             {
-                ((PartialTransactions)actualPrincipalContent).SetColumnVisibility();
+                transactions.SetColumnVisibility();
             }
         }
 
@@ -193,7 +190,7 @@ namespace GARCA
             AutoResizeListView();
         }
 
-        private void btnMntAccounts_Click(object sender, RoutedEventArgs e)
+        private async void btnMntAccounts_Click(object sender, RoutedEventArgs e)
         {
             FrmAccountsList frm = new();
             frm.ShowDialog();
@@ -205,7 +202,7 @@ namespace GARCA
                     transactions.LoadTransactions();
                     break;
                 case PartialHome home:
-                    home.LoadCharts();
+                    await home.LoadCharts();
                     break;
             }
         }
@@ -215,9 +212,9 @@ namespace GARCA
             FrmPersonsList frm = new();
             frm.ShowDialog();
 
-            if (actualPrincipalContent is PartialTransactions)
+            if (actualPrincipalContent is PartialTransactions transactions)
             {
-                ((PartialTransactions)actualPrincipalContent).LoadTransactions();
+                transactions.LoadTransactions();
             }
         }
 
@@ -237,7 +234,7 @@ namespace GARCA
             }
         }
 
-        private void btnMntCategories_Click(object sender, RoutedEventArgs e)
+        private async void btnMntCategories_Click(object sender, RoutedEventArgs e)
         {
             FrmCategoriesList frm = new();
             frm.ShowDialog();
@@ -248,7 +245,7 @@ namespace GARCA
                     transactions.LoadTransactions();
                     break;
                 case PartialHome home:
-                    home.LoadCharts();
+                    await home.LoadCharts();
                     break;
             }
         }
@@ -258,9 +255,9 @@ namespace GARCA
             FrmTagsList frm = new();
             frm.ShowDialog();
 
-            if (actualPrincipalContent is PartialTransactions)
+            if (actualPrincipalContent is PartialTransactions transactions)
             {
-                ((PartialTransactions)actualPrincipalContent).LoadTransactions();
+                transactions.LoadTransactions();
             }
         }
 
@@ -269,9 +266,9 @@ namespace GARCA
             FrmTransactionReminderList frm = new();
             frm.ShowDialog();
 
-            if (actualPrincipalContent is PartialReminders)
+            if (actualPrincipalContent is PartialReminders reminders)
             {
-                ((PartialReminders)actualPrincipalContent).LoadReminders();
+                reminders.LoadReminders();
             }
 
             await Task.Run(() => DependencyConfig.IExpirationsRemindersService.GenerateAutoregister());
@@ -298,7 +295,7 @@ namespace GARCA
             }
             catch (InvalidOperationException ex)
             {
-                Debug.WriteLine(DateTime.Now.ToString() + ": Error - " + ex.Message);
+                Debug.WriteLine(DateTime.Now + ": Error - " + ex.Message);
             }
         }
 
@@ -309,9 +306,9 @@ namespace GARCA
             frm.ShowDialog();
             LoadAccounts();
 
-            if (actualPrincipalContent is PartialTransactions)
+            if (actualPrincipalContent is PartialTransactions transactions)
             {
-                ((PartialTransactions)actualPrincipalContent).LoadTransactions();
+                transactions.LoadTransactions();
             }
         }
 

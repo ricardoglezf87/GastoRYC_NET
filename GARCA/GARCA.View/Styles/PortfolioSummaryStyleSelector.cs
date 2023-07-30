@@ -6,7 +6,7 @@ namespace GARCA.View.Styles
 {
     public class PortfolioSummaryStyleSelector : StyleSelector
     {
-        public Style CenterStyle { get; set; }
+        public Style? CenterStyle { get; set; }
 
         public override Style? SelectStyle(object item, DependencyObject container)
         {

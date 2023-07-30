@@ -1,5 +1,4 @@
 ﻿using GARCA.DAO.Models;
-using GARCA.DAO.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +9,7 @@ namespace GARCA.DAO.Managers
     public class InvestmentProductsManager : ManagerBase<InvestmentProductsDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<InvestmentProductsDAO, object>>[] GetIncludes()
+        protected override Expression<Func<InvestmentProductsDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<InvestmentProductsDAO, object>>[]
             {

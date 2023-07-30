@@ -1,17 +1,16 @@
-﻿using GARCA.Utlis.Extensions;
-
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utils.IOC;
+using GARCA.Utlis.Extensions;
 using System.Collections.Generic;
 using System.Linq;
-using GARCA.Utils.IOC;
 
 namespace GARCA.BO.Services
 {
     public class PersonsService
     {
         private readonly PersonsManager personsManager;
-        
+
         public PersonsService()
         {
             personsManager = new PersonsManager();
@@ -29,12 +28,12 @@ namespace GARCA.BO.Services
 
         public void Update(Persons persons)
         {
-            personsManager.Update(persons?.ToDao());
+            personsManager.Update(persons.ToDao());
         }
 
         public void Delete(Persons persons)
         {
-            personsManager.Delete(persons?.ToDao());
+            personsManager.Delete(persons.ToDao());
         }
 
         public void SetCategoryDefault(Persons? persons)
@@ -56,8 +55,8 @@ namespace GARCA.BO.Services
             {
                 var maxCount = result.Max(c => c.count);
                 var maxCounts = (from c in result
-                                  where c.count == maxCount
-                                  select c.categoryid).FirstOrDefault();
+                                 where c.count == maxCount
+                                 select c.categoryid).FirstOrDefault();
 
                 persons.Categoryid = maxCounts;
                 Update(persons);

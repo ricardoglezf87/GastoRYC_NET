@@ -12,7 +12,7 @@ namespace GARCA.BO.Models
         public virtual string? Category { set; get; }
         public virtual Decimal? Amount { set; get; }
         public virtual Decimal? NegAmount => -Amount;
-        
+
         public static explicit operator VBalancebyCategory?(VBalancebyCategoryDAO? v)
         {
             return v == null
