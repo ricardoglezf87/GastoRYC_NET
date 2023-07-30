@@ -1,6 +1,7 @@
 ﻿using GARCA.DAO.Models;
 using System;
 using System.Collections.Generic;
+using GARCA.Utlis.Extensions;
 
 namespace GARCA.BO.Models
 {
@@ -61,6 +62,8 @@ namespace GARCA.BO.Models
         public virtual Double? orden { set; get; }
 
         public virtual Decimal? balance { set; get; }
+
+        
 
         internal TransactionsDAO toDAO()
         {
@@ -125,6 +128,21 @@ namespace GARCA.BO.Models
                     balance = v.balance,
                     orden = v.orden
                 };
+        }
+
+        public override int CompareTo(object? obj)
+        {
+            if (obj == null)
+            {
+                return 1; 
+            }
+
+            if (!(obj is Transactions otherTransaction))
+            {
+                throw new ArgumentException("El objeto proporcionado no es de tipo Transactions.");
+            }
+
+            return otherTransaction.orden.compareTo(this.orden);
         }
     }
 }

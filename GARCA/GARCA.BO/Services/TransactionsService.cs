@@ -133,7 +133,7 @@ namespace GARCA.BO.Services
         {
             var tList = getByAccountOrderByOrderDesc(tUpdate.accountid);
             decimal? balanceTotal = 0;
-
+            
             if (tList != null)
             {
                 balanceTotal = tList.Sum(x => x.amount);

@@ -8,7 +8,7 @@ namespace GARCA.BO.Models
         [Key]
         public virtual int id { set; get; }
 
-        public int CompareTo(object? obj)
+        public virtual int CompareTo(object? obj)
         {
             return obj == null ? 0 : this.id.CompareTo(((ModelBase)obj).id);
         }
