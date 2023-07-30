@@ -18,108 +18,108 @@ namespace GARCA.BO.Services
             expirationsRemindersManager = new ExpirationsRemindersManager();
         }
 
-        private HashSet<ExpirationsReminders?>? getAll()
+        private HashSet<ExpirationsReminders?>? GetAll()
         {
-            return expirationsRemindersManager.getAll()?.toHashSetBO();
+            return expirationsRemindersManager.GetAll()?.ToHashSetBo();
         }
 
-        private HashSet<ExpirationsReminders?>? getAllWithGeneration()
+        private HashSet<ExpirationsReminders?>? GetAllWithGeneration()
         {
             GenerationAllExpirations();
-            return getAll();
+            return GetAll();
         }
 
-        private bool existsExpiration(TransactionsReminders? transactionsReminder, DateTime? date)
+        private bool ExistsExpiration(TransactionsReminders? transactionsReminder, DateTime? date)
         {
-            return expirationsRemindersManager.existsExpiration(transactionsReminder.toDAO(), date);
+            return expirationsRemindersManager.ExistsExpiration(transactionsReminder.ToDao(), date);
         }
 
-        private HashSet<ExpirationsReminders?>? getAllPendingWithGeneration()
+        private HashSet<ExpirationsReminders?>? GetAllPendingWithGeneration()
         {
-            return getAllWithGeneration()?.Where(x => x.done is null or not true).ToHashSet();
+            return GetAllWithGeneration()?.Where(x => x.Done is null or not true).ToHashSet();
         }
 
-        public HashSet<ExpirationsReminders?>? getAllPendingWithoutFutureWithGeneration()
+        public HashSet<ExpirationsReminders?>? GetAllPendingWithoutFutureWithGeneration()
         {
-            return getAllWithGeneration()?
-                .Where(x => (x.done == null || x.done != true) && x.groupDate != "Futuro").ToHashSet();
+            return GetAllWithGeneration()?
+                .Where(x => (x.Done == null || x.Done != true) && x.GroupDate != "Futuro").ToHashSet();
         }
 
         private void GenerationAllExpirations()
         {
-            foreach (var transactionsReminders in DependencyConfig.iTransactionsRemindersService.getAll())
+            foreach (var transactionsReminders in DependencyConfig.ITransactionsRemindersService.GetAll())
             {
-                generationExpirations(transactionsReminders);
+                GenerationExpirations(transactionsReminders);
             }
         }
 
-        public void generateAutoregister()
+        public void GenerateAutoregister()
         {
-            foreach (var exp in getAllPendingWithGeneration()?
-                .Where(x => x.date <= DateTime.Now && //x.transactionsReminders != null &&
-                    x.transactionsReminders.autoRegister.HasValue && x.transactionsReminders.autoRegister.Value))
+            foreach (var exp in GetAllPendingWithGeneration()?
+                .Where(x => x.Date <= DateTime.Now && //x.transactionsReminders != null &&
+                    x.TransactionsReminders.AutoRegister.HasValue && x.TransactionsReminders.AutoRegister.Value))
             {
-                registerTransactionfromReminder(exp.id);
-                exp.done = true;
-                update(exp);
+                RegisterTransactionfromReminder(exp.Id);
+                exp.Done = true;
+                Update(exp);
             }
         }
 
-        private void generationExpirations(TransactionsReminders? transactionsReminders)
+        private void GenerationExpirations(TransactionsReminders? transactionsReminders)
         {
             if (transactionsReminders != null)
             {
-                var date = transactionsReminders.date;
+                var date = transactionsReminders.Date;
 
                 while (date <= DateTime.Now.AddYears(1))
                 {
-                    if (!existsExpiration(transactionsReminders, date))
+                    if (!ExistsExpiration(transactionsReminders, date))
                     {
                         ExpirationsReminders expirationsReminders = new();
-                        expirationsReminders.transactionsRemindersid = transactionsReminders.id;
-                        expirationsReminders.transactionsReminders = transactionsReminders;
-                        expirationsReminders.date = date;
-                        update(expirationsReminders);
+                        expirationsReminders.TransactionsRemindersid = transactionsReminders.Id;
+                        expirationsReminders.TransactionsReminders = transactionsReminders;
+                        expirationsReminders.Date = date;
+                        Update(expirationsReminders);
                     }
 
-                    date = DependencyConfig.iPeriodsReminderService.getNextDate(date, DependencyConfig.iPeriodsReminderService.toEnum(transactionsReminders.periodsReminders));
+                    date = DependencyConfig.IPeriodsReminderService.GetNextDate(date, DependencyConfig.IPeriodsReminderService.ToEnum(transactionsReminders.PeriodsReminders));
 
                 }
             }
         }
 
-        public Transactions? registerTransactionfromReminder(int? id)
+        public Transactions? RegisterTransactionfromReminder(int? id)
         {
             if (id != null)
             {
-                var expirationsReminders = getByID(id);
-                if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
+                var expirationsReminders = GetById(id);
+                if (expirationsReminders != null && expirationsReminders.TransactionsReminders != null)
                 {
                     Transactions? transactions = new();
-                    transactions.date = expirationsReminders.date;
-                    transactions.accountid = expirationsReminders.transactionsReminders.accountid;
-                    transactions.personid = expirationsReminders.transactionsReminders.personid;
-                    transactions.categoryid = expirationsReminders.transactionsReminders.categoryid;
-                    transactions.category = expirationsReminders.transactionsReminders.category;
-                    transactions.memo = expirationsReminders.transactionsReminders.memo;
-                    transactions.amountIn = expirationsReminders.transactionsReminders.amountIn;
-                    transactions.amountOut = expirationsReminders.transactionsReminders.amountOut;
-                    transactions.tagid = expirationsReminders.transactionsReminders.tagid;
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    DependencyConfig.iTransactionsService.saveChanges(ref transactions);
+                    transactions.Date = expirationsReminders.Date;
+                    transactions.Accountid = expirationsReminders.TransactionsReminders.Accountid;
+                    transactions.Personid = expirationsReminders.TransactionsReminders.Personid;
+                    transactions.Categoryid = expirationsReminders.TransactionsReminders.Categoryid;
+                    transactions.Category = expirationsReminders.TransactionsReminders.Category;
+                    transactions.Memo = expirationsReminders.TransactionsReminders.Memo;
+                    transactions.AmountIn = expirationsReminders.TransactionsReminders.AmountIn;
+                    transactions.AmountOut = expirationsReminders.TransactionsReminders.AmountOut;
+                    transactions.Tagid = expirationsReminders.TransactionsReminders.Tagid;
+                    transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
+                    DependencyConfig.ITransactionsService.SaveChanges(ref transactions);
 
                     foreach (var splitsReminders in
-                        DependencyConfig.iSplitsRemindersService.getbyTransactionid(expirationsReminders.transactionsReminders.id))
+                        DependencyConfig.ISplitsRemindersService.GetbyTransactionid(expirationsReminders.TransactionsReminders.Id))
                     {
                         Splits splits = new();
-                        splits.transactionid = transactions.id;
-                        splits.categoryid = splitsReminders.categoryid;
-                        splits.memo = splitsReminders.memo;
-                        splits.amountIn = splitsReminders.amountIn;
-                        splits.amountOut = splitsReminders.amountOut;
-                        splits.tagid = splitsReminders.tagid;
-                        DependencyConfig.iSplitsService.saveChanges(splits);
-                        DependencyConfig.iTransactionsService.updateTranferSplits(transactions, splits);
+                        splits.Transactionid = transactions.Id;
+                        splits.Categoryid = splitsReminders.Categoryid;
+                        splits.Memo = splitsReminders.Memo;
+                        splits.AmountIn = splitsReminders.AmountIn;
+                        splits.AmountOut = splitsReminders.AmountOut;
+                        splits.Tagid = splitsReminders.Tagid;
+                        DependencyConfig.ISplitsService.SaveChanges(splits);
+                        DependencyConfig.ITransactionsService.UpdateTranferSplits(transactions, splits);
                     }
 
                     return transactions;
@@ -130,47 +130,47 @@ namespace GARCA.BO.Services
             return null;
         }
 
-        public HashSet<Transactions> registerTransactionfromReminderSimulation(ExpirationsReminders exp)
+        public HashSet<Transactions> RegisterTransactionfromReminderSimulation(ExpirationsReminders exp)
         {
             HashSet<Transactions>? lTransactions = new();
             var expirationsReminders = exp;
-            if (expirationsReminders != null && expirationsReminders.transactionsReminders != null)
+            if (expirationsReminders != null && expirationsReminders.TransactionsReminders != null)
             {
                 Transactions transactions = new();
-                transactions.date = expirationsReminders.date.removeTime();
-                transactions.accountid = expirationsReminders.transactionsReminders.accountid;
-                transactions.account = expirationsReminders.transactionsReminders.account;
-                transactions.personid = expirationsReminders.transactionsReminders.personid;
-                transactions.person = expirationsReminders.transactionsReminders.person;
-                transactions.categoryid = expirationsReminders.transactionsReminders.categoryid;
-                transactions.category = expirationsReminders.transactionsReminders.category;
-                transactions.memo = expirationsReminders.transactionsReminders.memo;
-                transactions.amountIn = expirationsReminders.transactionsReminders.amountIn ?? 0;
-                transactions.amountOut = expirationsReminders.transactionsReminders.amountOut ?? 0;
-                transactions.tag = expirationsReminders.transactionsReminders.tag;
-                transactions.tagid = expirationsReminders.transactionsReminders.tagid;
+                transactions.Date = expirationsReminders.Date.RemoveTime();
+                transactions.Accountid = expirationsReminders.TransactionsReminders.Accountid;
+                transactions.Account = expirationsReminders.TransactionsReminders.Account;
+                transactions.Personid = expirationsReminders.TransactionsReminders.Personid;
+                transactions.Person = expirationsReminders.TransactionsReminders.Person;
+                transactions.Categoryid = expirationsReminders.TransactionsReminders.Categoryid;
+                transactions.Category = expirationsReminders.TransactionsReminders.Category;
+                transactions.Memo = expirationsReminders.TransactionsReminders.Memo;
+                transactions.AmountIn = expirationsReminders.TransactionsReminders.AmountIn ?? 0;
+                transactions.AmountOut = expirationsReminders.TransactionsReminders.AmountOut ?? 0;
+                transactions.Tag = expirationsReminders.TransactionsReminders.Tag;
+                transactions.Tagid = expirationsReminders.TransactionsReminders.Tagid;
 
-                if (transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                if (transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
                 {
-                    lTransactions.Add(updateTranferSimulation(transactions));
+                    lTransactions.Add(UpdateTranferSimulation(transactions));
                 }
 
-                if (expirationsReminders.transactionsReminders.splits != null)
+                if (expirationsReminders.TransactionsReminders.Splits != null)
                 {
 
-                    foreach (var splitsReminders in expirationsReminders.transactionsReminders.splits)
+                    foreach (var splitsReminders in expirationsReminders.TransactionsReminders.Splits)
                     {
                         Splits splits = new();
-                        splits.transactionid = transactions.id;
-                        splits.categoryid = splitsReminders.categoryid;
-                        splits.category = splitsReminders.category;
-                        splits.memo = splitsReminders.memo;
-                        splits.amountIn = splitsReminders.amountIn ?? 0;
-                        splits.amountOut = splitsReminders.amountOut ?? 0;
-                        splits.tagid = splitsReminders.tagid;
-                        if (splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                        splits.Transactionid = transactions.Id;
+                        splits.Categoryid = splitsReminders.Categoryid;
+                        splits.Category = splitsReminders.Category;
+                        splits.Memo = splitsReminders.Memo;
+                        splits.AmountIn = splitsReminders.AmountIn ?? 0;
+                        splits.AmountOut = splitsReminders.AmountOut ?? 0;
+                        splits.Tagid = splitsReminders.Tagid;
+                        if (splits.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
                         {
-                            lTransactions.Add(updateTranferSplitsSimulation(transactions, splits));
+                            lTransactions.Add(UpdateTranferSplitsSimulation(transactions, splits));
                         }
                     }
                 }
@@ -179,78 +179,78 @@ namespace GARCA.BO.Services
             return lTransactions;
         }
 
-        private Transactions updateTranferSplitsSimulation(Transactions? transactions, Splits splits)
+        private Transactions UpdateTranferSplitsSimulation(Transactions? transactions, Splits splits)
         {
             Transactions? tContraria = new()
             {
-                date = transactions.date,
-                accountid = DependencyConfig.iAccountsService.getByCategoryId(splits.categoryid)?.id,
-                account = DependencyConfig.iAccountsService.getByCategoryId(splits.categoryid),
-                personid = transactions.personid,
-                person = transactions.person,
-                categoryid = transactions.account.categoryid,
-                category = DependencyConfig.iCategoriesService.getByID(transactions.account.categoryid),
-                memo = splits.memo,
-                tagid = transactions.tagid,
-                amountIn = splits.amountOut,
-                amountOut = splits.amountIn
+                Date = transactions.Date,
+                Accountid = DependencyConfig.IAccountsService.GetByCategoryId(splits.Categoryid)?.Id,
+                Account = DependencyConfig.IAccountsService.GetByCategoryId(splits.Categoryid),
+                Personid = transactions.Personid,
+                Person = transactions.Person,
+                Categoryid = transactions.Account.Categoryid,
+                Category = DependencyConfig.ICategoriesService.GetById(transactions.Account.Categoryid),
+                Memo = splits.Memo,
+                Tagid = transactions.Tagid,
+                AmountIn = splits.AmountOut,
+                AmountOut = splits.AmountIn
             };
 
             return tContraria;
         }
 
 
-        private Transactions updateTranferSimulation(Transactions transactions)
+        private Transactions UpdateTranferSimulation(Transactions transactions)
         {
             Transactions? tContraria = new()
             {
-                date = transactions.date.removeTime(),
-                accountid = DependencyConfig.iAccountsService.getByCategoryId(transactions.categoryid)?.id,
-                account = DependencyConfig.iAccountsService.getByCategoryId(transactions.categoryid),
-                personid = transactions.personid,
-                person = transactions.person,
-                categoryid = transactions.account?.categoryid,
-                category = DependencyConfig.iCategoriesService.getByID(transactions.account?.categoryid),
-                memo = transactions.memo,
-                tagid = transactions.tagid,
-                tag = transactions.tag,
-                amountIn = transactions.amountOut,
-                amountOut = transactions.amountIn
+                Date = transactions.Date.RemoveTime(),
+                Accountid = DependencyConfig.IAccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
+                Account = DependencyConfig.IAccountsService.GetByCategoryId(transactions.Categoryid),
+                Personid = transactions.Personid,
+                Person = transactions.Person,
+                Categoryid = transactions.Account?.Categoryid,
+                Category = DependencyConfig.ICategoriesService.GetById(transactions.Account?.Categoryid),
+                Memo = transactions.Memo,
+                Tagid = transactions.Tagid,
+                Tag = transactions.Tag,
+                AmountIn = transactions.AmountOut,
+                AmountOut = transactions.AmountIn
             };
             return tContraria;
         }
 
-        public ExpirationsReminders? getByID(int? id)
+        public ExpirationsReminders? GetById(int? id)
         {
-            return (ExpirationsReminders?)expirationsRemindersManager.getByID(id);
+            return (ExpirationsReminders?)expirationsRemindersManager.GetById(id);
         }
 
-        private HashSet<ExpirationsReminders?>? getByTransactionReminderid(int? id)
+        private HashSet<ExpirationsReminders?>? GetByTransactionReminderid(int? id)
         {
-            return expirationsRemindersManager.getByTransactionReminderid(id)?.toHashSetBO();
+            return expirationsRemindersManager.GetByTransactionReminderid(id)?.ToHashSetBo();
         }
 
-        public void update(ExpirationsReminders expirationsReminders)
+        public void Update(ExpirationsReminders expirationsReminders)
         {
-            expirationsRemindersManager.update(expirationsReminders?.toDAO());
+            expirationsRemindersManager.Update(expirationsReminders?.ToDao());
         }
 
-        private void delete(ExpirationsReminders? expirationsReminders)
+        private void Delete(ExpirationsReminders? expirationsReminders)
         {
-            expirationsRemindersManager.delete(expirationsReminders?.toDAO());
+            expirationsRemindersManager.Delete(expirationsReminders?.ToDao());
         }
 
-        public void deleteByTransactionReminderid(int id)
+        public void DeleteByTransactionReminderid(int id)
         {
-            foreach (var expirationsReminder in getByTransactionReminderid(id))
+            foreach (var expirationsReminder in GetByTransactionReminderid(id))
             {
-                delete(expirationsReminder);
+                Delete(expirationsReminder);
             }
         }
 
-        public DateTime? getNextReminder(int id)
+        public DateTime? GetNextReminder(int id)
         {
-            return getByTransactionReminderid(id)?.Where(x => !x.done.HasValue || !x.done.Value).Min(y => y.date);
+            return GetByTransactionReminderid(id)?.Where(x => !x.Done.HasValue || !x.Done.Value).Min(y => y.Date);
         }
     }
 }

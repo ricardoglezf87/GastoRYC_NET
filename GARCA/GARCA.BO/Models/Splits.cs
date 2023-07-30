@@ -5,43 +5,43 @@ namespace GARCA.BO.Models
 {
     public class Splits : ModelBase
     {
-        public virtual int? transactionid { set; get; }
+        public virtual int? Transactionid { set; get; }
 
-        public virtual Transactions? transaction { set; get; }
+        public virtual Transactions? Transaction { set; get; }
 
-        public virtual int? tagid { set; get; }
+        public virtual int? Tagid { set; get; }
 
-        public virtual Tags? tag { set; get; }
+        public virtual Tags? Tag { set; get; }
 
-        public virtual int? categoryid { set; get; }
+        public virtual int? Categoryid { set; get; }
 
-        public virtual Categories? category { set; get; }
+        public virtual Categories? Category { set; get; }
 
-        public virtual Decimal? amountIn { set; get; }
+        public virtual Decimal? AmountIn { set; get; }
 
-        public virtual Decimal? amountOut { set; get; }
+        public virtual Decimal? AmountOut { set; get; }
 
-        public virtual String? memo { set; get; }
+        public virtual String? Memo { set; get; }
 
-        public virtual int? tranferid { set; get; }
+        public virtual int? Tranferid { set; get; }
 
-        public virtual Decimal? amount => amountIn - amountOut;
+        public virtual Decimal? Amount => AmountIn - AmountOut;
 
 
-        internal SplitsDAO toDAO()
+        internal SplitsDAO ToDao()
         {
             return new SplitsDAO
             {
-                id = this.id,
-                transactionid = this.transactionid,
+                id = this.Id,
+                transactionid = this.Transactionid,
                 transaction = null,
-                categoryid = this.categoryid,
+                categoryid = this.Categoryid,
                 category = null,
-                amountOut = this.amountOut,
-                amountIn = this.amountIn,
-                memo = this.memo,
-                tranferid = this.tranferid,
-                tagid = this.tagid,
+                amountOut = this.AmountOut,
+                amountIn = this.AmountIn,
+                memo = this.Memo,
+                tranferid = this.Tranferid,
+                tagid = this.Tagid,
                 tag = null
             };
         }
@@ -52,17 +52,17 @@ namespace GARCA.BO.Models
                 ? null
                 : new Splits
                 {
-                    id = v.id,
-                    transactionid = v.transactionid,
-                    transaction = v.transaction != null ? (Transactions?)v.transaction : null,
-                    categoryid = v.categoryid,
-                    category = v.category != null ? (Categories?)v.category : null,
-                    amountOut = v.amountOut,
-                    amountIn = v.amountIn,
-                    memo = v.memo,
-                    tranferid = v.tranferid,
-                    tagid = v.tagid,
-                    tag = v.tag != null ? (Tags?)v.tag : null
+                    Id = v.id,
+                    Transactionid = v.transactionid,
+                    Transaction = v.transaction != null ? (Transactions?)v.transaction : null,
+                    Categoryid = v.categoryid,
+                    Category = v.category != null ? (Categories?)v.category : null,
+                    AmountOut = v.amountOut,
+                    AmountIn = v.amountIn,
+                    Memo = v.memo,
+                    Tranferid = v.tranferid,
+                    Tagid = v.tagid,
+                    Tag = v.tag != null ? (Tags?)v.tag : null
                 };
         }
     }

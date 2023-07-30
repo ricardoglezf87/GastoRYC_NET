@@ -7,19 +7,19 @@ namespace GARCA.BO.Models
     public class DateCalendar
     {
         [Key]
-        public virtual DateTime date { set; get; }
-        public virtual int? day { set; get; }
-        public virtual int? month { set; get; }
-        public virtual int? year { set; get; }
+        public virtual DateTime Date { set; get; }
+        public virtual int? Day { set; get; }
+        public virtual int? Month { set; get; }
+        public virtual int? Year { set; get; }
 
-        internal DateCalendarDAO toDAO()
+        internal DateCalendarDAO ToDao()
         {
             return new DateCalendarDAO
             {
-                date = this.date,
-                day = this.day,
-                month = this.month,
-                year = this.year
+                date = this.Date,
+                day = this.Day,
+                month = this.Month,
+                year = this.Year
             };
         }
 
@@ -29,10 +29,10 @@ namespace GARCA.BO.Models
                 ? null
                 : new DateCalendar
                 {
-                    date = v.date,
-                    day = v.day,
-                    month = v.month,
-                    year = v.year
+                    Date = v.date,
+                    Day = v.day,
+                    Month = v.month,
+                    Year = v.year
                 };
         }
     }

@@ -28,10 +28,10 @@ namespace GARCA.View.Views
 
         #region Constructor
 
-        public PartialHome(MainWindow _parentForm)
+        public PartialHome(MainWindow parentForm)
         {
             InitializeComponent();
-            parentForm = _parentForm;
+            this.parentForm = parentForm;
         }
 
         #endregion
@@ -41,14 +41,14 @@ namespace GARCA.View.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            loadCharts();
+            LoadCharts();
         }
 
         #endregion
 
         #region Functions
 
-        private async void loadChartForecast()
+        private async Task LoadChartForecast()
         {
             //Header
 
@@ -110,8 +110,6 @@ namespace GARCA.View.Views
 
             DateTimeAxis primaryAxis = new();
             primaryAxis.Header = "Fecha";
-            //primaryAxis.Minimum = DateTime.Today.AddDays(-1);
-            //primaryAxis.Maximum= DateTime.Today.AddMonths(1).AddDays(1);
             primaryAxis.PlotOffsetStart = 20;
             primaryAxis.PlotOffsetEnd = 20;
             primaryAxis.IntervalType = DateTimeIntervalType.Days;
@@ -131,7 +129,7 @@ namespace GARCA.View.Views
             stackpanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
 
             FrameworkElementFactory textblock = new(typeof(TextBlock));
-            textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.account"));
+            textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.Account"));
             textblock.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
             textblock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
             textblock.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
@@ -150,7 +148,7 @@ namespace GARCA.View.Views
 
             FrameworkElementFactory textblock2 = new(typeof(TextBlock));
             textblock2.SetBinding(TextBlock.TextProperty,
-                new Binding("Item.amount")
+                new Binding("Item.Amount")
                 {
                     StringFormat = "C",
                     ConverterCulture = new System.Globalization.CultureInfo("es-ES")
@@ -168,16 +166,16 @@ namespace GARCA.View.Views
 
             chForecast.Series.Clear();
 
-            foreach (var accounts in (await DependencyConfig.iAccountsService.getAllOpenedAync())?
-                .Where(x => DependencyConfig.iAccountsTypesService.accountExpensives(x.accountsTypesid)))
+            foreach (var accounts in (await DependencyConfig.IAccountsService.GetAllOpenedAync())?
+                .Where(x => DependencyConfig.IAccountsTypesService.AccountExpensives(x.AccountsTypesid)))
             {
 
                 LineSeries series = new()
                 {
-                    ItemsSource = (await Task.Run(() => DependencyConfig.iForecastsChartService.getMonthForecast()))?.Where(x => x.accountid == accounts.id).OrderByDescending(x => x.date),
-                    Label = accounts.description,
-                    XBindingPath = "date",
-                    YBindingPath = "amount",
+                    ItemsSource = (await Task.Run(() => DependencyConfig.IForecastsChartService.GetMonthForecast()))?.Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
+                    Label = accounts.Description,
+                    XBindingPath = "Date",
+                    YBindingPath = "Amount",
                     ShowTooltip = true,
                     TooltipTemplate = tooltip,
                     EnableAnimation = true,
@@ -199,7 +197,7 @@ namespace GARCA.View.Views
             }
         }
 
-        private async void loadChartExpenses()
+        private async Task LoadChartExpenses()
         {
             //Header
 
@@ -258,7 +256,7 @@ namespace GARCA.View.Views
             stackpanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
 
             FrameworkElementFactory textblock = new(typeof(TextBlock));
-            textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.category"));
+            textblock.SetBinding(TextBlock.TextProperty, new Binding("Item.Category"));
             textblock.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold);
             textblock.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center);
             textblock.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center);
@@ -277,7 +275,7 @@ namespace GARCA.View.Views
 
             FrameworkElementFactory textblock2 = new(typeof(TextBlock));
             textblock2.SetBinding(TextBlock.TextProperty,
-                new Binding("Item.neg_amount")
+                new Binding("Item.NegAmount")
                 {
                     StringFormat = "C",
                     ConverterCulture = new System.Globalization.CultureInfo("es-ES")
@@ -293,14 +291,14 @@ namespace GARCA.View.Views
 
             //Series
 
-            var lExpensesCharts = await DependencyConfig.iVBalancebyCategoryService.getExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
+            var lExpensesCharts = await DependencyConfig.IVBalancebyCategoryService.GetExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new()
             {
-                ItemsSource = lExpensesCharts?.OrderByDescending(x => x.neg_amount).Take(10),
-                XBindingPath = "category",
-                YBindingPath = "neg_amount",
+                ItemsSource = lExpensesCharts?.OrderByDescending(x => x.NegAmount).Take(10),
+                XBindingPath = "Category",
+                YBindingPath = "NegAmount",
                 ShowTooltip = true,
                 TooltipTemplate = tooltip,
                 EnableAnimation = true,
@@ -312,13 +310,13 @@ namespace GARCA.View.Views
 
             //Grid
 
-            gvExpenses.ItemsSource = lExpensesCharts?.OrderByDescending(x => x.neg_amount);
+            gvExpenses.ItemsSource = lExpensesCharts?.OrderByDescending(x => x.NegAmount);
         }
 
-        public void loadCharts()
+        public void LoadCharts()
         {
-            loadChartForecast();
-            loadChartExpenses();
+            LoadChartForecast();
+            LoadChartExpenses();
         }
 
         #endregion

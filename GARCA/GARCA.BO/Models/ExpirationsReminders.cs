@@ -5,27 +5,27 @@ namespace GARCA.BO.Models
 {
     public class ExpirationsReminders : ModelBase
     {
-        public virtual DateTime? date { set; get; }
+        public virtual DateTime? Date { set; get; }
 
-        public virtual int? transactionsRemindersid { set; get; }
+        public virtual int? TransactionsRemindersid { set; get; }
 
-        public virtual TransactionsReminders? transactionsReminders { set; get; }
+        public virtual TransactionsReminders? TransactionsReminders { set; get; }
 
-        public virtual bool? done { set; get; }
+        public virtual bool? Done { set; get; }
 
-        public virtual String? groupDate => date != null
-                    ? date < DateTime.Now ? "Vencido" : date > DateTime.Now.AddMonths(1) ? "Futuro" : date.Value.Day + "/" + date.Value.Month
+        public virtual String? GroupDate => Date != null
+                    ? Date < DateTime.Now ? "Vencido" : Date > DateTime.Now.AddMonths(1) ? "Futuro" : Date.Value.Day + "/" + Date.Value.Month
                     : String.Empty;
 
-        internal ExpirationsRemindersDAO toDAO()
+        internal ExpirationsRemindersDAO ToDao()
         {
             return new ExpirationsRemindersDAO
             {
-                id = this.id,
-                date = this.date,
+                id = this.Id,
+                date = this.Date,
                 transactionsReminders = null,
-                transactionsRemindersid = this.transactionsRemindersid,
-                done = this.done
+                transactionsRemindersid = this.TransactionsRemindersid,
+                done = this.Done
             };
         }
 
@@ -35,11 +35,11 @@ namespace GARCA.BO.Models
                 ? null
                 : new ExpirationsReminders
                 {
-                    id = v.id,
-                    date = v.date,
-                    transactionsReminders = v.transactionsReminders != null ? (TransactionsReminders?)v.transactionsReminders : null,
-                    transactionsRemindersid = v.transactionsRemindersid,
-                    done = v.done
+                    Id = v.id,
+                    Date = v.date,
+                    TransactionsReminders = v.transactionsReminders != null ? (TransactionsReminders?)v.transactionsReminders : null,
+                    TransactionsRemindersid = v.transactionsRemindersid,
+                    Done = v.done
                 };
         }
     }

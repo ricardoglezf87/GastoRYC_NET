@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GARCA.View.Views"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GARCA.View.Views.FrmTransactionReminderList"
         mc:Ignorable="d"
         Title="TransactionsReminders" Height="450" Width="800" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
@@ -28,17 +27,17 @@
                                RecordDeleted="gvTransactionsReminders_RecordDeleted" 
                                RecordDeleting="gvTransactionsReminders_RecordDeleting" Grid.Row="1" Grid.ColumnSpan="2"  >
             <syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SortColumnDescription ColumnName="date" SortDirection="Ascending"/>
+                <syncfusion:SortColumnDescription ColumnName="Date" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
-                <syncfusion:GridTextColumn  HeaderText="Periodicidad" MappingName="periodsReminders.description"/>
-                <syncfusion:GridTextColumn  HeaderText="Cuenta" MappingName="account.description"/>
-                <syncfusion:GridTextColumn  HeaderText="Persona" MappingName="person.name"/>
-                <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
-                <syncfusion:GridTextColumn  HeaderText="Categoria" MappingName="category.description"/>
-                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>
+                <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
+                <syncfusion:GridDateTimeColumn MappingName="Date" HeaderText="Fecha"/>
+                <syncfusion:GridTextColumn  HeaderText="Periodicidad" MappingName="PeriodsReminders.Description"/>
+                <syncfusion:GridTextColumn  HeaderText="Cuenta" MappingName="Account.Description"/>
+                <syncfusion:GridTextColumn  HeaderText="Persona" MappingName="Person.Name"/>
+                <syncfusion:GridTextColumn MappingName="Memo" HeaderText="Memo"/>
+                <syncfusion:GridTextColumn  HeaderText="Categoria" MappingName="Category.Description"/>
+                <syncfusion:GridCurrencyColumn MappingName="Amount" HeaderText="Importe"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 

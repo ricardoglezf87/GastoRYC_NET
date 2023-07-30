@@ -9,34 +9,34 @@ namespace GARCA.DAO.Managers
     public class DateCalendarManager
     {
 
-        public DateCalendarDAO? getByID(DateTime? id)
+        public DateCalendarDAO? GetById(DateTime? id)
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
                 return repository.GetById(id);
             }
         }
 
-        public void add(DateCalendarDAO? dateCalendar)
+        public void Add(DateCalendarDAO? dateCalendar)
         {
             if (dateCalendar != null)
             {
-                using (var unitOfWork = new UnitOfWork(new RYCContext()))
+                using (var unitOfWork = new UnitOfWork(new RycContext()))
                 {
                     var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
                     repository.Add(dateCalendar);
-                    repository.saveChanges();
+                    repository.SaveChanges();
                 }
             }
         }
 
-        public void saveChanges()
+        public void SaveChanges()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
-                repository.saveChanges();
+                repository.SaveChanges();
             }
         }
     }

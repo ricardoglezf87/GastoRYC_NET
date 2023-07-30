@@ -19,10 +19,10 @@ namespace GARCA.View.Views
 
         #region Constructor
 
-        public PartialPortfolio(MainWindow _parentForm)
+        public PartialPortfolio(MainWindow parentForm)
         {
             InitializeComponent();
-            parentForm = _parentForm;
+            this.parentForm = parentForm;
         }
 
         #endregion
@@ -31,16 +31,16 @@ namespace GARCA.View.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            loadPortfolio();
+            LoadPortfolio();
         }
 
         #endregion
 
         #region Functions        
 
-        public async void loadPortfolio()
+        public async void LoadPortfolio()
         {
-            gvPortfolio.ItemsSource = await DependencyConfig.iVPortfolioService.getAllAsync();
+            gvPortfolio.ItemsSource = await DependencyConfig.IVPortfolioService.GetAllAsync();
             gvPortfolio.ExpandAllGroup();
         }
 

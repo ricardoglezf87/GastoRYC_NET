@@ -13,7 +13,7 @@ namespace GARCA.DAO.Managers
     public class SplitsRemindersManager : ManagerBase<SplitsRemindersDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<SplitsRemindersDAO, object>>[] getIncludes()
+        public override Expression<Func<SplitsRemindersDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<SplitsRemindersDAO, object>>[]
             {
@@ -24,12 +24,12 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<SplitsRemindersDAO>? getbyTransactionidNull()
+        public IEnumerable<SplitsRemindersDAO>? GetbyTransactionidNull()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<SplitsRemindersDAO>();
-                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == null);
+                var query = GetEntyWithInclude(repository)?.Where(x => x.transactionid == null);
 
                 if (query != null)
                 {
@@ -41,12 +41,12 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<SplitsRemindersDAO>? getbyTransactionid(int transactionid)
+        public IEnumerable<SplitsRemindersDAO>? GetbyTransactionid(int transactionid)
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<SplitsRemindersDAO>();
-                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid);
+                var query = GetEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid);
 
                 if (query != null)
                 {

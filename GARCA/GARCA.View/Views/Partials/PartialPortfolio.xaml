@@ -43,24 +43,24 @@
                                TableSummaryCellStyleSelector="{StaticResource portfolioSummaryStyleSelector}"
                                GroupSummaryCellStyleSelector="{StaticResource portfolioGroupSummaryStyleSelector}">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SortColumnDescription ColumnName="id" SortDirection="Ascending"/>
+                <syncfusion:SortColumnDescription ColumnName="Id" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
 
             <syncfusion:SfDataGrid.GroupColumnDescriptions>
-                <syncfusion:GroupColumnDescription ColumnName="investmentProductsTypes.description"/>
+                <syncfusion:GroupColumnDescription ColumnName="InvestmentProductsTypes.Description"/>
             </syncfusion:SfDataGrid.GroupColumnDescriptions>
 
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="description" HeaderText="Producto"/>
-                <syncfusion:GridTextColumn MappingName="investmentProductsTypes.description" HeaderText="Tipo Producto" IsHidden="True"/>
-                <syncfusion:GridTextColumn MappingName="numShares" HeaderText="Num. Participaciones" TextAlignment="Center"/>
-                <syncfusion:GridCurrencyColumn MappingName="costShares" HeaderText="Coste" TextAlignment="Center"/>
-                <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha Valoración" TextAlignment="Center"/>
-                <syncfusion:GridCurrencyColumn MappingName="prices" HeaderText="Precio Actual" TextAlignment="Center"/>
-                <syncfusion:GridCurrencyColumn MappingName="marketValue" HeaderText="Valor Mercado" TextAlignment="Center"/>
-                <syncfusion:GridCurrencyColumn MappingName="profit" HeaderText="Beneficio" TextAlignment="Center"/>
-                <syncfusion:GridPercentColumn MappingName="profitPorcent" HeaderText="% Beneficio" TextAlignment="Center"/>
+                <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="Description" HeaderText="Producto"/>
+                <syncfusion:GridTextColumn MappingName="InvestmentProductsTypes.Description" HeaderText="Tipo Producto" IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="NumShares" HeaderText="Num. Participaciones" TextAlignment="Center"/>
+                <syncfusion:GridCurrencyColumn MappingName="CostShares" HeaderText="Coste" TextAlignment="Center"/>
+                <syncfusion:GridDateTimeColumn MappingName="Date" HeaderText="Fecha Valoración" TextAlignment="Center"/>
+                <syncfusion:GridCurrencyColumn MappingName="Prices" HeaderText="Precio Actual" TextAlignment="Center"/>
+                <syncfusion:GridCurrencyColumn MappingName="MarketValue" HeaderText="Valor Mercado" TextAlignment="Center"/>
+                <syncfusion:GridCurrencyColumn MappingName="Profit" HeaderText="Beneficio" TextAlignment="Center"/>
+                <syncfusion:GridPercentColumn MappingName="ProfitPorcent" HeaderText="% Beneficio" TextAlignment="Center"/>
             </syncfusion:SfDataGrid.Columns>
 
             <syncfusion:SfDataGrid.GroupSummaryRows>
@@ -68,15 +68,15 @@
                     <syncfusion:GridSummaryRow.SummaryColumns>
                         <syncfusion:GridSummaryColumn Name="tCostShares" 
                                               Format="'{Sum:c}'"
-                                              MappingName="costShares"
+                                              MappingName="CostShares"
                                               SummaryType="DoubleAggregate" />
                         <syncfusion:GridSummaryColumn Name="tMarketValue"
                                               Format="'{Sum:c}'"
-                                              MappingName="marketValue"
+                                              MappingName="MarketValue"
                                               SummaryType="DoubleAggregate" />
                         <syncfusion:GridSummaryColumn Name="tProfit"
                                               Format="'{Sum:c}'"
-                                              MappingName="profit"
+                                              MappingName="Profit"
                                               SummaryType="DoubleAggregate" />
                     </syncfusion:GridSummaryRow.SummaryColumns>
                 </syncfusion:GridSummaryRow>
@@ -87,15 +87,15 @@
                     <syncfusion:GridSummaryRow.SummaryColumns>
                         <syncfusion:GridSummaryColumn Name="tCostShares" 
                                               Format="'{Sum:c}'"
-                                              MappingName="costShares"
+                                              MappingName="CostShares"
                                               SummaryType="DoubleAggregate" />
                         <syncfusion:GridSummaryColumn Name="tMarketValue"
                                               Format="'{Sum:c}'"
-                                              MappingName="marketValue"
+                                              MappingName="MarketValue"
                                               SummaryType="DoubleAggregate" />
                         <syncfusion:GridSummaryColumn Name="tProfit"
                                               Format="'{Sum:c}'"
-                                              MappingName="profit"
+                                              MappingName="Profit"
                                               SummaryType="DoubleAggregate" />
                     </syncfusion:GridSummaryRow.SummaryColumns>
                 </syncfusion:GridTableSummaryRow>

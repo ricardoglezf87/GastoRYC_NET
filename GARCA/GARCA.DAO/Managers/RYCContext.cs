@@ -5,38 +5,38 @@ using System.IO;
 
 namespace GARCA.DAO.Managers
 {
-    public class RYCContext : DbContext
+    public class RycContext : DbContext
     {
 
         #region Tablas
 
-        public DbSet<DateCalendarDAO>? dateCalendar { get; set; }
-        public DbSet<AccountsDAO>? accounts { get; set; }
-        public DbSet<AccountsTypesDAO>? accountsTypes { get; set; }
-        public DbSet<TransactionsDAO>? transactions { get; set; }
-        public DbSet<PersonsDAO>? persons { get; set; }
-        public DbSet<CategoriesDAO>? categories { get; set; }
-        public DbSet<CategoriesTypesDAO>? categoriesTypes { get; set; }
-        public DbSet<TagsDAO>? tags { get; set; }
-        public DbSet<TransactionsStatusDAO>? transactionsStatus { get; set; }
-        public DbSet<SplitsDAO>? splits { get; set; }
-        public DbSet<PeriodsRemindersDAO>? periodsReminders { get; set; }
-        public DbSet<TransactionsRemindersDAO>? transactionsReminders { get; set; }
-        public DbSet<SplitsRemindersDAO>? splitsReminders { get; set; }
-        public DbSet<ExpirationsRemindersDAO>? expirationsReminders { get; set; }
-        public DbSet<InvestmentProductsDAO>? investmentProducts { get; set; }
-        public DbSet<InvestmentProductsPricesDAO>? investmentProductsPrices { get; set; }
-        public DbSet<InvestmentProductsTypesDAO>? investmentProductsTypes { get; set; }
+        public DbSet<DateCalendarDAO>? DateCalendar { get; set; }
+        public DbSet<AccountsDAO>? Accounts { get; set; }
+        public DbSet<AccountsTypesDAO>? AccountsTypes { get; set; }
+        public DbSet<TransactionsDAO>? Transactions { get; set; }
+        public DbSet<PersonsDAO>? Persons { get; set; }
+        public DbSet<CategoriesDAO>? Categories { get; set; }
+        public DbSet<CategoriesTypesDAO>? CategoriesTypes { get; set; }
+        public DbSet<TagsDAO>? Tags { get; set; }
+        public DbSet<TransactionsStatusDAO>? TransactionsStatus { get; set; }
+        public DbSet<SplitsDAO>? Splits { get; set; }
+        public DbSet<PeriodsRemindersDAO>? PeriodsReminders { get; set; }
+        public DbSet<TransactionsRemindersDAO>? TransactionsReminders { get; set; }
+        public DbSet<SplitsRemindersDAO>? SplitsReminders { get; set; }
+        public DbSet<ExpirationsRemindersDAO>? ExpirationsReminders { get; set; }
+        public DbSet<InvestmentProductsDAO>? InvestmentProducts { get; set; }
+        public DbSet<InvestmentProductsPricesDAO>? InvestmentProductsPrices { get; set; }
+        public DbSet<InvestmentProductsTypesDAO>? InvestmentProductsTypes { get; set; }
 
         #endregion
 
         #region Vistas
 
-        public DbSet<VBalancebyCategoryDAO>? vBalancebyCategory { get; set; }
+        public DbSet<VBalancebyCategoryDAO>? VBalancebyCategory { get; set; }
 
         #endregion
 
-        public RYCContext()
+        public RycContext()
         {
             if (!Directory.Exists("Data\\"))
             {
@@ -47,15 +47,15 @@ namespace GARCA.DAO.Managers
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            var nameDDBB = string.Empty;
+            var nameDdbb = string.Empty;
 
 #if DEBUG
-            nameDDBB = "rycBBDD_PRE.db";
+            nameDdbb = "rycBBDD_PRE.db";
 #else
             nameDDBB = "rycBBDD.db";
 #endif
 
-            optionsBuilder.UseSqlite("Data Source=Data\\" + nameDDBB);
+            optionsBuilder.UseSqlite("Data Source=Data\\" + nameDdbb);
 
             optionsBuilder.EnableSensitiveDataLogging(true);
         }

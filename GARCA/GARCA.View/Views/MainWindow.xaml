@@ -4,8 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
-        xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"                          
-        xmlns:chart="clr-namespace:Syncfusion.UI.Xaml.Charts;assembly=Syncfusion.SfChart.WPF"
+        xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf" 
         mc:Ignorable="d"
         Title="GARCA" Height="450" Width="800" Loaded="frmInicio_Loaded" WindowState="Maximized" Icon="/Resources/Logo-30.png" 
         PreviewKeyUp="frmInicio_PreviewKeyUp"
@@ -19,7 +18,7 @@
 
         <DataTemplate x:Key="BalanceTemplate">
             <TextBlock HorizontalAlignment="Right" 
-               Text="{Binding balance, StringFormat={}{0:N2} €}" Margin="0,0,5,0"/>
+               Text="{Binding Balance, StringFormat={}{0:N2} €}" Margin="0,0,5,0"/>
         </DataTemplate>
     </Window.Resources>
 
@@ -82,7 +81,7 @@
 
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn   DisplayMemberBinding="{Binding description}"  />
+                        <GridViewColumn   DisplayMemberBinding="{Binding Description}"  />
                         <GridViewColumn   CellTemplate="{StaticResource BalanceTemplate}"  />
 
                     </GridView>

@@ -11,7 +11,7 @@ namespace GARCA.DAO.Managers
     public class AccountsManager : ManagerBase<AccountsDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<AccountsDAO, object>>[] getIncludes()
+        public override Expression<Func<AccountsDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<AccountsDAO, object>>[]
             {
@@ -21,12 +21,12 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<AccountsDAO>? getAllOpened()
+        public IEnumerable<AccountsDAO>? GetAllOpened()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<AccountsDAO>();
-                var query = getEntyWithInclude(repository)?.Where(x => !x.closed.HasValue || !x.closed.Value);
+                var query = GetEntyWithInclude(repository)?.Where(x => !x.closed.HasValue || !x.closed.Value);
 
                 if (query != null)
                 {
@@ -38,12 +38,12 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public AccountsDAO? getByCategoryId(int? id)
+        public AccountsDAO? GetByCategoryId(int? id)
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<AccountsDAO>();
-                return repository?.entities?.FirstOrDefault(x => id.Equals(x.categoryid));
+                return repository?.Entities?.FirstOrDefault(x => id.Equals(x.categoryid));
             }
         }
     }

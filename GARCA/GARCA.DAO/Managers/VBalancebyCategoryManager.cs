@@ -8,9 +8,9 @@ namespace GARCA.DAO.Managers
 {
     public class VBalancebyCategoryManager
     {
-        public IEnumerable<VBalancebyCategoryDAO>? getAll()
+        public IEnumerable<VBalancebyCategoryDAO>? GetAll()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryGeneral<VBalancebyCategoryDAO>();
                 var query = repository.GetAll();

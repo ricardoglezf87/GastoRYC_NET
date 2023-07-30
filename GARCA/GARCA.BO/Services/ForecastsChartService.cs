@@ -12,32 +12,32 @@ namespace GARCA.BO.Services
     {
         #region Functions
 
-        public HashSet<ForecastsChart> getMonthForecast()
+        public HashSet<ForecastsChart> GetMonthForecast()
         {
             Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
             Dictionary<int, Decimal> saldos = new();
 
             var now = DateTime.Now;
 
-            foreach (var g in DependencyConfig.iAccountsService.getAllOpened()?.Where(x => (x.closed == false || x.closed == null)
-                                                            && (x.accountsTypesid == (int)eAccountsTypes.Cash ||
-                                                            x.accountsTypesid == (int)eAccountsTypes.Banks ||
-                                                            x.accountsTypesid == (int)eAccountsTypes.Cards)))
+            foreach (var g in DependencyConfig.IAccountsService.GetAllOpened()?.Where(x => (x.Closed == false || x.Closed == null)
+                                                            && (x.AccountsTypesid == (int)EAccountsTypes.Cash ||
+                                                            x.AccountsTypesid == (int)EAccountsTypes.Banks ||
+                                                            x.AccountsTypesid == (int)EAccountsTypes.Cards)))
             {
-                saldos.Add(g.id, 0);
+                saldos.Add(g.Id, 0);
             }
 
             List<Transactions> remTransactions = new();
 
-            foreach (var exp in DependencyConfig.iExpirationsRemindersService.getAllPendingWithoutFutureWithGeneration())
+            foreach (var exp in DependencyConfig.IExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration())
             {
                 if (exp != null)
                 {
-                    remTransactions.AddRange(DependencyConfig.iExpirationsRemindersService.registerTransactionfromReminderSimulation(exp));
+                    remTransactions.AddRange(DependencyConfig.IExpirationsRemindersService.RegisterTransactionfromReminderSimulation(exp));
                 }
             }
 
-            var transactions = DependencyConfig.iTransactionsService.getAll()?.ToList();
+            var transactions = DependencyConfig.ITransactionsService.GetAll()?.ToList();
 
             if (transactions != null)
             {
@@ -50,19 +50,19 @@ namespace GARCA.BO.Services
                 {
                     var d = now.AddDays(i);
                     foreach (var g in transactions
-                                    .Where(x => x.category != null && x.date <= d
-                                       && (x.account?.closed == false || x.account?.closed == null)
-                                       && (x.account?.accountsTypesid == (int)eAccountsTypes.Cash ||
-                                        x.account?.accountsTypesid == (int)eAccountsTypes.Banks ||
-                                        x.account?.accountsTypesid == (int)eAccountsTypes.Cards))
-                                    .GroupBy(g => g.accountid))
+                                    .Where(x => x.Category != null && x.Date <= d
+                                       && (x.Account?.Closed == false || x.Account?.Closed == null)
+                                       && (x.Account?.AccountsTypesid == (int)EAccountsTypes.Cash ||
+                                        x.Account?.AccountsTypesid == (int)EAccountsTypes.Banks ||
+                                        x.Account?.AccountsTypesid == (int)EAccountsTypes.Cards))
+                                    .GroupBy(g => g.Accountid))
                     {
-                        var saldo_act = g.Sum(x => x.amount) ?? 0;
+                        var saldoAct = g.Sum(x => x.Amount) ?? 0;
 
-                        if (g.Key != null && (saldos[g.Key.Value] != saldo_act || i == 29))
+                        if (g.Key != null && (saldos[g.Key.Value] != saldoAct || i == 29))
                         {
-                            dChart.Add(new Tuple<DateTime, int?>(d, g.Key), saldo_act);
-                            saldos[g.Key.Value] = saldo_act;
+                            dChart.Add(new Tuple<DateTime, int?>(d, g.Key), saldoAct);
+                            saldos[g.Key.Value] = saldoAct;
                         }
                     }
                 }
@@ -73,7 +73,7 @@ namespace GARCA.BO.Services
             foreach (var key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    DependencyConfig.iAccountsService.getByID(key.Item2)?.description,
+                    DependencyConfig.IAccountsService.GetById(key.Item2)?.Description,
                     key.Item2, dChart[key]));
             }
             return lChart;

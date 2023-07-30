@@ -10,7 +10,7 @@ namespace GARCA.DAO.Managers
     public class InvestmentProductsManager : ManagerBase<InvestmentProductsDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<InvestmentProductsDAO, object>>[] getIncludes()
+        public override Expression<Func<InvestmentProductsDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<InvestmentProductsDAO, object>>[]
             {
@@ -19,9 +19,9 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<InvestmentProductsDAO>? getAllOpened()
+        public IEnumerable<InvestmentProductsDAO>? GetAllOpened()
         {
-            return getAll()?.Where(x => x.active.HasValue && x.active.Value);
+            return GetAll()?.Where(x => x.active.HasValue && x.active.Value);
         }
     }
 }

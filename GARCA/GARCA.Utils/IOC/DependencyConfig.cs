@@ -11,137 +11,137 @@ namespace GARCA.Utils.IOC
 {
     public static class DependencyConfig
     {
-        private static readonly Container container;
+        private static readonly Container Container;
 
-        public static AccountsService iAccountsService
+        public static AccountsService IAccountsService
         {
-            get { return container.GetInstance<AccountsService>(); }
-        }
-
-        public static AccountsTypesService iAccountsTypesService
-        {
-            get { return container.GetInstance<AccountsTypesService>(); }
+            get { return Container.GetInstance<AccountsService>(); }
         }
 
-        public static CategoriesService iCategoriesService
+        public static AccountsTypesService IAccountsTypesService
         {
-            get { return container.GetInstance<CategoriesService>(); }
+            get { return Container.GetInstance<AccountsTypesService>(); }
         }
 
-        public static CategoriesTypesService iCategoriesTypesService
+        public static CategoriesService ICategoriesService
         {
-            get { return container.GetInstance<CategoriesTypesService>(); }
+            get { return Container.GetInstance<CategoriesService>(); }
         }
 
-        public static DateCalendarService iDateCalendarService
+        public static CategoriesTypesService ICategoriesTypesService
         {
-            get { return container.GetInstance<DateCalendarService>(); }
+            get { return Container.GetInstance<CategoriesTypesService>(); }
         }
 
-        public static ExpirationsRemindersService iExpirationsRemindersService
+        public static DateCalendarService IDateCalendarService
         {
-            get { return container.GetInstance<ExpirationsRemindersService>(); }
+            get { return Container.GetInstance<DateCalendarService>(); }
         }
 
-        public static ForecastsChartService iForecastsChartService
+        public static ExpirationsRemindersService IExpirationsRemindersService
         {
-            get { return container.GetInstance<ForecastsChartService>(); }
+            get { return Container.GetInstance<ExpirationsRemindersService>(); }
         }
 
-        public static InvestmentProductsPricesService iInvestmentProductsPricesService
+        public static ForecastsChartService IForecastsChartService
         {
-            get { return container.GetInstance<InvestmentProductsPricesService>(); }
+            get { return Container.GetInstance<ForecastsChartService>(); }
         }
 
-        public static InvestmentProductsService iInvestmentProductsService
+        public static InvestmentProductsPricesService IInvestmentProductsPricesService
         {
-            get { return container.GetInstance<InvestmentProductsService>(); }
+            get { return Container.GetInstance<InvestmentProductsPricesService>(); }
         }
 
-        public static InvestmentProductsTypesService iInvestmentProductsTypesService
+        public static InvestmentProductsService IInvestmentProductsService
         {
-            get { return container.GetInstance<InvestmentProductsTypesService>(); }
+            get { return Container.GetInstance<InvestmentProductsService>(); }
         }
 
-        public static PeriodsRemindersService iPeriodsReminderService
+        public static InvestmentProductsTypesService IInvestmentProductsTypesService
         {
-            get { return container.GetInstance<PeriodsRemindersService>(); }
+            get { return Container.GetInstance<InvestmentProductsTypesService>(); }
         }
 
-        public static PersonsService iPersonsService
+        public static PeriodsRemindersService IPeriodsReminderService
         {
-            get { return container.GetInstance<PersonsService>(); }
+            get { return Container.GetInstance<PeriodsRemindersService>(); }
         }
 
-        public static RYCContextService iRYCContextService
+        public static PersonsService IPersonsService
         {
-            get { return container.GetInstance<RYCContextService>(); }
+            get { return Container.GetInstance<PersonsService>(); }
         }
 
-        public static SplitsRemindersService iSplitsRemindersService
+        public static RycContextService IRycContextService
         {
-            get { return container.GetInstance<SplitsRemindersService>(); }
+            get { return Container.GetInstance<RycContextService>(); }
         }
 
-        public static SplitsService iSplitsService
+        public static SplitsRemindersService ISplitsRemindersService
         {
-            get { return container.GetInstance<SplitsService>(); }
+            get { return Container.GetInstance<SplitsRemindersService>(); }
         }
 
-        public static TagsService iTagsService
+        public static SplitsService ISplitsService
         {
-            get { return container.GetInstance<TagsService>(); }
+            get { return Container.GetInstance<SplitsService>(); }
         }
-        public static TransactionsRemindersService iTransactionsRemindersService
+
+        public static TagsService ITagsService
         {
-            get { return container.GetInstance<TransactionsRemindersService>(); }
+            get { return Container.GetInstance<TagsService>(); }
         }
-        public static TransactionsService iTransactionsService
+        public static TransactionsRemindersService ITransactionsRemindersService
         {
-            get { return container.GetInstance<TransactionsService>(); }
+            get { return Container.GetInstance<TransactionsRemindersService>(); }
         }
-        public static TransactionsStatusService iTransactionsStatusService
+        public static TransactionsService ITransactionsService
         {
-            get { return container.GetInstance<TransactionsStatusService>(); }
+            get { return Container.GetInstance<TransactionsService>(); }
         }
-        public static VBalancebyCategoryService iVBalancebyCategoryService
+        public static TransactionsStatusService ITransactionsStatusService
         {
-            get { return container.GetInstance<VBalancebyCategoryService>(); }
+            get { return Container.GetInstance<TransactionsStatusService>(); }
         }
-        public static VPortfolioService iVPortfolioService
+        public static VBalancebyCategoryService IVBalancebyCategoryService
         {
-            get { return container.GetInstance<VPortfolioService>(); }
+            get { return Container.GetInstance<VBalancebyCategoryService>(); }
+        }
+        public static VPortfolioService IVPortfolioService
+        {
+            get { return Container.GetInstance<VPortfolioService>(); }
         }
 
         static DependencyConfig()
         {
-            container = new Container();
+            Container = new Container();
             RegisterDependencies();
         }
 
         private static void RegisterDependencies()
         {
-            container.Register<AccountsService>(Lifestyle.Singleton);
-            container.Register<AccountsTypesService>(Lifestyle.Singleton);
-            container.Register<CategoriesService>(Lifestyle.Singleton);
-            container.Register<CategoriesTypesService>(Lifestyle.Singleton);
-            container.Register<DateCalendarService>(Lifestyle.Singleton);
-            container.Register<ExpirationsRemindersService>(Lifestyle.Singleton);
-            container.Register<ForecastsChartService>(Lifestyle.Singleton);
-            container.Register<InvestmentProductsPricesService>(Lifestyle.Singleton);
-            container.Register<InvestmentProductsService>(Lifestyle.Singleton);
-            container.Register<InvestmentProductsTypesService>(Lifestyle.Singleton);
-            container.Register<PeriodsRemindersService>(Lifestyle.Singleton);
-            container.Register<PersonsService>(Lifestyle.Singleton);
-            container.Register<RYCContextService>(Lifestyle.Singleton);
-            container.Register<SplitsRemindersService>(Lifestyle.Singleton);
-            container.Register<SplitsService>(Lifestyle.Singleton);
-            container.Register<TagsService>(Lifestyle.Singleton);
-            container.Register<TransactionsRemindersService>(Lifestyle.Singleton);
-            container.Register<TransactionsService>(Lifestyle.Singleton);
-            container.Register<TransactionsStatusService>(Lifestyle.Singleton);
-            container.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
-            container.Register<VPortfolioService>(Lifestyle.Singleton);
+            Container.Register<AccountsService>(Lifestyle.Singleton);
+            Container.Register<AccountsTypesService>(Lifestyle.Singleton);
+            Container.Register<CategoriesService>(Lifestyle.Singleton);
+            Container.Register<CategoriesTypesService>(Lifestyle.Singleton);
+            Container.Register<DateCalendarService>(Lifestyle.Singleton);
+            Container.Register<ExpirationsRemindersService>(Lifestyle.Singleton);
+            Container.Register<ForecastsChartService>(Lifestyle.Singleton);
+            Container.Register<InvestmentProductsPricesService>(Lifestyle.Singleton);
+            Container.Register<InvestmentProductsService>(Lifestyle.Singleton);
+            Container.Register<InvestmentProductsTypesService>(Lifestyle.Singleton);
+            Container.Register<PeriodsRemindersService>(Lifestyle.Singleton);
+            Container.Register<PersonsService>(Lifestyle.Singleton);
+            Container.Register<RycContextService>(Lifestyle.Singleton);
+            Container.Register<SplitsRemindersService>(Lifestyle.Singleton);
+            Container.Register<SplitsService>(Lifestyle.Singleton);
+            Container.Register<TagsService>(Lifestyle.Singleton);
+            Container.Register<TransactionsRemindersService>(Lifestyle.Singleton);
+            Container.Register<TransactionsService>(Lifestyle.Singleton);
+            Container.Register<TransactionsStatusService>(Lifestyle.Singleton);
+            Container.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
+            Container.Register<VPortfolioService>(Lifestyle.Singleton);
         }
 
 

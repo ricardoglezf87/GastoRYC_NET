@@ -6,67 +6,67 @@ namespace GARCA.BO.Models
 {
     public class TransactionsReminders : ModelBase
     {
-        public virtual int? periodsRemindersid { set; get; }
-        public virtual PeriodsReminders? periodsReminders { set; get; }
+        public virtual int? PeriodsRemindersid { set; get; }
+        public virtual PeriodsReminders? PeriodsReminders { set; get; }
 
-        public virtual bool? autoRegister { set; get; }
+        public virtual bool? AutoRegister { set; get; }
 
-        public virtual DateTime? date { set; get; }
+        public virtual DateTime? Date { set; get; }
 
-        public virtual int? accountid { set; get; }
+        public virtual int? Accountid { set; get; }
 
-        public virtual Accounts? account { set; get; }
+        public virtual Accounts? Account { set; get; }
 
-        public virtual int? personid { set; get; }
+        public virtual int? Personid { set; get; }
 
-        public virtual Persons? person { set; get; }
+        public virtual Persons? Person { set; get; }
 
-        public virtual int? tagid { set; get; }
+        public virtual int? Tagid { set; get; }
 
-        public virtual Tags? tag { set; get; }
+        public virtual Tags? Tag { set; get; }
 
-        public virtual int? categoryid { set; get; }
+        public virtual int? Categoryid { set; get; }
 
-        public virtual Categories? category { set; get; }
+        public virtual Categories? Category { set; get; }
 
-        public virtual Decimal? amountIn { set; get; }
+        public virtual Decimal? AmountIn { set; get; }
 
-        public virtual Decimal? amountOut { set; get; }
+        public virtual Decimal? AmountOut { set; get; }
 
-        public virtual String? memo { set; get; }
+        public virtual String? Memo { set; get; }
 
-        public virtual int? transactionStatusid { set; get; }
+        public virtual int? TransactionStatusid { set; get; }
 
-        public virtual TransactionsStatus? transactionStatus { set; get; }
+        public virtual TransactionsStatus? TransactionStatus { set; get; }
 
-        public virtual HashSet<SplitsReminders?>? splits { set; get; }
+        public virtual HashSet<SplitsReminders?>? Splits { set; get; }
 
-        public virtual String? personDescripGrid => person?.name ?? String.Empty;
+        public virtual String? PersonDescripGrid => Person?.Name ?? String.Empty;
 
-        public virtual Decimal? amount => amountIn - amountOut;
+        public virtual Decimal? Amount => AmountIn - AmountOut;
 
-        internal TransactionsRemindersDAO toDAO()
+        internal TransactionsRemindersDAO ToDao()
         {
             return new TransactionsRemindersDAO
             {
-                id = this.id,
-                date = this.date,
-                periodsRemindersid = this.periodsRemindersid,
+                id = this.Id,
+                date = this.Date,
+                periodsRemindersid = this.PeriodsRemindersid,
                 periodsReminders = null,
-                accountid = this.accountid,
+                accountid = this.Accountid,
                 account = null,
-                personid = this.personid,
+                personid = this.Personid,
                 person = null,
-                categoryid = this.categoryid,
+                categoryid = this.Categoryid,
                 category = null,
-                amountIn = this.amountIn,
-                amountOut = this.amountOut,
-                memo = this.memo,
+                amountIn = this.AmountIn,
+                amountOut = this.AmountOut,
+                memo = this.Memo,
                 transactionStatus = null,
-                transactionStatusid = this.transactionStatusid,
-                tagid = this.tagid,
+                transactionStatusid = this.TransactionStatusid,
+                tagid = this.Tagid,
                 tag = null,
-                autoRegister = this.autoRegister
+                autoRegister = this.AutoRegister
             };
         }
 
@@ -77,24 +77,24 @@ namespace GARCA.BO.Models
                 ? null
                 : new TransactionsReminders
                 {
-                    id = v.id,
-                    date = v.date,
-                    periodsRemindersid = v.periodsRemindersid,
-                    periodsReminders = v.periodsReminders != null ? (PeriodsReminders?)v.periodsReminders : null,
-                    accountid = v.accountid,
-                    account = v.account != null ? (Accounts?)v.account : null,
-                    personid = v.personid,
-                    person = v.person != null ? (Persons?)v.person : null,
-                    categoryid = v.categoryid,
-                    category = v.category != null ? (Categories?)v.category : null,
-                    amountIn = v.amountIn,
-                    amountOut = v.amountOut,
-                    memo = v.memo,
-                    transactionStatus = v.transactionStatus != null ? (TransactionsStatus?)v.transactionStatus : null,
-                    transactionStatusid = v.transactionStatusid,
-                    tagid = v.tagid,
-                    tag = v.tag != null ? (Tags?)v.tag : null,
-                    autoRegister = v.autoRegister
+                    Id = v.id,
+                    Date = v.date,
+                    PeriodsRemindersid = v.periodsRemindersid,
+                    PeriodsReminders = v.periodsReminders != null ? (PeriodsReminders?)v.periodsReminders : null,
+                    Accountid = v.accountid,
+                    Account = v.account != null ? (Accounts?)v.account : null,
+                    Personid = v.personid,
+                    Person = v.person != null ? (Persons?)v.person : null,
+                    Categoryid = v.categoryid,
+                    Category = v.category != null ? (Categories?)v.category : null,
+                    AmountIn = v.amountIn,
+                    AmountOut = v.amountOut,
+                    Memo = v.memo,
+                    TransactionStatus = v.transactionStatus != null ? (TransactionsStatus?)v.transactionStatus : null,
+                    TransactionStatusid = v.transactionStatusid,
+                    Tagid = v.tagid,
+                    Tag = v.tag != null ? (Tags?)v.tag : null,
+                    AutoRegister = v.autoRegister
                 };
         }
     }

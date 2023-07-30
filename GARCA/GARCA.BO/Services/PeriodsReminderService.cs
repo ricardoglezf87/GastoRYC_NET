@@ -10,7 +10,7 @@ namespace GARCA.BO.Services
     {
         private PeriodsRemindersManager periodsRemindersManager;
         
-        public enum ePeriodsReminders : int
+        public enum EPeriodsReminders : int
         {
             Diary = 1,
             Weekly = 2,
@@ -26,36 +26,36 @@ namespace GARCA.BO.Services
             periodsRemindersManager = new PeriodsRemindersManager();
         }
 
-        public HashSet<PeriodsReminders?>? getAll()
+        public HashSet<PeriodsReminders?>? GetAll()
         {
-            return periodsRemindersManager.getAll()?.toHashSetBO();
+            return periodsRemindersManager.GetAll()?.ToHashSetBo();
         }
 
-        public PeriodsReminders? getByID(int? id)
+        public PeriodsReminders? GetById(int? id)
         {
-            return (PeriodsReminders?)periodsRemindersManager.getByID(id);
+            return (PeriodsReminders?)periodsRemindersManager.GetById(id);
         }
 
-        public ePeriodsReminders? toEnum(PeriodsReminders? periodsReminders)
+        public EPeriodsReminders? ToEnum(PeriodsReminders? periodsReminders)
         {
             if (periodsReminders != null)
             {
-                switch (periodsReminders.id)
+                switch (periodsReminders.Id)
                 {
                     case 1:
-                        return ePeriodsReminders.Diary;
+                        return EPeriodsReminders.Diary;
                     case 2:
-                        return ePeriodsReminders.Weekly;
+                        return EPeriodsReminders.Weekly;
                     case 3:
-                        return ePeriodsReminders.Monthly;
+                        return EPeriodsReminders.Monthly;
                     case 4:
-                        return ePeriodsReminders.Bimonthly;
+                        return EPeriodsReminders.Bimonthly;
                     case 5:
-                        return ePeriodsReminders.Quarterly;
+                        return EPeriodsReminders.Quarterly;
                     case 6:
-                        return ePeriodsReminders.Bianual;
+                        return EPeriodsReminders.Bianual;
                     case 7:
-                        return ePeriodsReminders.Annual;
+                        return EPeriodsReminders.Annual;
 
                 }
             }
@@ -63,26 +63,26 @@ namespace GARCA.BO.Services
             return null;
         }
 
-        public DateTime? getNextDate(DateTime? date, ePeriodsReminders? periodsReminders)
+        public DateTime? GetNextDate(DateTime? date, EPeriodsReminders? periodsReminders)
         {
             if (date != null)
             {
                 switch (periodsReminders)
                 {
-                    case ePeriodsReminders.Diary:
-                        return date.addDay();
-                    case ePeriodsReminders.Weekly:
-                        return date.addWeek();
-                    case ePeriodsReminders.Monthly:
-                        return date.addMonth();
-                    case ePeriodsReminders.Bimonthly:
-                        return date.addMonth(2);
-                    case ePeriodsReminders.Quarterly:
-                        return date.addMonth(3);
-                    case ePeriodsReminders.Bianual:
-                        return date.addMonth(6);
-                    case ePeriodsReminders.Annual:
-                        return date.addYear();
+                    case EPeriodsReminders.Diary:
+                        return date.AddDay();
+                    case EPeriodsReminders.Weekly:
+                        return date.AddWeek();
+                    case EPeriodsReminders.Monthly:
+                        return date.AddMonth();
+                    case EPeriodsReminders.Bimonthly:
+                        return date.AddMonth(2);
+                    case EPeriodsReminders.Quarterly:
+                        return date.AddMonth(3);
+                    case EPeriodsReminders.Bianual:
+                        return date.AddMonth(6);
+                    case EPeriodsReminders.Annual:
+                        return date.AddYear();
                 }
 
             }

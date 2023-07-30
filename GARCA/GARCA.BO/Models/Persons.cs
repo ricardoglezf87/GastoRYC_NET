@@ -5,17 +5,17 @@ namespace GARCA.BO.Models
 {
     public class Persons : ModelBase
     {
-        public virtual String? name { set; get; }
-        public virtual int? categoryid { set; get; }
-        public virtual Categories? category { set; get; }
+        public virtual String? Name { set; get; }
+        public virtual int? Categoryid { set; get; }
+        public virtual Categories? Category { set; get; }
 
-        internal PersonsDAO toDAO()
+        internal PersonsDAO ToDao()
         {
             return new PersonsDAO
             {
-                id = this.id,
-                name = this.name,
-                categoryid = this.categoryid,
+                id = this.Id,
+                name = this.Name,
+                categoryid = this.Categoryid,
                 category = null
             };
         }
@@ -26,10 +26,10 @@ namespace GARCA.BO.Models
                 ? null
                 : new Persons
                 {
-                    id = v.id,
-                    name = v.name,
-                    categoryid = v.categoryid,
-                    category = v.category != null ? (Categories?)v.category : null
+                    Id = v.id,
+                    Name = v.name,
+                    Categoryid = v.categoryid,
+                    Category = v.category != null ? (Categories?)v.category : null
                 };
         }
     }

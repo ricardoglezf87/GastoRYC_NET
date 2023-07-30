@@ -4,24 +4,24 @@ namespace GARCA.BO.Models
 {
     public class ForecastsChart
     {
-        public virtual DateTime? date { set; get; }
-        public virtual int? accountid { set; get; }
-        public virtual string? account { set; get; }
-        public virtual decimal? amount { set; get; }
+        public virtual DateTime? Date { set; get; }
+        public virtual int? Accountid { set; get; }
+        public virtual string? Account { set; get; }
+        public virtual decimal? Amount { set; get; }
 
         public ForecastsChart(DateTime? date, string? account, decimal? amount)
         {
-            this.date = date;
-            this.account = account;
-            this.amount = amount;
+            Date = date;
+            Account = account;
+            Amount = amount;
         }
 
         public ForecastsChart(DateTime? date, string? account, int? accountid, decimal? amount)
         {
-            this.date = date;
-            this.account = account;
-            this.amount = amount;
-            this.accountid = accountid;
+            Date = date;
+            Account = account;
+            Amount = amount;
+            Accountid = accountid;
         }
     }
 }

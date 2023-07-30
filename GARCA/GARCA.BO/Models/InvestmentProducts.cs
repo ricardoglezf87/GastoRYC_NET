@@ -6,30 +6,30 @@ namespace GARCA.BO.Models
 {
     public class InvestmentProducts : ModelBase
     {
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
 
-        public virtual int? investmentProductsTypesid { set; get; }
+        public virtual int? InvestmentProductsTypesid { set; get; }
 
-        public virtual InvestmentProductsTypes? investmentProductsTypes { set; get; }
+        public virtual InvestmentProductsTypes? InvestmentProductsTypes { set; get; }
 
-        public virtual String? symbol { set; get; }
+        public virtual String? Symbol { set; get; }
 
-        public virtual String? url { set; get; }
+        public virtual String? Url { set; get; }
 
         [DefaultValue(true)]
-        public virtual bool? active { set; get; }
+        public virtual bool? Active { set; get; }
 
-        internal InvestmentProductsDAO toDAO()
+        internal InvestmentProductsDAO ToDao()
         {
             return new InvestmentProductsDAO
             {
-                id = this.id,
-                description = this.description,
-                investmentProductsTypesid = this.investmentProductsTypesid,
+                id = this.Id,
+                description = this.Description,
+                investmentProductsTypesid = this.InvestmentProductsTypesid,
                 investmentProductsTypes = null,
-                symbol = this.symbol,
-                url = this.url,
-                active = this.active
+                symbol = this.Symbol,
+                url = this.Url,
+                active = this.Active
             };
         }
 
@@ -39,13 +39,13 @@ namespace GARCA.BO.Models
                 ? null
                 : new InvestmentProducts
                 {
-                    id = v.id,
-                    description = v.description,
-                    investmentProductsTypesid = v.investmentProductsTypesid,
-                    investmentProductsTypes = v.investmentProductsTypes != null ? (InvestmentProductsTypes?)v.investmentProductsTypes : null,
-                    symbol = v.symbol,
-                    url = v.url,
-                    active = v.active
+                    Id = v.id,
+                    Description = v.description,
+                    InvestmentProductsTypesid = v.investmentProductsTypesid,
+                    InvestmentProductsTypes = v.investmentProductsTypes != null ? (InvestmentProductsTypes?)v.investmentProductsTypes : null,
+                    Symbol = v.symbol,
+                    Url = v.url,
+                    Active = v.active
                 };
         }
     }

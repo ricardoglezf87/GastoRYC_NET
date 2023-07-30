@@ -28,15 +28,15 @@
                                RecordDeleted="gvSplits_RecordDeleted" 
                                RecordDeleting="gvSplits_RecordDeleting" Grid.Row="1">
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="transactionid" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
+                <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="Transactionid" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="Memo" HeaderText="Memo"/>
                 <syncfusion:GridComboBoxColumn  HeaderText="Categoria"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbCategories" MappingName="categoryid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id"/>
-                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
-                <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
+                    x:Name="cbCategories" MappingName="Categoryid" 
+                                                DisplayMemberPath="Description" SelectedValuePath="Id"/>
+                <syncfusion:GridCurrencyColumn MappingName="AmountIn" HeaderText="Entrada"/>
+                <syncfusion:GridCurrencyColumn MappingName="AmountOut" HeaderText="Salida"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 

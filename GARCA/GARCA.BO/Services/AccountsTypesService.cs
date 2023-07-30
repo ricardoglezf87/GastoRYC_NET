@@ -15,30 +15,30 @@ namespace GARCA.BO.Services
             accountsTypesManager = new AccountsTypesManager();
         }
 
-        public enum eAccountsTypes : int
+        public enum EAccountsTypes : int
         {
             Cash = 1,
             Banks = 2,
             Cards = 3,
             Invests = 4,
             Loans = 5,
-            bounds = 6,
+            Bounds = 6,
             Savings = 7
         }
 
-        public HashSet<AccountsTypes?>? getAll()
+        public HashSet<AccountsTypes?>? GetAll()
         {
-            return accountsTypesManager.getAll()?.toHashSetBO();
+            return accountsTypesManager.GetAll()?.ToHashSetBo();
         }
 
-        public AccountsTypes? getByID(int? id)
+        public AccountsTypes? GetById(int? id)
         {
-            return (AccountsTypes?)accountsTypesManager.getByID(id);
+            return (AccountsTypes?)accountsTypesManager.GetById(id);
         }
 
-        public bool accountExpensives(int? types)
+        public bool AccountExpensives(int? types)
         {
-            return types is (int)eAccountsTypes.Cash or (int)eAccountsTypes.Banks or (int)eAccountsTypes.Cards;
+            return types is (int)EAccountsTypes.Cash or (int)EAccountsTypes.Banks or (int)EAccountsTypes.Cards;
         }
 
     }

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GARCA.DAO.Migrations
 {
-    [DbContext(typeof(RYCContext))]
+    [DbContext(typeof(RycContext))]
     [Migration("20221106113154_Init")]
     partial class Init
     {

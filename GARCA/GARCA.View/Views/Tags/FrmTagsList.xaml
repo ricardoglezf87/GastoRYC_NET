@@ -29,11 +29,11 @@
                                RecordDeleted="gvTags_RecordDeleted" 
                                RecordDeleting="gvTags_RecordDeleting" Grid.Row="1">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
+                <syncfusion:SortColumnDescription ColumnName="Description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="description" HeaderText="Descripción" />
+                <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="Description" HeaderText="Descripción" />
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 

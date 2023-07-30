@@ -4,16 +4,16 @@ namespace GARCA.BO.Models
 {
     public class VPortfolio : ModelBase
     {
-        public virtual String? description { set; get; }
-        public virtual int? investmentProductsTypesid { set; get; }
-        public virtual InvestmentProductsTypes? investmentProductsTypes { set; get; }
-        public virtual String? symbol { set; get; }
-        public virtual DateTime? date { set; get; }
-        public virtual Decimal? prices { set; get; }
-        public virtual Decimal? numShares { set; get; }
-        public virtual Decimal? costShares { set; get; }
-        public virtual Decimal? marketValue => (numShares == null ? 0 : numShares) * (prices == null ? 0 : prices);
-        public virtual Decimal? profit => (marketValue == null ? 0 : marketValue) - (costShares == null ? 0 : costShares);
-        public virtual Decimal? profitPorcent => costShares is null or 0 ? 0 : (marketValue / costShares - 1) * 100;
+        public virtual String? Description { set; get; }
+        public virtual int? InvestmentProductsTypesid { set; get; }
+        public virtual InvestmentProductsTypes? InvestmentProductsTypes { set; get; }
+        public virtual String? Symbol { set; get; }
+        public virtual DateTime? Date { set; get; }
+        public virtual Decimal? Prices { set; get; }
+        public virtual Decimal? NumShares { set; get; }
+        public virtual Decimal? CostShares { set; get; }
+        public virtual Decimal? MarketValue => (NumShares == null ? 0 : NumShares) * (Prices == null ? 0 : Prices);
+        public virtual Decimal? Profit => (MarketValue == null ? 0 : MarketValue) - (CostShares == null ? 0 : CostShares);
+        public virtual Decimal? ProfitPorcent => CostShares is null or 0 ? 0 : (MarketValue / CostShares - 1) * 100;
     }
 }

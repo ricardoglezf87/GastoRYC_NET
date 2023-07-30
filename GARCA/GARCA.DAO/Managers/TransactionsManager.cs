@@ -13,7 +13,7 @@ namespace GARCA.DAO.Managers
     {
 
 #pragma warning disable CS8603
-        public override Expression<Func<TransactionsDAO, object>>[] getIncludes()
+        public override Expression<Func<TransactionsDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<TransactionsDAO, object>>[]
             {
@@ -27,12 +27,12 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<TransactionsDAO>? getByAccount(int? id)
+        public IEnumerable<TransactionsDAO>? GetByAccount(int? id)
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                var query = getEntyWithInclude(repository)?
+                var query = GetEntyWithInclude(repository)?
                     .Where(x => id.Equals(x.accountid));
 
                 if (query != null)
@@ -45,17 +45,17 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<TransactionsDAO>? getByAccount(int? id, int startIndex, int nPage)
+        public IEnumerable<TransactionsDAO>? GetByAccount(int? id, int startIndex, int nPage)
         {
-            return getByAccount(id)?.Skip(startIndex).Take(nPage);
+            return GetByAccount(id)?.Skip(startIndex).Take(nPage);
         }
 
-        public IEnumerable<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id)
+        public IEnumerable<TransactionsDAO>? GetByAccountOrderByOrdenDesc(int? id)
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                var query = getEntyWithInclude(repository)?
+                var query = GetEntyWithInclude(repository)?
                     .Where(x => id.Equals(x.accountid))?
                     .OrderByDescending(x => x.orden);
 
@@ -68,17 +68,17 @@ namespace GARCA.DAO.Managers
                 }
             }
         }
-        public IEnumerable<TransactionsDAO>? getByAccountOrderByOrdenDesc(int? id, int startIndex, int nPage)
+        public IEnumerable<TransactionsDAO>? GetByAccountOrderByOrdenDesc(int? id, int startIndex, int nPage)
         {
-            return getByAccountOrderByOrdenDesc(id)?.Skip(startIndex).Take(nPage);
+            return GetByAccountOrderByOrdenDesc(id)?.Skip(startIndex).Take(nPage);
         }
 
-        public IEnumerable<TransactionsDAO>? getAllOpenned()
+        public IEnumerable<TransactionsDAO>? GetAllOpenned()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                var query = getEntyWithInclude(repository)?
+                var query = GetEntyWithInclude(repository)?
                     .Where(x => !x.account.closed.HasValue || !x.account.closed.Value);
 
                 if (query != null)
@@ -91,17 +91,17 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<TransactionsDAO>? getAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
+        public IEnumerable<TransactionsDAO>? GetAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
         {
-            return getAllOpennedOrderByOrdenDesc()?.Skip(startIndex).Take(nPage);
+            return GetAllOpennedOrderByOrdenDesc()?.Skip(startIndex).Take(nPage);
         }
 
-        private IEnumerable<TransactionsDAO>? getAllOpennedOrderByOrdenDesc()
+        private IEnumerable<TransactionsDAO>? GetAllOpennedOrderByOrdenDesc()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                var query = getEntyWithInclude(repository)?
+                var query = GetEntyWithInclude(repository)?
                     .Where(x => !x.account.closed.HasValue || !x.account.closed.Value)?
                     .OrderByDescending(x => x.orden);
 
@@ -115,12 +115,12 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<TransactionsDAO>? getByPerson(int? id)
+        public IEnumerable<TransactionsDAO>? GetByPerson(int? id)
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                var query = getEntyWithInclude(repository)?
+                var query = GetEntyWithInclude(repository)?
                     .Where(x => id.Equals(x.personid));
 
                 if (query != null)
@@ -133,12 +133,12 @@ namespace GARCA.DAO.Managers
             }
         }
         
-        public IEnumerable<TransactionsDAO>? getByInvestmentProduct(int? id)
+        public IEnumerable<TransactionsDAO>? GetByInvestmentProduct(int? id)
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
-                var query = getEntyWithInclude(repository)?
+                var query = GetEntyWithInclude(repository)?
                     .Where(x => id.Equals(x.investmentProductsid));
 
                 if (query != null)
@@ -151,15 +151,15 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public int getNextID()
+        public int GetNextId()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var cmd = unitOfWork.getDataBase().
+                var cmd = unitOfWork.GetDataBase().
                     GetDbConnection().CreateCommand();
                 cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactions';";
 
-                unitOfWork.getDataBase().OpenConnection();
+                unitOfWork.GetDataBase().OpenConnection();
                 var result = cmd.ExecuteReader();
                 result.Read();
                 var id = Convert.ToInt32(result[0]);

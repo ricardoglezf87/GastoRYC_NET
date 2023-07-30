@@ -9,7 +9,7 @@ namespace GARCA.DAO.Managers
 {
     public class CategoriesTypesManager : ManagerBase<CategoriesTypesDAO>
     {
-        public enum eCategoriesTypes : int
+        public enum ECategoriesTypes : int
         {
             Expenses = 1,
             Incomes = 2,
@@ -17,14 +17,14 @@ namespace GARCA.DAO.Managers
             Specials = 4
         }
 
-        public IEnumerable<CategoriesTypesDAO>? getAllWithoutSpecialTransfer()
+        public IEnumerable<CategoriesTypesDAO>? GetAllWithoutSpecialTransfer()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<CategoriesTypesDAO>();
                 var query = repository.GetAll()?
-                    .Where(x => x.id is not (int)eCategoriesTypes.Specials and
-                    not (int)eCategoriesTypes.Transfers);
+                    .Where(x => x.id is not (int)ECategoriesTypes.Specials and
+                    not (int)ECategoriesTypes.Transfers);
                 
                 if (query != null)
                 {

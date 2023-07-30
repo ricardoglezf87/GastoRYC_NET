@@ -4,22 +4,22 @@ using System.IO;
 
 namespace GARCA.DAO.Managers
 {
-    public class RYCContextManager
+    public class RycContextManager
     {
-        private RYCContext getContext()
+        private RycContext GetContext()
         {
-            return new RYCContext();
+            return new RycContext();
         }
 
-        public void migrateDataBase()
+        public void MigrateDataBase()
         {
-            getContext().Database.Migrate();
+            GetContext().Database.Migrate();
         }
         
-        public void makeBackup()
+        public void MakeBackup()
         {
             var path = string.Empty;
-            var nameDDBB = string.Empty;
+            var nameDdbb = string.Empty;
 
             path =  "Data\\";
 
@@ -29,15 +29,15 @@ namespace GARCA.DAO.Managers
             }
 
 #if DEBUG
-            nameDDBB = "rycBBDD_PRE.db";
+            nameDdbb = "rycBBDD_PRE.db";
 #else
             nameDDBB = "rycBBDD.db";
 #endif
 
-            if (File.Exists(path + nameDDBB))
+            if (File.Exists(path + nameDdbb))
             {
-                File.Copy(path + nameDDBB, path + "Backup\\" +
-                    nameDDBB + "." + DateTime.Now.Ticks.ToString() + ".bk", true);
+                File.Copy(path + nameDdbb, path + "Backup\\" +
+                    nameDdbb + "." + DateTime.Now.Ticks.ToString() + ".bk", true);
             }
         }
     }

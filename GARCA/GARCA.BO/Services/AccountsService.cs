@@ -19,49 +19,49 @@ namespace GARCA.BO.Services
             accountsManager = new AccountsManager();
         }
 
-        public HashSet<Accounts?>? getAll()
+        public HashSet<Accounts?>? GetAll()
         {
-            return accountsManager.getAll()?.toHashSetBO();
+            return accountsManager.GetAll()?.ToHashSetBo();
         }
 
-        public HashSet<Accounts?>? getAllOpened()
+        public HashSet<Accounts?>? GetAllOpened()
         {
-            return accountsManager.getAllOpened()?.toHashSetBO();
+            return accountsManager.GetAllOpened()?.ToHashSetBo();
         }
 
-        public async Task<HashSet<Accounts?>?> getAllOpenedAync()
+        public async Task<HashSet<Accounts?>?> GetAllOpenedAync()
         {
-            return await Task.Run(() => getAllOpened());
+            return await Task.Run(() => GetAllOpened());
         }
 
-        public HashSet<AccountsView>? getAllOpenedListView()
+        public HashSet<AccountsView>? GetAllOpenedListView()
         {
-            return accountsManager.getAllOpened()?.toHashSetViewBO();
+            return accountsManager.GetAllOpened()?.ToHashSetViewBo();
         }
 
-        public Accounts? getByID(int? id)
+        public Accounts? GetById(int? id)
         {
-            return (Accounts?)accountsManager.getByID(id);
+            return (Accounts?)accountsManager.GetById(id);
         }
 
-        public Accounts? getByCategoryId(int? id)
+        public Accounts? GetByCategoryId(int? id)
         {
-            return (Accounts?)accountsManager.getByCategoryId(id);
+            return (Accounts?)accountsManager.GetByCategoryId(id);
         }
 
-        public void update(Accounts accounts)
+        public void Update(Accounts accounts)
         {
-            accountsManager.update(accounts?.toDAO());
+            accountsManager.Update(accounts?.ToDao());
         }
 
-        public void delete(Accounts accounts)
+        public void Delete(Accounts accounts)
         {
-            accountsManager.delete(accounts?.toDAO());
+            accountsManager.Delete(accounts?.ToDao());
         }
 
-        public Decimal getBalanceByAccount(int? id)
+        public Decimal GetBalanceByAccount(int? id)
         {
-            return DependencyConfig.iTransactionsService.getByAccount(id)?.Sum(x => x.amount) ?? 0;
+            return DependencyConfig.ITransactionsService.GetByAccount(id)?.Sum(x => x.Amount) ?? 0;
         }
     }
 }

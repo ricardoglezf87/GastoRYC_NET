@@ -18,14 +18,14 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvTags.ItemsSource = DependencyConfig.iTagsService.getAll();
+            gvTags.ItemsSource = DependencyConfig.ITagsService.GetAll();
         }
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             var tags = (Tags)e.RowData;
 
-            if (tags.description == null)
+            if (tags.Description == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("descrìption", "Tiene que rellenar la descripción");
@@ -36,14 +36,14 @@ namespace GARCA.View.Views
         private void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var tags = (Tags)e.RowData;
-            DependencyConfig.iTagsService.update(tags);
+            DependencyConfig.ITagsService.Update(tags);
         }
 
         private void gvTags_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Tags tags in e.Items)
             {
-                DependencyConfig.iTagsService.delete(tags);
+                DependencyConfig.ITagsService.Delete(tags);
             }
         }
 

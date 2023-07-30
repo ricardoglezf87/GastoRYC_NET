@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GARCA.DAO.Migrations
 {
-    [DbContext(typeof(RYCContext))]
+    [DbContext(typeof(RycContext))]
     partial class RYCContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

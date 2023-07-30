@@ -14,21 +14,21 @@ namespace GARCA.BO.Services
             transactionsStatusManager = new TransactionsStatusManager();
         }
 
-        public enum eTransactionsTypes : int
+        public enum ETransactionsTypes : int
         {
             Pending = 1,
             Provisional = 2,
             Reconciled = 3
         }
 
-        public HashSet<TransactionsStatus?>? getAll()
+        public HashSet<TransactionsStatus?>? GetAll()
         {
-            return transactionsStatusManager.getAll()?.toHashSetBO();
+            return transactionsStatusManager.GetAll()?.ToHashSetBo();
         }
 
-        public TransactionsStatus? getByID(int? id)
+        public TransactionsStatus? GetById(int? id)
         {
-            return (TransactionsStatus?)transactionsStatusManager.getByID(id);
+            return (TransactionsStatus?)transactionsStatusManager.GetById(id);
         }
     }
 }

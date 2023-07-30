@@ -23,19 +23,19 @@ namespace GARCA.BO.Services
             investmentProductsPricesManager = new InvestmentProductsPricesManager();
         }
 
-        private bool exists(int? investmentProductId, DateTime? date)
+        private bool Exists(int? investmentProductId, DateTime? date)
         {
-            return investmentProductsPricesManager.exists(investmentProductId, date);
+            return investmentProductsPricesManager.Exists(investmentProductId, date);
         }
 
-        public Decimal? getActualPrice(InvestmentProducts investmentProducts)
+        public Decimal? GetActualPrice(InvestmentProducts investmentProducts)
         {
-            return investmentProductsPricesManager.getActualPrice(investmentProducts.toDAO());
+            return investmentProductsPricesManager.GetActualPrice(investmentProducts.ToDao());
         }
 
-        public DateTime? getLastValueDate(InvestmentProducts investmentProducts)
+        public DateTime? GetLastValueDate(InvestmentProducts investmentProducts)
         {
-            return investmentProductsPricesManager.getLastValueDate(investmentProducts.toDAO());
+            return investmentProductsPricesManager.GetLastValueDate(investmentProducts.ToDao());
         }
 
         public async Task getPricesOnlineAsync(InvestmentProducts? investmentProducts)
@@ -43,47 +43,47 @@ namespace GARCA.BO.Services
             try
             {
                 //Get prices from buy and sell ins transactions
-                foreach (var transactions in DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?
-                        .GroupBy(g => g.date)?.Select(x => new { date = x.Key, price = x.Average(y => y.pricesShares) }))
+                foreach (var transactions in DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?
+                        .GroupBy(g => g.Date)?.Select(x => new { date = x.Key, price = x.Average(y => y.PricesShares) }))
                 {
-                    if (!exists(investmentProducts.id, transactions.date))
+                    if (!Exists(investmentProducts.Id, transactions.date))
                     {
                         InvestmentProductsPrices productsPrices = new();
-                        productsPrices.date = transactions.date;
-                        productsPrices.investmentProductsid = investmentProducts.id;
-                        productsPrices.prices = transactions.price;
-                        investmentProductsPricesManager.update(productsPrices.toDAO());
+                        productsPrices.Date = transactions.date;
+                        productsPrices.InvestmentProductsid = investmentProducts.Id;
+                        productsPrices.Prices = transactions.price;
+                        investmentProductsPricesManager.Update(productsPrices.ToDao());
                     }
                 }
 
                 //Get prices online
 
-                if (investmentProducts == null || String.IsNullOrWhiteSpace(investmentProducts.url)
-                    || !investmentProducts.active.HasValue || !investmentProducts.active.Value)
+                if (investmentProducts == null || String.IsNullOrWhiteSpace(investmentProducts.Url)
+                    || !investmentProducts.Active.HasValue || !investmentProducts.Active.Value)
                 {
                     return;
                 }
 
                 HashSet<InvestmentProductsPrices> lproductsPrices = new();
 
-                if (investmentProducts.url.Contains("investing.com"))
+                if (investmentProducts.Url.Contains("investing.com"))
                 {
                     lproductsPrices = await getPricesOnlineInvesting(investmentProducts);
                 }
-                else if (investmentProducts.url.Contains("yahoo.com"))
+                else if (investmentProducts.Url.Contains("yahoo.com"))
                 {
                     lproductsPrices = await getPricesOnlineYahoo(investmentProducts);
                 }
 
                 foreach (var productsPrices in lproductsPrices)
                 {
-                    if (!exists(productsPrices.investmentProductsid, productsPrices.date))
+                    if (!Exists(productsPrices.InvestmentProductsid, productsPrices.Date))
                     {
-                        investmentProductsPricesManager.update(productsPrices.toDAO());
+                        investmentProductsPricesManager.Update(productsPrices.ToDao());
                     }
                 }
 
-                investmentProductsPricesManager.saveChanges();
+                investmentProductsPricesManager.SaveChanges();
             }
             catch (Exception)
             {
@@ -97,7 +97,7 @@ namespace GARCA.BO.Services
 
             using (HttpClient client = new())
             {
-                var response = await client.GetAsync(investmentProducts.url);
+                var response = await client.GetAsync(investmentProducts.Url);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -116,9 +116,9 @@ namespace GARCA.BO.Services
                                 var timestamp = (long)timestamps[i];
 
                                 InvestmentProductsPrices productsPrices = new();
-                                productsPrices.investmentProductsid = investmentProducts.id;
-                                productsPrices.date = DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
-                                productsPrices.prices = (decimal)prices[i];
+                                productsPrices.InvestmentProductsid = investmentProducts.Id;
+                                productsPrices.Date = DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
+                                productsPrices.Prices = (decimal)prices[i];
                                 lproductsPrices.Add(productsPrices);
                             }
                         }
@@ -143,7 +143,7 @@ namespace GARCA.BO.Services
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3");
-                var response = await httpClient.GetAsync(investmentProducts.url);
+                var response = await httpClient.GetAsync(investmentProducts.Url);
                 var html = await response.Content.ReadAsStringAsync();
 
                 var htmlDocument = new HtmlDocument();
@@ -158,9 +158,9 @@ namespace GARCA.BO.Services
                     var date = cells[0].InnerText;
                     var price = cells[1].InnerText;
                     InvestmentProductsPrices productsPrices = new();
-                    productsPrices.investmentProductsid = investmentProducts.id;
-                    productsPrices.date = DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-                    productsPrices.prices = Decimal.Parse(price);
+                    productsPrices.InvestmentProductsid = investmentProducts.Id;
+                    productsPrices.Date = DateTime.ParseExact(date, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                    productsPrices.Prices = Decimal.Parse(price);
                     lproductsPrices.Add(productsPrices);
                 }
             }

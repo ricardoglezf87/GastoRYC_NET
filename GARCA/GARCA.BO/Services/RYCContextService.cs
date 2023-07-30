@@ -2,23 +2,23 @@
 
 namespace GARCA.BO.Services
 {
-    public class RYCContextService
+    public class RycContextService
     {
-        private readonly RYCContextManager contextManager;
+        private readonly RycContextManager contextManager;
 
-        public RYCContextService()
+        public RycContextService()
         {
-            contextManager = new RYCContextManager();
+            contextManager = new RycContextManager();
         }
 
-        public void migrateDataBase()
+        public void MigrateDataBase()
         {
-            contextManager.migrateDataBase();
+            contextManager.MigrateDataBase();
         }
 
-        public void makeBackup()
+        public void MakeBackup()
         {
-            contextManager.makeBackup();
+            contextManager.MakeBackup();
         }
     }
 }

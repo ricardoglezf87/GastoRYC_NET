@@ -5,7 +5,7 @@ namespace GARCA.BO.Models
 {
     public class AccountsTypes : ModelBase
     {
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
         
         public static explicit operator AccountsTypes?(AccountsTypesDAO? v)
         {
@@ -13,8 +13,8 @@ namespace GARCA.BO.Models
                 ? null
                 : new AccountsTypes
                 {
-                    id = v.id,
-                    description = v.description
+                    Id = v.id,
+                    Description = v.description
                 };
         }
     }

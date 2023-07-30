@@ -21,21 +21,21 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbInvestmentProductsTypes.ItemsSource = DependencyConfig.iInvestmentProductsTypesService.getAll();
-            gvInvestmentProducts.ItemsSource = DependencyConfig.iInvestmentProductsService.getAll();
+            cbInvestmentProductsTypes.ItemsSource = DependencyConfig.IInvestmentProductsTypesService.GetAll();
+            gvInvestmentProducts.ItemsSource = DependencyConfig.IInvestmentProductsService.GetAll();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             var investmentProducts = (InvestmentProducts)e.RowData;
 
-            if (investmentProducts.description == null)
+            if (investmentProducts.Description == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("descrìption", "Tiene que rellenar la descripción");
             }
 
-            if (investmentProducts.investmentProductsTypesid == null)
+            if (investmentProducts.InvestmentProductsTypesid == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("investmentProductsTypesid", "Tiene que rellenar el tipo del producto financiero");
@@ -50,7 +50,7 @@ namespace GARCA.View.Views
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "investmentProductsTypesid":
-                        investmentProducts.investmentProductsTypes = DependencyConfig.iInvestmentProductsTypesService.getByID(investmentProducts.investmentProductsTypesid);
+                        investmentProducts.InvestmentProductsTypes = DependencyConfig.IInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
                         break;
                 }
             }
@@ -60,19 +60,19 @@ namespace GARCA.View.Views
         {
             var investmentProducts = (InvestmentProducts)e.RowData;
 
-            if (investmentProducts.investmentProductsTypes == null && investmentProducts.investmentProductsTypesid != null)
+            if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesid != null)
             {
-                investmentProducts.investmentProductsTypes = DependencyConfig.iInvestmentProductsTypesService.getByID(investmentProducts.investmentProductsTypesid);
+                investmentProducts.InvestmentProductsTypes = DependencyConfig.IInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
             }
 
-            DependencyConfig.iInvestmentProductsService.update(investmentProducts);
+            DependencyConfig.IInvestmentProductsService.Update(investmentProducts);
         }
 
         private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (InvestmentProducts InvestmentProducts in e.Items)
+            foreach (InvestmentProducts investmentProducts in e.Items)
             {
-                DependencyConfig.iInvestmentProductsService.delete(InvestmentProducts);
+                DependencyConfig.IInvestmentProductsService.Delete(investmentProducts);
             }
         }
 

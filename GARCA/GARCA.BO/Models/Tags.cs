@@ -5,14 +5,14 @@ namespace GARCA.BO.Models
 {
     public class Tags : ModelBase
     {
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
 
-        internal TagsDAO toDAO()
+        internal TagsDAO ToDao()
         {
             return new TagsDAO
             {
-                id = this.id,
-                description = this.description
+                id = this.Id,
+                description = this.Description
             };
         }
 
@@ -22,8 +22,8 @@ namespace GARCA.BO.Models
                 ? null
                 : new Tags
                 {
-                    id = v.id,
-                    description = v.description
+                    Id = v.id,
+                    Description = v.description
                 };
         }
     }

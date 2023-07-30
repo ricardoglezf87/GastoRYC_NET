@@ -18,33 +18,33 @@ namespace GARCA.BO.Services
             initDate = new DateTime(2001, 01, 01);
         }
 
-        private DateCalendar? getByID(DateTime? id)
+        private DateCalendar? GetById(DateTime? id)
         {
-            return (DateCalendar?)dateCalendarManager.getByID(id);
+            return (DateCalendar?)dateCalendarManager.GetById(id);
         }
 
-        public void fillCalendar()
+        public void FillCalendar()
         {
             var ini = initDate;
             while (ini < DateTime.Now.AddYears(1))
             {
-                if (getByID(ini) == null)
+                if (GetById(ini) == null)
                 {
                     DateCalendar date = new()
                     {
-                        date = ini,
-                        day = ini.Day,
-                        month = ini.Month,
-                        year = ini.Year
+                        Date = ini,
+                        Day = ini.Day,
+                        Month = ini.Month,
+                        Year = ini.Year
                     };
 
-                    dateCalendarManager.add(date.toDAO());
+                    dateCalendarManager.Add(date.ToDao());
                 }
 
                 ini = ini.AddDays(1);
             }
 
-            dateCalendarManager.saveChanges();
+            dateCalendarManager.SaveChanges();
         }
     }
 }

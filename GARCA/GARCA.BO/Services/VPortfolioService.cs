@@ -8,41 +8,41 @@ namespace GARCA.BO.Services
 {
     public class VPortfolioService
     {
-        public async Task<HashSet<VPortfolio?>?> getAllAsync()
+        public async Task<HashSet<VPortfolio?>?> GetAllAsync()
         {
             HashSet<VPortfolio?>? listPortFolio = new();
             foreach (var investmentProducts in
-                await DependencyConfig.iInvestmentProductsService.getAllOpened())
+                await DependencyConfig.IInvestmentProductsService.GetAllOpened())
             {
 
                 VPortfolio portfolio = new();
-                portfolio.id = investmentProducts.id;
-                portfolio.description = investmentProducts.description;
-                portfolio.investmentProductsTypesid = investmentProducts.investmentProductsTypesid;
-                portfolio.investmentProductsTypes = investmentProducts.investmentProductsTypes;
-                portfolio.symbol = investmentProducts.symbol;
-                portfolio.numShares = await getNumShares(investmentProducts);
+                portfolio.Id = investmentProducts.Id;
+                portfolio.Description = investmentProducts.Description;
+                portfolio.InvestmentProductsTypesid = investmentProducts.InvestmentProductsTypesid;
+                portfolio.InvestmentProductsTypes = investmentProducts.InvestmentProductsTypes;
+                portfolio.Symbol = investmentProducts.Symbol;
+                portfolio.NumShares = await GetNumShares(investmentProducts);
 
-                var lBuy = await getBuyOperations(investmentProducts);
-                var lSell = await getSellOperations(investmentProducts);
+                var lBuy = await GetBuyOperations(investmentProducts);
+                var lSell = await GetSellOperations(investmentProducts);
 
                 foreach (var sell in lSell)
                 {
-                    var shares = sell.numShares;
+                    var shares = sell.NumShares;
                     if (shares is not null and > 0)
                     {
                         foreach (var buy in lBuy)
                         {
-                            if (buy.numShares is not null and not 0)
+                            if (buy.NumShares is not null and not 0)
                             {
-                                if (shares >= -buy.numShares)
+                                if (shares >= -buy.NumShares)
                                 {
-                                    shares += buy.numShares;
-                                    buy.numShares = 0;
+                                    shares += buy.NumShares;
+                                    buy.NumShares = 0;
                                 }
                                 else
                                 {
-                                    buy.numShares += shares;
+                                    buy.NumShares += shares;
                                     shares = 0;
                                     break;
                                 }
@@ -50,28 +50,28 @@ namespace GARCA.BO.Services
                         }
                     }
                 }
-                portfolio.costShares = lBuy?.Sum(x => x.pricesShares * -x.numShares);
-                portfolio.date = DependencyConfig.iInvestmentProductsPricesService.getLastValueDate(investmentProducts);
-                portfolio.prices = DependencyConfig.iInvestmentProductsPricesService.getActualPrice(investmentProducts);
+                portfolio.CostShares = lBuy?.Sum(x => x.PricesShares * -x.NumShares);
+                portfolio.Date = DependencyConfig.IInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
+                portfolio.Prices = DependencyConfig.IInvestmentProductsPricesService.GetActualPrice(investmentProducts);
 
                 listPortFolio.Add(portfolio);
             }
             return listPortFolio;
         }
 
-        private async Task<decimal?> getNumShares(InvestmentProducts? investmentProducts)
+        private async Task<decimal?> GetNumShares(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Sum(x => -x.numShares));
+            return await Task.Run(() => DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?.Sum(x => -x.NumShares));
         }
 
-        private async Task<HashSet<Transactions?>?> getBuyOperations(InvestmentProducts? investmentProducts)
+        private async Task<HashSet<Transactions?>?> GetBuyOperations(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares < 0).OrderBy(x => x.date).ToHashSet());
+            return await Task.Run(() => DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares < 0).OrderBy(x => x.Date).ToHashSet());
         }
 
-        private async Task<HashSet<Transactions?>?> getSellOperations(InvestmentProducts? investmentProducts)
+        private async Task<HashSet<Transactions?>?> GetSellOperations(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => DependencyConfig.iTransactionsService.getByInvestmentProduct(investmentProducts)?.Where(x => x.numShares > 0).OrderBy(x => x.date).ToHashSet());
+            return await Task.Run(() => DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares > 0).OrderBy(x => x.Date).ToHashSet());
         }
     }
 }

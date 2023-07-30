@@ -10,7 +10,7 @@ namespace GARCA.DAO.Managers
     public class TransactionsRemindersManager : ManagerBase<TransactionsRemindersDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<TransactionsRemindersDAO, object>>[] getIncludes()
+        public override Expression<Func<TransactionsRemindersDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<TransactionsRemindersDAO, object>>[]
             {

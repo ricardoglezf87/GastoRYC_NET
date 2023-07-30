@@ -18,14 +18,14 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvPersons.ItemsSource = DependencyConfig.iPersonsService.getAll();
+            gvPersons.ItemsSource = DependencyConfig.IPersonsService.GetAll();
         }
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             var persons = (Persons)e.RowData;
 
-            if (persons.name == null)
+            if (persons.Name == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("name", "Tiene que rellenar el nombre");
@@ -36,14 +36,14 @@ namespace GARCA.View.Views
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var persons = (Persons)e.RowData;
-            DependencyConfig.iPersonsService.update(persons);
+            DependencyConfig.IPersonsService.Update(persons);
         }
 
         private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Persons persons in e.Items)
             {
-                DependencyConfig.iPersonsService.delete(persons);
+                DependencyConfig.IPersonsService.Delete(persons);
             }
         }
 

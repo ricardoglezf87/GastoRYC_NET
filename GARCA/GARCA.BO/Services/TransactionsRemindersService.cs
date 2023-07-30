@@ -18,81 +18,81 @@ namespace GARCA.BO.Services
 
         #region TransactionsRemindersActions
 
-        public HashSet<TransactionsReminders?>? getAll()
+        public HashSet<TransactionsReminders?>? GetAll()
         {
-            return transactionsRemindersManager.getAll()?.toHashSetBO();
+            return transactionsRemindersManager.GetAll()?.ToHashSetBo();
         }
 
-        public TransactionsReminders? getByID(int? id)
+        public TransactionsReminders? GetById(int? id)
         {
-            return (TransactionsReminders?)transactionsRemindersManager.getByID(id);
+            return (TransactionsReminders?)transactionsRemindersManager.GetById(id);
         }
 
-        public TransactionsReminders? update(TransactionsReminders transactionsReminders)
+        public TransactionsReminders? Update(TransactionsReminders transactionsReminders)
         {
-            DependencyConfig.iExpirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
-            return (TransactionsReminders?)transactionsRemindersManager.update(transactionsReminders.toDAO());
+            DependencyConfig.IExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
+            return (TransactionsReminders?)transactionsRemindersManager.Update(transactionsReminders.ToDao());
         }
 
-        public void delete(TransactionsReminders? transactionsReminders)
+        public void Delete(TransactionsReminders? transactionsReminders)
         {
             if (transactionsReminders != null)
             {
-                DependencyConfig.iExpirationsRemindersService.deleteByTransactionReminderid(transactionsReminders.id);
-                transactionsRemindersManager.delete(transactionsReminders.toDAO());
+                DependencyConfig.IExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
+                transactionsRemindersManager.Delete(transactionsReminders.ToDao());
             }
         }
 
-        public void saveChanges(TransactionsReminders transactionsReminders)
+        public void SaveChanges(TransactionsReminders transactionsReminders)
         {
-            transactionsReminders.amountIn ??= 0;
+            transactionsReminders.AmountIn ??= 0;
 
-            transactionsReminders.amountOut ??= 0;
+            transactionsReminders.AmountOut ??= 0;
 
-            update(transactionsReminders);
+            Update(transactionsReminders);
         }
 
         #endregion
 
         #region SplitsRemindersActions
 
-        public void updateSplitsReminders(TransactionsReminders? transactionsReminders)
+        public void UpdateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            var lSplitsReminders = DependencyConfig.iSplitsRemindersService.getbyTransactionid(transactionsReminders.id);
+            var lSplitsReminders = DependencyConfig.ISplitsRemindersService.GetbyTransactionid(transactionsReminders.Id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
-                transactionsReminders.amountIn = 0;
-                transactionsReminders.amountOut = 0;
+                transactionsReminders.AmountIn = 0;
+                transactionsReminders.AmountOut = 0;
 
                 foreach (var splitsReminders in lSplitsReminders)
                 {
-                    transactionsReminders.amountIn += splitsReminders.amountIn == null ? 0 : splitsReminders.amountIn;
-                    transactionsReminders.amountOut += splitsReminders.amountOut == null ? 0 : splitsReminders.amountOut;
+                    transactionsReminders.AmountIn += splitsReminders.AmountIn == null ? 0 : splitsReminders.AmountIn;
+                    transactionsReminders.AmountOut += splitsReminders.AmountOut == null ? 0 : splitsReminders.AmountOut;
                 }
 
-                transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactionsReminders.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
+                transactionsReminders.Category = DependencyConfig.ICategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
-            else if (transactionsReminders.categoryid is not null
-                and ((int)CategoriesService.eSpecialCategories.Split))
+            else if (transactionsReminders.Categoryid is not null
+                and ((int)CategoriesService.ESpecialCategories.Split))
             {
-                transactionsReminders.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactionsReminders.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
+                transactionsReminders.Category = DependencyConfig.ICategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
             }
 
-            if (transactionsReminders.id == 0)
+            if (transactionsReminders.Id == 0)
             {
-                update(transactionsReminders);
+                Update(transactionsReminders);
                 foreach (var splitsReminders in lSplitsReminders)
                 {
-                    splitsReminders.transactionid = transactionsReminders.id;
-                    DependencyConfig.iSplitsRemindersService.update(splitsReminders);
+                    splitsReminders.Transactionid = transactionsReminders.Id;
+                    DependencyConfig.ISplitsRemindersService.Update(splitsReminders);
                 }
             }
             else
             {
-                update(transactionsReminders);
+                Update(transactionsReminders);
             }
         }
 

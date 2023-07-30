@@ -7,92 +7,92 @@ namespace GARCA.BO.Models
 {
     public class Transactions : ModelBase
     {
-        public virtual DateTime? date { set; get; }
+        public virtual DateTime? Date { set; get; }
 
-        public virtual int? accountid { set; get; }
+        public virtual int? Accountid { set; get; }
 
-        public virtual Accounts? account { set; get; }
+        public virtual Accounts? Account { set; get; }
 
-        public virtual int? personid { set; get; }
+        public virtual int? Personid { set; get; }
 
-        public virtual Persons? person { set; get; }
+        public virtual Persons? Person { set; get; }
 
-        public virtual int? tagid { set; get; }
+        public virtual int? Tagid { set; get; }
 
-        public virtual Tags? tag { set; get; }
+        public virtual Tags? Tag { set; get; }
 
-        public virtual int? categoryid { set; get; }
+        public virtual int? Categoryid { set; get; }
 
-        public virtual Categories? category { set; get; }
+        public virtual Categories? Category { set; get; }
 
-        public virtual Decimal? amountIn { set; get; }
+        public virtual Decimal? AmountIn { set; get; }
 
-        public virtual Decimal? amountOut { set; get; }
+        public virtual Decimal? AmountOut { set; get; }
 
-        public virtual int? tranferid { set; get; }
+        public virtual int? Tranferid { set; get; }
 
-        public virtual int? tranferSplitid { set; get; }
+        public virtual int? TranferSplitid { set; get; }
 
-        public virtual String? memo { set; get; }
+        public virtual String? Memo { set; get; }
 
-        public virtual int? transactionStatusid { set; get; }
+        public virtual int? TransactionStatusid { set; get; }
 
-        public virtual TransactionsStatus? transactionStatus { set; get; }
+        public virtual TransactionsStatus? TransactionStatus { set; get; }
 
-        public virtual int? investmentProductsid { set; get; }
+        public virtual int? InvestmentProductsid { set; get; }
 
-        public virtual InvestmentProducts? investmentProducts { set; get; }
+        public virtual InvestmentProducts? InvestmentProducts { set; get; }
 
-        public virtual HashSet<Splits?>? splits { set; get; }
+        public virtual HashSet<Splits?>? Splits { set; get; }
 
-        public virtual Decimal? numShares { set; get; }
+        public virtual Decimal? NumShares { set; get; }
 
-        public virtual Decimal? pricesShares { set; get; }
+        public virtual Decimal? PricesShares { set; get; }
 
-        public virtual bool? investmentCategory { set; get; }
+        public virtual bool? InvestmentCategory { set; get; }
 
-        public virtual String? categoryDescripGrid => investmentCategory.HasValue && investmentCategory.Value == false ?
-            numShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra" : category?.description ?? String.Empty;
+        public virtual String? CategoryDescripGrid => InvestmentCategory.HasValue && InvestmentCategory.Value == false ?
+            NumShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra" : Category?.Description ?? String.Empty;
 
-        public virtual String? personDescripGrid => investmentCategory.HasValue && investmentCategory.Value == false ?
-            investmentProducts?.description ?? String.Empty : person?.name ?? String.Empty;
+        public virtual String? PersonDescripGrid => InvestmentCategory.HasValue && InvestmentCategory.Value == false ?
+            InvestmentProducts?.Description ?? String.Empty : Person?.Name ?? String.Empty;
 
-        public virtual Decimal? amount => investmentCategory.HasValue && investmentCategory.Value == false ? Math.Round((numShares ?? 0) * (pricesShares ?? 0), 2) : amountIn - amountOut;
+        public virtual Decimal? Amount => InvestmentCategory.HasValue && InvestmentCategory.Value == false ? Math.Round((NumShares ?? 0) * (PricesShares ?? 0), 2) : AmountIn - AmountOut;
 
-        public virtual Double? orden { set; get; }
+        public virtual Double? Orden { set; get; }
 
-        public virtual Decimal? balance { set; get; }
+        public virtual Decimal? Balance { set; get; }
 
         
 
-        internal TransactionsDAO toDAO()
+        internal TransactionsDAO ToDao()
         {
             return new TransactionsDAO
             {
-                id = this.id,
-                date = this.date,
-                accountid = this.accountid,
+                id = this.Id,
+                date = this.Date,
+                accountid = this.Accountid,
                 account = null,
-                personid = this.personid,
+                personid = this.Personid,
                 person = null,
-                categoryid = this.categoryid,
+                categoryid = this.Categoryid,
                 category = null,
-                amountIn = this.amountIn,
-                amountOut = this.amountOut,
-                memo = this.memo,
-                investmentCategory = this.investmentCategory,
+                amountIn = this.AmountIn,
+                amountOut = this.AmountOut,
+                memo = this.Memo,
+                investmentCategory = this.InvestmentCategory,
                 investmentProducts = null,
-                investmentProductsid = this.investmentProductsid,
-                tranferid = this.tranferid,
-                tranferSplitid = this.tranferSplitid,
+                investmentProductsid = this.InvestmentProductsid,
+                tranferid = this.Tranferid,
+                tranferSplitid = this.TranferSplitid,
                 transactionStatus = null,
-                transactionStatusid = this.transactionStatusid,
-                numShares = this.numShares,
-                pricesShares = this.pricesShares,
-                tagid = this.tagid,
+                transactionStatusid = this.TransactionStatusid,
+                numShares = this.NumShares,
+                pricesShares = this.PricesShares,
+                tagid = this.Tagid,
                 tag = null,
-                balance = this.balance,
-                orden = this.orden
+                balance = this.Balance,
+                orden = this.Orden
             };
         }
 
@@ -103,30 +103,30 @@ namespace GARCA.BO.Models
                 ? null
                 : new Transactions
                 {
-                    id = v.id,
-                    date = v.date,
-                    accountid = v.accountid,
-                    account = v.account != null ? (Accounts?)v.account : null,
-                    personid = v.personid,
-                    person = v.person != null ? (Persons?)v.person : null,
-                    categoryid = v.categoryid,
-                    category = v.category != null ? (Categories?)v.category : null,
-                    amountIn = v.amountIn,
-                    amountOut = v.amountOut,
-                    memo = v.memo,
-                    investmentCategory = v.investmentCategory,
-                    investmentProducts = v.investmentProducts != null ? (InvestmentProducts?)v.investmentProducts : null,
-                    investmentProductsid = v.investmentProductsid,
-                    tranferid = v.tranferid,
-                    tranferSplitid = v.tranferSplitid,
-                    transactionStatus = v.transactionStatus != null ? (TransactionsStatus?)v.transactionStatus : null,
-                    transactionStatusid = v.transactionStatusid,
-                    numShares = v.numShares,
-                    pricesShares = v.pricesShares,
-                    tagid = v.tagid,
-                    tag = v.tag != null ? (Tags?)v.tag : null,
-                    balance = v.balance,
-                    orden = v.orden
+                    Id = v.id,
+                    Date = v.date,
+                    Accountid = v.accountid,
+                    Account = v.account != null ? (Accounts?)v.account : null,
+                    Personid = v.personid,
+                    Person = v.person != null ? (Persons?)v.person : null,
+                    Categoryid = v.categoryid,
+                    Category = v.category != null ? (Categories?)v.category : null,
+                    AmountIn = v.amountIn,
+                    AmountOut = v.amountOut,
+                    Memo = v.memo,
+                    InvestmentCategory = v.investmentCategory,
+                    InvestmentProducts = v.investmentProducts != null ? (InvestmentProducts?)v.investmentProducts : null,
+                    InvestmentProductsid = v.investmentProductsid,
+                    Tranferid = v.tranferid,
+                    TranferSplitid = v.tranferSplitid,
+                    TransactionStatus = v.transactionStatus != null ? (TransactionsStatus?)v.transactionStatus : null,
+                    TransactionStatusid = v.transactionStatusid,
+                    NumShares = v.numShares,
+                    PricesShares = v.pricesShares,
+                    Tagid = v.tagid,
+                    Tag = v.tag != null ? (Tags?)v.tag : null,
+                    Balance = v.balance,
+                    Orden = v.orden
                 };
         }
 
@@ -137,12 +137,12 @@ namespace GARCA.BO.Models
                 return 1; 
             }
 
-            if (!(obj is Transactions otherTransaction))
+            if (obj is not Transactions otherTransaction)
             {
                 throw new ArgumentException("El objeto proporcionado no es de tipo Transactions.");
             }
 
-            return otherTransaction.orden.compareTo(this.orden);
+            return otherTransaction.Orden.CompareTo(this.Orden);
         }
     }
 }

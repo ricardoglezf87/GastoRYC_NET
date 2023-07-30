@@ -6,30 +6,30 @@ namespace GARCA.BO.Models
 {
     public class Accounts : ModelBase
     {
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
 
-        public virtual int? accountsTypesid { set; get; }
+        public virtual int? AccountsTypesid { set; get; }
 
-        public virtual AccountsTypes? accountsTypes { set; get; }
+        public virtual AccountsTypes? AccountsTypes { set; get; }
 
-        public virtual int? categoryid { set; get; }
+        public virtual int? Categoryid { set; get; }
 
-        public virtual Categories? category { set; get; }
+        public virtual Categories? Category { set; get; }
 
         [DefaultValue(false)]
-        public virtual Boolean? closed { set; get; }
+        public virtual Boolean? Closed { set; get; }
 
-        internal AccountsDAO toDAO()
+        internal AccountsDAO ToDao()
         {
             return new AccountsDAO
             {
-                id = this.id,
-                description = this.description,
-                categoryid = this.categoryid,
+                id = this.Id,
+                description = this.Description,
+                categoryid = this.Categoryid,
                 category = null,
-                accountsTypesid = this.accountsTypesid,
+                accountsTypesid = this.AccountsTypesid,
                 accountsTypes = null,
-                closed = this.closed
+                closed = this.Closed
             };
         }
 
@@ -39,13 +39,13 @@ namespace GARCA.BO.Models
                 ? null
                 : new Accounts
                 {
-                    id = v.id,
-                    description = v.description,
-                    categoryid = v.categoryid,
-                    category = v.category != null ? (Categories?)v.category : null,
-                    accountsTypesid = v.accountsTypesid,
-                    accountsTypes = v.accountsTypes != null ? (AccountsTypes?)v.accountsTypes : null,
-                    closed = v.closed
+                    Id = v.id,
+                    Description = v.description,
+                    Categoryid = v.categoryid,
+                    Category = v.category != null ? (Categories?)v.category : null,
+                    AccountsTypesid = v.accountsTypesid,
+                    AccountsTypes = v.accountsTypes != null ? (AccountsTypes?)v.accountsTypes : null,
+                    Closed = v.closed
                 };
         }
     }

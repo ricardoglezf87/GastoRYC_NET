@@ -11,14 +11,9 @@ namespace GARCA.View.ViewModels
 {
     public class TransactionViewModel
     {
-        public static AccountsView? accountsSelected;
+        public static AccountsView? AccountsSelected;
 
-        private IncrementalList<Transactions>? _incrementalItemsSource;
-        public IncrementalList<Transactions>? IncrementalItemsSource
-        {
-            get => _incrementalItemsSource;
-            set => _incrementalItemsSource = value;
-        }
+        public IncrementalList<Transactions>? IncrementalItemsSource { get; set; }
 
         public TransactionViewModel()
         {
@@ -32,9 +27,9 @@ namespace GARCA.View.ViewModels
         /// <param name="baseIndex"></param>
         private async void LoadMoreItems(uint count, int baseIndex)
         {
-            var item = accountsSelected != null
-                ? await Task.Run(() => DependencyConfig.iTransactionsService.getByAccountOrderByOrderDesc(accountsSelected.id, baseIndex, 50))
-                : await Task.Run(() => DependencyConfig.iTransactionsService.getAllOpennedOrderByOrderDesc(baseIndex, 50));
+            var item = AccountsSelected != null
+                ? await Task.Run(() => DependencyConfig.ITransactionsService.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, 50))
+                : await Task.Run(() => DependencyConfig.ITransactionsService.GetAllOpennedOrderByOrderDesc(baseIndex, 50));
             if (item != null)
             {
                 var transactions = new ObservableCollection<Transactions?>(item);

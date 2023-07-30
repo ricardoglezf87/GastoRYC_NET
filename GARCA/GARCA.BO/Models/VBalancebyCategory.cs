@@ -5,13 +5,13 @@ namespace GARCA.BO.Models
 {
     public class VBalancebyCategory
     {
-        public virtual int? year { set; get; }
-        public virtual int? month { set; get; }
-        public virtual int? categoriesTypesid { set; get; }
-        public virtual int? categoryid { set; get; }
-        public virtual string? category { set; get; }
-        public virtual Decimal? amount { set; get; }
-        public virtual Decimal? neg_amount => -amount;
+        public virtual int? Year { set; get; }
+        public virtual int? Month { set; get; }
+        public virtual int? CategoriesTypesid { set; get; }
+        public virtual int? Categoryid { set; get; }
+        public virtual string? Category { set; get; }
+        public virtual Decimal? Amount { set; get; }
+        public virtual Decimal? NegAmount => -Amount;
         
         public static explicit operator VBalancebyCategory?(VBalancebyCategoryDAO? v)
         {
@@ -19,12 +19,12 @@ namespace GARCA.BO.Models
                 ? null
                 : new VBalancebyCategory
                 {
-                    year = v.year,
-                    month = v.month,
-                    categoriesTypesid = v.categoriesTypesid,
-                    categoryid = v.categoryid,
-                    category = v.category,
-                    amount = v.amount
+                    Year = v.year,
+                    Month = v.month,
+                    CategoriesTypesid = v.categoriesTypesid,
+                    Categoryid = v.categoryid,
+                    Category = v.category,
+                    Amount = v.amount
                 };
         }
     }

@@ -20,8 +20,8 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = DependencyConfig.iAccountsTypesService.getAll();
-            gvAccounts.ItemsSource = DependencyConfig.iAccountsService.getAll();
+            cbAccountsTypes.ItemsSource = DependencyConfig.IAccountsTypesService.GetAll();
+            gvAccounts.ItemsSource = DependencyConfig.IAccountsService.GetAll();
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -32,7 +32,7 @@ namespace GARCA.View.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.accountsTypes = DependencyConfig.iAccountsTypesService.getByID(accounts.accountsTypesid);
+                        accounts.AccountsTypes = DependencyConfig.IAccountsTypesService.GetById(accounts.AccountsTypesid);
                         break;
                 }
             }
@@ -43,44 +43,44 @@ namespace GARCA.View.Views
         {
             var accounts = (Accounts)e.RowData;
 
-            if (accounts.description == null)
+            if (accounts.Description == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("description", "Tiene que rellenar la descripción");
             }
 
-            if (accounts.accountsTypesid == null)
+            if (accounts.AccountsTypesid == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("accountsTypesid", "Tiene que rellenar el tipo de cuenta");
             }
         }
 
-        private void updateCategory(Accounts accounts)
+        private void UpdateCategory(Accounts accounts)
         {
             Categories? categories;
 
-            if (accounts.categoryid != null)
+            if (accounts.Categoryid != null)
             {
-                categories = DependencyConfig.iCategoriesService.getByID(accounts.categoryid);
+                categories = DependencyConfig.ICategoriesService.GetById(accounts.Categoryid);
                 if (categories != null)
                 {
-                    categories.description = "[" + accounts.description + "]";
-                    DependencyConfig.iCategoriesService.update(categories);
+                    categories.Description = "[" + accounts.Description + "]";
+                    DependencyConfig.ICategoriesService.Update(categories);
                 }
             }
             else
             {
                 categories = new Categories();
-                accounts.categoryid = DependencyConfig.iCategoriesService.getNextID();
-                categories.description = "[" + accounts.description + "]";
-                categories.categoriesTypesid = (int)CategoriesTypesService.eCategoriesTypes.Transfers;
+                accounts.Categoryid = DependencyConfig.ICategoriesService.GetNextId();
+                categories.Description = "[" + accounts.Description + "]";
+                categories.CategoriesTypesid = (int)CategoriesTypesService.ECategoriesTypes.Transfers;
 
             }
 
             if (categories != null)
             {
-                DependencyConfig.iCategoriesService.update(categories);
+                DependencyConfig.ICategoriesService.Update(categories);
             }
         }
 
@@ -88,26 +88,26 @@ namespace GARCA.View.Views
         {
             var accounts = (Accounts)e.RowData;
 
-            if (accounts.accountsTypes == null && accounts.accountsTypesid != null)
+            if (accounts.AccountsTypes == null && accounts.AccountsTypesid != null)
             {
-                accounts.accountsTypes = DependencyConfig.iAccountsTypesService.getByID(accounts.accountsTypesid);
+                accounts.AccountsTypes = DependencyConfig.IAccountsTypesService.GetById(accounts.AccountsTypesid);
             }
 
-            updateCategory(accounts);
-            DependencyConfig.iAccountsService.update(accounts);
+            UpdateCategory(accounts);
+            DependencyConfig.IAccountsService.Update(accounts);
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items)
             {
-                var categories = DependencyConfig.iCategoriesService.getByID(accounts.categoryid);
+                var categories = DependencyConfig.ICategoriesService.GetById(accounts.Categoryid);
                 if (categories != null)
                 {
-                    DependencyConfig.iCategoriesService.delete(categories);
+                    DependencyConfig.ICategoriesService.Delete(categories);
                 }
 
-                DependencyConfig.iAccountsService.delete(accounts);
+                DependencyConfig.IAccountsService.Delete(accounts);
             }
         }
 

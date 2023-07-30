@@ -30,15 +30,15 @@
                                RecordDeleted="gvCategories_RecordDeleted" 
                                RecordDeleting="gvCategories_RecordDeleting" Grid.Row="1">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
+                <syncfusion:SortColumnDescription ColumnName="Description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="description" HeaderText="Descripción" />
+                <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="Description" HeaderText="Descripción" />
                 <syncfusion:GridComboBoxColumn  HeaderText="Tipos"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbCategoriesTypes" MappingName="categoriesTypesid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id"/>
+                    x:Name="cbCategoriesTypes" MappingName="CategoriesTypesid" 
+                                                DisplayMemberPath="Description" SelectedValuePath="Id"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 

@@ -24,191 +24,191 @@ namespace GARCA.BO.Services
 
         #region TransactionsActions
 
-        public HashSet<Transactions?>? getAll()
+        public HashSet<Transactions?>? GetAll()
         {
-            return transactionsManager.getAll()?.toHashSetBO();
+            return transactionsManager.GetAll()?.ToHashSetBo();
         }
 
-        public HashSet<Transactions?>? getAllOpenned()
+        public HashSet<Transactions?>? GetAllOpenned()
         {
-            return transactionsManager.getAllOpenned()?.toHashSetBO();
+            return transactionsManager.GetAllOpenned()?.ToHashSetBo();
         }
 
-        public SortedSet<Transactions?>? getAllOpennedOrderByOrderDesc(int startIndex, int nPage)
+        public SortedSet<Transactions?>? GetAllOpennedOrderByOrderDesc(int startIndex, int nPage)
         {
-            return transactionsManager.getAllOpennedOrderByOrdenDesc(startIndex, nPage)?.toSortedSetBO();
+            return transactionsManager.GetAllOpennedOrderByOrdenDesc(startIndex, nPage)?.ToSortedSetBo();
         }
 
-        public Transactions? getByID(int? id)
+        public Transactions? GetById(int? id)
         {
-            return (Transactions?)transactionsManager.getByID(id);
+            return (Transactions?)transactionsManager.GetById(id);
         }
 
-        private HashSet<Transactions?>? getByInvestmentProduct(int? id)
+        private HashSet<Transactions?>? GetByInvestmentProduct(int? id)
         {
-            return transactionsManager.getByInvestmentProduct(id)?.toHashSetBO();
+            return transactionsManager.GetByInvestmentProduct(id)?.ToHashSetBo();
         }
 
-        public HashSet<Transactions?>? getByInvestmentProduct(InvestmentProducts? investment)
+        public HashSet<Transactions?>? GetByInvestmentProduct(InvestmentProducts? investment)
         {
-            return getByInvestmentProduct(investment.id);
+            return GetByInvestmentProduct(investment.Id);
         }
 
-        public Transactions? update(Transactions transactions)
+        public Transactions? Update(Transactions transactions)
         {
-            transactions.date = transactions.date.removeTime();
-            transactions.orden = createOrden(transactions);
-            return (Transactions?)transactionsManager.update(transactions?.toDAO());
+            transactions.Date = transactions.Date.RemoveTime();
+            transactions.Orden = CreateOrden(transactions);
+            return (Transactions?)transactionsManager.Update(transactions?.ToDao());
         }
 
-        private void updateList(List<Transactions?>? lObj)
+        private void UpdateList(List<Transactions?>? lObj)
         {
-                transactionsManager.updateList(lObj.toListDAO());
+                transactionsManager.UpdateList(lObj.ToListDao());
         }
 
-        public void delete(Transactions? transactions)
+        public void Delete(Transactions? transactions)
         {
-            transactionsManager.delete(transactions?.toDAO());
+            transactionsManager.Delete(transactions?.ToDao());
         }
 
-        public HashSet<Transactions?>? getByAccount(int? id)
+        public HashSet<Transactions?>? GetByAccount(int? id)
         {
-            return transactionsManager.getByAccount(id)?.toHashSetBO();
+            return transactionsManager.GetByAccount(id)?.ToHashSetBo();
         }
 
-        private SortedSet<Transactions?>? getByAccountOrderByOrderDesc(int? id)
+        private SortedSet<Transactions?>? GetByAccountOrderByOrderDesc(int? id)
         {
-            return transactionsManager.getByAccountOrderByOrdenDesc(id)?.toSortedSetBO();
+            return transactionsManager.GetByAccountOrderByOrdenDesc(id)?.ToSortedSetBo();
         }
 
-        public SortedSet<Transactions?>? getByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
+        public SortedSet<Transactions?>? GetByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
         {
-            return transactionsManager.getByAccountOrderByOrdenDesc(id, startIndex, nPage)?.toSortedSetBO();
+            return transactionsManager.GetByAccountOrderByOrdenDesc(id, startIndex, nPage)?.ToSortedSetBo();
         }
 
-        public HashSet<Transactions?>? getByAccount(Accounts? accounts)
+        public HashSet<Transactions?>? GetByAccount(Accounts? accounts)
         {
-            return getByAccount(accounts?.id);
+            return GetByAccount(accounts?.Id);
         }
 
-        private HashSet<Transactions?>? getByPerson(int? id)
+        private HashSet<Transactions?>? GetByPerson(int? id)
         {
-            return transactionsManager.getByPerson(id)?.toHashSetBO();
+            return transactionsManager.GetByPerson(id)?.ToHashSetBo();
         }
 
-        public HashSet<Transactions?>? getByPerson(Persons? person)
+        public HashSet<Transactions?>? GetByPerson(Persons? person)
         {
-            return getByPerson(person?.id);
+            return GetByPerson(person?.Id);
         }
 
-        private int getNextID()
+        private int GetNextId()
         {
-            return transactionsManager.getNextID();
+            return transactionsManager.GetNextId();
         }
 
-        private double createOrden(Transactions transactions)
+        private double CreateOrden(Transactions transactions)
         {
             return Convert.ToDouble(
-                    transactions.date?.Year.ToString("0000")
-                    + transactions.date?.Month.ToString("00")
-                    + transactions.date?.Day.ToString("00")
-                    + transactions.id.ToString("000000")
-                    + (transactions.amountIn != 0 ? "1" : "0"));
+                    transactions.Date?.Year.ToString("0000")
+                    + transactions.Date?.Month.ToString("00")
+                    + transactions.Date?.Day.ToString("00")
+                    + transactions.Id.ToString("000000")
+                    + (transactions.AmountIn != 0 ? "1" : "0"));
         }
 
-        public void saveChanges(ref Transactions? transactions)
+        public void SaveChanges(ref Transactions? transactions)
         {
-            transactions.amountIn ??= 0;
+            transactions.AmountIn ??= 0;
 
-            transactions.amountOut ??= 0;
+            transactions.AmountOut ??= 0;
 
-            updateTranfer(transactions);
-            updateTranferFromSplit(transactions);
-            transactions = update(transactions);
-            DependencyConfig.iPersonsService.setCategoryDefault(transactions.person);
-            refreshBalanceTransactions(transactions);
+            UpdateTranfer(transactions);
+            UpdateTranferFromSplit(transactions);
+            transactions = Update(transactions);
+            DependencyConfig.IPersonsService.SetCategoryDefault(transactions.Person);
+            RefreshBalanceTransactions(transactions);
         }
 
-        public void refreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false)
+        public void RefreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false)
         {
-            var tList = getByAccountOrderByOrderDesc(tUpdate.accountid);
+            var tList = GetByAccountOrderByOrderDesc(tUpdate.Accountid);
             decimal? balanceTotal = 0;
             
             if (tList != null)
             {
-                balanceTotal = tList.Sum(x => x.amount);
+                balanceTotal = tList.Sum(x => x.Amount);
             }
 
-            if (tUpdate != null && tUpdate.date != null)
+            if (tUpdate != null && tUpdate.Date != null)
             {
-                var aux = tList?.Where(x => x.date >= tUpdate?.date.addDay(-1) || dateFilter).ToList();
+                var aux = tList?.Where(x => x.Date >= tUpdate?.Date.AddDay(-1) || dateFilter).ToList();
                 for (var i = 0; i < aux.Count; i++)
                 {
-                    if (aux[i].amount != null)
+                    if (aux[i].Amount != null)
                     {
-                        aux[i].balance = balanceTotal;
-                        balanceTotal -= aux[i].amount;
+                        aux[i].Balance = balanceTotal;
+                        balanceTotal -= aux[i].Amount;
                     }
                 }
-                updateList(aux);
+                UpdateList(aux);
             }
         }
 
-        private void updateTranfer(Transactions transactions)
+        private void UpdateTranfer(Transactions transactions)
         {
-            if (transactions.tranferid != null &&
-                transactions.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            if (transactions.Tranferid != null &&
+                transactions.Category.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = getByID(transactions.tranferid);
+                var tContraria = GetById(transactions.Tranferid);
                 if (tContraria != null)
                 {
-                    delete(tContraria);
+                    Delete(tContraria);
                 }
-                transactions.tranferid = null;
-                refreshBalanceTransactions(tContraria);
+                transactions.Tranferid = null;
+                RefreshBalanceTransactions(tContraria);
             }
-            else if (transactions.tranferid == null &&
-                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            else if (transactions.Tranferid == null &&
+                transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                transactions.tranferid = getNextID();
+                transactions.Tranferid = GetNextId();
 
                 Transactions? tContraria = new()
                 {
-                    date = transactions.date,
-                    accountid = DependencyConfig.iAccountsService.getByCategoryId(transactions.categoryid)?.id,
-                    personid = transactions.personid,
-                    categoryid = DependencyConfig.iAccountsService.getByID(transactions.accountid)?.categoryid,
-                    memo = transactions.memo,
-                    tagid = transactions.tagid,
-                    amountIn = transactions.amountOut,
-                    amountOut = transactions.amountIn
+                    Date = transactions.Date,
+                    Accountid = DependencyConfig.IAccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
+                    Personid = transactions.Personid,
+                    Categoryid = DependencyConfig.IAccountsService.GetById(transactions.Accountid)?.Categoryid,
+                    Memo = transactions.Memo,
+                    Tagid = transactions.Tagid,
+                    AmountIn = transactions.AmountOut,
+                    AmountOut = transactions.AmountIn
                 };
 
-                tContraria.tranferid = transactions.id != 0 ? transactions.id : getNextID() + 1;
+                tContraria.Tranferid = transactions.Id != 0 ? transactions.Id : GetNextId() + 1;
 
-                tContraria.transactionStatusid = transactions.transactionStatusid;
+                tContraria.TransactionStatusid = transactions.TransactionStatusid;
 
-                update(tContraria);
-                refreshBalanceTransactions(tContraria);
+                Update(tContraria);
+                RefreshBalanceTransactions(tContraria);
 
             }
-            else if (transactions.tranferid != null &&
-                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            else if (transactions.Tranferid != null &&
+                transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = getByID(transactions.tranferid);
+                var tContraria = GetById(transactions.Tranferid);
                 if (tContraria != null)
                 {
-                    tContraria.date = transactions.date;
-                    tContraria.accountid = DependencyConfig.iAccountsService.getByCategoryId(transactions.categoryid)?.id;
-                    tContraria.personid = transactions.personid;
-                    tContraria.categoryid = DependencyConfig.iAccountsService.getByID(transactions.accountid)?.categoryid;
-                    tContraria.memo = transactions.memo;
-                    tContraria.tagid = transactions.tagid;
-                    tContraria.amountIn = transactions.amountOut;
-                    tContraria.amountOut = transactions.amountIn;
-                    tContraria.transactionStatusid = transactions.transactionStatusid;
-                    update(tContraria);
-                    refreshBalanceTransactions(tContraria);
+                    tContraria.Date = transactions.Date;
+                    tContraria.Accountid = DependencyConfig.IAccountsService.GetByCategoryId(transactions.Categoryid)?.Id;
+                    tContraria.Personid = transactions.Personid;
+                    tContraria.Categoryid = DependencyConfig.IAccountsService.GetById(transactions.Accountid)?.Categoryid;
+                    tContraria.Memo = transactions.Memo;
+                    tContraria.Tagid = transactions.Tagid;
+                    tContraria.AmountIn = transactions.AmountOut;
+                    tContraria.AmountOut = transactions.AmountIn;
+                    tContraria.TransactionStatusid = transactions.TransactionStatusid;
+                    Update(tContraria);
+                    RefreshBalanceTransactions(tContraria);
                 }
             }
         }
@@ -217,117 +217,117 @@ namespace GARCA.BO.Services
 
         #region SplitsActions
 
-        public void updateTranferFromSplit(Transactions transactions)
+        public void UpdateTranferFromSplit(Transactions transactions)
         {
-            if (transactions.tranferSplitid != null &&
-                transactions.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            if (transactions.TranferSplitid != null &&
+                transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = DependencyConfig.iSplitsService.getByID(transactions.tranferSplitid);
+                var tContraria = DependencyConfig.ISplitsService.GetById(transactions.TranferSplitid);
                 if (tContraria != null)
                 {
-                    tContraria.transaction.date = transactions.date;
-                    tContraria.transaction.personid = transactions.personid;
-                    tContraria.categoryid = transactions.account.categoryid;
-                    tContraria.memo = transactions.memo;
-                    tContraria.tagid = transactions.tagid;
-                    tContraria.amountIn = transactions.amountOut;
-                    tContraria.amountOut = transactions.amountIn;
-                    tContraria.transaction.transactionStatusid = transactions.transactionStatusid;
-                    DependencyConfig.iSplitsService.update(tContraria);
+                    tContraria.Transaction.Date = transactions.Date;
+                    tContraria.Transaction.Personid = transactions.Personid;
+                    tContraria.Categoryid = transactions.Account.Categoryid;
+                    tContraria.Memo = transactions.Memo;
+                    tContraria.Tagid = transactions.Tagid;
+                    tContraria.AmountIn = transactions.AmountOut;
+                    tContraria.AmountOut = transactions.AmountIn;
+                    tContraria.Transaction.TransactionStatusid = transactions.TransactionStatusid;
+                    DependencyConfig.ISplitsService.Update(tContraria);
                 }
             }
         }
 
-        public void updateTransactionAfterSplits(Transactions? transactions)
+        public void UpdateTransactionAfterSplits(Transactions? transactions)
         {
-            var lSplits = transactions.splits ?? DependencyConfig.iSplitsService.getbyTransactionid(transactions.id);
+            var lSplits = transactions.Splits ?? DependencyConfig.ISplitsService.GetbyTransactionid(transactions.Id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
-                transactions.amountIn = 0;
-                transactions.amountOut = 0;
+                transactions.AmountIn = 0;
+                transactions.AmountOut = 0;
 
                 foreach (var splits in lSplits)
                 {
-                    transactions.amountIn += splits.amountIn == null ? 0 : splits.amountIn;
-                    transactions.amountOut += splits.amountOut == null ? 0 : splits.amountOut;
+                    transactions.AmountIn += splits.AmountIn == null ? 0 : splits.AmountIn;
+                    transactions.AmountOut += splits.AmountOut == null ? 0 : splits.AmountOut;
                 }
 
-                transactions.categoryid = (int)CategoriesService.eSpecialCategories.Split;
-                transactions.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.Split);
+                transactions.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
+                transactions.Category = DependencyConfig.ICategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
-            else if (transactions.categoryid is not null
-                and (int)CategoriesService.eSpecialCategories.Split)
+            else if (transactions.Categoryid is not null
+                and (int)CategoriesService.ESpecialCategories.Split)
             {
-                transactions.categoryid = (int)CategoriesService.eSpecialCategories.WithoutCategory;
-                transactions.category = DependencyConfig.iCategoriesService.getByID((int)CategoriesService.eSpecialCategories.WithoutCategory);
+                transactions.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
+                transactions.Category = DependencyConfig.ICategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
             }
 
-            if (transactions.id == 0)
+            if (transactions.Id == 0)
             {
-                update(transactions);
+                Update(transactions);
                 foreach (var splits in lSplits)
                 {
-                    splits.transactionid = transactions.id;
-                    DependencyConfig.iSplitsService.update(splits);
+                    splits.Transactionid = transactions.Id;
+                    DependencyConfig.ISplitsService.Update(splits);
                 }
             }
             else
             {
-                update(transactions);
+                Update(transactions);
             }
         }
 
-        public void updateTranferSplits(Transactions? transactions, Splits splits)
+        public void UpdateTranferSplits(Transactions? transactions, Splits splits)
         {
-            if (splits.tranferid != null &&
-                splits.category.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            if (splits.Tranferid != null &&
+                splits.Category.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = getByID(splits.tranferid);
+                var tContraria = GetById(splits.Tranferid);
                 if (tContraria != null)
                 {
-                    delete(tContraria);
+                    Delete(tContraria);
                 }
-                splits.tranferid = null;
+                splits.Tranferid = null;
             }
-            else if (splits.tranferid == null &&
-                splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            else if (splits.Tranferid == null &&
+                splits.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                splits.tranferid = getNextID();
+                splits.Tranferid = GetNextId();
 
                 Transactions? tContraria = new()
                 {
-                    date = transactions.date,
-                    accountid = DependencyConfig.iAccountsService.getByCategoryId(splits.categoryid)?.id,
-                    personid = transactions.personid,
-                    categoryid = DependencyConfig.iAccountsService.getByID(transactions.accountid).categoryid,
-                    memo = splits.memo,
-                    tagid = transactions.tagid,
-                    amountIn = splits.amountOut,
-                    amountOut = splits.amountIn,
-                    tranferSplitid = splits.id != 0 ? splits.id : getNextID() + 1,
-                    transactionStatusid = transactions.transactionStatusid
+                    Date = transactions.Date,
+                    Accountid = DependencyConfig.IAccountsService.GetByCategoryId(splits.Categoryid)?.Id,
+                    Personid = transactions.Personid,
+                    Categoryid = DependencyConfig.IAccountsService.GetById(transactions.Accountid).Categoryid,
+                    Memo = splits.Memo,
+                    Tagid = transactions.Tagid,
+                    AmountIn = splits.AmountOut,
+                    AmountOut = splits.AmountIn,
+                    TranferSplitid = splits.Id != 0 ? splits.Id : GetNextId() + 1,
+                    TransactionStatusid = transactions.TransactionStatusid
                 };
 
-                update(tContraria);
+                Update(tContraria);
 
             }
-            else if (splits.tranferid != null &&
-                splits.category.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            else if (splits.Tranferid != null &&
+                splits.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = getByID(splits.tranferid);
+                var tContraria = GetById(splits.Tranferid);
                 if (tContraria != null)
                 {
-                    tContraria.date = transactions.date;
-                    tContraria.accountid = DependencyConfig.iAccountsService.getByCategoryId(splits.categoryid)?.id;
-                    tContraria.personid = transactions.personid;
-                    tContraria.categoryid = DependencyConfig.iAccountsService.getByID(transactions.accountid).categoryid;
-                    tContraria.memo = splits.memo;
-                    tContraria.tagid = transactions.tagid;
-                    tContraria.amountIn = splits.amountOut ?? 0;
-                    tContraria.amountOut = splits.amountIn ?? 0;
-                    tContraria.transactionStatusid = transactions.transactionStatusid;
-                    update(tContraria);
+                    tContraria.Date = transactions.Date;
+                    tContraria.Accountid = DependencyConfig.IAccountsService.GetByCategoryId(splits.Categoryid)?.Id;
+                    tContraria.Personid = transactions.Personid;
+                    tContraria.Categoryid = DependencyConfig.IAccountsService.GetById(transactions.Accountid).Categoryid;
+                    tContraria.Memo = splits.Memo;
+                    tContraria.Tagid = transactions.Tagid;
+                    tContraria.AmountIn = splits.AmountOut ?? 0;
+                    tContraria.AmountOut = splits.AmountIn ?? 0;
+                    tContraria.TransactionStatusid = transactions.TransactionStatusid;
+                    Update(tContraria);
                 }
             }
         }

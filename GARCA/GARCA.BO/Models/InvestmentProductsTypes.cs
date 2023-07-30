@@ -5,7 +5,7 @@ namespace GARCA.BO.Models
 {
     public class InvestmentProductsTypes : ModelBase
     {
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
         
         public static explicit operator InvestmentProductsTypes?(InvestmentProductsTypesDAO? v)
         {
@@ -13,8 +13,8 @@ namespace GARCA.BO.Models
                 ? null
                 : new InvestmentProductsTypes
                 {
-                    id = v.id,
-                    description = v.description
+                    Id = v.id,
+                    Description = v.description
                 };
         }
     }

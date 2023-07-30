@@ -11,7 +11,7 @@ namespace GARCA.BO.Services
 
         private readonly CategoriesManager categoriesManager;
         
-        public enum eSpecialCategories : int
+        public enum ESpecialCategories : int
         {
             Split = -1,
             WithoutCategory = 0
@@ -22,34 +22,34 @@ namespace GARCA.BO.Services
             categoriesManager = new CategoriesManager();
         }
 
-        public HashSet<Categories?>? getAll()
+        public HashSet<Categories?>? GetAll()
         {
-            return categoriesManager.getAll()?.toHashSetBO();
+            return categoriesManager.GetAll()?.ToHashSetBo();
         }
 
-        public HashSet<Categories?>? getAllWithoutSpecialTransfer()
+        public HashSet<Categories?>? GetAllWithoutSpecialTransfer()
         {
-            return categoriesManager?.getAllWithoutSpecialTransfer()?.toHashSetBO();
+            return categoriesManager?.GetAllWithoutSpecialTransfer()?.ToHashSetBo();
         }
 
-        public Categories? getByID(int? id)
+        public Categories? GetById(int? id)
         {
-            return (Categories?)categoriesManager.getByID(id);
+            return (Categories?)categoriesManager.GetById(id);
         }
 
-        public void update(Categories categories)
+        public void Update(Categories categories)
         {
-            categoriesManager.update(categories?.toDAO());
+            categoriesManager.Update(categories?.ToDao());
         }
 
-        public void delete(Categories categories)
+        public void Delete(Categories categories)
         {
-            categoriesManager.delete(categories?.toDAO());
+            categoriesManager.Delete(categories?.ToDao());
         }
 
-        public int getNextID()
+        public int GetNextId()
         {
-            return categoriesManager.getNextID();
+            return categoriesManager.GetNextId();
         }
     }
 }

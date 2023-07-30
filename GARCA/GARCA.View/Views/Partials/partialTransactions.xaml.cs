@@ -26,10 +26,10 @@ namespace GARCA.View.Views
 
         #region Constructor
 
-        public PartialTransactions(MainWindow _parentForm)
+        public PartialTransactions(MainWindow parentForm)
         {
             InitializeComponent();
-            parentForm = _parentForm;
+            this.parentForm = parentForm;
         }
 
         #endregion
@@ -38,7 +38,7 @@ namespace GARCA.View.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            loadTransactions();
+            LoadTransactions();
         }
 
         private void gvTransactions_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
@@ -55,20 +55,20 @@ namespace GARCA.View.Views
             var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
-            DependencyConfig.iTransactionsService.updateTransactionAfterSplits(transactions);
-            loadTransactions();
-            parentForm.loadAccounts();
+            DependencyConfig.ITransactionsService.UpdateTransactionAfterSplits(transactions);
+            LoadTransactions();
+            parentForm.LoadAccounts();
         }
 
         private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Transactions transactions in e.Items)
             {
-                removeTransaction(transactions);
+                RemoveTransaction(transactions);
             }
 
-            loadTransactions();
-            parentForm.loadAccounts();
+            LoadTransactions();
+            parentForm.LoadAccounts();
         }
 
         private void btnCopy_Click(object sender, RoutedEventArgs e)
@@ -87,34 +87,34 @@ namespace GARCA.View.Views
                     foreach (Transactions transactions in gvTransactions.SelectedItems)
                     {
                         TransactionsReminders? transactionsReminders = new();
-                        transactionsReminders.date = transactions.date;
-                        transactionsReminders.periodsRemindersid = (int)PeriodsRemindersService.ePeriodsReminders.Monthly;
-                        transactionsReminders.accountid = transactions.accountid;
-                        transactionsReminders.personid = transactions.personid;
-                        transactionsReminders.categoryid = transactions.categoryid;
-                        transactionsReminders.memo = transactions.memo;
-                        transactionsReminders.amountIn = transactions.amountIn;
-                        transactionsReminders.amountOut = transactions.amountOut;
-                        transactionsReminders.tagid = transactions.tagid;
-                        transactionsReminders.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                        transactionsReminders.Date = transactions.Date;
+                        transactionsReminders.PeriodsRemindersid = (int)PeriodsRemindersService.EPeriodsReminders.Monthly;
+                        transactionsReminders.Accountid = transactions.Accountid;
+                        transactionsReminders.Personid = transactions.Personid;
+                        transactionsReminders.Categoryid = transactions.Categoryid;
+                        transactionsReminders.Memo = transactions.Memo;
+                        transactionsReminders.AmountIn = transactions.AmountIn;
+                        transactionsReminders.AmountOut = transactions.AmountOut;
+                        transactionsReminders.Tagid = transactions.Tagid;
+                        transactionsReminders.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
 
-                        transactionsReminders = DependencyConfig.iTransactionsRemindersService.update(transactionsReminders);
+                        transactionsReminders = DependencyConfig.ITransactionsRemindersService.Update(transactionsReminders);
 
-                        foreach (var splits in DependencyConfig.iSplitsService.getbyTransactionid(transactions.id))
+                        foreach (var splits in DependencyConfig.ISplitsService.GetbyTransactionid(transactions.Id))
                         {
                             SplitsReminders splitsReminders = new();
-                            splitsReminders.transactionid = transactionsReminders.id;
-                            splitsReminders.categoryid = splits.categoryid;
-                            splitsReminders.memo = splits.memo;
-                            splitsReminders.amountIn = splits.amountIn;
-                            splitsReminders.amountOut = splits.amountOut;
-                            splitsReminders.tagid = splits.tagid;
-                            DependencyConfig.iSplitsRemindersService.update(splitsReminders);
+                            splitsReminders.Transactionid = transactionsReminders.Id;
+                            splitsReminders.Categoryid = splits.Categoryid;
+                            splitsReminders.Memo = splits.Memo;
+                            splitsReminders.AmountIn = splits.AmountIn;
+                            splitsReminders.AmountOut = splits.AmountOut;
+                            splitsReminders.Tagid = splits.Tagid;
+                            DependencyConfig.ISplitsRemindersService.Update(splitsReminders);
                         }
 
                         FrmTransactionReminders frm = new(transactionsReminders);
                         frm.ShowDialog();
-                        if (frm.windowsResult == eWindowsResult.Sucess)
+                        if (frm.WindowsResult == EWindowsResult.Sucess)
                         {
                             MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
                         }
@@ -149,8 +149,8 @@ namespace GARCA.View.Views
             {
                 FrmTransaction frm = new((Transactions)gvTransactions.CurrentItem);
                 frm.ShowDialog();
-                loadTransactions();
-                parentForm.loadAccounts();
+                LoadTransactions();
+                parentForm.LoadAccounts();
             }
         }
 
@@ -160,10 +160,10 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    removeTransaction(transactions);
+                    RemoveTransaction(transactions);
                 }
-                loadTransactions();
-                parentForm.loadAccounts();
+                LoadTransactions();
+                parentForm.LoadAccounts();
             }
             else
             {
@@ -177,11 +177,11 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
-                    transactions.transactionStatus = DependencyConfig.iTransactionsStatusService.getByID(transactions.transactionStatusid);
-                    DependencyConfig.iTransactionsService.update(transactions);
+                    transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
+                    transactions.TransactionStatus = DependencyConfig.ITransactionsStatusService.GetById(transactions.TransactionStatusid);
+                    DependencyConfig.ITransactionsService.Update(transactions);
                 }
-                loadTransactions();
+                LoadTransactions();
             }
             else
             {
@@ -195,11 +195,11 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Provisional;
-                    transactions.transactionStatus = DependencyConfig.iTransactionsStatusService.getByID(transactions.transactionStatusid);
-                    DependencyConfig.iTransactionsService.update(transactions);
+                    transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
+                    transactions.TransactionStatus = DependencyConfig.ITransactionsStatusService.GetById(transactions.TransactionStatusid);
+                    DependencyConfig.ITransactionsService.Update(transactions);
                 }
-                loadTransactions();
+                LoadTransactions();
             }
             else
             {
@@ -213,11 +213,11 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Reconciled;
-                    transactions.transactionStatus = DependencyConfig.iTransactionsStatusService.getByID(transactions.transactionStatusid);
-                    DependencyConfig.iTransactionsService.update(transactions);
+                    transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
+                    transactions.TransactionStatus = DependencyConfig.ITransactionsStatusService.GetById(transactions.TransactionStatusid);
+                    DependencyConfig.ITransactionsService.Update(transactions);
                 }
-                loadTransactions();
+                LoadTransactions();
             }
             else
             {
@@ -229,75 +229,75 @@ namespace GARCA.View.Views
 
         #region Functions        
 
-        public void loadTransactions()
+        public void LoadTransactions()
         {
-            setColumnVisibility(TransactionViewModel.accountsSelected);
+            SetColumnVisibility(TransactionViewModel.AccountsSelected);
         }
 
-        public void setColumnVisibility(AccountsView? _accountSelected = null)
+        public void SetColumnVisibility(AccountsView? accountSelected = null)
         {
-            TransactionViewModel.accountsSelected = _accountSelected;
+            TransactionViewModel.AccountsSelected = accountSelected;
 
             if (gvTransactions.View != null)
             {
                 gvTransactions.View.Refresh();
 
-                if (_accountSelected != null)
+                if (accountSelected != null)
                 {
-                    gvTransactions.Columns["account.description"].IsHidden = true;
+                    gvTransactions.Columns["Account.Description"].IsHidden = true;
 
-                    if (TransactionViewModel.accountsSelected.accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
+                    if (TransactionViewModel.AccountsSelected.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Invests)
                     {
-                        gvTransactions.Columns["numShares"].IsHidden = false;
-                        gvTransactions.Columns["pricesShares"].IsHidden = false;
-                        gvTransactions.Columns["amountIn"].IsHidden = true;
-                        gvTransactions.Columns["amountOut"].IsHidden = true;
+                        gvTransactions.Columns["NumShares"].IsHidden = false;
+                        gvTransactions.Columns["PricesShares"].IsHidden = false;
+                        gvTransactions.Columns["AmountIn"].IsHidden = true;
+                        gvTransactions.Columns["AmountOut"].IsHidden = true;
                     }
                     else
                     {
-                        gvTransactions.Columns["numShares"].IsHidden = true;
-                        gvTransactions.Columns["pricesShares"].IsHidden = true;
-                        gvTransactions.Columns["amountIn"].IsHidden = false;
-                        gvTransactions.Columns["amountOut"].IsHidden = false;
+                        gvTransactions.Columns["NumShares"].IsHidden = true;
+                        gvTransactions.Columns["PricesShares"].IsHidden = true;
+                        gvTransactions.Columns["AmountIn"].IsHidden = false;
+                        gvTransactions.Columns["AmountOut"].IsHidden = false;
                     }
                 }
                 else
                 {
-                    gvTransactions.Columns["account.description"].IsHidden = false;
+                    gvTransactions.Columns["Account.Description"].IsHidden = false;
                 }
             }
         }
 
-        private void removeTransaction(Transactions transactions)
+        private void RemoveTransaction(Transactions transactions)
         {
-            if (transactions.tranferSplitid != null)
+            if (transactions.TranferSplitid != null)
             {
-                MessageBox.Show("El movimiento Id: " + transactions.id.ToString() +
-                    " de fecha: " + transactions.date.toShortDateString() + " viene de una transferencia desde split, para borrar diríjase al split que lo generó.", "Eliminación movimiento");
+                MessageBox.Show("El movimiento Id: " + transactions.Id.ToString() +
+                    " de fecha: " + transactions.Date.ToShortDateString() + " viene de una transferencia desde split, para borrar diríjase al split que lo generó.", "Eliminación movimiento");
             }
             else
             {
-                if (transactions.splits != null)
+                if (transactions.Splits != null)
                 {
-                    var lSplits = transactions.splits.ToList();
+                    var lSplits = transactions.Splits.ToList();
                     for (var i = 0; i < lSplits.Count; i++)
                     {
                         var splits = lSplits[i];
-                        if (splits.tranferid != null)
+                        if (splits.Tranferid != null)
                         {
-                            DependencyConfig.iTransactionsService.delete(DependencyConfig.iTransactionsService.getByID(splits.tranferid));
+                            DependencyConfig.ITransactionsService.Delete(DependencyConfig.ITransactionsService.GetById(splits.Tranferid));
                         }
 
-                        DependencyConfig.iSplitsService.delete(splits);
+                        DependencyConfig.ISplitsService.Delete(splits);
                     }
                 }
 
-                if (transactions.tranferid != null)
+                if (transactions.Tranferid != null)
                 {
-                    DependencyConfig.iTransactionsService.delete(DependencyConfig.iTransactionsService.getByID(transactions.tranferid));
+                    DependencyConfig.ITransactionsService.Delete(DependencyConfig.ITransactionsService.GetById(transactions.Tranferid));
                 }
 
-                DependencyConfig.iTransactionsService.delete(transactions);
+                DependencyConfig.ITransactionsService.Delete(transactions);
             }
         }
 

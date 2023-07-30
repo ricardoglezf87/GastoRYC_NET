@@ -15,24 +15,24 @@ namespace GARCA.BO.Services
             tagsManager = new TagsManager();
         }
 
-        public HashSet<Tags?>? getAll()
+        public HashSet<Tags?>? GetAll()
         {
-            return tagsManager.getAll()?.toHashSetBO();
+            return tagsManager.GetAll()?.ToHashSetBo();
         }
 
-        public Tags? getByID(int? id)
+        public Tags? GetById(int? id)
         {
-            return (Tags?)tagsManager.getByID(id);
+            return (Tags?)tagsManager.GetById(id);
         }
 
-        public void update(Tags tags)
+        public void Update(Tags tags)
         {
-            tagsManager.update(tags?.toDAO());
+            tagsManager.Update(tags?.ToDao());
         }
 
-        public void delete(Tags tags)
+        public void Delete(Tags tags)
         {
-            tagsManager.delete(tags?.toDAO());
+            tagsManager.Delete(tags?.ToDao());
         }
     }
 }

@@ -17,35 +17,35 @@ namespace GARCA.BO.Services
             personsManager = new PersonsManager();
         }
 
-        public HashSet<Persons?>? getAll()
+        public HashSet<Persons?>? GetAll()
         {
-            return personsManager.getAll()?.toHashSetBO();
+            return personsManager.GetAll()?.ToHashSetBo();
         }
 
-        public Persons? getByID(int? id)
+        public Persons? GetById(int? id)
         {
-            return (Persons?)personsManager.getByID(id);
+            return (Persons?)personsManager.GetById(id);
         }
 
-        public void update(Persons persons)
+        public void Update(Persons persons)
         {
-            personsManager.update(persons?.toDAO());
+            personsManager.Update(persons?.ToDao());
         }
 
-        public void delete(Persons persons)
+        public void Delete(Persons persons)
         {
-            personsManager.delete(persons?.toDAO());
+            personsManager.Delete(persons?.ToDao());
         }
 
-        public void setCategoryDefault(Persons? persons)
+        public void SetCategoryDefault(Persons? persons)
         {
             if (persons == null)
             {
                 return;
             }
 
-            var result = (from x in DependencyConfig.iTransactionsService.getByPerson(persons)
-                          group x by x.categoryid into g
+            var result = (from x in DependencyConfig.ITransactionsService.GetByPerson(persons)
+                          group x by x.Categoryid into g
                           select new
                           {
                               categoryid = g.Key,
@@ -59,8 +59,8 @@ namespace GARCA.BO.Services
                                   where c.count == maxCount
                                   select c.categoryid).FirstOrDefault();
 
-                persons.categoryid = maxCounts;
-                update(persons);
+                persons.Categoryid = maxCounts;
+                Update(persons);
             }
         }
     }

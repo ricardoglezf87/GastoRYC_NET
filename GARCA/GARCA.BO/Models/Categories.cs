@@ -5,19 +5,19 @@ namespace GARCA.BO.Models
 {
     public class Categories : ModelBase
     {
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
 
-        public virtual int? categoriesTypesid { set; get; }
+        public virtual int? CategoriesTypesid { set; get; }
 
-        public virtual CategoriesTypes? categoriesTypes { set; get; }
+        public virtual CategoriesTypes? CategoriesTypes { set; get; }
 
-        internal CategoriesDAO toDAO()
+        internal CategoriesDAO ToDao()
         {
             return new CategoriesDAO
             {
-                id = this.id,
-                description = this.description,
-                categoriesTypesid = this.categoriesTypesid,
+                id = this.Id,
+                description = this.Description,
+                categoriesTypesid = this.CategoriesTypesid,
                 categoriesTypes = null
             };
         }
@@ -28,10 +28,10 @@ namespace GARCA.BO.Models
                 ? null
                 : new Categories
                 {
-                    id = v.id,
-                    description = v.description,
-                    categoriesTypesid = v.categoriesTypesid,
-                    categoriesTypes = v.categoriesTypes != null ? (CategoriesTypes?)v.categoriesTypes : null
+                    Id = v.id,
+                    Description = v.description,
+                    CategoriesTypesid = v.categoriesTypesid,
+                    CategoriesTypes = v.categoriesTypes != null ? (CategoriesTypes?)v.categoriesTypes : null
                 };
         }
     }

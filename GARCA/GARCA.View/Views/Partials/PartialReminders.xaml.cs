@@ -24,10 +24,10 @@ namespace GARCA.View.Views
 
         #region Constructor
 
-        public PartialReminders(MainWindow _parentForm)
+        public PartialReminders(MainWindow parentForm)
         {
             InitializeComponent();
-            parentForm = _parentForm;
+            this.parentForm = parentForm;
         }
 
         #endregion
@@ -36,7 +36,7 @@ namespace GARCA.View.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            loadReminders();
+            LoadReminders();
         }
 
         private void btnSkip_Click(object sender, RoutedEventArgs e)
@@ -46,7 +46,7 @@ namespace GARCA.View.Views
             {
                 if (sender != null && ((Button)sender)?.Tag != null)
                 {
-                    putDoneReminder((int?)((Button)sender).Tag);
+                    PutDoneReminder((int?)((Button)sender).Tag);
                 }
             }
         }
@@ -57,19 +57,19 @@ namespace GARCA.View.Views
             {
                 if (sender != null && ((Button)sender)?.Tag != null)
                 {
-                    makeTransactionFromReminder((int?)((Button)sender).Tag);
-                    putDoneReminder((int?)((Button)sender).Tag);
+                    MakeTransactionFromReminder((int?)((Button)sender).Tag);
+                    PutDoneReminder((int?)((Button)sender).Tag);
                 }
             }
         }
 
         private void cvReminders_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders != null)
+            if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).TransactionsReminders != null)
             {
-                FrmTransactionReminders frm = new(((ExpirationsReminders)cvReminders.SelectedItem).transactionsReminders);
+                FrmTransactionReminders frm = new(((ExpirationsReminders)cvReminders.SelectedItem).TransactionsReminders);
                 frm.ShowDialog();
-                loadReminders();
+                LoadReminders();
             }
         }
 
@@ -77,9 +77,9 @@ namespace GARCA.View.Views
 
         #region Functions
 
-        public async void loadReminders()
+        public async void LoadReminders()
         {
-            var expirationsReminders = await Task.Run(() => DependencyConfig.iExpirationsRemindersService.getAllPendingWithoutFutureWithGeneration()?.ToList());
+            var expirationsReminders = await Task.Run(() => DependencyConfig.IExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration()?.ToList());
 
             cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 
@@ -91,28 +91,28 @@ namespace GARCA.View.Views
                 new System.ComponentModel.SortDescription("date", System.ComponentModel.ListSortDirection.Ascending));
         }
 
-        private void putDoneReminder(int? id)
+        private void PutDoneReminder(int? id)
         {
-            var expirationsReminders = DependencyConfig.iExpirationsRemindersService.getByID(id);
+            var expirationsReminders = DependencyConfig.IExpirationsRemindersService.GetById(id);
             if (expirationsReminders != null)
             {
-                expirationsReminders.done = true;
-                DependencyConfig.iExpirationsRemindersService.update(expirationsReminders);
+                expirationsReminders.Done = true;
+                DependencyConfig.IExpirationsRemindersService.Update(expirationsReminders);
             }
 
-            loadReminders();
+            LoadReminders();
         }
 
-        private void makeTransactionFromReminder(int? id)
+        private void MakeTransactionFromReminder(int? id)
         {
-            var transaction = DependencyConfig.iExpirationsRemindersService.registerTransactionfromReminder(id);
+            var transaction = DependencyConfig.IExpirationsRemindersService.RegisterTransactionfromReminder(id);
             if (transaction != null)
             {
                 FrmTransaction frm = new(transaction);
                 frm.ShowDialog();
             }
 
-            parentForm.loadAccounts();
+            parentForm.LoadAccounts();
         }
 
         #endregion

@@ -15,14 +15,14 @@ namespace GARCA.BO.Services
             investementProductsTypesManager = new InvestmentProductsTypesManager();
         }
 
-        public HashSet<InvestmentProductsTypes?>? getAll()
+        public HashSet<InvestmentProductsTypes?>? GetAll()
         {
-            return investementProductsTypesManager.getAll()?.toHashSetBO();
+            return investementProductsTypesManager.GetAll()?.ToHashSetBo();
         }
 
-        public InvestmentProductsTypes? getByID(int? id)
+        public InvestmentProductsTypes? GetById(int? id)
         {
-            return (InvestmentProductsTypes?)investementProductsTypesManager.getByID(id);
+            return (InvestmentProductsTypes?)investementProductsTypesManager.GetById(id);
         }
 
 

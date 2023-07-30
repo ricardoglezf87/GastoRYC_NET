@@ -13,7 +13,7 @@ namespace GARCA.DAO.Managers
     public class CategoriesManager : ManagerBase<CategoriesDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<CategoriesDAO, object>>[] getIncludes()
+        public override Expression<Func<CategoriesDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<CategoriesDAO, object>>[]
             {
@@ -22,14 +22,14 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<CategoriesDAO>? getAllWithoutSpecialTransfer()
+        public IEnumerable<CategoriesDAO>? GetAllWithoutSpecialTransfer()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<CategoriesDAO>();
-                var query =  getEntyWithInclude(repository)?
-                .Where(x => !x.categoriesTypesid.Equals((int)CategoriesTypesManager.eCategoriesTypes.Transfers) &&
-                !x.categoriesTypesid.Equals((int)CategoriesTypesManager.eCategoriesTypes.Specials));
+                var query =  GetEntyWithInclude(repository)?
+                .Where(x => !x.categoriesTypesid.Equals((int)CategoriesTypesManager.ECategoriesTypes.Transfers) &&
+                !x.categoriesTypesid.Equals((int)CategoriesTypesManager.ECategoriesTypes.Specials));
 
                 if (query != null)
                 {
@@ -41,15 +41,15 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public int getNextID()
+        public int GetNextId()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var cmd = unitOfWork.getDataBase().
+                var cmd = unitOfWork.GetDataBase().
                 GetDbConnection().CreateCommand();
                 cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';";
 
-                unitOfWork.getDataBase().OpenConnection();
+                unitOfWork.GetDataBase().OpenConnection();
                 var result = cmd.ExecuteReader();
                 result.Read();
                 var id = Convert.ToInt32(result[0]);

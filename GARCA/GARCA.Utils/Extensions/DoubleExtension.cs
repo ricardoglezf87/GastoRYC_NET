@@ -7,7 +7,7 @@ namespace GARCA.Utlis.Extensions
 {
     public static class DoubleExtension
     {
-        public static int compareTo(this double? source, double? other)
+        public static int CompareTo(this double? source, double? other)
         {
             if (source < other)
             {

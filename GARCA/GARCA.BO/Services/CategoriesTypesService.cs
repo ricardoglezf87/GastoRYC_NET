@@ -9,7 +9,7 @@ namespace GARCA.BO.Services
     {
         private readonly CategoriesTypesManager categoriesTypesManager;
 
-        public enum eCategoriesTypes : int
+        public enum ECategoriesTypes : int
         {
             Expenses = 1,
             Incomes = 2,
@@ -22,14 +22,14 @@ namespace GARCA.BO.Services
             categoriesTypesManager = new CategoriesTypesManager();
         }
 
-        public HashSet<CategoriesTypes?>? getAllWithoutSpecialTransfer()
+        public HashSet<CategoriesTypes?>? GetAllWithoutSpecialTransfer()
         {
-            return categoriesTypesManager.getAllWithoutSpecialTransfer()?.toHashSetBO();
+            return categoriesTypesManager.GetAllWithoutSpecialTransfer()?.ToHashSetBo();
         }
 
-        public CategoriesTypes? getByID(int? id)
+        public CategoriesTypes? GetById(int? id)
         {
-            return (CategoriesTypes?)categoriesTypesManager.getByID(id);
+            return (CategoriesTypes?)categoriesTypesManager.GetById(id);
         }
 
     }

@@ -18,43 +18,43 @@ namespace GARCA.BO.Services
             splitsManager = new SplitsManager();
         }
 
-        public HashSet<Splits?>? getbyTransactionidNull()
+        public HashSet<Splits?>? GetbyTransactionidNull()
         {
-            return splitsManager.getbyTransactionidNull()?.toHashSetBO();
+            return splitsManager.GetbyTransactionidNull()?.ToHashSetBo();
         }
 
-        public HashSet<Splits?>? getbyTransactionid(int transactionid)
+        public HashSet<Splits?>? GetbyTransactionid(int transactionid)
         {
-            return splitsManager.getbyTransactionid(transactionid)?.toHashSetBO();
+            return splitsManager.GetbyTransactionid(transactionid)?.ToHashSetBo();
         }
 
-        public Splits? getByID(int? id)
+        public Splits? GetById(int? id)
         {
-            return (Splits?)splitsManager.getByID(id);
+            return (Splits?)splitsManager.GetById(id);
         }
 
-        public void update(Splits splits)
+        public void Update(Splits splits)
         {
-            splitsManager.update(splits?.toDAO());
+            splitsManager.Update(splits?.ToDao());
         }
 
-        public void delete(Splits splits)
+        public void Delete(Splits splits)
         {
-            splitsManager.delete(splits?.toDAO());
+            splitsManager.Delete(splits?.ToDao());
         }
 
-        public void saveChanges(Splits splits)
+        public void SaveChanges(Splits splits)
         {
-            if (splits.category == null && splits.categoryid != null)
+            if (splits.Category == null && splits.Categoryid != null)
             {
-                splits.category = DependencyConfig.iCategoriesService.getByID(splits.categoryid);
+                splits.Category = DependencyConfig.ICategoriesService.GetById(splits.Categoryid);
             }
 
-            splits.amountIn ??= 0;
+            splits.AmountIn ??= 0;
 
-            splits.amountOut ??= 0;
+            splits.AmountOut ??= 0;
 
-            update(splits);
+            Update(splits);
         }
 
     }

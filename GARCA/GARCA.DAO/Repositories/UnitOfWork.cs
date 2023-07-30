@@ -25,7 +25,7 @@ namespace GARCA.DAO.Repositories
             return new RepositoryGeneral<TEntity>(context);
         }
 
-        public DatabaseFacade getDataBase()
+        public DatabaseFacade GetDataBase()
         {
             return context.Database;
         }

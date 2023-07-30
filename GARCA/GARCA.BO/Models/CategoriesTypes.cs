@@ -5,7 +5,7 @@ namespace GARCA.BO.Models
 {
     public class CategoriesTypes : ModelBase
     {
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
         
         public static explicit operator CategoriesTypes?(CategoriesTypesDAO? v)
         {
@@ -13,8 +13,8 @@ namespace GARCA.BO.Models
                 ? null
                 : new CategoriesTypes
                 {
-                    id = v.id,
-                    description = v.description
+                    Id = v.id,
+                    Description = v.description
                 };
         }
     }

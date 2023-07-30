@@ -13,7 +13,7 @@ namespace GARCA.DAO.Managers
     public class SplitsManager : ManagerBase<SplitsDAO>
     {
 #pragma warning disable CS8603
-        public override Expression<Func<SplitsDAO, object>>[] getIncludes()
+        public override Expression<Func<SplitsDAO, object>>[] GetIncludes()
         {
             return new Expression<Func<SplitsDAO, object>>[]
             {
@@ -24,12 +24,12 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<SplitsDAO>? getbyTransactionidNull()
+        public IEnumerable<SplitsDAO>? GetbyTransactionidNull()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<SplitsDAO>();
-                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == null);
+                var query = GetEntyWithInclude(repository)?.Where(x => x.transactionid == null);
 
                 if (query != null)
                 {
@@ -41,12 +41,12 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<SplitsDAO>? getbyTransactionid(int transactionid)
+        public IEnumerable<SplitsDAO>? GetbyTransactionid(int transactionid)
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<SplitsDAO>();
-                var query = getEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid);
+                var query = GetEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid);
 
                 if (query != null)
                 {

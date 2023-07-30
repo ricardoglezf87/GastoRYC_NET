@@ -3,12 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
-        xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"                          
-        xmlns:chart="clr-namespace:Syncfusion.UI.Xaml.Charts;assembly=Syncfusion.SfChart.WPF"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GARCA.View.Views"
-         xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" xmlns:local1="clr-namespace:GARCA.View.ViewModels"
-      syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" xmlns:local1="clr-namespace:GARCA.View.ViewModels"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
         Title="partialTransactions" Loaded="Page_Loaded">
     <Page.DataContext>
@@ -26,7 +23,7 @@
                                ShowRowHeader="True" SelectionMode="Extended"
                                 ItemsSource="{Binding IncrementalItemsSource}">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
-                <syncfusion:SortColumnDescription ColumnName="orden" SortDirection="Descending"/>
+                <syncfusion:SortColumnDescription ColumnName="Orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <syncfusion:SfDataGrid.RecordContextMenu>
                 <ContextMenu>
@@ -43,20 +40,20 @@
                 </ContextMenu>
             </syncfusion:SfDataGrid.RecordContextMenu>
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridDateTimeColumn MappingName="date" HeaderText="Fecha"/>
-                <syncfusion:GridTextColumn MappingName="account.description" HeaderText="Cuenta"/>
-                <syncfusion:GridTextColumn MappingName="personDescripGrid" HeaderText="Persona"/>
-                <syncfusion:GridTextColumn MappingName="memo" HeaderText="Memo"/>
-                <syncfusion:GridTextColumn MappingName="categoryDescripGrid" HeaderText="Categoría"/>
-                <syncfusion:GridTextColumn MappingName="transactionStatus.description" HeaderText="Estado"/>
-                <syncfusion:GridTextColumn MappingName="tag.description" HeaderText="Tag"/>
-                <syncfusion:GridTextColumn MappingName="numShares" HeaderText="Num. Participaciones" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="pricesShares" HeaderText="Precio Part." IsHidden="True" />
-                <syncfusion:GridCurrencyColumn MappingName="amountIn" HeaderText="Entrada"/>
-                <syncfusion:GridCurrencyColumn MappingName="amountOut" HeaderText="Salida"/>
-                <syncfusion:GridCurrencyColumn MappingName="amount" HeaderText="Importe"/>
-                <syncfusion:GridCurrencyColumn MappingName="balance" HeaderText="Saldo"/>
+                <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
+                <syncfusion:GridDateTimeColumn MappingName="Date" HeaderText="Fecha"/>
+                <syncfusion:GridTextColumn MappingName="Account.Description" HeaderText="Cuenta"/>
+                <syncfusion:GridTextColumn MappingName="PersonDescripGrid" HeaderText="Persona"/>
+                <syncfusion:GridTextColumn MappingName="Memo" HeaderText="Memo"/>
+                <syncfusion:GridTextColumn MappingName="CategoryDescripGrid" HeaderText="Categoría"/>
+                <syncfusion:GridTextColumn MappingName="TransactionStatus.Description" HeaderText="Estado"/>
+                <syncfusion:GridTextColumn MappingName="Tag.Description" HeaderText="Tag"/>
+                <syncfusion:GridTextColumn MappingName="NumShares" HeaderText="Num. Participaciones" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="PricesShares" HeaderText="Precio Part." IsHidden="True" />
+                <syncfusion:GridCurrencyColumn MappingName="AmountIn" HeaderText="Entrada"/>
+                <syncfusion:GridCurrencyColumn MappingName="AmountOut" HeaderText="Salida"/>
+                <syncfusion:GridCurrencyColumn MappingName="Amount" HeaderText="Importe"/>
+                <syncfusion:GridCurrencyColumn MappingName="Balance" HeaderText="Saldo"/>
                 <syncfusion:GridTemplateColumn Width="25"
                                                MappingName="id"
                                                HeaderText=""

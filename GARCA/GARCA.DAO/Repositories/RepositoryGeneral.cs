@@ -8,40 +8,40 @@ namespace GARCA.DAO.Repositories
     public class RepositoryGeneral<TEntity> where TEntity : class
     {
         private readonly DbContext context;
-        private readonly DbSet<TEntity> _entities;
+        private readonly DbSet<TEntity> entities;
         
         public RepositoryGeneral(DbContext dbContext)
         {
             context = dbContext;
-            _entities = context.Set<TEntity>();
+            entities = context.Set<TEntity>();
         }
         
         public TEntity? GetById(DateTime? id)
         {
-            return _entities.Find(id);
+            return entities.Find(id);
         }
 
         public HashSet<TEntity> GetAll()
         {
-            return _entities.ToHashSet();
+            return entities.ToHashSet();
         }
 
         public void Add(TEntity entity)
         {
-            _entities.Add(entity);
+            entities.Add(entity);
         }
 
         public void Update(TEntity entity)
         {
-            _entities.Update(entity);
+            entities.Update(entity);
         }
 
         public void Delete(TEntity entity)
         {
-            _entities.Remove(entity);
+            entities.Remove(entity);
         }
 
-        public void saveChanges()
+        public void SaveChanges()
         {
             context.SaveChanges();
         }

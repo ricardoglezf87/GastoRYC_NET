@@ -18,14 +18,14 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            loadTransactions();
+            LoadTransactions();
         }
 
         private void gvTransactionsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (TransactionsReminders transactionsReminders in e.Items)
             {
-                DependencyConfig.iTransactionsRemindersService.delete(transactionsReminders);
+                DependencyConfig.ITransactionsRemindersService.Delete(transactionsReminders);
             }
         }
 
@@ -49,20 +49,20 @@ namespace GARCA.View.Views
             {
                 FrmTransactionReminders frm = new((TransactionsReminders)gvTransactionsReminders.CurrentItem);
                 frm.ShowDialog();
-                loadTransactions();
+                LoadTransactions();
             }
         }
 
-        private void loadTransactions()
+        private void LoadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = DependencyConfig.iTransactionsRemindersService.getAll();
+            gvTransactionsReminders.ItemsSource = DependencyConfig.ITransactionsRemindersService.GetAll();
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             FrmTransactionReminders frm = new();
             frm.ShowDialog();
-            loadTransactions();
+            LoadTransactions();
         }
     }
 }

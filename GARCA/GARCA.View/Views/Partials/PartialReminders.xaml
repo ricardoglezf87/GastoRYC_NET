@@ -3,11 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
-        xmlns:input="clr-namespace:Syncfusion.Windows.Controls.Input;assembly=Syncfusion.SfInput.Wpf"                          
-        xmlns:chart="clr-namespace:Syncfusion.UI.Xaml.Charts;assembly=Syncfusion.SfChart.WPF"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GARCA.View.Views"
-         xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
         Title="partialTransactions" Loaded="Page_Loaded">
@@ -17,8 +14,8 @@
             <syncfusion:CardView.HeaderTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Text="{Binding transactionsReminders.personDescripGrid}"/>
-                        <TextBlock Text="{Binding transactionsReminders.memo}"/>
+                        <TextBlock Text="{Binding TransactionsReminders.PersonDescripGrid}"/>
+                        <TextBlock Text="{Binding TransactionsReminders.Memo}"/>
                     </StackPanel>
                 </DataTemplate>
             </syncfusion:CardView.HeaderTemplate>
@@ -34,7 +31,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Fecha:" />
                                     <TextBlock Grid.Column="1" 
-                                    Text="{Binding date, StringFormat='{}{0:dd/MM/yyyy}'}" />
+                                    Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" />
                                 </Grid>
                             </ListBoxItem>
                             <ListBoxItem Padding="1">
@@ -45,7 +42,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Categoría:" />
                                     <TextBlock Grid.Column="1"
-                                    Text="{Binding transactionsReminders.category.description}" />
+                                    Text="{Binding TransactionsReminders.Category.Description}" />
                                 </Grid>
                             </ListBoxItem>
 
@@ -57,7 +54,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Importe:" />
                                     <TextBlock Grid.Column="1"
-                                   Text="{Binding transactionsReminders.amount,ConverterCulture='es-ES', StringFormat='{}{0:C}'}" />
+                                   Text="{Binding TransactionsReminders.Amount,ConverterCulture='es-ES', StringFormat='{}{0:C}'}" />
                                 </Grid>
                             </ListBoxItem>
                         </ListBox>

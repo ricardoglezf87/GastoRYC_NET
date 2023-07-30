@@ -26,10 +26,10 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = DependencyConfig.iCategoriesService.getAll();
-            gvSplits.ItemsSource = transactions != null && transactions.id > 0
-                ? DependencyConfig.iSplitsService.getbyTransactionid(transactions.id)
-                : (object?)DependencyConfig.iSplitsService.getbyTransactionidNull();
+            cbCategories.ItemsSource = DependencyConfig.ICategoriesService.GetAll();
+            gvSplits.ItemsSource = transactions != null && transactions.Id > 0
+                ? DependencyConfig.ISplitsService.GetbyTransactionid(transactions.Id)
+                : (object?)DependencyConfig.ISplitsService.GetbyTransactionidNull();
         }
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -40,7 +40,7 @@ namespace GARCA.View.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.category = DependencyConfig.iCategoriesService.getByID(splits.categoryid);
+                        splits.Category = DependencyConfig.ICategoriesService.GetById(splits.Categoryid);
                         break;
                 }
             }
@@ -51,18 +51,18 @@ namespace GARCA.View.Views
         {
             var splits = (Splits)e.RowData;
 
-            if (splits.categoryid == null)
+            if (splits.Categoryid == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if (splits.categoryid == (int)CategoriesService.eSpecialCategories.Split)
+            else if (splits.Categoryid == (int)CategoriesService.ESpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
             }
 
-            if (splits.amountIn == null && splits.amountOut == null)
+            if (splits.AmountIn == null && splits.AmountOut == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
@@ -74,19 +74,19 @@ namespace GARCA.View.Views
         {
             var splits = (Splits)e.RowData;
 
-            DependencyConfig.iSplitsService.saveChanges(splits);
-            DependencyConfig.iTransactionsService.updateTranferSplits(transactions, splits);
+            DependencyConfig.ISplitsService.SaveChanges(splits);
+            DependencyConfig.ITransactionsService.UpdateTranferSplits(transactions, splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Splits splits in e.Items)
             {
-                if (splits.tranferid != null)
+                if (splits.Tranferid != null)
                 {
-                    DependencyConfig.iTransactionsService.delete(DependencyConfig.iTransactionsService.getByID(splits.tranferid));
+                    DependencyConfig.ITransactionsService.Delete(DependencyConfig.ITransactionsService.GetById(splits.Tranferid));
                 }
-                DependencyConfig.iSplitsService.delete(splits);
+                DependencyConfig.ISplitsService.Delete(splits);
             }
         }
 
@@ -102,8 +102,8 @@ namespace GARCA.View.Views
         private void gvSplits_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
         {
             var splits = (Splits)e.NewObject;
-            splits.transactionid = transactions.id;
-            splits.transaction = transactions;
+            splits.Transactionid = transactions.Id;
+            splits.Transaction = transactions;
         }
     }
 }

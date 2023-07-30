@@ -31,15 +31,15 @@
                 <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridTextColumn MappingName="id" IsHidden="True" />
-                <syncfusion:GridTextColumn MappingName="description" HeaderText="Descripción" Width="300"/>
+                <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="Description" HeaderText="Descripción" Width="300"/>
                 <syncfusion:GridComboBoxColumn  HeaderText="Tipo"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbInvestmentProductsTypes" MappingName="investmentProductsTypesid" 
-                                                DisplayMemberPath="description" SelectedValuePath="id"/>
-                <syncfusion:GridTextColumn MappingName="symbol" HeaderText="Simbolo" Width="150" />
-                <syncfusion:GridTextColumn MappingName="url" HeaderText="Url" />
-                <syncfusion:GridCheckBoxColumn MappingName="active" HeaderText="Activo"/>
+                    x:Name="cbInvestmentProductsTypes" MappingName="InvestmentProductsTypesid" 
+                                                DisplayMemberPath="Description" SelectedValuePath="Id"/>
+                <syncfusion:GridTextColumn MappingName="Symbol" HeaderText="Simbolo" Width="150" />
+                <syncfusion:GridTextColumn MappingName="Url" HeaderText="Url" />
+                <syncfusion:GridCheckBoxColumn MappingName="Active" HeaderText="Activo"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
 

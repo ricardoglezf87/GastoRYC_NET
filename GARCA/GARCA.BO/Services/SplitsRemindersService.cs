@@ -15,24 +15,24 @@ namespace GARCA.BO.Services
             splitsRemindersManager = new SplitsRemindersManager();
         }
 
-        public HashSet<SplitsReminders?>? getbyTransactionidNull()
+        public HashSet<SplitsReminders?>? GetbyTransactionidNull()
         {
-            return splitsRemindersManager.getbyTransactionidNull()?.toHashSetBO();
+            return splitsRemindersManager.GetbyTransactionidNull()?.ToHashSetBo();
         }
 
-        public HashSet<SplitsReminders?>? getbyTransactionid(int transactionid)
+        public HashSet<SplitsReminders?>? GetbyTransactionid(int transactionid)
         {
-            return splitsRemindersManager.getbyTransactionid(transactionid)?.toHashSetBO();
+            return splitsRemindersManager.GetbyTransactionid(transactionid)?.ToHashSetBo();
         }
 
-        public void update(SplitsReminders splitsReminders)
+        public void Update(SplitsReminders splitsReminders)
         {
-            splitsRemindersManager.update(splitsReminders.toDAO());
+            splitsRemindersManager.Update(splitsReminders.ToDao());
         }
 
-        public void delete(SplitsReminders splitsReminders)
+        public void Delete(SplitsReminders splitsReminders)
         {
-            splitsRemindersManager.delete(splitsReminders.toDAO());
+            splitsRemindersManager.Delete(splitsReminders.ToDao());
         }
     }
 }

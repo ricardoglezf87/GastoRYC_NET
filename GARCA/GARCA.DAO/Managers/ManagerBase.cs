@@ -12,17 +12,17 @@ namespace GARCA.DAO.Managers
     public class ManagerBase<T> where T : ModelBaseDAO
     {
 #pragma warning disable CS8603
-        public virtual Expression<Func<T, object>>[] getIncludes()
+        public virtual Expression<Func<T, object>>[] GetIncludes()
         {
             return null;
         }
 #pragma warning restore CS8603
 
-        public IQueryable<T>? getEntyWithInclude(Repository<T> repository)
+        protected IQueryable<T>? GetEntyWithInclude(Repository<T> repository)
         {
-            var query = repository.entities.AsQueryable();
+            var query = repository.Entities.AsQueryable();
 
-            foreach (var include in getIncludes())
+            foreach (var include in GetIncludes())
             {
                 query = query?.Include(include);
             }
@@ -30,45 +30,52 @@ namespace GARCA.DAO.Managers
             return query;
         }
 
-        public HashSet<T>? getAll()
+        public IEnumerable<T>? GetAll()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<T>();
-                return repository.GetAllWithInclude(getIncludes());
+                var query = repository.GetAllWithInclude(GetIncludes());
+                
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
 
-
-        public T? getByID(int? id)
+        public T? GetById(int? id)
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<T>();
-                return repository.GetWithInclude(id, getIncludes());
+                return repository.GetWithInclude(id, GetIncludes());
             }
         }
 
-        public T? update(T? obj)
+        public T? Update(T? obj)
         {
             if (obj != null)
             {
-                using (var unitOfWork = new UnitOfWork(new RYCContext()))
+                using (var unitOfWork = new UnitOfWork(new RycContext()))
                 {
                     var repository = unitOfWork.GetRepositoryModelBase<T>();
                     var entity = repository.Update(obj);
-                    repository.saveChanges();
+                    repository.SaveChanges();
                     return entity;
                 }
             }
             return null;
         }
 
-        public void updateList(List<T?>? lObj)
+        public void UpdateList(List<T?>? lObj)
         {
             if (lObj != null)
             {
-                using (var unitOfWork = new UnitOfWork(new RYCContext()))
+                using (var unitOfWork = new UnitOfWork(new RycContext()))
                 {
                     var repository = unitOfWork.GetRepositoryModelBase<T>();
                     foreach (var item in lObj)
@@ -78,30 +85,30 @@ namespace GARCA.DAO.Managers
                             repository.Update(item);
                         }
                     }
-                    repository.saveChanges();
+                    repository.SaveChanges();
                 }
             }
         }
 
-        public void delete(T? obj)
+        public void Delete(T? obj)
         {
             if (obj != null)
             {
-                using (var unitOfWork = new UnitOfWork(new RYCContext()))
+                using (var unitOfWork = new UnitOfWork(new RycContext()))
                 {
                     var repository = unitOfWork.GetRepositoryModelBase<T>();
                     repository.Delete(obj);
-                    repository.saveChanges();
+                    repository.SaveChanges();
                 }
             }
         }
 
-        public void saveChanges()
+        public void SaveChanges()
         {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<T>();
-                repository.saveChanges();
+                repository.SaveChanges();
             }
         }
     }

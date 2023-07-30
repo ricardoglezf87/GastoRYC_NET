@@ -15,7 +15,7 @@ namespace GARCA.View.Views.Common
             lblProgreso.Content = "(0 / " + max.ToString() + ") Elementos procesados";
         }
 
-        public void performeStep()
+        public void PerformeStep()
         {
             pbProgreso.Value += 1;
             lblProgreso.Content = "(" + pbProgreso.Value.ToString() + " / " + pbProgreso.Maximum.ToString() + ") Elementos procesados";

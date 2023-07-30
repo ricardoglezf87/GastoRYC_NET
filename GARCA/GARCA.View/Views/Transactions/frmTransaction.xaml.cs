@@ -52,23 +52,23 @@ namespace GARCA.View.Views
         #region Eventos
         private void cbAccount_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cbAccount?.SelectedItem != null && !transaction.investmentCategory.HasValue)
+            if (cbAccount?.SelectedItem != null && !transaction.InvestmentCategory.HasValue)
             {
-                transaction.investmentCategory = ((Accounts)cbAccount.SelectedItem).accountsTypesid !=
-                    (int)AccountsTypesService.eAccountsTypes.Invests;
+                transaction.InvestmentCategory = ((Accounts)cbAccount.SelectedItem).AccountsTypesid !=
+                    (int)AccountsTypesService.EAccountsTypes.Invests;
             }
-            toggleViews();
+            ToggleViews();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            loadComboBox();
-            loadTransaction();
+            LoadComboBox();
+            LoadTransaction();
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            if (saveTransaction())
+            if (SaveTransaction())
             {
                 this.Close();
             }
@@ -80,7 +80,7 @@ namespace GARCA.View.Views
             {
                 if (MessageBox.Show("Para hacer una división se tiene que asignar una categoría especial, ¿Esta de acuerdo?", "inserción movimiento", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    cbCategory.SelectedValue = (int)CategoriesService.eSpecialCategories.Split;
+                    cbCategory.SelectedValue = (int)CategoriesService.ESpecialCategories.Split;
                     txtAmount.Value = 0;
                 }
                 else
@@ -90,7 +90,7 @@ namespace GARCA.View.Views
                 }
             }
 
-            if (transaction == null || !saveTransaction())
+            if (transaction == null || !SaveTransaction())
             {
                 MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
                 return;
@@ -98,8 +98,8 @@ namespace GARCA.View.Views
 
             FrmSplitsList frm = new(transaction);
             frm.ShowDialog();
-            DependencyConfig.iTransactionsService.updateTransactionAfterSplits(transaction);
-            loadTransaction();
+            DependencyConfig.ITransactionsService.UpdateTransactionAfterSplits(transaction);
+            LoadTransaction();
         }
 
         private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -107,31 +107,31 @@ namespace GARCA.View.Views
             switch (e.Key)
             {
                 case Key.F1:
-                    if (saveTransaction())
+                    if (SaveTransaction())
                     {
                         var previousDate = DateTime.Now;
                         if (dtpDate.SelectedDate != null)
                         {
                             previousDate = (DateTime)dtpDate.SelectedDate;
                         }
-                        var investmentCategory = transaction.investmentCategory;
+                        var investmentCategory = transaction.InvestmentCategory;
 
                         transaction = null;
-                        loadTransaction();
+                        LoadTransaction();
 
-                        transaction.investmentCategory = investmentCategory;
+                        transaction.InvestmentCategory = investmentCategory;
                         dtpDate.SelectedDate = previousDate;
                     }
                     break;
                 case Key.F2:
-                    saveTransaction();
+                    SaveTransaction();
                     break;
                 case Key.F3:
-                    transaction.investmentCategory = !transaction.investmentCategory ?? false;
-                    toggleViews();
+                    transaction.InvestmentCategory = !transaction.InvestmentCategory ?? false;
+                    ToggleViews();
                     break;
                 case Key.F4:
-                    calculateSharesOrPrice();
+                    CalculateSharesOrPrice();
                     break;
                 case Key.Escape:
                     this.Close();
@@ -144,9 +144,9 @@ namespace GARCA.View.Views
             if (cbPerson.SelectedItem != null)
             {
                 var p = (Persons)cbPerson.SelectedItem;
-                if (p?.categoryid != null)
+                if (p?.Categoryid != null)
                 {
-                    cbCategory.SelectedValue = p.categoryid;
+                    cbCategory.SelectedValue = p.Categoryid;
                 }
             }
         }
@@ -173,27 +173,27 @@ namespace GARCA.View.Views
 
         private void txtNumShares_ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            calculateValueShares();
+            CalculateValueShares();
         }
 
         private void txtPriceShares_ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            calculateValueShares();
+            CalculateValueShares();
         }
 
         #endregion
 
         #region Funtions
 
-        private void calculateSharesOrPrice()
+        private void CalculateSharesOrPrice()
         {
             if (txtNumShares.Value != null)
             {
-                calculatePriceByShares();
+                CalculatePriceByShares();
             }
             else if (txtPriceShares.Value != null)
             {
-                calculateSharesByPrice();
+                CalculateSharesByPrice();
             }
             else
             {
@@ -201,7 +201,7 @@ namespace GARCA.View.Views
             }
         }
 
-        private void calculatePriceByShares()
+        private void CalculatePriceByShares()
         {
             var importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:", "Transacción");
             if (!String.IsNullOrWhiteSpace(importe))
@@ -211,7 +211,7 @@ namespace GARCA.View.Views
             }
         }
 
-        private void calculateSharesByPrice()
+        private void CalculateSharesByPrice()
         {
             var importe = Microsoft.VisualBasic.Interaction.InputBox("Inserte un importe:", "Transacción");
             if (!String.IsNullOrWhiteSpace(importe))
@@ -221,9 +221,9 @@ namespace GARCA.View.Views
             }
         }
 
-        private void toggleViews()
+        private void ToggleViews()
         {
-            if (transaction.investmentCategory == false)
+            if (transaction.InvestmentCategory == false)
             {
                 lblInvestmentProduct.Visibility = Visibility.Visible;
                 cbInvestmentProduct.Visibility = Visibility.Visible;
@@ -239,7 +239,7 @@ namespace GARCA.View.Views
                 cbTag.Visibility = Visibility.Hidden;
                 Grid.SetRow(lblMemo, 6);
                 Grid.SetRow(txtMemo, 6);
-                calculateValueShares();
+                CalculateValueShares();
             }
             else
             {
@@ -260,21 +260,21 @@ namespace GARCA.View.Views
             }
         }
 
-        private void loadTransaction()
+        private void LoadTransaction()
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = transaction.date;
-                cbAccount.SelectedValue = transaction.accountid;
-                cbPerson.SelectedValue = transaction.personid;
-                txtMemo.Text = transaction.memo;
-                cbCategory.SelectedValue = transaction.categoryid;
-                txtAmount.Value = transaction.amount;
-                cbTag.SelectedValue = transaction.tagid;
-                cbTransactionStatus.SelectedValue = transaction.transactionStatusid;
-                cbInvestmentProduct.SelectedValue = transaction.investmentProductsid;
-                txtNumShares.Value = Convert.ToDouble(transaction.numShares);
-                txtPriceShares.Value = transaction.pricesShares;
+                dtpDate.SelectedDate = transaction.Date;
+                cbAccount.SelectedValue = transaction.Accountid;
+                cbPerson.SelectedValue = transaction.Personid;
+                txtMemo.Text = transaction.Memo;
+                cbCategory.SelectedValue = transaction.Categoryid;
+                txtAmount.Value = transaction.Amount;
+                cbTag.SelectedValue = transaction.Tagid;
+                cbTransactionStatus.SelectedValue = transaction.TransactionStatusid;
+                cbInvestmentProduct.SelectedValue = transaction.InvestmentProductsid;
+                txtNumShares.Value = Convert.ToDouble(transaction.NumShares);
+                txtPriceShares.Value = transaction.PricesShares;
             }
             else
             {
@@ -295,80 +295,80 @@ namespace GARCA.View.Views
                 cbInvestmentProduct.Text = String.Empty;
                 txtNumShares.Value = null;
                 txtPriceShares.Value = null;
-                cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.eTransactionsTypes.Pending;
+                cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.ETransactionsTypes.Pending;
 
                 dtpDate.Focus();
             }
         }
 
-        private void updateTransaction()
+        private void UpdateTransaction()
         {
             transaction ??= new Transactions();
 
-            transaction.date = dtpDate.SelectedDate;
-            transaction.accountid = (int)cbAccount.SelectedValue;
-            transaction.account = DependencyConfig.iAccountsService.getByID(transaction.accountid);
+            transaction.Date = dtpDate.SelectedDate;
+            transaction.Accountid = (int)cbAccount.SelectedValue;
+            transaction.Account = DependencyConfig.IAccountsService.GetById(transaction.Accountid);
 
             if (cbPerson.SelectedValue != null)
             {
-                transaction.personid = (int)cbPerson.SelectedValue;
-                transaction.person = DependencyConfig.iPersonsService.getByID(transaction.personid);
+                transaction.Personid = (int)cbPerson.SelectedValue;
+                transaction.Person = DependencyConfig.IPersonsService.GetById(transaction.Personid);
             }
 
-            transaction.memo = txtMemo.Text;
+            transaction.Memo = txtMemo.Text;
             if (cbCategory.SelectedValue == null && cbAccount?.SelectedItem != null &&
-                ((Accounts)cbAccount.SelectedItem).accountsTypesid == (int)AccountsTypesService.eAccountsTypes.Invests)
+                ((Accounts)cbAccount.SelectedItem).AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Invests)
             {
                 cbCategory.SelectedValue = 0;
             }
 
             if (cbCategory.SelectedValue != null)
             {
-                transaction.categoryid = (int)cbCategory.SelectedValue;
-                transaction.category = DependencyConfig.iCategoriesService.getByID(transaction.categoryid);
+                transaction.Categoryid = (int)cbCategory.SelectedValue;
+                transaction.Category = DependencyConfig.ICategoriesService.GetById(transaction.Categoryid);
             }
 
             if (cbInvestmentProduct.SelectedValue != null)
             {
-                transaction.investmentProductsid = (int)cbInvestmentProduct.SelectedValue;
-                transaction.investmentProducts = DependencyConfig.iInvestmentProductsService.getByID(transaction.investmentProductsid);
+                transaction.InvestmentProductsid = (int)cbInvestmentProduct.SelectedValue;
+                transaction.InvestmentProducts = DependencyConfig.IInvestmentProductsService.GetById(transaction.InvestmentProductsid);
             }
 
-            transaction.numShares = (decimal?)Convert.ToDouble(txtNumShares.Value);
-            transaction.pricesShares = txtPriceShares.Value ?? 0;
+            transaction.NumShares = (decimal?)Convert.ToDouble(txtNumShares.Value);
+            transaction.PricesShares = txtPriceShares.Value ?? 0;
 
             if (txtAmount.Value > 0)
             {
-                transaction.amountIn = txtAmount.Value;
-                transaction.amountOut = 0;
+                transaction.AmountIn = txtAmount.Value;
+                transaction.AmountOut = 0;
             }
             else
             {
-                transaction.amountOut = -txtAmount.Value;
-                transaction.amountIn = 0;
+                transaction.AmountOut = -txtAmount.Value;
+                transaction.AmountIn = 0;
             }
 
             if (cbTag.SelectedValue != null)
             {
-                transaction.tagid = (int)cbTag.SelectedValue;
-                transaction.tag = DependencyConfig.iTagsService.getByID(transaction.tagid);
+                transaction.Tagid = (int)cbTag.SelectedValue;
+                transaction.Tag = DependencyConfig.ITagsService.GetById(transaction.Tagid);
             }
 
-            transaction.transactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.transactionStatus = DependencyConfig.iTransactionsStatusService.getByID(transaction.transactionStatusid);
+            transaction.TransactionStatusid = (int)cbTransactionStatus.SelectedValue;
+            transaction.TransactionStatus = DependencyConfig.ITransactionsStatusService.GetById(transaction.TransactionStatusid);
         }
 
-        private void loadComboBox()
+        private void LoadComboBox()
         {
-            cbAccount.ItemsSource = DependencyConfig.iAccountsService.getAll();
-            cbPerson.ItemsSource = DependencyConfig.iPersonsService.getAll();
-            cbCategory.ItemsSource = DependencyConfig.iCategoriesService.getAll();
-            cbInvestmentProduct.ItemsSource = DependencyConfig.iInvestmentProductsService.getAll();
-            cbTag.ItemsSource = DependencyConfig.iTagsService.getAll();
-            cbTransactionStatus.ItemsSource = DependencyConfig.iTransactionsStatusService.getAll();
+            cbAccount.ItemsSource = DependencyConfig.IAccountsService.GetAll();
+            cbPerson.ItemsSource = DependencyConfig.IPersonsService.GetAll();
+            cbCategory.ItemsSource = DependencyConfig.ICategoriesService.GetAll();
+            cbInvestmentProduct.ItemsSource = DependencyConfig.IInvestmentProductsService.GetAll();
+            cbTag.ItemsSource = DependencyConfig.ITagsService.GetAll();
+            cbTransactionStatus.ItemsSource = DependencyConfig.ITransactionsStatusService.GetAll();
         }
 
-        private bool isTransactionValid()
+        private bool IsTransactionValid()
         {
             var errorMessage = "";
             var valid = true;
@@ -384,20 +384,20 @@ namespace GARCA.View.Views
                 errorMessage += "- Cuenta\n";
                 valid = false;
             }
-            else if (((Accounts)cbAccount.SelectedItem).accountsTypesid != (int)AccountsTypesService.eAccountsTypes.Invests &&
-                    transaction.investmentCategory == false)
+            else if (((Accounts)cbAccount.SelectedItem).AccountsTypesid != (int)AccountsTypesService.EAccountsTypes.Invests &&
+                    transaction.InvestmentCategory == false)
             {
                 errorMessage += "- No se puede realizar una transacción de inversión en una cuenta que no sea de inversión\n";
                 valid = false;
             }
 
-            if (cbCategory.SelectedValue == null && (!transaction.investmentCategory.HasValue || transaction.investmentCategory == true))
+            if (cbCategory.SelectedValue == null && (!transaction.InvestmentCategory.HasValue || transaction.InvestmentCategory == true))
             {
                 errorMessage += "- Categoría\n";
                 valid = false;
             }
 
-            if (cbInvestmentProduct.SelectedValue == null && transaction.investmentCategory == false)
+            if (cbInvestmentProduct.SelectedValue == null && transaction.InvestmentCategory == false)
             {
                 errorMessage += "- Producto de inversión\n";
                 valid = false;
@@ -421,7 +421,7 @@ namespace GARCA.View.Views
                 valid = false;
             }
 
-            if (transaction?.tranferSplitid != null)
+            if (transaction?.TranferSplitid != null)
             {
                 errorMessage += "- No se puede editar una transferencia proveniente de un split\n";
                 valid = false;
@@ -436,17 +436,17 @@ namespace GARCA.View.Views
             return valid;
         }
 
-        private bool saveTransaction()
+        private bool SaveTransaction()
         {
-            if (isTransactionValid())
+            if (IsTransactionValid())
             {
                 if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
                 MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    updateTransaction();
+                    UpdateTransaction();
                     if (transaction != null)
                     {
-                        DependencyConfig.iTransactionsService.saveChanges(ref transaction);
+                        DependencyConfig.ITransactionsService.SaveChanges(ref transaction);
                     }
                     return true;
                 }
@@ -461,11 +461,11 @@ namespace GARCA.View.Views
             }
         }
 
-        private void calculateValueShares()
+        private void CalculateValueShares()
         {
             if (txtNumShares.Value != null && txtPriceShares.Value != null
-                && transaction != null && transaction.investmentCategory.HasValue
-                && transaction.investmentCategory.Value == false)
+                && transaction != null && transaction.InvestmentCategory.HasValue
+                && transaction.InvestmentCategory.Value == false)
             {
                 txtAmount.Value = (Decimal?)Convert.ToDouble(txtNumShares.Value) * txtPriceShares.Value;
             }

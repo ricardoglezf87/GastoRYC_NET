@@ -16,29 +16,29 @@ namespace GARCA.BO.Services
             investmentProductsManager = new InvestmentProductsManager();
         }
 
-        public HashSet<InvestmentProducts?>? getAll()
+        public HashSet<InvestmentProducts?>? GetAll()
         {
-            return investmentProductsManager.getAll()?.toHashSetBO();
+            return investmentProductsManager.GetAll()?.ToHashSetBo();
         }
 
-        public InvestmentProducts? getByID(int? id)
+        public InvestmentProducts? GetById(int? id)
         {
-            return (InvestmentProducts?)investmentProductsManager.getByID(id);
+            return (InvestmentProducts?)investmentProductsManager.GetById(id);
         }
 
-        public void update(InvestmentProducts investmentProducts)
+        public void Update(InvestmentProducts investmentProducts)
         {
-            investmentProductsManager.update(investmentProducts?.toDAO());
+            investmentProductsManager.Update(investmentProducts?.ToDao());
         }
 
-        public void delete(InvestmentProducts investmentProducts)
+        public void Delete(InvestmentProducts investmentProducts)
         {
-            investmentProductsManager.delete(investmentProducts?.toDAO());
+            investmentProductsManager.Delete(investmentProducts?.ToDao());
         }
 
-        public async Task<HashSet<InvestmentProducts?>?> getAllOpened()
+        public async Task<HashSet<InvestmentProducts?>?> GetAllOpened()
         {
-            return await Task.Run(() => investmentProductsManager.getAllOpened()?.toHashSetBO());
+            return await Task.Run(() => investmentProductsManager.GetAllOpened()?.ToHashSetBo());
         }
     }
 }
