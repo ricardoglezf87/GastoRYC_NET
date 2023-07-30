@@ -34,7 +34,7 @@ namespace GARCA.BO.Services
         }
 
         public IEnumerable<Transactions>? GetAllOpennedOrderByOrderDesc(int startIndex, int nPage)
-        {
+        {   //TODO: Ver si podemos saltar esta conversion
             return transactionsManager.GetAllOpennedOrderByOrdenDesc(startIndex, nPage)?.ToSortedSetBo();
         }
 
@@ -81,7 +81,7 @@ namespace GARCA.BO.Services
         }
 
         public IEnumerable<Transactions>? GetByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
-        {
+        {   //TODO: Ver si podemos saltar esta conversion
             return transactionsManager.GetByAccountOrderByOrdenDesc(id, startIndex, nPage)?.ToSortedSetBo();
         }
 
