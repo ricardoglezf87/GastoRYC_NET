@@ -5,78 +5,78 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("Transactions")]
-    public class TransactionsDAO : ModelBaseDAO
+    public class TransactionsDao : ModelBaseDao
     {
         [Column("date")]
-        public virtual DateTime? date { set; get; }
+        public virtual DateTime? Date { set; get; }
 
         [Column("accountid")]
-        public virtual int? accountid { set; get; }
+        public virtual int? Accountid { set; get; }
 
         [Column("account")]
-        public virtual AccountsDAO? account { set; get; }
+        public virtual AccountsDao? Account { set; get; }
 
         [Column("personid")]
-        public virtual int? personid { set; get; }
+        public virtual int? Personid { set; get; }
 
         [Column("person")]
-        public virtual PersonsDAO? person { set; get; }
+        public virtual PersonsDao? Person { set; get; }
 
         [Column("tagid")]
-        public virtual int? tagid { set; get; }
+        public virtual int? Tagid { set; get; }
 
         [Column("tag")]
-        public virtual TagsDAO? tag { set; get; }
+        public virtual TagsDao? Tag { set; get; }
 
         [Column("categoryid")]
-        public virtual int? categoryid { set; get; }
+        public virtual int? Categoryid { set; get; }
 
         [Column("category")]
-        public virtual CategoriesDAO? category { set; get; }
+        public virtual CategoriesDao? Category { set; get; }
 
         [Column("amountIn")]
-        public virtual Decimal? amountIn { set; get; }
+        public virtual Decimal? AmountIn { set; get; }
 
         [Column("amountOut")]
-        public virtual Decimal? amountOut { set; get; }
+        public virtual Decimal? AmountOut { set; get; }
 
         [Column("tranferid")]
-        public virtual int? tranferid { set; get; }
+        public virtual int? Tranferid { set; get; }
 
         [Column("tranferSplitid")]
-        public virtual int? tranferSplitid { set; get; }
+        public virtual int? TranferSplitid { set; get; }
 
         [Column("memo")]
-        public virtual String? memo { set; get; }
+        public virtual String? Memo { set; get; }
 
         [Column("transactionStatusid")]
-        public virtual int? transactionStatusid { set; get; }
+        public virtual int? TransactionStatusid { set; get; }
 
         [Column("transactionStatus")]
-        public virtual TransactionsStatusDAO? transactionStatus { set; get; }
+        public virtual TransactionsStatusDao? TransactionStatus { set; get; }
 
         [Column("investmentProductsid")]
-        public virtual int? investmentProductsid { set; get; }
+        public virtual int? InvestmentProductsid { set; get; }
 
         [Column("investmentProducts")]
-        public virtual InvestmentProductsDAO? investmentProducts { set; get; }
+        public virtual InvestmentProductsDao? InvestmentProducts { set; get; }
 
         [Column("splits")]
-        public virtual HashSet<SplitsDAO>? splits { set; get; }
+        public virtual HashSet<SplitsDao>? Splits { set; get; }
 
         [Column("numShares")]
-        public virtual Decimal? numShares { set; get; }
+        public virtual Decimal? NumShares { set; get; }
 
         [Column("pricesShares")]
-        public virtual Decimal? pricesShares { set; get; }
+        public virtual Decimal? PricesShares { set; get; }
 
         [Column("investmentCategory")]
-        public virtual bool? investmentCategory { set; get; }
+        public virtual bool? InvestmentCategory { set; get; }
 
         [Column("balance")]
-        public virtual Decimal? balance { set; get; }
+        public virtual Decimal? Balance { set; get; }
 
         [Column("orden")]
-        public virtual Double? orden { set; get; }
+        public virtual Double? Orden { set; get; }
     }
 }

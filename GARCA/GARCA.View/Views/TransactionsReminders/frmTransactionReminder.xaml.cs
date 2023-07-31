@@ -64,7 +64,7 @@ namespace GARCA.View.Views
 
             FrmSplitsRemindersList frm = new(transaction);
             frm.ShowDialog();
-            DependencyConfig.ITransactionsRemindersService.UpdateSplitsReminders(transaction);
+            DependencyConfig.TransactionsRemindersService.UpdateSplitsReminders(transaction);
             LoadTransaction();
         }
 
@@ -116,7 +116,7 @@ namespace GARCA.View.Views
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = DependencyConfig.IExpirationsRemindersService.GetNextReminder(transaction.Id) ?? transaction.Date;
+                dtpDate.SelectedDate = DependencyConfig.ExpirationsRemindersService.GetNextReminder(transaction.Id) ?? transaction.Date;
                 cbPeriodTransaction.SelectedValue = transaction.PeriodsRemindersid;
                 cbAccount.SelectedValue = transaction.Accountid;
                 cbPerson.SelectedValue = transaction.Personid;
@@ -152,21 +152,21 @@ namespace GARCA.View.Views
             transaction.Date = dtpDate.SelectedDate;
 
             transaction.PeriodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
-            transaction.PeriodsReminders = DependencyConfig.IPeriodsReminderService.GetById(transaction.PeriodsRemindersid);
+            transaction.PeriodsReminders = DependencyConfig.PeriodsReminderService.GetById(transaction.PeriodsRemindersid);
 
             transaction.Accountid = (int)cbAccount.SelectedValue;
-            transaction.Account = DependencyConfig.IAccountsService.GetById(transaction.Accountid);
+            transaction.Account = DependencyConfig.AccountsService.GetById(transaction.Accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.Personid = (int)cbPerson.SelectedValue;
-                transaction.Person = DependencyConfig.IPersonsService.GetById(transaction.Personid);
+                transaction.Person = DependencyConfig.PersonsService.GetById(transaction.Personid);
             }
 
             transaction.Memo = txtMemo.Text;
 
             transaction.Categoryid = (int)cbCategory.SelectedValue;
-            transaction.Category = DependencyConfig.ICategoriesService.GetById(transaction.Categoryid);
+            transaction.Category = DependencyConfig.CategoriesService.GetById(transaction.Categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -182,24 +182,24 @@ namespace GARCA.View.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.Tagid = (int)cbTag.SelectedValue;
-                transaction.Tag = DependencyConfig.ITagsService.GetById(transaction.Tagid);
+                transaction.Tag = DependencyConfig.TagsService.GetById(transaction.Tagid);
             }
 
             transaction.TransactionStatusid = (int)cbTransactionStatus.SelectedValue;
 
             transaction.AutoRegister = chkAutoregister.IsChecked ?? false;
 
-            transaction.TransactionStatus = DependencyConfig.ITransactionsStatusService.GetById(transaction.TransactionStatusid);
+            transaction.TransactionStatus = DependencyConfig.TransactionsStatusService.GetById(transaction.TransactionStatusid);
         }
 
         private void LoadComboBox()
         {
-            cbAccount.ItemsSource = DependencyConfig.IAccountsService.GetAll();
-            cbPerson.ItemsSource = DependencyConfig.IPersonsService.GetAll();
-            cbCategory.ItemsSource = DependencyConfig.ICategoriesService.GetAll();
-            cbTag.ItemsSource = DependencyConfig.ITagsService.GetAll();
-            cbTransactionStatus.ItemsSource = DependencyConfig.ITransactionsStatusService.GetAll();
-            cbPeriodTransaction.ItemsSource = DependencyConfig.IPeriodsReminderService.GetAll();
+            cbAccount.ItemsSource = DependencyConfig.AccountsService.GetAll();
+            cbPerson.ItemsSource = DependencyConfig.PersonsService.GetAll();
+            cbCategory.ItemsSource = DependencyConfig.CategoriesService.GetAll();
+            cbTag.ItemsSource = DependencyConfig.TagsService.GetAll();
+            cbTransactionStatus.ItemsSource = DependencyConfig.TransactionsStatusService.GetAll();
+            cbPeriodTransaction.ItemsSource = DependencyConfig.PeriodsReminderService.GetAll();
         }
 
         private bool SaveTransaction()
@@ -212,7 +212,7 @@ namespace GARCA.View.Views
                     UpdateTransaction();
                     if (transaction != null)
                     {
-                        DependencyConfig.ITransactionsRemindersService.SaveChanges(transaction);
+                        DependencyConfig.TransactionsRemindersService.SaveChanges(transaction);
                     }
                     return true;
                 }

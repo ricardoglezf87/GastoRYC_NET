@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace GARCA.DAO.Managers
 {
-    public class ManagerBase<T> where T : ModelBaseDAO
+    public class ManagerBase<T> where T : ModelBaseDao
     {
 #pragma warning disable CS8603
         protected virtual Expression<Func<T, object>>[] GetIncludes()

@@ -19,33 +19,33 @@ namespace GARCA.BO.Models
         [DefaultValue(true)]
         public virtual bool? Active { set; get; }
 
-        internal InvestmentProductsDAO ToDao()
+        internal InvestmentProductsDao ToDao()
         {
-            return new InvestmentProductsDAO
+            return new InvestmentProductsDao
             {
-                id = Id,
-                description = Description,
-                investmentProductsTypesid = InvestmentProductsTypesid,
-                investmentProductsTypes = null,
-                symbol = Symbol,
-                url = Url,
-                active = Active
+                Id = Id,
+                Description = Description,
+                InvestmentProductsTypesid = InvestmentProductsTypesid,
+                InvestmentProductsTypes = null,
+                Symbol = Symbol,
+                Url = Url,
+                Active = Active
             };
         }
 
-        public static explicit operator InvestmentProducts?(InvestmentProductsDAO? v)
+        public static explicit operator InvestmentProducts?(InvestmentProductsDao? v)
         {
             return v == null
                 ? null
                 : new InvestmentProducts
                 {
-                    Id = v.id,
-                    Description = v.description,
-                    InvestmentProductsTypesid = v.investmentProductsTypesid,
-                    InvestmentProductsTypes = v.investmentProductsTypes != null ? (InvestmentProductsTypes?)v.investmentProductsTypes : null,
-                    Symbol = v.symbol,
-                    Url = v.url,
-                    Active = v.active
+                    Id = v.Id,
+                    Description = v.Description,
+                    InvestmentProductsTypesid = v.InvestmentProductsTypesid,
+                    InvestmentProductsTypes = v.InvestmentProductsTypes != null ? (InvestmentProductsTypes?)v.InvestmentProductsTypes : null,
+                    Symbol = v.Symbol,
+                    Url = v.Url,
+                    Active = v.Active
                 };
         }
     }

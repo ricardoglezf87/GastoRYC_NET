@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("AccountsTypes")]
-    public class AccountsTypesDAO : ModelBaseDAO
+    public class AccountsTypesDao : ModelBaseDao
     {
         [Column("description")]
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
     }
 }

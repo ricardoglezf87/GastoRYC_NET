@@ -24,7 +24,7 @@ namespace GARCA.View.Views
         {
             foreach (TransactionsReminders transactionsReminders in e.Items)
             {
-                DependencyConfig.ITransactionsRemindersService.Delete(transactionsReminders);
+                DependencyConfig.TransactionsRemindersService.Delete(transactionsReminders);
             }
         }
 
@@ -54,7 +54,7 @@ namespace GARCA.View.Views
 
         private void LoadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = DependencyConfig.ITransactionsRemindersService.GetAll();
+            gvTransactionsReminders.ItemsSource = DependencyConfig.TransactionsRemindersService.GetAll();
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)

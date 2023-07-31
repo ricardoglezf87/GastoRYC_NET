@@ -163,13 +163,13 @@ namespace GARCA.View.Views
 
             chForecast.Series.Clear();
 
-            foreach (var accounts in (await DependencyConfig.IAccountsService.GetAllOpenedAync())?
-                .Where(x => DependencyConfig.IAccountsTypesService.AccountExpensives(x.AccountsTypesid)))
+            foreach (var accounts in (await DependencyConfig.AccountsService.GetAllOpenedAync())?
+                .Where(x => DependencyConfig.AccountsTypesService.AccountExpensives(x.AccountsTypesid)))
             {
 
                 LineSeries series = new()
                 {
-                    ItemsSource = (await Task.Run(() => DependencyConfig.IForecastsChartService.GetMonthForecast())).Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
+                    ItemsSource = (await Task.Run(() => DependencyConfig.ForecastsChartService.GetMonthForecast())).Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
                     Label = accounts.Description,
                     XBindingPath = "Date",
                     YBindingPath = "Amount",
@@ -288,7 +288,7 @@ namespace GARCA.View.Views
 
             //Series
 
-            var lExpensesCharts = await DependencyConfig.IVBalancebyCategoryService.GetExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
+            var lExpensesCharts = await DependencyConfig.IvBalancebyCategoryService.GetExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new()

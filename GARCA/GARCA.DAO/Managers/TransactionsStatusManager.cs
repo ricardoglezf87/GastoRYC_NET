@@ -2,7 +2,7 @@
 
 namespace GARCA.DAO.Managers
 {
-    public class TransactionsStatusManager : ManagerBase<TransactionsStatusDAO>
+    public class TransactionsStatusManager : ManagerBase<TransactionsStatusDao>
     {
     }
 }

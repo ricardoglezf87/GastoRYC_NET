@@ -25,41 +25,41 @@ namespace GARCA.BO.Models
 
         public virtual int? Tranferid { set; get; }
 
-        public SplitsRemindersDAO ToDao()
+        public SplitsRemindersDao ToDao()
         {
-            return new SplitsRemindersDAO
+            return new SplitsRemindersDao
             {
-                id = Id,
-                transactionid = Transactionid,
-                transaction = null,
-                categoryid = Categoryid,
-                category = null,
-                amountOut = AmountOut,
-                amountIn = AmountIn,
-                memo = Memo,
-                tranferid = Tranferid,
-                tagid = Tagid,
-                tag = null
+                Id = Id,
+                Transactionid = Transactionid,
+                Transaction = null,
+                Categoryid = Categoryid,
+                Category = null,
+                AmountOut = AmountOut,
+                AmountIn = AmountIn,
+                Memo = Memo,
+                Tranferid = Tranferid,
+                Tagid = Tagid,
+                Tag = null
             };
         }
 
-        public static explicit operator SplitsReminders?(SplitsRemindersDAO? v)
+        public static explicit operator SplitsReminders?(SplitsRemindersDao? v)
         {
             return v == null
                 ? null
                 : new SplitsReminders
                 {
-                    Id = v.id,
-                    Transactionid = v.transactionid,
-                    Transaction = v.transaction != null ? (TransactionsReminders?)v.transaction : null,
-                    Categoryid = v.categoryid,
-                    Category = v.category != null ? (Categories?)v.category : null,
-                    AmountOut = v.amountOut,
-                    AmountIn = v.amountIn,
-                    Memo = v.memo,
-                    Tranferid = v.tranferid,
-                    Tagid = v.tagid,
-                    Tag = v.tag != null ? (Tags?)v.tag : null
+                    Id = v.Id,
+                    Transactionid = v.Transactionid,
+                    Transaction = v.Transaction != null ? (TransactionsReminders?)v.Transaction : null,
+                    Categoryid = v.Categoryid,
+                    Category = v.Category != null ? (Categories?)v.Category : null,
+                    AmountOut = v.AmountOut,
+                    AmountIn = v.AmountIn,
+                    Memo = v.Memo,
+                    Tranferid = v.Tranferid,
+                    Tagid = v.Tagid,
+                    Tag = v.Tag != null ? (Tags?)v.Tag : null
                 };
         }
     }

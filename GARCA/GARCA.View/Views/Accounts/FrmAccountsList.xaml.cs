@@ -20,8 +20,8 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = DependencyConfig.IAccountsTypesService.GetAll();
-            gvAccounts.ItemsSource = DependencyConfig.IAccountsService.GetAll();
+            cbAccountsTypes.ItemsSource = DependencyConfig.AccountsTypesService.GetAll();
+            gvAccounts.ItemsSource = DependencyConfig.AccountsService.GetAll();
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -32,7 +32,7 @@ namespace GARCA.View.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.AccountsTypes = DependencyConfig.IAccountsTypesService.GetById(accounts.AccountsTypesid);
+                        accounts.AccountsTypes = DependencyConfig.AccountsTypesService.GetById(accounts.AccountsTypesid);
                         break;
                 }
             }
@@ -62,17 +62,17 @@ namespace GARCA.View.Views
 
             if (accounts.Categoryid != null)
             {
-                categories = DependencyConfig.ICategoriesService.GetById(accounts.Categoryid);
+                categories = DependencyConfig.CategoriesService.GetById(accounts.Categoryid);
                 if (categories != null)
                 {
                     categories.Description = "[" + accounts.Description + "]";
-                    DependencyConfig.ICategoriesService.Update(categories);
+                    DependencyConfig.CategoriesService.Update(categories);
                 }
             }
             else
             {
                 categories = new Categories();
-                accounts.Categoryid = DependencyConfig.ICategoriesService.GetNextId();
+                accounts.Categoryid = DependencyConfig.CategoriesService.GetNextId();
                 categories.Description = "[" + accounts.Description + "]";
                 categories.CategoriesTypesid = (int)CategoriesTypesService.ECategoriesTypes.Transfers;
 
@@ -80,7 +80,7 @@ namespace GARCA.View.Views
 
             if (categories != null)
             {
-                DependencyConfig.ICategoriesService.Update(categories);
+                DependencyConfig.CategoriesService.Update(categories);
             }
         }
 
@@ -90,24 +90,24 @@ namespace GARCA.View.Views
 
             if (accounts.AccountsTypes == null && accounts.AccountsTypesid != null)
             {
-                accounts.AccountsTypes = DependencyConfig.IAccountsTypesService.GetById(accounts.AccountsTypesid);
+                accounts.AccountsTypes = DependencyConfig.AccountsTypesService.GetById(accounts.AccountsTypesid);
             }
 
             UpdateCategory(accounts);
-            DependencyConfig.IAccountsService.Update(accounts);
+            DependencyConfig.AccountsService.Update(accounts);
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items)
             {
-                var categories = DependencyConfig.ICategoriesService.GetById(accounts.Categoryid);
+                var categories = DependencyConfig.CategoriesService.GetById(accounts.Categoryid);
                 if (categories != null)
                 {
-                    DependencyConfig.ICategoriesService.Delete(categories);
+                    DependencyConfig.CategoriesService.Delete(categories);
                 }
 
-                DependencyConfig.IAccountsService.Delete(accounts);
+                DependencyConfig.AccountsService.Delete(accounts);
             }
         }
 

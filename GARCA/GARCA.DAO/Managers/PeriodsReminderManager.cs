@@ -2,7 +2,7 @@
 
 namespace GARCA.DAO.Managers
 {
-    public class PeriodsRemindersManager : ManagerBase<PeriodsRemindersDAO>
+    public class PeriodsRemindersManager : ManagerBase<PeriodsRemindersDao>
     {
     }
 }

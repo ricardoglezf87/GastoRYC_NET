@@ -6,9 +6,9 @@ namespace GARCA.Utlis.Extensions
 {
     public static class ListExtension
     {
-        public static List<TransactionsDAO?> ToListDao(this List<Transactions?>? source)
+        public static List<TransactionsDao?> ToListDao(this List<Transactions?>? source)
         {
-            List<TransactionsDAO?> list = new();
+            List<TransactionsDao?> list = new();
             if (source != null)
             {
                 foreach (var obj in source)

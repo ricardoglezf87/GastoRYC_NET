@@ -11,27 +11,27 @@ namespace GARCA.BO.Models
 
         public virtual CategoriesTypes? CategoriesTypes { set; get; }
 
-        internal CategoriesDAO ToDao()
+        internal CategoriesDao ToDao()
         {
-            return new CategoriesDAO
+            return new CategoriesDao
             {
-                id = Id,
-                description = Description,
-                categoriesTypesid = CategoriesTypesid,
-                categoriesTypes = null
+                Id = Id,
+                Description = Description,
+                CategoriesTypesid = CategoriesTypesid,
+                CategoriesTypes = null
             };
         }
 
-        public static explicit operator Categories?(CategoriesDAO? v)
+        public static explicit operator Categories?(CategoriesDao? v)
         {
             return v == null
                 ? null
                 : new Categories
                 {
-                    Id = v.id,
-                    Description = v.description,
-                    CategoriesTypesid = v.categoriesTypesid,
-                    CategoriesTypes = v.categoriesTypes != null ? (CategoriesTypes?)v.categoriesTypes : null
+                    Id = v.Id,
+                    Description = v.Description,
+                    CategoriesTypesid = v.CategoriesTypesid,
+                    CategoriesTypes = v.CategoriesTypes != null ? (CategoriesTypes?)v.CategoriesTypes : null
                 };
         }
     }

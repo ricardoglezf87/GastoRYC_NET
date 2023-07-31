@@ -9,26 +9,26 @@ using System.Linq.Expressions;
 
 namespace GARCA.DAO.Managers
 {
-    public class CategoriesManager : ManagerBase<CategoriesDAO>
+    public class CategoriesManager : ManagerBase<CategoriesDao>
     {
 #pragma warning disable CS8603
-        protected override Expression<Func<CategoriesDAO, object>>[] GetIncludes()
+        protected override Expression<Func<CategoriesDao, object>>[] GetIncludes()
         {
-            return new Expression<Func<CategoriesDAO, object>>[]
+            return new Expression<Func<CategoriesDao, object>>[]
             {
-                a => a.categoriesTypes
+                a => a.CategoriesTypes
             };
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<CategoriesDAO>? GetAllWithoutSpecialTransfer()
+        public IEnumerable<CategoriesDao>? GetAllWithoutSpecialTransfer()
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<CategoriesDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<CategoriesDao>();
                 var query = GetEntyWithInclude(repository)?
-                .Where(x => !x.categoriesTypesid.Equals((int)CategoriesTypesManager.ECategoriesTypes.Transfers) &&
-                !x.categoriesTypesid.Equals((int)CategoriesTypesManager.ECategoriesTypes.Specials));
+                .Where(x => !x.CategoriesTypesid.Equals((int)CategoriesTypesManager.ECategoriesTypes.Transfers) &&
+                !x.CategoriesTypesid.Equals((int)CategoriesTypesManager.ECategoriesTypes.Specials));
 
                 if (query != null)
                 {

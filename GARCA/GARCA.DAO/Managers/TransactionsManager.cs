@@ -9,31 +9,31 @@ using System.Linq.Expressions;
 
 namespace GARCA.DAO.Managers
 {
-    public class TransactionsManager : ManagerBase<TransactionsDAO>
+    public class TransactionsManager : ManagerBase<TransactionsDao>
     {
 
 #pragma warning disable CS8603
-        protected override Expression<Func<TransactionsDAO, object>>[] GetIncludes()
+        protected override Expression<Func<TransactionsDao, object>>[] GetIncludes()
         {
-            return new Expression<Func<TransactionsDAO, object>>[]
+            return new Expression<Func<TransactionsDao, object>>[]
             {
-                a => a.account,
-                a => a.person,
-                a => a.category,
-                a => a.tag,
-                a => a.investmentProducts,
-                a => a.transactionStatus
+                a => a.Account,
+                a => a.Person,
+                a => a.Category,
+                a => a.Tag,
+                a => a.InvestmentProducts,
+                a => a.TransactionStatus
             };
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<TransactionsDAO>? GetByAccount(int? id)
+        public IEnumerable<TransactionsDao>? GetByAccount(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDao>();
                 var query = GetEntyWithInclude(repository)?
-                    .Where(x => id.Equals(x.accountid));
+                    .Where(x => id.Equals(x.Accountid));
 
                 if (query != null)
                 {
@@ -45,14 +45,14 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<TransactionsDAO>? GetByAccountOrderByOrdenDesc(int? id)
+        public IEnumerable<TransactionsDao>? GetByAccountOrderByOrdenDesc(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDao>();
                 var query = GetEntyWithInclude(repository)?
-                    .Where(x => id.Equals(x.accountid))
-                    .OrderByDescending(x => x.orden);
+                    .Where(x => id.Equals(x.Accountid))
+                    .OrderByDescending(x => x.Orden);
 
                 if (query != null)
                 {
@@ -63,18 +63,18 @@ namespace GARCA.DAO.Managers
                 }
             }
         }
-        public IEnumerable<TransactionsDAO>? GetByAccountOrderByOrdenDesc(int? id, int startIndex, int nPage)
+        public IEnumerable<TransactionsDao>? GetByAccountOrderByOrdenDesc(int? id, int startIndex, int nPage)
         {
             return GetByAccountOrderByOrdenDesc(id)?.Skip(startIndex).Take(nPage);
         }
 
-        public IEnumerable<TransactionsDAO>? GetAllOpenned()
+        public IEnumerable<TransactionsDao>? GetAllOpenned()
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDao>();
                 var query = GetEntyWithInclude(repository)?
-                    .Where(x => !x.account.closed.HasValue || !x.account.closed.Value);
+                    .Where(x => !x.Account.Closed.HasValue || !x.Account.Closed.Value);
 
                 if (query != null)
                 {
@@ -86,19 +86,19 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<TransactionsDAO>? GetAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
+        public IEnumerable<TransactionsDao>? GetAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
         {
             return GetAllOpennedOrderByOrdenDesc()?.Skip(startIndex).Take(nPage);
         }
 
-        private IEnumerable<TransactionsDAO>? GetAllOpennedOrderByOrdenDesc()
+        private IEnumerable<TransactionsDao>? GetAllOpennedOrderByOrdenDesc()
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDao>();
                 var query = GetEntyWithInclude(repository)?
-                    .Where(x => !x.account.closed.HasValue || !x.account.closed.Value)
-                    .OrderByDescending(x => x.orden);
+                    .Where(x => !x.Account.Closed.HasValue || !x.Account.Closed.Value)
+                    .OrderByDescending(x => x.Orden);
 
                 if (query != null)
                 {
@@ -110,13 +110,13 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<TransactionsDAO>? GetByPerson(int? id)
+        public IEnumerable<TransactionsDao>? GetByPerson(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDao>();
                 var query = GetEntyWithInclude(repository)?
-                    .Where(x => id.Equals(x.personid));
+                    .Where(x => id.Equals(x.Personid));
 
                 if (query != null)
                 {
@@ -128,13 +128,13 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<TransactionsDAO>? GetByInvestmentProduct(int? id)
+        public IEnumerable<TransactionsDao>? GetByInvestmentProduct(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsDao>();
                 var query = GetEntyWithInclude(repository)?
-                    .Where(x => id.Equals(x.investmentProductsid));
+                    .Where(x => id.Equals(x.InvestmentProductsid));
 
                 if (query != null)
                 {

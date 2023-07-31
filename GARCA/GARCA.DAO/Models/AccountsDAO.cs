@@ -5,25 +5,25 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("Accounts")]
-    public class AccountsDAO : ModelBaseDAO
+    public class AccountsDao : ModelBaseDao
     {
         [Column("description")]
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
 
         [Column("accountsTypesid")]
-        public virtual int? accountsTypesid { set; get; }
+        public virtual int? AccountsTypesid { set; get; }
 
         [Column("accountsTypes")]
-        public virtual AccountsTypesDAO? accountsTypes { set; get; }
+        public virtual AccountsTypesDao? AccountsTypes { set; get; }
 
         [Column("categoryid")]
-        public virtual int? categoryid { set; get; }
+        public virtual int? Categoryid { set; get; }
 
         [Column("category")]
-        public virtual CategoriesDAO? category { set; get; }
+        public virtual CategoriesDao? Category { set; get; }
 
         [Column("closed")]
         [DefaultValue(false)]
-        public virtual Boolean? closed { set; get; }
+        public virtual Boolean? Closed { set; get; }
     }
 }

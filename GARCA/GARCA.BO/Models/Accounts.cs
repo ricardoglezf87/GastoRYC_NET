@@ -19,33 +19,33 @@ namespace GARCA.BO.Models
         [DefaultValue(false)]
         public virtual Boolean? Closed { set; get; }
 
-        internal AccountsDAO ToDao()
+        internal AccountsDao ToDao()
         {
-            return new AccountsDAO
+            return new AccountsDao
             {
-                id = Id,
-                description = Description,
-                categoryid = Categoryid,
-                category = null,
-                accountsTypesid = AccountsTypesid,
-                accountsTypes = null,
-                closed = Closed
+                Id = Id,
+                Description = Description,
+                Categoryid = Categoryid,
+                Category = null,
+                AccountsTypesid = AccountsTypesid,
+                AccountsTypes = null,
+                Closed = Closed
             };
         }
 
-        public static explicit operator Accounts?(AccountsDAO? v)
+        public static explicit operator Accounts?(AccountsDao? v)
         {
             return v == null
                 ? null
                 : new Accounts
                 {
-                    Id = v.id,
-                    Description = v.description,
-                    Categoryid = v.categoryid,
-                    Category = v.category != null ? (Categories?)v.category : null,
-                    AccountsTypesid = v.accountsTypesid,
-                    AccountsTypes = v.accountsTypes != null ? (AccountsTypes?)v.accountsTypes : null,
-                    Closed = v.closed
+                    Id = v.Id,
+                    Description = v.Description,
+                    Categoryid = v.Categoryid,
+                    Category = v.Category != null ? (Categories?)v.Category : null,
+                    AccountsTypesid = v.AccountsTypesid,
+                    AccountsTypes = v.AccountsTypes != null ? (AccountsTypes?)v.AccountsTypes : null,
+                    Closed = v.Closed
                 };
         }
     }

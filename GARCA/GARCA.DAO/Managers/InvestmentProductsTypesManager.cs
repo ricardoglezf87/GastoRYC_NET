@@ -2,7 +2,7 @@
 
 namespace GARCA.DAO.Managers
 {
-    public class InvestmentProductsTypesManager : ManagerBase<InvestmentProductsTypesDAO>
+    public class InvestmentProductsTypesManager : ManagerBase<InvestmentProductsTypesDao>
     {
     }
 }

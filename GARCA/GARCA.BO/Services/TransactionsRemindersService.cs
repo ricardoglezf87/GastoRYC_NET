@@ -29,7 +29,7 @@ namespace GARCA.BO.Services
 
         public TransactionsReminders? Update(TransactionsReminders transactionsReminders)
         {
-            DependencyConfig.IExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
+            DependencyConfig.ExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
             return (TransactionsReminders?)transactionsRemindersManager.Update(transactionsReminders.ToDao());
         }
 
@@ -37,7 +37,7 @@ namespace GARCA.BO.Services
         {
             if (transactionsReminders != null)
             {
-                DependencyConfig.IExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
+                DependencyConfig.ExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
                 transactionsRemindersManager.Delete(transactionsReminders.ToDao());
             }
         }
@@ -57,7 +57,7 @@ namespace GARCA.BO.Services
 
         public void UpdateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            var lSplitsReminders = DependencyConfig.ISplitsRemindersService.GetbyTransactionid(transactionsReminders.Id);
+            var lSplitsReminders = DependencyConfig.SplitsRemindersService.GetbyTransactionid(transactionsReminders.Id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
@@ -71,13 +71,13 @@ namespace GARCA.BO.Services
                 }
 
                 transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
-                transactionsReminders.Category = DependencyConfig.ICategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
+                transactionsReminders.Category = DependencyConfig.CategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
             else if (transactionsReminders.Categoryid is not null
                 and ((int)CategoriesService.ESpecialCategories.Split))
             {
                 transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
-                transactionsReminders.Category = DependencyConfig.ICategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
+                transactionsReminders.Category = DependencyConfig.CategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.Id == 0)
@@ -86,7 +86,7 @@ namespace GARCA.BO.Services
                 foreach (var splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.Transactionid = transactionsReminders.Id;
-                    DependencyConfig.ISplitsRemindersService.Update(splitsReminders);
+                    DependencyConfig.SplitsRemindersService.Update(splitsReminders);
                 }
             }
             else

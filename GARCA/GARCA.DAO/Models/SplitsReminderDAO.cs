@@ -4,36 +4,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("SplitsReminders")]
-    public class SplitsRemindersDAO : ModelBaseDAO
+    public class SplitsRemindersDao : ModelBaseDao
     {
         [Column("transactionid")]
-        public virtual int? transactionid { set; get; }
+        public virtual int? Transactionid { set; get; }
 
         [Column("transaction")]
-        public virtual TransactionsRemindersDAO? transaction { set; get; }
+        public virtual TransactionsRemindersDao? Transaction { set; get; }
 
         [Column("tagid")]
-        public virtual int? tagid { set; get; }
+        public virtual int? Tagid { set; get; }
 
         [Column("tag")]
-        public virtual TagsDAO? tag { set; get; }
+        public virtual TagsDao? Tag { set; get; }
 
         [Column("categoryid")]
-        public virtual int? categoryid { set; get; }
+        public virtual int? Categoryid { set; get; }
 
         [Column("category")]
-        public virtual CategoriesDAO? category { set; get; }
+        public virtual CategoriesDao? Category { set; get; }
 
         [Column("amountIn")]
-        public virtual Decimal? amountIn { set; get; }
+        public virtual Decimal? AmountIn { set; get; }
 
         [Column("amountOut")]
-        public virtual Decimal? amountOut { set; get; }
+        public virtual Decimal? AmountOut { set; get; }
 
         [Column("memo")]
-        public virtual String? memo { set; get; }
+        public virtual String? Memo { set; get; }
 
         [Column("tranferid")]
-        public virtual int? tranferid { set; get; }
+        public virtual int? Tranferid { set; get; }
     }
 }

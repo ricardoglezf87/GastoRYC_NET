@@ -12,7 +12,7 @@ namespace GARCA.BO.Services
         {
             HashSet<VPortfolio?> listPortFolio = new();
             foreach (var investmentProducts in
-                await DependencyConfig.IInvestmentProductsService.GetAllOpened())
+                await DependencyConfig.InvestmentProductsService.GetAllOpened())
             {
 
                 VPortfolio portfolio = new();
@@ -51,8 +51,8 @@ namespace GARCA.BO.Services
                     }
                 }
                 portfolio.CostShares = lBuy?.Sum(x => x.PricesShares * -x.NumShares);
-                portfolio.Date = DependencyConfig.IInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
-                portfolio.Prices = DependencyConfig.IInvestmentProductsPricesService.GetActualPrice(investmentProducts);
+                portfolio.Date = DependencyConfig.InvestmentProductsPricesService.GetLastValueDate(investmentProducts);
+                portfolio.Prices = DependencyConfig.InvestmentProductsPricesService.GetActualPrice(investmentProducts);
 
                 listPortFolio.Add(portfolio);
             }
@@ -61,17 +61,17 @@ namespace GARCA.BO.Services
 
         private async Task<decimal?> GetNumShares(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?.Sum(x => -x.NumShares));
+            return await Task.Run(() => DependencyConfig.TransactionsService.GetByInvestmentProduct(investmentProducts)?.Sum(x => -x.NumShares));
         }
 
         private async Task<HashSet<Transactions?>?> GetBuyOperations(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares < 0).OrderBy(x => x.Date).ToHashSet());
+            return await Task.Run(() => DependencyConfig.TransactionsService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares < 0).OrderBy(x => x.Date).ToHashSet());
         }
 
         private async Task<HashSet<Transactions?>?> GetSellOperations(InvestmentProducts? investmentProducts)
         {
-            return await Task.Run(() => DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares > 0).OrderBy(x => x.Date).ToHashSet());
+            return await Task.Run(() => DependencyConfig.TransactionsService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares > 0).OrderBy(x => x.Date).ToHashSet());
         }
     }
 }

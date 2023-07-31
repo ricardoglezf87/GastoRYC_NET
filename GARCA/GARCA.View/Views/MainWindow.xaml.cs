@@ -43,8 +43,8 @@ namespace GARCA
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
             SfSkinManager.ApplyStylesOnApplication = true;
 
-            DependencyConfig.IRycContextService.MakeBackup();
-            DependencyConfig.IRycContextService.MigrateDataBase();
+            DependencyConfig.RycContextService.MakeBackup();
+            DependencyConfig.RycContextService.MigrateDataBase();
         }
 
         #endregion
@@ -135,7 +135,7 @@ namespace GARCA
                             break;
                         case PartialReminders reminders:
                             reminders.LoadReminders();
-                            await Task.Run(() => DependencyConfig.IExpirationsRemindersService.GenerateAutoregister());
+                            await Task.Run(() => DependencyConfig.ExpirationsRemindersService.GenerateAutoregister());
                             LoadAccounts();
                             break;
                         case PartialPortfolio portfolio:
@@ -150,7 +150,7 @@ namespace GARCA
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             LoadCalendar();
-            await Task.Run(() => DependencyConfig.IExpirationsRemindersService.GenerateAutoregister());
+            await Task.Run(() => DependencyConfig.ExpirationsRemindersService.GenerateAutoregister());
             LoadAccounts();
             ToggleViews(EViews.Home);
         }
@@ -271,7 +271,7 @@ namespace GARCA
                 reminders.LoadReminders();
             }
 
-            await Task.Run(() => DependencyConfig.IExpirationsRemindersService.GenerateAutoregister());
+            await Task.Run(() => DependencyConfig.ExpirationsRemindersService.GenerateAutoregister());
             LoadAccounts();
         }
 
@@ -286,7 +286,7 @@ namespace GARCA
             {
                 foreach (AccountsView accounts in lvAccounts.ItemsSource)
                 {
-                    accounts.Balance = await Task.Run(() => DependencyConfig.IAccountsService.GetBalanceByAccount(accounts.Id));
+                    accounts.Balance = await Task.Run(() => DependencyConfig.AccountsService.GetBalanceByAccount(accounts.Id));
                 }
 
                 viewAccounts.Refresh();
@@ -314,7 +314,7 @@ namespace GARCA
 
         private void LoadCalendar()
         {
-            DependencyConfig.IDateCalendarService.FillCalendar();
+            DependencyConfig.DateCalendarService.FillCalendar();
         }
 
         private void ToggleViews(EViews views)
@@ -368,7 +368,7 @@ namespace GARCA
                 accountsView = lvAccounts.SelectedValue as AccountsView;
             }
 
-            var accountsViews = DependencyConfig.IAccountsService.GetAllOpenedListView();
+            var accountsViews = DependencyConfig.AccountsService.GetAllOpenedListView();
             viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("AccountsTypesdescription"));
@@ -403,7 +403,7 @@ namespace GARCA
         {
             try
             {
-                var laccounts = DependencyConfig.IAccountsService.GetAll();
+                var laccounts = DependencyConfig.AccountsService.GetAll();
 
                 if (laccounts != null)
                 {
@@ -412,10 +412,10 @@ namespace GARCA
 
                     foreach (var accounts in laccounts)
                     {
-                        var tFirst = DependencyConfig.ITransactionsService.GetByAccount(accounts)?.FirstOrDefault();
+                        var tFirst = DependencyConfig.TransactionsService.GetByAccount(accounts)?.FirstOrDefault();
                         if (tFirst != null)
                         {
-                            await Task.Run(() => DependencyConfig.ITransactionsService.RefreshBalanceTransactions(tFirst, true));
+                            await Task.Run(() => DependencyConfig.TransactionsService.RefreshBalanceTransactions(tFirst, true));
                         }
                         loadDialog.PerformeStep();
                     }
@@ -438,7 +438,7 @@ namespace GARCA
         {
             try
             {
-                var lInvestmentProducts = DependencyConfig.IInvestmentProductsService.GetAll()?.Where(x => !String.IsNullOrWhiteSpace(x.Url) || x.Active == true).ToList();
+                var lInvestmentProducts = DependencyConfig.InvestmentProductsService.GetAll()?.Where(x => !String.IsNullOrWhiteSpace(x.Url) || x.Active == true).ToList();
 
                 if (lInvestmentProducts != null)
                 {
@@ -447,7 +447,7 @@ namespace GARCA
 
                     foreach (var investmentProducts in lInvestmentProducts)
                     {
-                        await DependencyConfig.IInvestmentProductsPricesService.getPricesOnlineAsync(investmentProducts);
+                        await DependencyConfig.InvestmentProductsPricesService.getPricesOnlineAsync(investmentProducts);
                         loadDialog.PerformeStep();
                     }
 

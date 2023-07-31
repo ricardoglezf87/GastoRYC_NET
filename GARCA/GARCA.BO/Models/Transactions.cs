@@ -65,68 +65,68 @@ namespace GARCA.BO.Models
 
 
 
-        internal TransactionsDAO ToDao()
+        internal TransactionsDao ToDao()
         {
-            return new TransactionsDAO
+            return new TransactionsDao
             {
-                id = Id,
-                date = Date,
-                accountid = Accountid,
-                account = null,
-                personid = Personid,
-                person = null,
-                categoryid = Categoryid,
-                category = null,
-                amountIn = AmountIn,
-                amountOut = AmountOut,
-                memo = Memo,
-                investmentCategory = InvestmentCategory,
-                investmentProducts = null,
-                investmentProductsid = InvestmentProductsid,
-                tranferid = Tranferid,
-                tranferSplitid = TranferSplitid,
-                transactionStatus = null,
-                transactionStatusid = TransactionStatusid,
-                numShares = NumShares,
-                pricesShares = PricesShares,
-                tagid = Tagid,
-                tag = null,
-                balance = Balance,
-                orden = Orden
+                Id = Id,
+                Date = Date,
+                Accountid = Accountid,
+                Account = null,
+                Personid = Personid,
+                Person = null,
+                Categoryid = Categoryid,
+                Category = null,
+                AmountIn = AmountIn,
+                AmountOut = AmountOut,
+                Memo = Memo,
+                InvestmentCategory = InvestmentCategory,
+                InvestmentProducts = null,
+                InvestmentProductsid = InvestmentProductsid,
+                Tranferid = Tranferid,
+                TranferSplitid = TranferSplitid,
+                TransactionStatus = null,
+                TransactionStatusid = TransactionStatusid,
+                NumShares = NumShares,
+                PricesShares = PricesShares,
+                Tagid = Tagid,
+                Tag = null,
+                Balance = Balance,
+                Orden = Orden
             };
         }
 
 
-        public static explicit operator Transactions?(TransactionsDAO? v)
+        public static explicit operator Transactions?(TransactionsDao? v)
         {
             return v == null
                 ? null
                 : new Transactions
                 {
-                    Id = v.id,
-                    Date = v.date,
-                    Accountid = v.accountid,
-                    Account = v.account != null ? (Accounts?)v.account : null,
-                    Personid = v.personid,
-                    Person = v.person != null ? (Persons?)v.person : null,
-                    Categoryid = v.categoryid,
-                    Category = v.category != null ? (Categories?)v.category : null,
-                    AmountIn = v.amountIn,
-                    AmountOut = v.amountOut,
-                    Memo = v.memo,
-                    InvestmentCategory = v.investmentCategory,
-                    InvestmentProducts = v.investmentProducts != null ? (InvestmentProducts?)v.investmentProducts : null,
-                    InvestmentProductsid = v.investmentProductsid,
-                    Tranferid = v.tranferid,
-                    TranferSplitid = v.tranferSplitid,
-                    TransactionStatus = v.transactionStatus != null ? (TransactionsStatus?)v.transactionStatus : null,
-                    TransactionStatusid = v.transactionStatusid,
-                    NumShares = v.numShares,
-                    PricesShares = v.pricesShares,
-                    Tagid = v.tagid,
-                    Tag = v.tag != null ? (Tags?)v.tag : null,
-                    Balance = v.balance,
-                    Orden = v.orden
+                    Id = v.Id,
+                    Date = v.Date,
+                    Accountid = v.Accountid,
+                    Account = v.Account != null ? (Accounts?)v.Account : null,
+                    Personid = v.Personid,
+                    Person = v.Person != null ? (Persons?)v.Person : null,
+                    Categoryid = v.Categoryid,
+                    Category = v.Category != null ? (Categories?)v.Category : null,
+                    AmountIn = v.AmountIn,
+                    AmountOut = v.AmountOut,
+                    Memo = v.Memo,
+                    InvestmentCategory = v.InvestmentCategory,
+                    InvestmentProducts = v.InvestmentProducts != null ? (InvestmentProducts?)v.InvestmentProducts : null,
+                    InvestmentProductsid = v.InvestmentProductsid,
+                    Tranferid = v.Tranferid,
+                    TranferSplitid = v.TranferSplitid,
+                    TransactionStatus = v.TransactionStatus != null ? (TransactionsStatus?)v.TransactionStatus : null,
+                    TransactionStatusid = v.TransactionStatusid,
+                    NumShares = v.NumShares,
+                    PricesShares = v.PricesShares,
+                    Tagid = v.Tagid,
+                    Tag = v.Tag != null ? (Tags?)v.Tag : null,
+                    Balance = v.Balance,
+                    Orden = v.Orden
                 };
         }
 

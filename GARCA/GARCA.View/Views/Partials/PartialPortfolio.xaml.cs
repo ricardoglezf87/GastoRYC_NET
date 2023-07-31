@@ -39,7 +39,7 @@ namespace GARCA.View.Views
 
         public async void LoadPortfolio()
         {
-            gvPortfolio.ItemsSource = await DependencyConfig.IVPortfolioService.GetAllAsync();
+            gvPortfolio.ItemsSource = await DependencyConfig.IvPortfolioService.GetAllAsync();
             gvPortfolio.ExpandAllGroup();
         }
 

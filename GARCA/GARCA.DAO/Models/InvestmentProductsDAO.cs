@@ -5,25 +5,25 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("InvestmentProducts")]
-    public class InvestmentProductsDAO : ModelBaseDAO
+    public class InvestmentProductsDao : ModelBaseDao
     {
         [Column("description")]
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
 
         [Column("investmentProductsTypesid")]
-        public virtual int? investmentProductsTypesid { set; get; }
+        public virtual int? InvestmentProductsTypesid { set; get; }
 
         [Column("investmentProductsTypes")]
-        public virtual InvestmentProductsTypesDAO? investmentProductsTypes { set; get; }
+        public virtual InvestmentProductsTypesDao? InvestmentProductsTypes { set; get; }
 
         [Column("symbol")]
-        public virtual String? symbol { set; get; }
+        public virtual String? Symbol { set; get; }
 
         [Column("url")]
-        public virtual String? url { set; get; }
+        public virtual String? Url { set; get; }
 
         [Column("active")]
         [DefaultValue(true)]
-        public virtual bool? active { set; get; }
+        public virtual bool? Active { set; get; }
     }
 }

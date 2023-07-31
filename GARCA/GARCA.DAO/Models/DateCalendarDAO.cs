@@ -5,19 +5,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("DateCalendar")]
-    public class DateCalendarDAO
+    public class DateCalendarDao
     {
         [Key]
         [Column("date")]
-        public virtual DateTime date { set; get; }
+        public virtual DateTime Date { set; get; }
 
         [Column("day")]
-        public virtual int? day { set; get; }
+        public virtual int? Day { set; get; }
 
         [Column("month")]
-        public virtual int? month { set; get; }
+        public virtual int? Month { set; get; }
 
         [Column("year")]
-        public virtual int? year { set; get; }
+        public virtual int? Year { set; get; }
     }
 }

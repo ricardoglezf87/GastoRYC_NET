@@ -45,56 +45,56 @@ namespace GARCA.BO.Models
 
         public virtual Decimal? Amount => AmountIn - AmountOut;
 
-        internal TransactionsRemindersDAO ToDao()
+        internal TransactionsRemindersDao ToDao()
         {
-            return new TransactionsRemindersDAO
+            return new TransactionsRemindersDao
             {
-                id = Id,
-                date = Date,
-                periodsRemindersid = PeriodsRemindersid,
-                periodsReminders = null,
-                accountid = Accountid,
-                account = null,
-                personid = Personid,
-                person = null,
-                categoryid = Categoryid,
-                category = null,
-                amountIn = AmountIn,
-                amountOut = AmountOut,
-                memo = Memo,
-                transactionStatus = null,
-                transactionStatusid = TransactionStatusid,
-                tagid = Tagid,
-                tag = null,
-                autoRegister = AutoRegister
+                Id = Id,
+                Date = Date,
+                PeriodsRemindersid = PeriodsRemindersid,
+                PeriodsReminders = null,
+                Accountid = Accountid,
+                Account = null,
+                Personid = Personid,
+                Person = null,
+                Categoryid = Categoryid,
+                Category = null,
+                AmountIn = AmountIn,
+                AmountOut = AmountOut,
+                Memo = Memo,
+                TransactionStatus = null,
+                TransactionStatusid = TransactionStatusid,
+                Tagid = Tagid,
+                Tag = null,
+                AutoRegister = AutoRegister
             };
         }
 
 
-        public static explicit operator TransactionsReminders?(TransactionsRemindersDAO? v)
+        public static explicit operator TransactionsReminders?(TransactionsRemindersDao? v)
         {
             return v == null
                 ? null
                 : new TransactionsReminders
                 {
-                    Id = v.id,
-                    Date = v.date,
-                    PeriodsRemindersid = v.periodsRemindersid,
-                    PeriodsReminders = v.periodsReminders != null ? (PeriodsReminders?)v.periodsReminders : null,
-                    Accountid = v.accountid,
-                    Account = v.account != null ? (Accounts?)v.account : null,
-                    Personid = v.personid,
-                    Person = v.person != null ? (Persons?)v.person : null,
-                    Categoryid = v.categoryid,
-                    Category = v.category != null ? (Categories?)v.category : null,
-                    AmountIn = v.amountIn,
-                    AmountOut = v.amountOut,
-                    Memo = v.memo,
-                    TransactionStatus = v.transactionStatus != null ? (TransactionsStatus?)v.transactionStatus : null,
-                    TransactionStatusid = v.transactionStatusid,
-                    Tagid = v.tagid,
-                    Tag = v.tag != null ? (Tags?)v.tag : null,
-                    AutoRegister = v.autoRegister
+                    Id = v.Id,
+                    Date = v.Date,
+                    PeriodsRemindersid = v.PeriodsRemindersid,
+                    PeriodsReminders = v.PeriodsReminders != null ? (PeriodsReminders?)v.PeriodsReminders : null,
+                    Accountid = v.Accountid,
+                    Account = v.Account != null ? (Accounts?)v.Account : null,
+                    Personid = v.Personid,
+                    Person = v.Person != null ? (Persons?)v.Person : null,
+                    Categoryid = v.Categoryid,
+                    Category = v.Category != null ? (Categories?)v.Category : null,
+                    AmountIn = v.AmountIn,
+                    AmountOut = v.AmountOut,
+                    Memo = v.Memo,
+                    TransactionStatus = v.TransactionStatus != null ? (TransactionsStatus?)v.TransactionStatus : null,
+                    TransactionStatusid = v.TransactionStatusid,
+                    Tagid = v.Tagid,
+                    Tag = v.Tag != null ? (Tags?)v.Tag : null,
+                    AutoRegister = v.AutoRegister
                 };
         }
     }

@@ -25,10 +25,10 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = DependencyConfig.ICategoriesService.GetAll();
+            cbCategories.ItemsSource = DependencyConfig.CategoriesService.GetAll();
             gvSplitsReminders.ItemsSource = transactionsReminders != null && transactionsReminders.Id > 0
-                ? DependencyConfig.ISplitsRemindersService.GetbyTransactionid(transactionsReminders.Id)
-                : (object?)DependencyConfig.ISplitsRemindersService.GetbyTransactionidNull();
+                ? DependencyConfig.SplitsRemindersService.GetbyTransactionid(transactionsReminders.Id)
+                : (object?)DependencyConfig.SplitsRemindersService.GetbyTransactionidNull();
         }
 
         private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -39,7 +39,7 @@ namespace GARCA.View.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.Category = DependencyConfig.ICategoriesService.GetById(splitsReminders.Categoryid);
+                        splitsReminders.Category = DependencyConfig.CategoriesService.GetById(splitsReminders.Categoryid);
                         break;
                 }
             }
@@ -79,14 +79,14 @@ namespace GARCA.View.Views
         {
             if (splitsReminders.Category == null && splitsReminders.Categoryid != null)
             {
-                splitsReminders.Category = DependencyConfig.ICategoriesService.GetById(splitsReminders.Categoryid);
+                splitsReminders.Category = DependencyConfig.CategoriesService.GetById(splitsReminders.Categoryid);
             }
 
             splitsReminders.AmountIn ??= 0;
 
             splitsReminders.AmountOut ??= 0;
 
-            DependencyConfig.ISplitsRemindersService.Update(splitsReminders);
+            DependencyConfig.SplitsRemindersService.Update(splitsReminders);
         }
         private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
@@ -94,9 +94,9 @@ namespace GARCA.View.Views
             {
                 if (splitsReminders.Tranferid != null)
                 {
-                    DependencyConfig.ITransactionsRemindersService.Delete(DependencyConfig.ITransactionsRemindersService.GetById(splitsReminders.Tranferid));
+                    DependencyConfig.TransactionsRemindersService.Delete(DependencyConfig.TransactionsRemindersService.GetById(splitsReminders.Tranferid));
                 }
-                DependencyConfig.ISplitsRemindersService.Delete(splitsReminders);
+                DependencyConfig.SplitsRemindersService.Delete(splitsReminders);
             }
         }
 

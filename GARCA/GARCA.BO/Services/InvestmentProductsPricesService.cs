@@ -39,7 +39,7 @@ namespace GARCA.BO.Services
         public async Task getPricesOnlineAsync(InvestmentProducts? investmentProducts)
         {
             //Get prices from buy and sell ins transactions
-            foreach (var transactions in DependencyConfig.ITransactionsService.GetByInvestmentProduct(investmentProducts)?
+            foreach (var transactions in DependencyConfig.TransactionsService.GetByInvestmentProduct(investmentProducts)?
                          .GroupBy(g => g.Date).Select(x => new { date = x.Key, price = x.Average(y => y.PricesShares) }))
             {
                 if (!Exists(investmentProducts.Id, transactions.date))

@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace GARCA.DAO.Repositories
 {
-    public class Repository<TEntity> where TEntity : ModelBaseDAO
+    public class Repository<TEntity> where TEntity : ModelBaseDao
     {
         private readonly DbContext context;
 
@@ -46,7 +46,7 @@ namespace GARCA.DAO.Repositories
             {
                 query = query.Include(include);
             }
-            return query.FirstOrDefault(e => e.id == id);
+            return query.FirstOrDefault(e => e.Id == id);
         }
 
         public HashSet<TEntity> GetAllWithInclude(params Expression<Func<TEntity, object>>[] includes)

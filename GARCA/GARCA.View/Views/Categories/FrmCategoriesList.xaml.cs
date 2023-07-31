@@ -17,8 +17,8 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategoriesTypes.ItemsSource = DependencyConfig.ICategoriesTypesService.GetAllWithoutSpecialTransfer();
-            gvCategories.ItemsSource = DependencyConfig.ICategoriesService.GetAllWithoutSpecialTransfer();
+            cbCategoriesTypes.ItemsSource = DependencyConfig.CategoriesTypesService.GetAllWithoutSpecialTransfer();
+            gvCategories.ItemsSource = DependencyConfig.CategoriesService.GetAllWithoutSpecialTransfer();
         }
 
         private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -29,7 +29,7 @@ namespace GARCA.View.Views
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
                 {
                     case "categoriesTypesid":
-                        categories.CategoriesTypes = DependencyConfig.ICategoriesTypesService.GetById(categories.CategoriesTypesid);
+                        categories.CategoriesTypes = DependencyConfig.CategoriesTypesService.GetById(categories.CategoriesTypesid);
                         break;
                 }
             }
@@ -59,17 +59,17 @@ namespace GARCA.View.Views
 
             if (categories.CategoriesTypes == null && categories.CategoriesTypesid != null)
             {
-                categories.CategoriesTypes = DependencyConfig.ICategoriesTypesService.GetById(categories.CategoriesTypesid);
+                categories.CategoriesTypes = DependencyConfig.CategoriesTypesService.GetById(categories.CategoriesTypesid);
             }
 
-            DependencyConfig.ICategoriesService.Update(categories);
+            DependencyConfig.CategoriesService.Update(categories);
         }
 
         private void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Categories categories in e.Items)
             {
-                DependencyConfig.ICategoriesService.Delete(categories);
+                DependencyConfig.CategoriesService.Delete(categories);
             }
         }
 

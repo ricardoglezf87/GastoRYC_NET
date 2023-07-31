@@ -9,27 +9,27 @@ namespace GARCA.BO.Models
         public virtual int? Categoryid { set; get; }
         public virtual Categories? Category { set; get; }
 
-        internal PersonsDAO ToDao()
+        internal PersonsDao ToDao()
         {
-            return new PersonsDAO
+            return new PersonsDao
             {
-                id = Id,
-                name = Name,
-                categoryid = Categoryid,
-                category = null
+                Id = Id,
+                Name = Name,
+                Categoryid = Categoryid,
+                Category = null
             };
         }
 
-        public static explicit operator Persons?(PersonsDAO? v)
+        public static explicit operator Persons?(PersonsDao? v)
         {
             return v == null
                 ? null
                 : new Persons
                 {
-                    Id = v.id,
-                    Name = v.name,
-                    Categoryid = v.categoryid,
-                    Category = v.category != null ? (Categories?)v.category : null
+                    Id = v.Id,
+                    Name = v.Name,
+                    Categoryid = v.Categoryid,
+                    Category = v.Category != null ? (Categories?)v.Category : null
                 };
         }
     }

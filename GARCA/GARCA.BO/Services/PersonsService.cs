@@ -43,7 +43,7 @@ namespace GARCA.BO.Services
                 return;
             }
 
-            var result = (from x in DependencyConfig.ITransactionsService.GetByPerson(persons)
+            var result = (from x in DependencyConfig.TransactionsService.GetByPerson(persons)
                           group x by x.Categoryid into g
                           select new
                           {

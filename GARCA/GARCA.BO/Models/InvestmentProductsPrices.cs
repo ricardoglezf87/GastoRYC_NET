@@ -10,29 +10,29 @@ namespace GARCA.BO.Models
         public virtual InvestmentProducts? InvestmentProducts { set; get; }
         public virtual Decimal? Prices { set; get; }
 
-        internal InvestmentProductsPricesDAO ToDao()
+        internal InvestmentProductsPricesDao ToDao()
         {
-            return new InvestmentProductsPricesDAO
+            return new InvestmentProductsPricesDao
             {
-                id = Id,
-                date = Date,
-                investmentProducts = null,
-                investmentProductsid = InvestmentProductsid,
-                prices = Prices
+                Id = Id,
+                Date = Date,
+                InvestmentProducts = null,
+                InvestmentProductsid = InvestmentProductsid,
+                Prices = Prices
             };
         }
 
-        public static explicit operator InvestmentProductsPrices?(InvestmentProductsPricesDAO? v)
+        public static explicit operator InvestmentProductsPrices?(InvestmentProductsPricesDao? v)
         {
             return v == null
                 ? null
                 : new InvestmentProductsPrices
                 {
-                    Id = v.id,
-                    Date = v.date,
-                    InvestmentProducts = v.investmentProducts != null ? (InvestmentProducts?)v.investmentProducts : null,
-                    InvestmentProductsid = v.investmentProductsid,
-                    Prices = v.prices
+                    Id = v.Id,
+                    Date = v.Date,
+                    InvestmentProducts = v.InvestmentProducts != null ? (InvestmentProducts?)v.InvestmentProducts : null,
+                    InvestmentProductsid = v.InvestmentProductsid,
+                    Prices = v.Prices
                 };
         }
     }

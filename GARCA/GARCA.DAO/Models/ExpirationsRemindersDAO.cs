@@ -4,18 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("ExpirationsReminders")]
-    public class ExpirationsRemindersDAO : ModelBaseDAO
+    public class ExpirationsRemindersDao : ModelBaseDao
     {
         [Column("date")]
-        public virtual DateTime? date { set; get; }
+        public virtual DateTime? Date { set; get; }
 
         [Column("transactionsRemindersid")]
-        public virtual int? transactionsRemindersid { set; get; }
+        public virtual int? TransactionsRemindersid { set; get; }
 
         [Column("transactionsReminders")]
-        public virtual TransactionsRemindersDAO? transactionsReminders { set; get; }
+        public virtual TransactionsRemindersDao? TransactionsReminders { set; get; }
 
         [Column("done")]
-        public virtual bool? done { set; get; }
+        public virtual bool? Done { set; get; }
     }
 }

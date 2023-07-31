@@ -9,29 +9,29 @@ namespace GARCA.DAO.Managers
 
         #region Tablas
 
-        public DbSet<DateCalendarDAO>? DateCalendar { get; set; }
-        public DbSet<AccountsDAO>? Accounts { get; set; }
-        public DbSet<AccountsTypesDAO>? AccountsTypes { get; set; }
-        public DbSet<TransactionsDAO>? Transactions { get; set; }
-        public DbSet<PersonsDAO>? Persons { get; set; }
-        public DbSet<CategoriesDAO>? Categories { get; set; }
-        public DbSet<CategoriesTypesDAO>? CategoriesTypes { get; set; }
-        public DbSet<TagsDAO>? Tags { get; set; }
-        public DbSet<TransactionsStatusDAO>? TransactionsStatus { get; set; }
-        public DbSet<SplitsDAO>? Splits { get; set; }
-        public DbSet<PeriodsRemindersDAO>? PeriodsReminders { get; set; }
-        public DbSet<TransactionsRemindersDAO>? TransactionsReminders { get; set; }
-        public DbSet<SplitsRemindersDAO>? SplitsReminders { get; set; }
-        public DbSet<ExpirationsRemindersDAO>? ExpirationsReminders { get; set; }
-        public DbSet<InvestmentProductsDAO>? InvestmentProducts { get; set; }
-        public DbSet<InvestmentProductsPricesDAO>? InvestmentProductsPrices { get; set; }
-        public DbSet<InvestmentProductsTypesDAO>? InvestmentProductsTypes { get; set; }
+        public DbSet<DateCalendarDao>? DateCalendar { get; set; }
+        public DbSet<AccountsDao>? Accounts { get; set; }
+        public DbSet<AccountsTypesDao>? AccountsTypes { get; set; }
+        public DbSet<TransactionsDao>? Transactions { get; set; }
+        public DbSet<PersonsDao>? Persons { get; set; }
+        public DbSet<CategoriesDao>? Categories { get; set; }
+        public DbSet<CategoriesTypesDao>? CategoriesTypes { get; set; }
+        public DbSet<TagsDao>? Tags { get; set; }
+        public DbSet<TransactionsStatusDao>? TransactionsStatus { get; set; }
+        public DbSet<SplitsDao>? Splits { get; set; }
+        public DbSet<PeriodsRemindersDao>? PeriodsReminders { get; set; }
+        public DbSet<TransactionsRemindersDao>? TransactionsReminders { get; set; }
+        public DbSet<SplitsRemindersDao>? SplitsReminders { get; set; }
+        public DbSet<ExpirationsRemindersDao>? ExpirationsReminders { get; set; }
+        public DbSet<InvestmentProductsDao>? InvestmentProducts { get; set; }
+        public DbSet<InvestmentProductsPricesDao>? InvestmentProductsPrices { get; set; }
+        public DbSet<InvestmentProductsTypesDao>? InvestmentProductsTypes { get; set; }
 
         #endregion
 
         #region Vistas
 
-        public DbSet<VBalancebyCategoryDAO>? VBalancebyCategory { get; set; }
+        public DbSet<VBalancebyCategoryDao>? VBalancebyCategory { get; set; }
 
         #endregion
 
@@ -62,9 +62,9 @@ namespace GARCA.DAO.Managers
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<VBalancebyCategoryDAO>()
+            modelBuilder.Entity<VBalancebyCategoryDao>()
                 .ToView("VBalancebyCategory")
-                .HasKey(t => new { t.year, t.month, t.categoryid });
+                .HasKey(t => new { year = t.Year, month = t.Month, categoryid = t.Categoryid });
         }
 
     }

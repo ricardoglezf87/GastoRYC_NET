@@ -7,26 +7,26 @@ using System.Linq.Expressions;
 
 namespace GARCA.DAO.Managers
 {
-    public class SplitsManager : ManagerBase<SplitsDAO>
+    public class SplitsManager : ManagerBase<SplitsDao>
     {
 #pragma warning disable CS8603
-        protected override Expression<Func<SplitsDAO, object>>[] GetIncludes()
+        protected override Expression<Func<SplitsDao, object>>[] GetIncludes()
         {
-            return new Expression<Func<SplitsDAO, object>>[]
+            return new Expression<Func<SplitsDao, object>>[]
             {
-                a => a.transaction,
-                a => a.category,
-                a => a.tag
+                a => a.Transaction,
+                a => a.Category,
+                a => a.Tag
             };
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<SplitsDAO>? GetbyTransactionidNull()
+        public IEnumerable<SplitsDao>? GetbyTransactionidNull()
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<SplitsDAO>();
-                var query = GetEntyWithInclude(repository)?.Where(x => x.transactionid == null);
+                var repository = unitOfWork.GetRepositoryModelBase<SplitsDao>();
+                var query = GetEntyWithInclude(repository)?.Where(x => x.Transactionid == null);
 
                 if (query != null)
                 {
@@ -38,12 +38,12 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<SplitsDAO>? GetbyTransactionid(int transactionid)
+        public IEnumerable<SplitsDao>? GetbyTransactionid(int transactionid)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<SplitsDAO>();
-                var query = GetEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid);
+                var repository = unitOfWork.GetRepositoryModelBase<SplitsDao>();
+                var query = GetEntyWithInclude(repository)?.Where(x => x.Transactionid == transactionid);
 
                 if (query != null)
                 {

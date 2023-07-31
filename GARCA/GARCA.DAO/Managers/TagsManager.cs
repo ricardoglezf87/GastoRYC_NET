@@ -2,7 +2,7 @@
 
 namespace GARCA.DAO.Managers
 {
-    public class TagsManager : ManagerBase<TagsDAO>
+    public class TagsManager : ManagerBase<TagsDao>
     {
     }
 }

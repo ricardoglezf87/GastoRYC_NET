@@ -39,7 +39,7 @@ namespace GARCA.WebReport
 
         private async Task UpdateTransactions(SheetsService service)
         {
-            var transactions = await Task.Run(() => DependencyConfig.ITransactionsService.GetAllOpenned()?.ToList());
+            var transactions = await Task.Run(() => DependencyConfig.TransactionsService.GetAllOpenned()?.ToList());
             List<string[]> filasDeDatos = new()
                 {
                     new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
@@ -49,7 +49,7 @@ namespace GARCA.WebReport
             {
                 var trans = transactions[i];
 
-                var splits = await Task.Run(() => DependencyConfig.ISplitsService.GetbyTransactionid(trans.Id));
+                var splits = await Task.Run(() => DependencyConfig.SplitsService.GetbyTransactionid(trans.Id));
 
                 if (splits != null && splits.Count > 0)
                 {

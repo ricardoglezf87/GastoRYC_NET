@@ -4,24 +4,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("VBalancebyCategory")]
-    public class VBalancebyCategoryDAO
+    public class VBalancebyCategoryDao
     {
         [Column("year")]
-        public virtual int? year { set; get; }
+        public virtual int? Year { set; get; }
 
         [Column("month")]
-        public virtual int? month { set; get; }
+        public virtual int? Month { set; get; }
 
         [Column("categoriesTypesid")]
-        public virtual int? categoriesTypesid { set; get; }
+        public virtual int? CategoriesTypesid { set; get; }
 
         [Column("categoryid")]
-        public virtual int? categoryid { set; get; }
+        public virtual int? Categoryid { set; get; }
 
         [Column("category")]
-        public virtual string? category { set; get; }
+        public virtual string? Category { set; get; }
 
         [Column("amount")]
-        public virtual Decimal? amount { set; get; }
+        public virtual Decimal? Amount { set; get; }
     }
 }

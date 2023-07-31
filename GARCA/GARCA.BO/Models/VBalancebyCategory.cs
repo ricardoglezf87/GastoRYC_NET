@@ -13,18 +13,18 @@ namespace GARCA.BO.Models
         public virtual Decimal? Amount { set; get; }
         public virtual Decimal? NegAmount => -Amount;
 
-        public static explicit operator VBalancebyCategory?(VBalancebyCategoryDAO? v)
+        public static explicit operator VBalancebyCategory?(VBalancebyCategoryDao? v)
         {
             return v == null
                 ? null
                 : new VBalancebyCategory
                 {
-                    Year = v.year,
-                    Month = v.month,
-                    CategoriesTypesid = v.categoriesTypesid,
-                    Categoryid = v.categoryid,
-                    Category = v.category,
-                    Amount = v.amount
+                    Year = v.Year,
+                    Month = v.Month,
+                    CategoriesTypesid = v.CategoriesTypesid,
+                    Categoryid = v.Categoryid,
+                    Category = v.Category,
+                    Amount = v.Amount
                 };
         }
     }

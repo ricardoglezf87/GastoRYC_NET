@@ -17,7 +17,7 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvTags.ItemsSource = DependencyConfig.ITagsService.GetAll();
+            gvTags.ItemsSource = DependencyConfig.TagsService.GetAll();
         }
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -35,14 +35,14 @@ namespace GARCA.View.Views
         private void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var tags = (Tags)e.RowData;
-            DependencyConfig.ITagsService.Update(tags);
+            DependencyConfig.TagsService.Update(tags);
         }
 
         private void gvTags_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Tags tags in e.Items)
             {
-                DependencyConfig.ITagsService.Delete(tags);
+                DependencyConfig.TagsService.Delete(tags);
             }
         }
 

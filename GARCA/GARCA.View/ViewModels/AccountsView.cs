@@ -17,14 +17,14 @@ namespace GARCA.View.ViewModels
 
         public virtual Decimal Balance { set; get; }
 
-        public static explicit operator AccountsView(AccountsDAO v)
+        public static explicit operator AccountsView(AccountsDao v)
         {
             return new AccountsView
             {
-                Id = v.id,
-                Description = v.description,
-                AccountsTypesid = v.accountsTypesid,
-                AccountsTypesdescription = v.accountsTypes.description
+                Id = v.Id,
+                Description = v.Description,
+                AccountsTypesid = v.AccountsTypesid,
+                AccountsTypesdescription = v.AccountsTypes.Description
             };
         }
     }

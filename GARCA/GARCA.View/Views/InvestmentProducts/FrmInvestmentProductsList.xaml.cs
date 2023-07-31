@@ -20,8 +20,8 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbInvestmentProductsTypes.ItemsSource = DependencyConfig.IInvestmentProductsTypesService.GetAll();
-            gvInvestmentProducts.ItemsSource = DependencyConfig.IInvestmentProductsService.GetAll();
+            cbInvestmentProductsTypes.ItemsSource = DependencyConfig.InvestmentProductsTypesService.GetAll();
+            gvInvestmentProducts.ItemsSource = DependencyConfig.InvestmentProductsService.GetAll();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -49,7 +49,7 @@ namespace GARCA.View.Views
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "investmentProductsTypesid":
-                        investmentProducts.InvestmentProductsTypes = DependencyConfig.IInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
+                        investmentProducts.InvestmentProductsTypes = DependencyConfig.InvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
                         break;
                 }
             }
@@ -61,17 +61,17 @@ namespace GARCA.View.Views
 
             if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesid != null)
             {
-                investmentProducts.InvestmentProductsTypes = DependencyConfig.IInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
+                investmentProducts.InvestmentProductsTypes = DependencyConfig.InvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
             }
 
-            DependencyConfig.IInvestmentProductsService.Update(investmentProducts);
+            DependencyConfig.InvestmentProductsService.Update(investmentProducts);
         }
 
         private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (InvestmentProducts investmentProducts in e.Items)
             {
-                DependencyConfig.IInvestmentProductsService.Delete(investmentProducts);
+                DependencyConfig.InvestmentProductsService.Delete(investmentProducts);
             }
         }
 

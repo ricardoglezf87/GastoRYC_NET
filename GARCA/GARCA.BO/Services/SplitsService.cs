@@ -45,7 +45,7 @@ namespace GARCA.BO.Services
         {
             if (splits.Category == null && splits.Categoryid != null)
             {
-                splits.Category = DependencyConfig.ICategoriesService.GetById(splits.Categoryid);
+                splits.Category = DependencyConfig.CategoriesService.GetById(splits.Categoryid);
             }
 
             splits.AmountIn ??= 0;

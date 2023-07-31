@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace GARCA.DAO.Managers
 {
-    public class CategoriesTypesManager : ManagerBase<CategoriesTypesDAO>
+    public class CategoriesTypesManager : ManagerBase<CategoriesTypesDao>
     {
         public enum ECategoriesTypes
         {
@@ -16,13 +16,13 @@ namespace GARCA.DAO.Managers
             Specials = 4
         }
 
-        public IEnumerable<CategoriesTypesDAO>? GetAllWithoutSpecialTransfer()
+        public IEnumerable<CategoriesTypesDao>? GetAllWithoutSpecialTransfer()
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<CategoriesTypesDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<CategoriesTypesDao>();
                 var query = repository.GetAll()
-                    .Where(x => x.id is not (int)ECategoriesTypes.Specials and
+                    .Where(x => x.Id is not (int)ECategoriesTypes.Specials and
                     not (int)ECategoriesTypes.Transfers);
 
                 foreach (var item in query)

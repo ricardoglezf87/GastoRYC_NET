@@ -77,7 +77,7 @@ namespace GARCA.View.Views
 
         public async void LoadReminders()
         {
-            var expirationsReminders = await Task.Run(() => DependencyConfig.IExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration()?.ToList());
+            var expirationsReminders = await Task.Run(() => DependencyConfig.ExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration()?.ToList());
 
             cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 
@@ -91,11 +91,11 @@ namespace GARCA.View.Views
 
         private void PutDoneReminder(int? id)
         {
-            var expirationsReminders = DependencyConfig.IExpirationsRemindersService.GetById(id);
+            var expirationsReminders = DependencyConfig.ExpirationsRemindersService.GetById(id);
             if (expirationsReminders != null)
             {
                 expirationsReminders.Done = true;
-                DependencyConfig.IExpirationsRemindersService.Update(expirationsReminders);
+                DependencyConfig.ExpirationsRemindersService.Update(expirationsReminders);
             }
 
             LoadReminders();
@@ -103,7 +103,7 @@ namespace GARCA.View.Views
 
         private void MakeTransactionFromReminder(int? id)
         {
-            var transaction = DependencyConfig.IExpirationsRemindersService.RegisterTransactionfromReminder(id);
+            var transaction = DependencyConfig.ExpirationsRemindersService.RegisterTransactionfromReminder(id);
             if (transaction != null)
             {
                 FrmTransaction frm = new(transaction);

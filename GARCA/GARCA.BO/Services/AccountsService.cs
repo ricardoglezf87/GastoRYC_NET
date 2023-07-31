@@ -61,7 +61,7 @@ namespace GARCA.BO.Services
 
         public Decimal GetBalanceByAccount(int? id)
         {
-            return DependencyConfig.ITransactionsService.GetByAccount(id)?.Sum(x => x.Amount) ?? 0;
+            return DependencyConfig.TransactionsService.GetByAccount(id)?.Sum(x => x.Amount) ?? 0;
         }
     }
 }

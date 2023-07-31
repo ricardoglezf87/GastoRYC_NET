@@ -6,21 +6,21 @@ using System.Linq.Expressions;
 
 namespace GARCA.DAO.Managers
 {
-    public class InvestmentProductsManager : ManagerBase<InvestmentProductsDAO>
+    public class InvestmentProductsManager : ManagerBase<InvestmentProductsDao>
     {
 #pragma warning disable CS8603
-        protected override Expression<Func<InvestmentProductsDAO, object>>[] GetIncludes()
+        protected override Expression<Func<InvestmentProductsDao, object>>[] GetIncludes()
         {
-            return new Expression<Func<InvestmentProductsDAO, object>>[]
+            return new Expression<Func<InvestmentProductsDao, object>>[]
             {
-                a => a.investmentProductsTypes
+                a => a.InvestmentProductsTypes
             };
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<InvestmentProductsDAO>? GetAllOpened()
+        public IEnumerable<InvestmentProductsDao>? GetAllOpened()
         {
-            return GetAll()?.Where(x => x.active.HasValue && x.active.Value);
+            return GetAll()?.Where(x => x.Active.HasValue && x.Active.Value);
         }
     }
 }

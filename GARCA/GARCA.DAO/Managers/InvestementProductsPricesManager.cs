@@ -7,14 +7,14 @@ using System.Linq.Expressions;
 
 namespace GARCA.DAO.Managers
 {
-    public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPricesDAO>
+    public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPricesDao>
     {
 #pragma warning disable CS8603
-        protected override Expression<Func<InvestmentProductsPricesDAO, object>>[] GetIncludes()
+        protected override Expression<Func<InvestmentProductsPricesDao, object>>[] GetIncludes()
         {
-            return new Expression<Func<InvestmentProductsPricesDAO, object>>[]
+            return new Expression<Func<InvestmentProductsPricesDao, object>>[]
             {
-                a => a.investmentProducts
+                a => a.InvestmentProducts
             };
         }
 #pragma warning restore CS8603
@@ -23,29 +23,29 @@ namespace GARCA.DAO.Managers
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<InvestmentProductsPricesDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<InvestmentProductsPricesDao>();
                 return GetEntyWithInclude(repository)?
-                    .Any(x => investmentProductId.Equals(x.investmentProductsid) && date.Equals(x.date)) ?? false;
+                    .Any(x => investmentProductId.Equals(x.InvestmentProductsid) && date.Equals(x.Date)) ?? false;
             }
         }
 
-        public Decimal? GetActualPrice(InvestmentProductsDAO investmentProducts)
+        public Decimal? GetActualPrice(InvestmentProductsDao investmentProducts)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<InvestmentProductsPricesDAO>();
-                var query = GetEntyWithInclude(repository)?.Where(x => x.investmentProductsid.Equals(investmentProducts.id));
-                return query?.Where(x => x.investmentProductsid.Equals(investmentProducts.id)
-                    && x.date.Equals(query.Max(y => y.date))).Select(z => z.prices).FirstOrDefault();
+                var repository = unitOfWork.GetRepositoryModelBase<InvestmentProductsPricesDao>();
+                var query = GetEntyWithInclude(repository)?.Where(x => x.InvestmentProductsid.Equals(investmentProducts.Id));
+                return query?.Where(x => x.InvestmentProductsid.Equals(investmentProducts.Id)
+                    && x.Date.Equals(query.Max(y => y.Date))).Select(z => z.Prices).FirstOrDefault();
             }
         }
 
-        public DateTime? GetLastValueDate(InvestmentProductsDAO investmentProducts)
+        public DateTime? GetLastValueDate(InvestmentProductsDao investmentProducts)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<InvestmentProductsPricesDAO>();
-                return GetEntyWithInclude(repository)?.Where(x => x.investmentProductsid.Equals(investmentProducts.id)).Max(x => x.date);
+                var repository = unitOfWork.GetRepositoryModelBase<InvestmentProductsPricesDao>();
+                return GetEntyWithInclude(repository)?.Where(x => x.InvestmentProductsid.Equals(investmentProducts.Id)).Max(x => x.Date);
             }
         }
     }

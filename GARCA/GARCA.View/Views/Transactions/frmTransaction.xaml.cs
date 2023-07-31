@@ -98,7 +98,7 @@ namespace GARCA.View.Views
 
             FrmSplitsList frm = new(transaction);
             frm.ShowDialog();
-            DependencyConfig.ITransactionsService.UpdateTransactionAfterSplits(transaction);
+            DependencyConfig.TransactionsService.UpdateTransactionAfterSplits(transaction);
             LoadTransaction();
         }
 
@@ -307,12 +307,12 @@ namespace GARCA.View.Views
 
             transaction.Date = dtpDate.SelectedDate;
             transaction.Accountid = (int)cbAccount.SelectedValue;
-            transaction.Account = DependencyConfig.IAccountsService.GetById(transaction.Accountid);
+            transaction.Account = DependencyConfig.AccountsService.GetById(transaction.Accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.Personid = (int)cbPerson.SelectedValue;
-                transaction.Person = DependencyConfig.IPersonsService.GetById(transaction.Personid);
+                transaction.Person = DependencyConfig.PersonsService.GetById(transaction.Personid);
             }
 
             transaction.Memo = txtMemo.Text;
@@ -325,13 +325,13 @@ namespace GARCA.View.Views
             if (cbCategory.SelectedValue != null)
             {
                 transaction.Categoryid = (int)cbCategory.SelectedValue;
-                transaction.Category = DependencyConfig.ICategoriesService.GetById(transaction.Categoryid);
+                transaction.Category = DependencyConfig.CategoriesService.GetById(transaction.Categoryid);
             }
 
             if (cbInvestmentProduct.SelectedValue != null)
             {
                 transaction.InvestmentProductsid = (int)cbInvestmentProduct.SelectedValue;
-                transaction.InvestmentProducts = DependencyConfig.IInvestmentProductsService.GetById(transaction.InvestmentProductsid);
+                transaction.InvestmentProducts = DependencyConfig.InvestmentProductsService.GetById(transaction.InvestmentProductsid);
             }
 
             transaction.NumShares = (decimal?)Convert.ToDouble(txtNumShares.Value);
@@ -351,21 +351,21 @@ namespace GARCA.View.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.Tagid = (int)cbTag.SelectedValue;
-                transaction.Tag = DependencyConfig.ITagsService.GetById(transaction.Tagid);
+                transaction.Tag = DependencyConfig.TagsService.GetById(transaction.Tagid);
             }
 
             transaction.TransactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.TransactionStatus = DependencyConfig.ITransactionsStatusService.GetById(transaction.TransactionStatusid);
+            transaction.TransactionStatus = DependencyConfig.TransactionsStatusService.GetById(transaction.TransactionStatusid);
         }
 
         private void LoadComboBox()
         {
-            cbAccount.ItemsSource = DependencyConfig.IAccountsService.GetAll();
-            cbPerson.ItemsSource = DependencyConfig.IPersonsService.GetAll();
-            cbCategory.ItemsSource = DependencyConfig.ICategoriesService.GetAll();
-            cbInvestmentProduct.ItemsSource = DependencyConfig.IInvestmentProductsService.GetAll();
-            cbTag.ItemsSource = DependencyConfig.ITagsService.GetAll();
-            cbTransactionStatus.ItemsSource = DependencyConfig.ITransactionsStatusService.GetAll();
+            cbAccount.ItemsSource = DependencyConfig.AccountsService.GetAll();
+            cbPerson.ItemsSource = DependencyConfig.PersonsService.GetAll();
+            cbCategory.ItemsSource = DependencyConfig.CategoriesService.GetAll();
+            cbInvestmentProduct.ItemsSource = DependencyConfig.InvestmentProductsService.GetAll();
+            cbTag.ItemsSource = DependencyConfig.TagsService.GetAll();
+            cbTransactionStatus.ItemsSource = DependencyConfig.TransactionsStatusService.GetAll();
         }
 
         private bool IsTransactionValid()
@@ -446,7 +446,7 @@ namespace GARCA.View.Views
                     UpdateTransaction();
                     if (transaction != null)
                     {
-                        DependencyConfig.ITransactionsService.SaveChanges(ref transaction);
+                        DependencyConfig.TransactionsService.SaveChanges(ref transaction);
                     }
                     return true;
                 }

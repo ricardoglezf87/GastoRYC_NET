@@ -7,26 +7,26 @@ using System.Linq.Expressions;
 
 namespace GARCA.DAO.Managers
 {
-    public class SplitsRemindersManager : ManagerBase<SplitsRemindersDAO>
+    public class SplitsRemindersManager : ManagerBase<SplitsRemindersDao>
     {
 #pragma warning disable CS8603
-        protected override Expression<Func<SplitsRemindersDAO, object>>[] GetIncludes()
+        protected override Expression<Func<SplitsRemindersDao, object>>[] GetIncludes()
         {
-            return new Expression<Func<SplitsRemindersDAO, object>>[]
+            return new Expression<Func<SplitsRemindersDao, object>>[]
             {
-                a => a.transaction,
-                a => a.category,
-                a => a.tag
+                a => a.Transaction,
+                a => a.Category,
+                a => a.Tag
             };
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<SplitsRemindersDAO>? GetbyTransactionidNull()
+        public IEnumerable<SplitsRemindersDao>? GetbyTransactionidNull()
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<SplitsRemindersDAO>();
-                var query = GetEntyWithInclude(repository)?.Where(x => x.transactionid == null);
+                var repository = unitOfWork.GetRepositoryModelBase<SplitsRemindersDao>();
+                var query = GetEntyWithInclude(repository)?.Where(x => x.Transactionid == null);
 
                 if (query != null)
                 {
@@ -38,12 +38,12 @@ namespace GARCA.DAO.Managers
             }
         }
 
-        public IEnumerable<SplitsRemindersDAO>? GetbyTransactionid(int transactionid)
+        public IEnumerable<SplitsRemindersDao>? GetbyTransactionid(int transactionid)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<SplitsRemindersDAO>();
-                var query = GetEntyWithInclude(repository)?.Where(x => x.transactionid == transactionid);
+                var repository = unitOfWork.GetRepositoryModelBase<SplitsRemindersDao>();
+                var query = GetEntyWithInclude(repository)?.Where(x => x.Transactionid == transactionid);
 
                 if (query != null)
                 {

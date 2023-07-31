@@ -12,27 +12,27 @@ namespace GARCA.BO.Models
         public virtual int? Month { set; get; }
         public virtual int? Year { set; get; }
 
-        internal DateCalendarDAO ToDao()
+        internal DateCalendarDao ToDao()
         {
-            return new DateCalendarDAO
+            return new DateCalendarDao
             {
-                date = Date,
-                day = Day,
-                month = Month,
-                year = Year
+                Date = Date,
+                Day = Day,
+                Month = Month,
+                Year = Year
             };
         }
 
-        public static explicit operator DateCalendar?(DateCalendarDAO? v)
+        public static explicit operator DateCalendar?(DateCalendarDao? v)
         {
             return v == null
                 ? null
                 : new DateCalendar
                 {
-                    Date = v.date,
-                    Day = v.day,
-                    Month = v.month,
-                    Year = v.year
+                    Date = v.Date,
+                    Day = v.Day,
+                    Month = v.Month,
+                    Year = v.Year
                 };
         }
     }

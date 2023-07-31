@@ -53,7 +53,7 @@ namespace GARCA.View.Views
             var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
-            DependencyConfig.ITransactionsService.UpdateTransactionAfterSplits(transactions);
+            DependencyConfig.TransactionsService.UpdateTransactionAfterSplits(transactions);
             LoadTransactions();
             parentForm.LoadAccounts();
         }
@@ -96,9 +96,9 @@ namespace GARCA.View.Views
                         transactionsReminders.Tagid = transactions.Tagid;
                         transactionsReminders.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
 
-                        transactionsReminders = DependencyConfig.ITransactionsRemindersService.Update(transactionsReminders);
+                        transactionsReminders = DependencyConfig.TransactionsRemindersService.Update(transactionsReminders);
 
-                        foreach (var splits in DependencyConfig.ISplitsService.GetbyTransactionid(transactions.Id))
+                        foreach (var splits in DependencyConfig.SplitsService.GetbyTransactionid(transactions.Id))
                         {
                             SplitsReminders splitsReminders = new();
                             splitsReminders.Transactionid = transactionsReminders.Id;
@@ -107,7 +107,7 @@ namespace GARCA.View.Views
                             splitsReminders.AmountIn = splits.AmountIn;
                             splitsReminders.AmountOut = splits.AmountOut;
                             splitsReminders.Tagid = splits.Tagid;
-                            DependencyConfig.ISplitsRemindersService.Update(splitsReminders);
+                            DependencyConfig.SplitsRemindersService.Update(splitsReminders);
                         }
 
                         FrmTransactionReminders frm = new(transactionsReminders);
@@ -176,8 +176,8 @@ namespace GARCA.View.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
-                    transactions.TransactionStatus = DependencyConfig.ITransactionsStatusService.GetById(transactions.TransactionStatusid);
-                    DependencyConfig.ITransactionsService.Update(transactions);
+                    transactions.TransactionStatus = DependencyConfig.TransactionsStatusService.GetById(transactions.TransactionStatusid);
+                    DependencyConfig.TransactionsService.Update(transactions);
                 }
                 LoadTransactions();
             }
@@ -194,8 +194,8 @@ namespace GARCA.View.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
-                    transactions.TransactionStatus = DependencyConfig.ITransactionsStatusService.GetById(transactions.TransactionStatusid);
-                    DependencyConfig.ITransactionsService.Update(transactions);
+                    transactions.TransactionStatus = DependencyConfig.TransactionsStatusService.GetById(transactions.TransactionStatusid);
+                    DependencyConfig.TransactionsService.Update(transactions);
                 }
                 LoadTransactions();
             }
@@ -212,8 +212,8 @@ namespace GARCA.View.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
-                    transactions.TransactionStatus = DependencyConfig.ITransactionsStatusService.GetById(transactions.TransactionStatusid);
-                    DependencyConfig.ITransactionsService.Update(transactions);
+                    transactions.TransactionStatus = DependencyConfig.TransactionsStatusService.GetById(transactions.TransactionStatusid);
+                    DependencyConfig.TransactionsService.Update(transactions);
                 }
                 LoadTransactions();
             }
@@ -283,19 +283,19 @@ namespace GARCA.View.Views
                         var splits = lSplits[i];
                         if (splits.Tranferid != null)
                         {
-                            DependencyConfig.ITransactionsService.Delete(DependencyConfig.ITransactionsService.GetById(splits.Tranferid));
+                            DependencyConfig.TransactionsService.Delete(DependencyConfig.TransactionsService.GetById(splits.Tranferid));
                         }
 
-                        DependencyConfig.ISplitsService.Delete(splits);
+                        DependencyConfig.SplitsService.Delete(splits);
                     }
                 }
 
                 if (transactions.Tranferid != null)
                 {
-                    DependencyConfig.ITransactionsService.Delete(DependencyConfig.ITransactionsService.GetById(transactions.Tranferid));
+                    DependencyConfig.TransactionsService.Delete(DependencyConfig.TransactionsService.GetById(transactions.Tranferid));
                 }
 
-                DependencyConfig.ITransactionsService.Delete(transactions);
+                DependencyConfig.TransactionsService.Delete(transactions);
             }
         }
 

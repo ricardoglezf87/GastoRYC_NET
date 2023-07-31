@@ -7,14 +7,14 @@ namespace GARCA.BO.Models
     {
         public virtual String? Description { set; get; }
 
-        public static explicit operator PeriodsReminders?(PeriodsRemindersDAO? v)
+        public static explicit operator PeriodsReminders?(PeriodsRemindersDao? v)
         {
             return v == null
                 ? null
                 : new PeriodsReminders
                 {
-                    Id = v.id,
-                    Description = v.description
+                    Id = v.Id,
+                    Description = v.Description
                 };
         }
 

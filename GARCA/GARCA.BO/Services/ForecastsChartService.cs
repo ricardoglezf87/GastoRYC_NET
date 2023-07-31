@@ -19,7 +19,7 @@ namespace GARCA.BO.Services
 
             var now = DateTime.Now;
 
-            foreach (var g in DependencyConfig.IAccountsService.GetAllOpened()?.Where(x => (x.Closed == false || x.Closed == null)
+            foreach (var g in DependencyConfig.AccountsService.GetAllOpened()?.Where(x => (x.Closed == false || x.Closed == null)
                                                             && (x.AccountsTypesid == (int)EAccountsTypes.Cash ||
                                                             x.AccountsTypesid == (int)EAccountsTypes.Banks ||
                                                             x.AccountsTypesid == (int)EAccountsTypes.Cards)))
@@ -29,15 +29,15 @@ namespace GARCA.BO.Services
 
             List<Transactions> remTransactions = new();
 
-            foreach (var exp in DependencyConfig.IExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration())
+            foreach (var exp in DependencyConfig.ExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration())
             {
                 if (exp != null)
                 {
-                    remTransactions.AddRange(DependencyConfig.IExpirationsRemindersService.RegisterTransactionfromReminderSimulation(exp));
+                    remTransactions.AddRange(DependencyConfig.ExpirationsRemindersService.RegisterTransactionfromReminderSimulation(exp));
                 }
             }
 
-            var transactions = DependencyConfig.ITransactionsService.GetAll()?.ToList();
+            var transactions = DependencyConfig.TransactionsService.GetAll()?.ToList();
 
             if (transactions != null)
             {
@@ -73,7 +73,7 @@ namespace GARCA.BO.Services
             foreach (var key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    DependencyConfig.IAccountsService.GetById(key.Item2)?.Description,
+                    DependencyConfig.AccountsService.GetById(key.Item2)?.Description,
                     key.Item2, dChart[key]));
             }
             return lChart;

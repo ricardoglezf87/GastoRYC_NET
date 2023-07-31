@@ -7,23 +7,23 @@ namespace GARCA.BO.Models
     {
         public virtual String? Description { set; get; }
 
-        internal TagsDAO ToDao()
+        internal TagsDao ToDao()
         {
-            return new TagsDAO
+            return new TagsDao
             {
-                id = Id,
-                description = Description
+                Id = Id,
+                Description = Description
             };
         }
 
-        public static explicit operator Tags?(TagsDAO? v)
+        public static explicit operator Tags?(TagsDao? v)
         {
             return v == null
                 ? null
                 : new Tags
                 {
-                    Id = v.id,
-                    Description = v.description
+                    Id = v.Id,
+                    Description = v.Description
                 };
         }
     }

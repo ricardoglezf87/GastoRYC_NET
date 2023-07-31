@@ -17,7 +17,7 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvPersons.ItemsSource = DependencyConfig.IPersonsService.GetAll();
+            gvPersons.ItemsSource = DependencyConfig.PersonsService.GetAll();
         }
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -35,14 +35,14 @@ namespace GARCA.View.Views
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var persons = (Persons)e.RowData;
-            DependencyConfig.IPersonsService.Update(persons);
+            DependencyConfig.PersonsService.Update(persons);
         }
 
         private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Persons persons in e.Items)
             {
-                DependencyConfig.IPersonsService.Delete(persons);
+                DependencyConfig.PersonsService.Delete(persons);
             }
         }
 

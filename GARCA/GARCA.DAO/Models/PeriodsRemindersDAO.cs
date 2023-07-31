@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("PeriodsReminders")]
-    public class PeriodsRemindersDAO : ModelBaseDAO
+    public class PeriodsRemindersDao : ModelBaseDao
     {
         [Column("description")]
-        public virtual String? description { set; get; }
+        public virtual String? Description { set; get; }
 
     }
 }

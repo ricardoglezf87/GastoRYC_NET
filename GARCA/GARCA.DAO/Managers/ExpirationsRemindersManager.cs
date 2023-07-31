@@ -7,38 +7,38 @@ using System.Linq.Expressions;
 
 namespace GARCA.DAO.Managers
 {
-    public class ExpirationsRemindersManager : ManagerBase<ExpirationsRemindersDAO>
+    public class ExpirationsRemindersManager : ManagerBase<ExpirationsRemindersDao>
     {
 #pragma warning disable CS8603
-        protected override Expression<Func<ExpirationsRemindersDAO, object>>[] GetIncludes()
+        protected override Expression<Func<ExpirationsRemindersDao, object>>[] GetIncludes()
         {
-            return new Expression<Func<ExpirationsRemindersDAO, object>>[]
+            return new Expression<Func<ExpirationsRemindersDao, object>>[]
             {
-                a => a.transactionsReminders,
-                a => a.transactionsReminders.person,
-                a => a.transactionsReminders.account,
-                a => a.transactionsReminders.category,
-                a => a.transactionsReminders.category.categoriesTypes
+                a => a.TransactionsReminders,
+                a => a.TransactionsReminders.Person,
+                a => a.TransactionsReminders.Account,
+                a => a.TransactionsReminders.Category,
+                a => a.TransactionsReminders.Category.CategoriesTypes
             };
         }
 #pragma warning restore CS8603
 
-        public bool ExistsExpiration(TransactionsRemindersDAO? transactionsReminder, DateTime? date)
+        public bool ExistsExpiration(TransactionsRemindersDao? transactionsReminder, DateTime? date)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<ExpirationsRemindersDAO>();
+                var repository = unitOfWork.GetRepositoryModelBase<ExpirationsRemindersDao>();
                 return transactionsReminder != null
-                    && (GetEntyWithInclude(repository)?.Any(x => x.transactionsRemindersid == transactionsReminder.id && x.date == date) ?? false);
+                    && (GetEntyWithInclude(repository)?.Any(x => x.TransactionsRemindersid == transactionsReminder.Id && x.Date == date) ?? false);
             }
         }
 
-        public IEnumerable<ExpirationsRemindersDAO>? GetByTransactionReminderid(int? id)
+        public IEnumerable<ExpirationsRemindersDao>? GetByTransactionReminderid(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
-                var repository = unitOfWork.GetRepositoryModelBase<ExpirationsRemindersDAO>();
-                var query = GetEntyWithInclude(repository)?.Where(x => id.Equals(x.transactionsRemindersid));
+                var repository = unitOfWork.GetRepositoryModelBase<ExpirationsRemindersDao>();
+                var query = GetEntyWithInclude(repository)?.Where(x => id.Equals(x.TransactionsRemindersid));
 
                 if (query != null)
                 {

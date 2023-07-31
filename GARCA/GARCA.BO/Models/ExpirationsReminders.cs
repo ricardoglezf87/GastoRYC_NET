@@ -17,29 +17,29 @@ namespace GARCA.BO.Models
                     ? Date < DateTime.Now ? "Vencido" : Date > DateTime.Now.AddMonths(1) ? "Futuro" : Date.Value.Day + "/" + Date.Value.Month
                     : String.Empty;
 
-        internal ExpirationsRemindersDAO ToDao()
+        internal ExpirationsRemindersDao ToDao()
         {
-            return new ExpirationsRemindersDAO
+            return new ExpirationsRemindersDao
             {
-                id = Id,
-                date = Date,
-                transactionsReminders = null,
-                transactionsRemindersid = TransactionsRemindersid,
-                done = Done
+                Id = Id,
+                Date = Date,
+                TransactionsReminders = null,
+                TransactionsRemindersid = TransactionsRemindersid,
+                Done = Done
             };
         }
 
-        public static explicit operator ExpirationsReminders?(ExpirationsRemindersDAO? v)
+        public static explicit operator ExpirationsReminders?(ExpirationsRemindersDao? v)
         {
             return v == null
                 ? null
                 : new ExpirationsReminders
                 {
-                    Id = v.id,
-                    Date = v.date,
-                    TransactionsReminders = v.transactionsReminders != null ? (TransactionsReminders?)v.transactionsReminders : null,
-                    TransactionsRemindersid = v.transactionsRemindersid,
-                    Done = v.done
+                    Id = v.Id,
+                    Date = v.Date,
+                    TransactionsReminders = v.TransactionsReminders != null ? (TransactionsReminders?)v.TransactionsReminders : null,
+                    TransactionsRemindersid = v.TransactionsRemindersid,
+                    Done = v.Done
                 };
         }
     }

@@ -26,10 +26,10 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = DependencyConfig.ICategoriesService.GetAll();
+            cbCategories.ItemsSource = DependencyConfig.CategoriesService.GetAll();
             gvSplits.ItemsSource = transactions != null && transactions.Id > 0
-                ? DependencyConfig.ISplitsService.GetbyTransactionid(transactions.Id)
-                : (object?)DependencyConfig.ISplitsService.GetbyTransactionidNull();
+                ? DependencyConfig.SplitsService.GetbyTransactionid(transactions.Id)
+                : (object?)DependencyConfig.SplitsService.GetbyTransactionidNull();
         }
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -40,7 +40,7 @@ namespace GARCA.View.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.Category = DependencyConfig.ICategoriesService.GetById(splits.Categoryid);
+                        splits.Category = DependencyConfig.CategoriesService.GetById(splits.Categoryid);
                         break;
                 }
             }
@@ -74,8 +74,8 @@ namespace GARCA.View.Views
         {
             var splits = (Splits)e.RowData;
 
-            DependencyConfig.ISplitsService.SaveChanges(splits);
-            DependencyConfig.ITransactionsService.UpdateTranferSplits(transactions, splits);
+            DependencyConfig.SplitsService.SaveChanges(splits);
+            DependencyConfig.TransactionsService.UpdateTranferSplits(transactions, splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -84,9 +84,9 @@ namespace GARCA.View.Views
             {
                 if (splits.Tranferid != null)
                 {
-                    DependencyConfig.ITransactionsService.Delete(DependencyConfig.ITransactionsService.GetById(splits.Tranferid));
+                    DependencyConfig.TransactionsService.Delete(DependencyConfig.TransactionsService.GetById(splits.Tranferid));
                 }
-                DependencyConfig.ISplitsService.Delete(splits);
+                DependencyConfig.SplitsService.Delete(splits);
             }
         }
 

@@ -15,7 +15,7 @@ namespace GARCA.DAO.Repositories
             context = dbContext;
         }
 
-        public Repository<TEntity> GetRepositoryModelBase<TEntity>() where TEntity : ModelBaseDAO
+        public Repository<TEntity> GetRepositoryModelBase<TEntity>() where TEntity : ModelBaseDao
         {
             return new Repository<TEntity>(context);
         }

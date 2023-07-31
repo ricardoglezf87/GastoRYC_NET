@@ -4,15 +4,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.DAO.Models
 {
     [Table("Persons")]
-    public class PersonsDAO : ModelBaseDAO
+    public class PersonsDao : ModelBaseDao
     {
         [Column("name")]
-        public virtual String? name { set; get; }
+        public virtual String? Name { set; get; }
 
         [Column("categoryid")]
-        public virtual int? categoryid { set; get; }
+        public virtual int? Categoryid { set; get; }
 
         [Column("category")]
-        public virtual CategoriesDAO? category { set; get; }
+        public virtual CategoriesDao? Category { set; get; }
     }
 }

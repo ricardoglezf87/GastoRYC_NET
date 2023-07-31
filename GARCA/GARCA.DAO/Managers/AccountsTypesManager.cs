@@ -2,7 +2,7 @@
 
 namespace GARCA.DAO.Managers
 {
-    public class AccountsTypesManager : ManagerBase<AccountsTypesDAO>
+    public class AccountsTypesManager : ManagerBase<AccountsTypesDao>
     {
     }
 }
