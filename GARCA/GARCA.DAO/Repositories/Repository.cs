@@ -42,9 +42,12 @@ namespace GARCA.DAO.Repositories
         public TEntity? GetWithInclude(int? id, params Expression<Func<TEntity, object>>[] includes)
         {
             var query = Entities.AsQueryable();
-            foreach (var include in includes)
+            if (includes is not null)
             {
-                query = query.Include(include);
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
             }
             return query.FirstOrDefault(e => e.Id == id);
         }
