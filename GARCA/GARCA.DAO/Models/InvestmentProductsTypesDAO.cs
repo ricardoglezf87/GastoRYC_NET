@@ -6,6 +6,7 @@ namespace GARCA.DAO.Models
     [Table("InvestmentProductsTypes")]
     public class InvestmentProductsTypesDAO : ModelBaseDAO
     {
+        [Column("description")]
         public virtual String? description { set; get; }
     }
 }
