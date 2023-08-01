@@ -1,5 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.Utils.IOC;
+using Syncfusion.Windows.Shared;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,17 +19,17 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvTags.ItemsSource = DependencyConfig.TagsService.GetAll();
+            gvTags.ItemsSource = DependencyConfig.TagsService.GetAll()?.ToList();
         }
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             var tags = (Tags)e.RowData;
 
-            if (tags.Description == null)
+            if (string.IsNullOrWhiteSpace(tags.Description))
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("descrìption", "Tiene que rellenar la descripción");
+                e.ErrorMessages.Add("Descrìption", "Tiene que rellenar la descripción");
             }
 
         }

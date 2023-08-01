@@ -54,19 +54,19 @@ namespace GARCA.View.Views
             if (splits.Categoryid == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("categoryid", "Tiene que rellenar el tipo de categoría");
+                e.ErrorMessages.Add("Categoryid", "Tiene que rellenar el tipo de categoría");
             }
             else if (splits.Categoryid == (int)CategoriesService.ESpecialCategories.Split)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("categoryid", "No se puede utilizar esta categoría en un split");
+                e.ErrorMessages.Add("Categoryid", "No se puede utilizar esta categoría en un split");
             }
 
             if (splits.AmountIn == null && splits.AmountOut == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("amountIn", "Tiene que rellenar la cantidad");
-                e.ErrorMessages.Add("amountOut", "Tiene que rellenar la cantidad");
+                e.ErrorMessages.Add("AmountIn", "Tiene que rellenar la cantidad");
+                e.ErrorMessages.Add("AmountOut", "Tiene que rellenar la cantidad");
             }
         }
 

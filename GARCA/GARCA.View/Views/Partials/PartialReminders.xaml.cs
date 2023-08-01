@@ -82,11 +82,11 @@ namespace GARCA.View.Views
             cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 
             cvReminders.CanGroup = true;
-            cvReminders.GroupCards("groupDate");
+            cvReminders.GroupCards("GroupDate");
 
             cvReminders.Items.SortDescriptions.Clear();
             cvReminders.Items.SortDescriptions.Add(
-                new System.ComponentModel.SortDescription("date", System.ComponentModel.ListSortDirection.Ascending));
+                new System.ComponentModel.SortDescription("Date", System.ComponentModel.ListSortDirection.Ascending));
         }
 
         private void PutDoneReminder(int? id)

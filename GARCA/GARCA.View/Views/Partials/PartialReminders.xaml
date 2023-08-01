@@ -63,10 +63,10 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Button Name="btnSkip" Click="btnSkip_Click" Width="40" Height="40" Foreground="{x:Null}" Background="White" HorizontalAlignment="Left" BorderBrush="{x:Null}" Margin="5,0,0,0" Tag="{Binding id}">
+                            <Button Name="btnSkip" Click="btnSkip_Click" Width="40" Height="40" Foreground="{x:Null}" Background="White" HorizontalAlignment="Left" BorderBrush="{x:Null}" Margin="5,0,0,0" Tag="{Binding Id}">
                                 <Image Source="/Resources/skip-32.png" Stretch="Fill" />
                             </Button>
-                            <Button Name="btnRegister" Click="btnRegister_Click"   Width="40" Height="40" Foreground="{x:Null}" Background="White" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,5,0" Tag="{Binding id}" >
+                            <Button Name="btnRegister" Click="btnRegister_Click"   Width="40" Height="40" Foreground="{x:Null}" Background="White" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,5,0" Tag="{Binding Id}" >
                                 <Image Source="/Resources/register-32.png" Stretch="Fill" />
                             </Button>
                         </Grid>

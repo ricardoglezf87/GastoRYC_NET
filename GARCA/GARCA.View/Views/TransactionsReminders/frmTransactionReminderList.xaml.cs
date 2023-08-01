@@ -1,5 +1,6 @@
 ﻿using GARCA.BO.Models;
 using GARCA.Utils.IOC;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -54,7 +55,7 @@ namespace GARCA.View.Views
 
         private void LoadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = DependencyConfig.TransactionsRemindersService.GetAll();
+            gvTransactionsReminders.ItemsSource = DependencyConfig.TransactionsRemindersService.GetAll()?.ToList();
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)

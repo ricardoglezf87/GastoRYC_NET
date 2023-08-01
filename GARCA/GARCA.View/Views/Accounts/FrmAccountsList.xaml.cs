@@ -1,6 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
 using GARCA.Utils.IOC;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -21,7 +22,7 @@ namespace GARCA.View.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbAccountsTypes.ItemsSource = DependencyConfig.AccountsTypesService.GetAll();
-            gvAccounts.ItemsSource = DependencyConfig.AccountsService.GetAll();
+            gvAccounts.ItemsSource = DependencyConfig.AccountsService.GetAll()?.ToList();
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -43,16 +44,16 @@ namespace GARCA.View.Views
         {
             var accounts = (Accounts)e.RowData;
 
-            if (accounts.Description == null)
+            if (string.IsNullOrWhiteSpace(accounts.Description))
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("description", "Tiene que rellenar la descripción");
+                e.ErrorMessages.Add("Description", "Tiene que rellenar la descripción");
             }
 
             if (accounts.AccountsTypesid == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("accountsTypesid", "Tiene que rellenar el tipo de cuenta");
+                e.ErrorMessages.Add("AccountsTypesid", "Tiene que rellenar el tipo de cuenta");
             }
         }
 

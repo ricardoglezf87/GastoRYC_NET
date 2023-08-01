@@ -1,5 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.Utils.IOC;
+using Syncfusion.Windows.Shared;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -21,23 +23,23 @@ namespace GARCA.View.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbInvestmentProductsTypes.ItemsSource = DependencyConfig.InvestmentProductsTypesService.GetAll();
-            gvInvestmentProducts.ItemsSource = DependencyConfig.InvestmentProductsService.GetAll();
+            gvInvestmentProducts.ItemsSource = DependencyConfig.InvestmentProductsService.GetAll()?.ToList();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             var investmentProducts = (InvestmentProducts)e.RowData;
 
-            if (investmentProducts.Description == null)
+            if (string.IsNullOrWhiteSpace(investmentProducts.Description))
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("descrìption", "Tiene que rellenar la descripción");
+                e.ErrorMessages.Add("Descrìption", "Tiene que rellenar la descripción");
             }
 
             if (investmentProducts.InvestmentProductsTypesid == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("investmentProductsTypesid", "Tiene que rellenar el tipo del producto financiero");
+                e.ErrorMessages.Add("InvestmentProductsTypesid", "Tiene que rellenar el tipo del producto financiero");
             }
         }
 

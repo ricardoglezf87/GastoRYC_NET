@@ -26,9 +26,9 @@ namespace GARCA.BO.Services
             return (Persons?)personsManager.GetById(id);
         }
 
-        public void Update(Persons persons)
+        public Persons? Update(Persons persons)
         {
-            personsManager.Update(persons.ToDao());
+            return (Persons?)personsManager.Update(persons.ToDao());
         }
 
         public void Delete(Persons persons)

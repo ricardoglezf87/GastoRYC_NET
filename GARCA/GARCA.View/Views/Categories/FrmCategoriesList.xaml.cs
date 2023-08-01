@@ -1,5 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.Utils.IOC;
+using Syncfusion.Windows.Shared;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -18,7 +20,7 @@ namespace GARCA.View.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategoriesTypes.ItemsSource = DependencyConfig.CategoriesTypesService.GetAllWithoutSpecialTransfer();
-            gvCategories.ItemsSource = DependencyConfig.CategoriesService.GetAllWithoutSpecialTransfer();
+            gvCategories.ItemsSource = DependencyConfig.CategoriesService.GetAllWithoutSpecialTransfer()?.ToList();
         }
 
         private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -40,16 +42,16 @@ namespace GARCA.View.Views
         {
             var categories = (Categories)e.RowData;
 
-            if (categories.Description == null)
+            if (string.IsNullOrWhiteSpace(categories.Description))
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("description", "Tiene que rellenar la descripción");
+                e.ErrorMessages.Add("Description", "Tiene que rellenar la descripción");
             }
 
             if (categories.CategoriesTypesid == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("categoriesTypesid", "Tiene que rellenar el tipo de categoría");
+                e.ErrorMessages.Add("CategoriesTypesid", "Tiene que rellenar el tipo de categoría");
             }
         }
 

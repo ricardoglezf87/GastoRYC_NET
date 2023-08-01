@@ -1,5 +1,6 @@
 ﻿using GARCA.BO.Models;
 using GARCA.Utils.IOC;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,17 +18,17 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            gvPersons.ItemsSource = DependencyConfig.PersonsService.GetAll();
+            gvPersons.ItemsSource = DependencyConfig.PersonsService.GetAll()?.ToList();
         }
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             var persons = (Persons)e.RowData;
 
-            if (persons.Name == null)
+            if (string.IsNullOrWhiteSpace(persons.Name))
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("name", "Tiene que rellenar el nombre");
+                e.ErrorMessages.Add("Name", "Tiene que rellenar el nombre");
             }
 
         }
@@ -35,7 +36,7 @@ namespace GARCA.View.Views
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var persons = (Persons)e.RowData;
-            DependencyConfig.PersonsService.Update(persons);
+            persons = DependencyConfig.PersonsService.Update(persons);
         }
 
         private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
