@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GARCA.DAO.Models
 {
-    [Table("Accounts")]
+    [Table("Accounts")] //TODO: Eliminacion en cascada
     public class AccountsDao : ModelBaseDao
     {
         [Column("description")]
