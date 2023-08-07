@@ -148,6 +148,8 @@ namespace GARCA.BO.Services
                         aux[i].Balance = balanceTotal;
                         balanceTotal -= aux[i].Amount;
                     }
+                    aux[i].Orden = CreateOrden(aux[i]);
+
                 }
                 UpdateList(aux);
             }
