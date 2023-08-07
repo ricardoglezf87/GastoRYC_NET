@@ -51,7 +51,7 @@ namespace GARCA.DAO.Managers
 #if DEBUG
             nameDdbb = "rycBBDD_PRE.db";
 #else
-            nameDDBB = "rycBBDD.db";
+            nameDdbb = "rycBBDD.db";
 #endif
 
             optionsBuilder.UseSqlite("Data Source=Data\\" + nameDdbb);

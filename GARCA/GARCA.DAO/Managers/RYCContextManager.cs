@@ -31,7 +31,7 @@ namespace GARCA.DAO.Managers
 #if DEBUG
             nameDdbb = "rycBBDD_PRE.db";
 #else
-            nameDDBB = "rycBBDD.db";
+            nameDdbb = "rycBBDD.db";
 #endif
 
             if (File.Exists(path + nameDdbb))
