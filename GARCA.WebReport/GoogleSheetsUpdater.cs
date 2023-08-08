@@ -1,17 +1,14 @@
-﻿using Google.Apis.Auth.OAuth2;
-using Google.Apis.Services;
-using Google.Apis.Sheets.v4.Data;
-using Google.Apis.Sheets.v4;
-using GARCA.BO.Models;
+﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
+using Google.Apis.Sheets.v4;
+using Google.Apis.Sheets.v4.Data;
 
 namespace GARCA.WebReport
 {
     public class GoogleSheetsUpdater
     {
-        private const string SpreadsheetId = "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI";
-        private const string SheetName = "Data";
-
         private const string jsonKey = @"{
                                           ""type"": ""service_account"",
                                           ""project_id"": ""garca-393321"",
@@ -33,28 +30,40 @@ namespace GARCA.WebReport
 
             try
             {
-                var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpenned());
-                List<string[]> filasDeDatos = new()
+                await updateTransactions(service);
+                await updateInvest(service);
+                await updateForecast(service);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private async Task updateTransactions(SheetsService service)
+        {
+            var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpenned());
+            List<string[]> filasDeDatos = new()
                 {
                     new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
                 };
 
-                for (int i = 0; i < transactions.Count; i++)
+            for (int i = 0; i < transactions.Count; i++)
+            {
+                Transactions? trans = transactions[i];
+
+                List<Splits?>? splits = await Task.Run(() => SplitsService.Instance.getbyTransactionid(trans.id));
+
+                if (splits != null && splits.Count > 0)
                 {
-                    Transactions? trans = transactions[i];
-
-                    List<Splits?>? splits = await Task.Run(() => SplitsService.Instance.getbyTransactionid(trans.id));
-
-                    if (splits != null && splits.Count > 0)
+                    Decimal? balance = trans.balance ?? 0 - trans.amount ?? 0;
+                    foreach (var spl in splits)
                     {
-                        Decimal? balance = trans.balance ?? 0 - trans.amount ?? 0;
-                        foreach (var spl in splits)
+                        if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
                         {
-                            if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-                            {
-                                balance += spl.amount ?? 0;
-                                filasDeDatos.Add(
-                                   new string[] {
+                            balance += spl.amount ?? 0;
+                            filasDeDatos.Add(
+                               new string[] {
                                         trans.id.ToString(),
                                         dateToStringJS(trans.date),
                                         trans.account?.description ?? "Sin Cuenta",
@@ -68,14 +77,14 @@ namespace GARCA.WebReport
                                         (trans.tagid??-99).ToString(),
                                         trans.memo?.ToString() ?? String.Empty,
                                         decimalToStringJS(balance)
-                                   });
-                            }
+                               });
                         }
                     }
-                    else if (trans.category == null || trans.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
-                    {
-                        filasDeDatos.Add(
-                            new string[] {
+                }
+                else if (trans.category == null || trans.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+                {
+                    filasDeDatos.Add(
+                        new string[] {
                                 trans.id.ToString(),
                                 dateToStringJS(trans.date),
                                 trans.account?.description ?? "Sin Cuenta",
@@ -89,54 +98,154 @@ namespace GARCA.WebReport
                                 (trans.tagid??-99).ToString(),
                                 trans.memo?.ToString() ?? String.Empty,
                                 decimalToStringJS(trans.balance)
-                            });
-                    }
+                        });
                 }
+            }
 
-                await writeSheet(service, filasDeDatos);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            await writeSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "Data");
+        }
+
+        private async Task updateInvest(SheetsService service)
+        {
+            //var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpenned());
+            //List<string[]> filasDeDatos = new()
+            //    {
+            //        new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
+            //    };
+
+            //for (int i = 0; i < transactions.Count; i++)
+            //{
+            //    Transactions? trans = transactions[i];
+
+            //    List<Splits?>? splits = await Task.Run(() => SplitsService.Instance.getbyTransactionid(trans.id));
+
+            //    if (splits != null && splits.Count > 0)
+            //    {
+            //        Decimal? balance = trans.balance ?? 0 - trans.amount ?? 0;
+            //        foreach (var spl in splits)
+            //        {
+            //            if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            //            {
+            //                balance += spl.amount ?? 0;
+            //                filasDeDatos.Add(
+            //                   new string[] {
+            //                            trans.id.ToString(),
+            //                            dateToStringJS(trans.date),
+            //                            trans.account?.description ?? "Sin Cuenta",
+            //                            (trans.accountid ?? -99).ToString(),
+            //                            trans.personDescripGrid ?? "Sin Persona",
+            //                            (trans.personid ?? -99).ToString(),
+            //                            spl.category?.description ?? "Sin Categoria",
+            //                            (spl.categoryid??-99).ToString(),
+            //                            decimalToStringJS(spl.amount),
+            //                            trans.tag?.description ?? "Sin Tag",
+            //                            (trans.tagid??-99).ToString(),
+            //                            trans.memo?.ToString() ?? String.Empty,
+            //                            decimalToStringJS(balance)
+            //                   });
+            //            }
+            //        }
+            //    }
+            //    else if (trans.category == null || trans.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            //    {
+            //        filasDeDatos.Add(
+            //            new string[] {
+            //                    trans.id.ToString(),
+            //                    dateToStringJS(trans.date),
+            //                    trans.account?.description ?? "Sin Cuenta",
+            //                    (trans.accountid ?? -99).ToString(),
+            //                    trans.personDescripGrid ?? "Sin Persona",
+            //                    (trans.personid ?? -99).ToString(),
+            //                    trans.categoryDescripGrid ?? "Sin Categoria",
+            //                    (trans.categoryid??-99).ToString(),
+            //                    decimalToStringJS(trans.amount),
+            //                    trans.tag?.description ?? "Sin Tag",
+            //                    (trans.tagid??-99).ToString(),
+            //                    trans.memo?.ToString() ?? String.Empty,
+            //                    decimalToStringJS(trans.balance)
+            //            });
+            //    }
+            //}
+
+            //await writeSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "Data");
+        }
+        private async Task updateForecast(SheetsService service)
+        {
+            //var transactions = await Task.Run(() => TransactionsService.Instance.getAllOpenned());
+            //List<string[]> filasDeDatos = new()
+            //    {
+            //        new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
+            //    };
+
+            //for (int i = 0; i < transactions.Count; i++)
+            //{
+            //    Transactions? trans = transactions[i];
+
+            //    List<Splits?>? splits = await Task.Run(() => SplitsService.Instance.getbyTransactionid(trans.id));
+
+            //    if (splits != null && splits.Count > 0)
+            //    {
+            //        Decimal? balance = trans.balance ?? 0 - trans.amount ?? 0;
+            //        foreach (var spl in splits)
+            //        {
+            //            if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            //            {
+            //                balance += spl.amount ?? 0;
+            //                filasDeDatos.Add(
+            //                   new string[] {
+            //                            trans.id.ToString(),
+            //                            dateToStringJS(trans.date),
+            //                            trans.account?.description ?? "Sin Cuenta",
+            //                            (trans.accountid ?? -99).ToString(),
+            //                            trans.personDescripGrid ?? "Sin Persona",
+            //                            (trans.personid ?? -99).ToString(),
+            //                            spl.category?.description ?? "Sin Categoria",
+            //                            (spl.categoryid??-99).ToString(),
+            //                            decimalToStringJS(spl.amount),
+            //                            trans.tag?.description ?? "Sin Tag",
+            //                            (trans.tagid??-99).ToString(),
+            //                            trans.memo?.ToString() ?? String.Empty,
+            //                            decimalToStringJS(balance)
+            //                   });
+            //            }
+            //        }
+            //    }
+            //    else if (trans.category == null || trans.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
+            //    {
+            //        filasDeDatos.Add(
+            //            new string[] {
+            //                    trans.id.ToString(),
+            //                    dateToStringJS(trans.date),
+            //                    trans.account?.description ?? "Sin Cuenta",
+            //                    (trans.accountid ?? -99).ToString(),
+            //                    trans.personDescripGrid ?? "Sin Persona",
+            //                    (trans.personid ?? -99).ToString(),
+            //                    trans.categoryDescripGrid ?? "Sin Categoria",
+            //                    (trans.categoryid??-99).ToString(),
+            //                    decimalToStringJS(trans.amount),
+            //                    trans.tag?.description ?? "Sin Tag",
+            //                    (trans.tagid??-99).ToString(),
+            //                    trans.memo?.ToString() ?? String.Empty,
+            //                    decimalToStringJS(trans.balance)
+            //            });
+            //    }
+            //}
+
+            //await writeSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "Data");
         }
 
         private string decimalToStringJS(decimal? amount)
         {
-            if (amount == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return amount.ToString().Replace(".", "").Replace(",", ".");
-            }
+            return amount == null ? string.Empty : amount.ToString().Replace(".", "").Replace(",", ".");
         }
 
         private string dateToStringJS(DateTime? date)
         {
-            if (date == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return $"{date.Value.Year.ToString("0000")}-{date.Value.Month.ToString("00")}-{date.Value.Day.ToString("00")}";
-            }
+            return date == null
+                ? string.Empty
+                : $"{date.Value.Year.ToString("0000")}-{date.Value.Month.ToString("00")}-{date.Value.Day.ToString("00")}";
         }
-
-        private string dateNumberToStringJS(DateTime? date)
-        {
-            if (date == null)
-            {
-                return string.Empty;
-            }
-            else
-            {
-                return $"{date.Value.Year.ToString("0000") + date.Value.Month.ToString("00") + date.Value.Day.ToString("00")}";
-            }
-        }
-
+        
         public async Task<SheetsService> getSheetsService()
         {
             // Crear el servicio de Google Sheets
@@ -155,14 +264,14 @@ namespace GARCA.WebReport
                 .CreateScoped(SheetsService.Scope.Spreadsheets));
         }
 
-        public async Task writeSheet(SheetsService service, List<string[]> dataRows)
+        public async Task writeSheet(SheetsService service, List<string[]> dataRows, string spreadsheetId, string sheetName)
         {
             var valueRanges = new List<ValueRange>();
             for (int i = 0; i < dataRows.Count; i++)
             {
                 var valueRange = new ValueRange
                 {
-                    Range = $"{SheetName}!A{i + 1}",
+                    Range = $"{sheetName}!A{i + 1}",
                     Values = new List<IList<object>> { dataRows[i] }
                 };
                 valueRanges.Add(valueRange);
@@ -173,7 +282,7 @@ namespace GARCA.WebReport
                 ValueInputOption = "RAW",
                 Data = valueRanges
             };
-            var request = service.Spreadsheets.Values.BatchUpdate(batchUpdateRequest, SpreadsheetId);
+            var request = service.Spreadsheets.Values.BatchUpdate(batchUpdateRequest, spreadsheetId);
             await Task.Run(() => request.Execute());
         }
     }

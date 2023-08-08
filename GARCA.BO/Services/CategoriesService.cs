@@ -39,9 +39,9 @@ namespace GARCA.BO.Services
             categoriesManager = new();
         }
 
-        public List<Categories?>? getAll()
+        public HashSet<Categories?>? getAll()
         {
-            return categoriesManager.getAll()?.toListBO();
+            return categoriesManager.getAll()?.toHashSetBO();
         }
 
         public List<Categories?>? getAllWithoutSpecialTransfer()

@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GARCA.BO\GARCA.BO.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Web\index.html">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

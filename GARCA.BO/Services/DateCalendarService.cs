@@ -35,11 +35,6 @@ namespace GARCA.BO.Services
             initDate = new DateTime(2001, 01, 01);
         }
 
-        public List<DateCalendar?>? getAll()
-        {
-            return dateCalendarManager.getAll()?.toListBO();
-        }
-
         public DateCalendar? getByID(DateTime? id)
         {
             return (DateCalendar?)dateCalendarManager.getByID(id);
@@ -67,16 +62,6 @@ namespace GARCA.BO.Services
             }
 
             dateCalendarManager.saveChanges();
-        }
-
-        public void update(DateCalendar dateCalendar)
-        {
-            dateCalendarManager.update(dateCalendar.toDAO());
-        }
-
-        public void delete(DateCalendar dateCalendar)
-        {
-            dateCalendarManager.delete(dateCalendar.toDAO());
         }
     }
 }

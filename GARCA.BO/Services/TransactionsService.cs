@@ -1,6 +1,7 @@
 ﻿using GARCA.BO.Extensions;
 using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,9 +40,9 @@ namespace GARCA.BO.Services
 
         #region TransactionsActions
 
-        public List<Transactions?>? getAll()
+        public HashSet<Transactions?>? getAll()
         {
-            return transactionsManager.getAll()?.toListBO();
+            return transactionsManager.getAll()?.toHashSetBO();
         }
 
         public List<Transactions?>? getAllOpenned()
@@ -49,28 +50,9 @@ namespace GARCA.BO.Services
             return transactionsManager.getAllOpenned()?.toListBO();
         }
 
-        public List<Transactions?>? getAllOpennedOrderByDateDesc()
+        public List<Transactions?>? getAllOpennedOrderByOrderDesc(int startIndex, int nPage)
         {
-            return transactionsManager.getAllOpennedOrderByDateDesc()?.toListBO();
-        }
-        public List<Transactions?>? getAllOpennedOrderByDateAsc()
-        {
-            return transactionsManager.getAllOpennedOrderByDateAsc()?.toListBO();
-        }
-
-        public List<Transactions?>? getAllOpennedWithoutTransOrderByDateAsc()
-        {
-            return transactionsManager.getAllOpennedWithoutTransOrderByDateAsc()?.toListBO();
-        }
-
-        public List<Transactions?>? getAllOpennedOrderByOrderDesc()
-        {
-            return transactionsManager.getAllOpennedOrderByDateDesc()?.toListBO()?.OrderByDescending(x => x.orden)?.ToList();
-        }
-
-        public async Task<List<Transactions?>?> getAllAsync()
-        {
-            return await Task.Run(() => getAll());
+            return transactionsManager.getAllOpennedOrderByOrdenDesc(startIndex, nPage)?.toListBO();
         }
 
         public Transactions? getByID(int? id)
@@ -91,7 +73,16 @@ namespace GARCA.BO.Services
         public Transactions? update(Transactions transactions)
         {
             transactions.date = transactions.date.removeTime();
+            transactions.orden = createOrden(transactions);
             return (Transactions?)transactionsManager.update(transactions?.toDAO());
+        }
+
+        public void updateList(List<Transactions?>? lObj)
+        {
+            if (lObj != null)
+            {
+                transactionsManager.updateList(lObj?.toListDAO());
+            }
         }
 
         public void delete(Transactions? transactions)
@@ -104,14 +95,14 @@ namespace GARCA.BO.Services
             return transactionsManager.getByAccount(id)?.toListBO();
         }
 
-        public List<Transactions?>? getByAccountOrderByDateDesc(int? id)
-        {
-            return transactionsManager.getByAccountOrderByDateDesc(id)?.toListBO();
-        }
-
         public List<Transactions?>? getByAccountOrderByOrderDesc(int? id)
         {
-            return transactionsManager.getByAccount(id)?.toListBO()?.OrderByDescending(x => x.orden)?.ToList();
+            return transactionsManager.getByAccountOrderByOrdenDesc(id)?.toListBO();
+        }
+
+        public List<Transactions?>? getByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
+        {
+            return transactionsManager.getByAccountOrderByOrdenDesc(id, startIndex, nPage)?.toListBO();
         }
 
         public List<Transactions?>? getByAccount(Accounts? accounts)
@@ -134,6 +125,16 @@ namespace GARCA.BO.Services
             return transactionsManager.getNextID();
         }
 
+        public double createOrden(Transactions transactions)
+        {
+            return Convert.ToDouble(
+                    transactions.date?.Year.ToString("0000")
+                    + transactions.date?.Month.ToString("00")
+                    + transactions.date?.Day.ToString("00")
+                    + transactions.id.ToString("000000")
+                    + (transactions.amountIn != 0 ? "1" : "0"));
+        }
+
         public void saveChanges(ref Transactions? transactions)
         {
             transactions.amountIn ??= 0;
@@ -148,26 +149,27 @@ namespace GARCA.BO.Services
         }
 
         public void refreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false)
-        {                        
-            List<Transactions?>? tList = getByAccount(tUpdate.accountid)?.OrderByDescending(x => x.orden)?.ToList();
+        {
+            var tList = getByAccountOrderByOrderDesc(tUpdate.accountid);
             decimal? balanceTotal = 0;
 
-            if(tList != null)
+            if (tList != null)
             {
-                balanceTotal = tList.Sum(x=>x.amount);
+                balanceTotal = tList.Sum(x => x.amount);
             }
 
             if (tUpdate != null && tUpdate.date != null)
             {
-                foreach (Transactions? t in tList?.Where(x => x.date >= tUpdate?.date.addDay(-1) || dateFilter))
+                List<Transactions?>? aux = tList?.Where(x => x.date >= tUpdate?.date.addDay(-1) || dateFilter).ToList();
+                for (int i = 0; i < aux.Count; i++)
                 {
-                    if (t.amount != null)
+                    if (aux[i].amount != null)
                     {
-                        t.balance = balanceTotal;
-                        balanceTotal -= t.amount;
+                        aux[i].balance = balanceTotal;
+                        balanceTotal -= aux[i].amount;
                     }
-                    update(t);
                 }
+                updateList(aux);
             }
         }
 

@@ -1,7 +1,6 @@
 ﻿using GARCA.BO.Extensions;
 
 using GARCA.BO.Models;
-using GARCA.BO.ModelsView;
 using GARCA.DAO.Managers;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -34,9 +33,9 @@ namespace GARCA.BO.Services
             investmentProductsManager = new();
         }
 
-        public List<InvestmentProducts?>? getAll()
+        public HashSet<InvestmentProducts?>? getAll()
         {
-            return investmentProductsManager.getAll()?.toListBO();
+            return investmentProductsManager.getAll()?.toHashSetBO();
         }
 
         public InvestmentProducts? getByID(int? id)

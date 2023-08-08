@@ -35,14 +35,9 @@ namespace GARCA.BO.Services
             accountsManager = new();
         }
 
-        public List<Accounts?>? getAll()
+        public HashSet<Accounts?>? getAll()
         {
-            return accountsManager.getAll()?.toListBO();
-        }
-
-        public List<Accounts?>? getAllOrderByAccountsTypesId()
-        {
-            return accountsManager.getAllOrderByAccountsTypesId()?.toListBO();
+            return accountsManager.getAll()?.toHashSetBO();
         }
 
         public List<Accounts?>? getAllOpened()
@@ -83,11 +78,6 @@ namespace GARCA.BO.Services
         public Decimal getBalanceByAccount(int? id)
         {
             return TransactionsService.Instance.getByAccount(id)?.Sum(x => x.amount) ?? 0;
-        }
-
-        public Decimal getBalanceByAccount(Accounts? accounts)
-        {
-            return getBalanceByAccount(accounts.id);
         }
     }
 }

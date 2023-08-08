@@ -30,5 +30,6 @@ namespace GARCA.DAO.Models
         public virtual Decimal? pricesShares { set; get; }
         public virtual bool? investmentCategory { set; get; }
         public virtual Decimal? balance { set; get; }
+        public virtual Double? orden { set; get; }
     }
 }

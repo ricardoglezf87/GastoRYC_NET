@@ -35,11 +35,6 @@ namespace GARCA.BO.Services
             splitsManager = new();
         }
 
-        public List<Splits?>? getAll()
-        {
-            return splitsManager.getAll()?.toListBO();
-        }
-
         public List<Splits?>? getbyTransactionidNull()
         {
             return splitsManager.getbyTransactionidNull()?.toListBO();
@@ -65,21 +60,6 @@ namespace GARCA.BO.Services
             splitsManager.delete(splits?.toDAO());
         }
 
-        public Decimal? getAmountTotal(Transactions transactions)
-        {
-            Decimal? total = 0;
-            if (transactions.splits != null && transactions.splits.Count != 0)
-            {
-                foreach (Splits? splits in transactions.splits)
-                {
-                    total += splits.amountIn == null ? 0 : splits.amountIn;
-                    total -= splits.amountOut == null ? 0 : splits.amountOut;
-                }
-            }
-
-            return total;
-        }
-
         public void saveChanges(Transactions? transactions, Splits splits)
         {
             if (splits.category == null && splits.categoryid != null)
@@ -94,9 +74,5 @@ namespace GARCA.BO.Services
             update(splits);
         }
 
-        public int getNextID()
-        {
-            return splitsManager.getNextID();
-        }
     }
 }

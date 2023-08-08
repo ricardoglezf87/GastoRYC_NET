@@ -34,9 +34,9 @@ namespace GARCA.BO.Services
 
         #region TransactionsRemindersActions
 
-        public List<TransactionsReminders?>? getAll()
+        public HashSet<TransactionsReminders?>? getAll()
         {
-            return transactionsRemindersManager.getAll()?.toListBO();
+            return transactionsRemindersManager.getAll()?.toHashSetBO();
         }
 
         public TransactionsReminders? getByID(int? id)
@@ -57,11 +57,6 @@ namespace GARCA.BO.Services
                 ExpirationsRemindersService.Instance.deleteByTransactionReminderid(transactionsReminders.id);
                 transactionsRemindersManager.delete(transactionsReminders.toDAO());
             }
-        }
-
-        public int getNextID()
-        {
-            return transactionsRemindersManager.getNextID();
         }
 
         public void saveChanges(TransactionsReminders transactionsReminders)

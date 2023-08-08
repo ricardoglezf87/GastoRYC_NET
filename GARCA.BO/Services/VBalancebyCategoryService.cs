@@ -34,22 +34,17 @@ namespace GARCA.BO.Services
             vBalancebyCategoryManager = new();
         }
 
-        public List<VBalancebyCategory?>? getAll()
+        public HashSet<VBalancebyCategory?>? getAll()
         {
-            return vBalancebyCategoryManager.getAll()?.toListBO();
+            return vBalancebyCategoryManager.getAll()?.toHashSetBO();
         }
 
-        public List<VBalancebyCategory?>? getbyYearMonth(int month, int year)
+        public HashSet<VBalancebyCategory?>? getExpensesbyYearMonth(int month, int year)
         {
-            return getAll()?.Where(x => x.year == year && x.month == month).ToList();
+            return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToHashSet();
         }
 
-        public List<VBalancebyCategory?>? getExpensesbyYearMonth(int month, int year)
-        {
-            return getAll()?.Where(x => x.categoriesTypesid == (int)CategoriesTypesService.eCategoriesTypes.Expenses && x.year == year && x.month == month).ToList();
-        }
-
-        public async Task<List<VBalancebyCategory?>?> getExpensesbyYearMonthAsync(int month, int year)
+        public async Task<HashSet<VBalancebyCategory?>?> getExpensesbyYearMonthAsync(int month, int year)
         {
             return await Task.Run(() => getExpensesbyYearMonth(month, year));
         }
