@@ -75,7 +75,7 @@ namespace GARCA.WebReport
                                         trans.Memo ?? String.Empty,
                                         DecimalToStringJs(balance)
                                });
-                        }
+                        }                      
                     }
                 }
                 else if (trans.Category == null || trans.Category?.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
@@ -91,6 +91,25 @@ namespace GARCA.WebReport
                                 trans.CategoryDescripGrid ?? "Sin Categoria",
                                 (trans.Categoryid??-99).ToString(),
                                 DecimalToStringJs(trans.Amount),
+                                trans.Tag?.Description ?? "Sin Tag",
+                                (trans.Tagid??-99).ToString(),
+                                trans.Memo ?? String.Empty,
+                                DecimalToStringJs(trans.Balance)
+                        });
+                }
+                else if(trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Loans)
+                {
+                    filasDeDatos.Add(
+                        new[] {
+                                trans.Id.ToString(),
+                                DateToStringJs(trans.Date),
+                                trans.Account?.Description ?? "Sin Cuenta",
+                                (trans.Accountid ?? -99).ToString(),
+                                trans.PersonDescripGrid ?? "Sin Persona",
+                                (trans.Personid ?? -99).ToString(),
+                                "Prestamos:Amortización",
+                                (trans.Categoryid??-99).ToString(),
+                                DecimalToStringJs(-trans.Amount),
                                 trans.Tag?.Description ?? "Sin Tag",
                                 (trans.Tagid??-99).ToString(),
                                 trans.Memo ?? String.Empty,
