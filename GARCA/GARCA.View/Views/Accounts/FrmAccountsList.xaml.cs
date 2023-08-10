@@ -1,6 +1,8 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
 using GARCA.Utils.IOC;
+using Syncfusion.UI.Xaml.Grid.Helpers;
+using Syncfusion.UI.Xaml.Grid;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -125,6 +127,16 @@ namespace GARCA.View.Views
         {
             gvAccounts.SearchHelper.AllowFiltering = true;
             gvAccounts.SearchHelper.Search(txtSearch.Text);
+        }
+
+        private void gvAccounts_CurrentCellValueChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellValueChangedEventArgs e)
+        {
+            int columnIndex = this.gvAccounts.ResolveToGridVisibleColumnIndex(e.RowColumnIndex.ColumnIndex);
+
+            if (this.gvAccounts.Columns[columnIndex].CellType == "CheckBox")
+            { 
+                this.gvAccounts.GetValidationHelper().SetCurrentRowValidated(false);
+            }
         }
     }
 }

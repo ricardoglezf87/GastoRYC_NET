@@ -25,7 +25,7 @@
                                RowValidated="gvInvestmentProducts_RowValidated" 
                                RowValidating="gvInvestmentProducts_RowValidating" 
                                RecordDeleted="gvInvestmentProducts_RecordDeleted" 
-                               RecordDeleting="gvInvestmentProducts_RecordDeleting" Grid.Row="1" CurrentCellDropDownSelectionChanged="gvInvestmentProducts_CurrentCellDropDownSelectionChanged">
+                               RecordDeleting="gvInvestmentProducts_RecordDeleting" Grid.Row="1" CurrentCellDropDownSelectionChanged="gvInvestmentProducts_CurrentCellDropDownSelectionChanged" CurrentCellValueChanged="gvInvestmentProducts_CurrentCellValueChanged">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
