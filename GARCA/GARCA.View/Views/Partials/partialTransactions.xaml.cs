@@ -238,8 +238,6 @@ namespace GARCA.View.Views
 
             if (gvTransactions.View != null)
             {
-                gvTransactions.View.Refresh();
-
                 if (accountSelected != null)
                 {
                     gvTransactions.Columns["Account.Description"].IsHidden = true;

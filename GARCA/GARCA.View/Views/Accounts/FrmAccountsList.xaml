@@ -25,7 +25,7 @@
                                CurrentCellDropDownSelectionChanged="gvAccounts_CurrentCellDropDownSelectionChanged" 
                                RowValidated="gvAccounts_RowValidated" RowValidating="gvAccounts_RowValidating" 
                                RecordDeleted="gvAccounts_RecordDeleted" RecordDeleting="gvAccounts_RecordDeleting" 
-                               Grid.Row="1">
+                               Grid.Row="1" CurrentCellValueChanged="gvAccounts_CurrentCellValueChanged">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="Description" SortDirection="Ascending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

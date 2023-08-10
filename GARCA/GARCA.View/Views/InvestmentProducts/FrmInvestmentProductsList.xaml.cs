@@ -1,5 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.Utils.IOC;
+using Syncfusion.UI.Xaml.Grid;
+using Syncfusion.UI.Xaml.Grid.Helpers;
 using Syncfusion.Windows.Shared;
 using System.Linq;
 using System.Windows;
@@ -92,6 +94,14 @@ namespace GARCA.View.Views
             gvInvestmentProducts.SearchHelper.Search(txtSearch.Text);
         }
 
+        private void gvInvestmentProducts_CurrentCellValueChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellValueChangedEventArgs e)
+        {
+            int columnIndex = this.gvInvestmentProducts.ResolveToGridVisibleColumnIndex(e.RowColumnIndex.ColumnIndex);
 
+            if (this.gvInvestmentProducts.Columns[columnIndex].CellType == "CheckBox")
+            {
+                this.gvInvestmentProducts.GetValidationHelper().SetCurrentRowValidated(false);
+            }
+        }
     }
 }
