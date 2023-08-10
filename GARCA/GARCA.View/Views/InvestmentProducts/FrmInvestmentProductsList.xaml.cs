@@ -92,6 +92,14 @@ namespace GARCA.View.Views
             gvInvestmentProducts.SearchHelper.Search(txtSearch.Text);
         }
 
+        private void gvInvestmentProducts_CurrentCellValueChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellValueChangedEventArgs e)
+        {
+            int columnIndex = this.gvAccounts.ResolveToGridVisibleColumnIndex(e.RowColumnIndex.ColumnIndex);
 
+            if (this.gvAccounts.Columns[columnIndex].CellType == "CheckBox")
+            {
+                this.gvAccounts.GetValidationHelper().SetCurrentRowValidated(false);
+            }
+        }
     }
 }
