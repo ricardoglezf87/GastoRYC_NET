@@ -279,10 +279,12 @@ namespace GARCA.BO.Services
             }
         }
 
-        public void UpdateTranferSplits(Transactions? transactions, Splits splits)
+        public void UpdateTranferSplits(Transactions? transactions, ref Splits splits)
         {
+            Categories? category = DependencyConfig.CategoriesService.GetById(splits.Categoryid);
+
             if (splits.Tranferid != null &&
-                splits.Category.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+                category?.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
                 var tContraria = GetById(splits.Tranferid);
                 if (tContraria != null)
@@ -292,7 +294,7 @@ namespace GARCA.BO.Services
                 splits.Tranferid = null;
             }
             else if (splits.Tranferid == null &&
-                splits.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+                category?.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
                 splits.Tranferid = GetNextId();
 
@@ -314,7 +316,7 @@ namespace GARCA.BO.Services
 
             }
             else if (splits.Tranferid != null &&
-                splits.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+                category?.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
                 var tContraria = GetById(splits.Tranferid);
                 if (tContraria != null)

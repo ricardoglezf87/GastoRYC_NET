@@ -7,8 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-//TODO: En esta version de syncfusion no permite guardar los checkbox al perder foco, tienes que saltar a un texbox antes de saltar de linea
-
 namespace GARCA.View.Views
 {
     /// <summary>

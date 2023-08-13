@@ -73,9 +73,9 @@ namespace GARCA.View.Views
         private void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var splits = (Splits)e.RowData;
-
+            
+            DependencyConfig.TransactionsService.UpdateTranferSplits(transactions,ref splits);
             DependencyConfig.SplitsService.SaveChanges(splits);
-            DependencyConfig.TransactionsService.UpdateTranferSplits(transactions, splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)

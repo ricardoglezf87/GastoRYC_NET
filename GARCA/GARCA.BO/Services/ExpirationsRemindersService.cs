@@ -117,8 +117,9 @@ namespace GARCA.BO.Services
                         splits.AmountIn = splitsReminders.AmountIn;
                         splits.AmountOut = splitsReminders.AmountOut;
                         splits.Tagid = splitsReminders.Tagid;
+                        
+                        DependencyConfig.TransactionsService.UpdateTranferSplits(transactions, ref splits);
                         DependencyConfig.SplitsService.SaveChanges(splits);
-                        DependencyConfig.TransactionsService.UpdateTranferSplits(transactions, splits);
                     }
 
                     return transactions;
