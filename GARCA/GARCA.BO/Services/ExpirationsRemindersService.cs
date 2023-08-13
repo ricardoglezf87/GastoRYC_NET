@@ -123,7 +123,6 @@ namespace GARCA.BO.Services
                     }
 
                     return transactions;
-
                 }
             }
 

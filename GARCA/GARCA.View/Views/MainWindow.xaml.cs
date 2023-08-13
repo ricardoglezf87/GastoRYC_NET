@@ -415,7 +415,7 @@ namespace GARCA
                         var tFirst = DependencyConfig.TransactionsService.GetByAccount(accounts)?.FirstOrDefault();
                         if (tFirst != null)
                         {
-                            await Task.Run(() => DependencyConfig.TransactionsService.RefreshBalanceTransactions(tFirst, true));
+                            await Task.Run(() => DependencyConfig.TransactionsService.RefreshBalanceTransactions(tFirst, true, true));
                         }
                         loadDialog.PerformeStep();
                     }

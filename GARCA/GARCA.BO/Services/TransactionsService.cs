@@ -124,11 +124,10 @@ namespace GARCA.BO.Services
             UpdateTranfer(transactions);
             UpdateTranferFromSplit(transactions);
             transactions = Update(transactions);
-            DependencyConfig.PersonsService.SetCategoryDefault(transactions.Person);
-            RefreshBalanceTransactions(transactions);
+            DependencyConfig.PersonsService.SetCategoryDefault(transactions.Person);            
         }
 
-        public void RefreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false)
+        public void RefreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false, bool pararRec = false)
         {
             var tList = GetByAccountOrderByOrderDesc(tUpdate.Accountid);
             decimal? balanceTotal = 0;
@@ -150,6 +149,23 @@ namespace GARCA.BO.Services
                     }
                     aux[i].Orden = CreateOrden(aux[i]);
 
+                    if (!pararRec)
+                    {
+                        if (tUpdate.Tranferid != null)
+                        {
+                            RefreshBalanceTransactions(DependencyConfig.TransactionsService.GetById(tUpdate.Tranferid), false, true);
+                        }
+
+                        HashSet<Splits?>? lsplits = DependencyConfig.SplitsService.GetbyTransactionid(aux[i].Id);
+
+                        if (lsplits != null)
+                        {
+                            foreach (var splits in lsplits.Where(splits => splits.Tranferid != null))
+                            {
+                                RefreshBalanceTransactions(DependencyConfig.TransactionsService.GetById(splits.Tranferid), false, true);
+                            }
+                        }
+                    }
                 }
                 UpdateList(aux);
             }
@@ -166,7 +182,6 @@ namespace GARCA.BO.Services
                     Delete(tContraria);
                 }
                 transactions.Tranferid = null;
-                RefreshBalanceTransactions(tContraria);
             }
             else if (transactions.Tranferid == null &&
                 transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
@@ -190,8 +205,6 @@ namespace GARCA.BO.Services
                 tContraria.TransactionStatusid = transactions.TransactionStatusid;
 
                 Update(tContraria);
-                RefreshBalanceTransactions(tContraria);
-
             }
             else if (transactions.Tranferid != null &&
                 transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)

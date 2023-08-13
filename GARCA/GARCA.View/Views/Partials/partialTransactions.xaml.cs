@@ -53,7 +53,8 @@ namespace GARCA.View.Views
             var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
-            DependencyConfig.TransactionsService.UpdateTransactionAfterSplits(transactions);
+            DependencyConfig.TransactionsService.UpdateTransactionAfterSplits(transactions);            
+            DependencyConfig.TransactionsService.RefreshBalanceTransactions(transactions);            
             LoadTransactions();
             parentForm.LoadAccounts();
         }

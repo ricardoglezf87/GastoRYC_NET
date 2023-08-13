@@ -181,6 +181,11 @@ namespace GARCA.View.Views
             CalculateValueShares();
         }
 
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            DependencyConfig.TransactionsService.RefreshBalanceTransactions(transaction);
+        }
+
         #endregion
 
         #region Funtions
@@ -467,6 +472,6 @@ namespace GARCA.View.Views
             }
         }
 
-        #endregion
+        #endregion        
     }
 }

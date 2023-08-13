@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" x:Class="GARCA.View.Views.FrmTransaction"
         mc:Ignorable="d"
-        Title="Transacción" Height="450" Width="450" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" PreviewKeyUp="Window_PreviewKeyUp">
+        Title="Transacción" Height="450" Width="450" Loaded="Window_Loaded" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" PreviewKeyUp="Window_PreviewKeyUp" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
