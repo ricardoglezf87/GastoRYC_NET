@@ -13,7 +13,7 @@ namespace GARCA.View.Styles
             var cell = container as GridTableSummaryCell;
 
             return cell.ColumnBase.GridColumn.MappingName is "CostShares" or "MarketValue"
-                or "profit"
+                or "Profit"
                 ? CenterStyle
                 : null;
         }
