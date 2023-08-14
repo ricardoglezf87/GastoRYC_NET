@@ -38,14 +38,9 @@ namespace GARCA.BO.Services
             Reconciled = 3
         }
 
-        public List<TransactionsStatus?>? getAll()
+        public HashSet<TransactionsStatus?>? getAll()
         {
-            return transactionsStatusManager.getAll()?.toListBO();
-        }
-
-        public TransactionsStatus? getFirst()
-        {
-            return (TransactionsStatus?)transactionsStatusManager.getFirst();
+            return transactionsStatusManager.getAll()?.toHashSetBO();
         }
 
         public TransactionsStatus? getByID(int? id)

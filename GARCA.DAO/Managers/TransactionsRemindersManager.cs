@@ -23,23 +23,5 @@ namespace GARCA.DAO.Managers
             };
         }
 #pragma warning restore CS8603
-
-        public int getNextID()
-        {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
-            {
-                var cmd = unitOfWork.getDataBase().
-                GetDbConnection().CreateCommand();
-                cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactionsReminders';";
-
-                unitOfWork.getDataBase().OpenConnection();
-                var result = cmd.ExecuteReader();
-                result.Read();
-                int id = Convert.ToInt32(result[0]);
-                result.Close();
-
-                return id;
-            }
-        }
     }
 }

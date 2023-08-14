@@ -43,24 +43,14 @@ namespace GARCA.BO.Services
             periodsRemindersManager = new();
         }
 
-        public List<PeriodsReminders?>? getAll()
+        public HashSet<PeriodsReminders?>? getAll()
         {
-            return periodsRemindersManager.getAll()?.toListBO();
+            return periodsRemindersManager.getAll()?.toHashSetBO();
         }
 
         public PeriodsReminders? getByID(int? id)
         {
             return (PeriodsReminders?)periodsRemindersManager.getByID(id);
-        }
-
-        public void update(PeriodsReminders periodsReminders)
-        {
-            periodsRemindersManager.update(periodsReminders?.toDAO());
-        }
-
-        public void delete(PeriodsReminders periodsReminders)
-        {
-            periodsRemindersManager.delete(periodsReminders?.toDAO());
         }
 
         public ePeriodsReminders? toEnum(PeriodsReminders? periodsReminders)

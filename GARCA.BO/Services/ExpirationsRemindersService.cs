@@ -34,12 +34,12 @@ namespace GARCA.BO.Services
             expirationsRemindersManager = new();
         }
 
-        public List<ExpirationsReminders?>? getAll()
+        public HashSet<ExpirationsReminders?>? getAll()
         {
-            return expirationsRemindersManager.getAll()?.toListBO();
+            return expirationsRemindersManager.getAll()?.toHashSetBO();
         }
 
-        public List<ExpirationsReminders?>? getAllWithGeneration()
+        public HashSet<ExpirationsReminders?>? getAllWithGeneration()
         {
             GenerationAllExpirations();
             return getAll();
@@ -52,17 +52,12 @@ namespace GARCA.BO.Services
 
         public List<ExpirationsReminders?>? getAllPendingWithGeneration()
         {
-            return getAllWithGeneration()?.Where(x => x.done == null || x.done != true).ToList();
+            return getAllWithGeneration()?.Where(x => x.done is null or not true).ToList();
         }
 
         public List<ExpirationsReminders?>? getAllPendingWithoutFutureWithGeneration()
         {
             return getAllWithGeneration()?.Where(x => (x.done == null || x.done != true) && x.groupDate != "Futuro").ToList();
-        }
-
-        public async Task<List<ExpirationsReminders?>?> getAllPendingWithoutFutureWithGenerationAsync()
-        {
-            return await Task.Run(() => getAllPendingWithoutFutureWithGeneration());
         }
 
         public void GenerationAllExpirations()
@@ -127,8 +122,8 @@ namespace GARCA.BO.Services
                     transactions.tagid = expirationsReminders.transactionsReminders.tagid;
                     transactions.transactionStatusid = (int)TransactionsStatusService.eTransactionsTypes.Pending;
                     TransactionsService.Instance.saveChanges(ref transactions);
-                   
-                    foreach (SplitsReminders? splitsReminders in 
+
+                    foreach (SplitsReminders? splitsReminders in
                         SplitsRemindersService.Instance.getbyTransactionid(expirationsReminders.transactionsReminders.id))
                     {
                         Splits splits = new();
@@ -198,12 +193,7 @@ namespace GARCA.BO.Services
             }
             return lTransactions;
         }
-
-        public Task<List<Transactions>> registerTransactionfromReminderSimulationAsync(ExpirationsReminders exp)
-        {
-            return Task.Run(() => registerTransactionfromReminderSimulation(exp));
-        }
-
+        
         public Transactions updateTranferSplitsSimulation(Transactions? transactions, Splits splits)
         {
             Transactions? tContraria = new()

@@ -1,0 +1,102 @@
+﻿<Page x:Class="GARCA.View.Views.PartialPortfolio"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" 
+        xmlns:local1="clr-namespace:GARCA.View.ViewModels" 
+        xmlns:local2="clr-namespace:GARCA.View.Styles"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        mc:Ignorable="d"
+        Title="partialPortfolio" Loaded="Page_Loaded">
+    <Page.DataContext>
+        <local1:TransactionViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <Style x:Key="PorfolioSummaryStyleCenter" TargetType="syncfusion:GridTableSummaryCell">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="0,1,0,0"/>
+            <Setter Property="BorderBrush" Value="#FF7fd0de" />
+        </Style>
+
+        <Style x:Key="PorfolioGroupSummaryStyleCenter" TargetType="syncfusion:GridGroupSummaryCell">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+
+        <local2:PortfolioGroupSummaryStyleSelector x:Key="portfolioGroupSummaryStyleSelector"
+                             CenterStyle="{StaticResource PorfolioGroupSummaryStyleCenter}" />
+
+        <local2:PortfolioSummaryStyleSelector x:Key="portfolioSummaryStyleSelector"
+                             CenterStyle="{StaticResource PorfolioSummaryStyleCenter}" />
+    </Page.Resources>
+    <Grid>
+        <syncfusion:SfDataGrid  x:Name="gvPortfolio"
+                               AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
+                               CanMaintainScrollPosition="True" 
+                               AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
+                               AllowDeleting="True"                               
+                               ShowRowHeader="True" SelectionMode="Extended"
+                               TableSummaryCellStyleSelector="{StaticResource portfolioSummaryStyleSelector}"
+                               GroupSummaryCellStyleSelector="{StaticResource portfolioGroupSummaryStyleSelector}">
+            <syncfusion:SfDataGrid.SortColumnDescriptions>
+                <syncfusion:SortColumnDescription ColumnName="Id" SortDirection="Ascending"/>
+            </syncfusion:SfDataGrid.SortColumnDescriptions>
+
+            <syncfusion:SfDataGrid.GroupColumnDescriptions>
+                <syncfusion:GroupColumnDescription ColumnName="InvestmentProductsTypes.Description"/>
+            </syncfusion:SfDataGrid.GroupColumnDescriptions>
+
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="Description" HeaderText="Producto"/>
+                <syncfusion:GridTextColumn MappingName="InvestmentProductsTypes.Description" HeaderText="Tipo Producto" IsHidden="True"/>
+                <syncfusion:GridTextColumn MappingName="NumShares" HeaderText="Num. Participaciones" TextAlignment="Center"/>
+                <syncfusion:GridCurrencyColumn MappingName="CostShares" HeaderText="Coste" TextAlignment="Center"/>
+                <syncfusion:GridDateTimeColumn MappingName="Date" HeaderText="Fecha Valoración" TextAlignment="Center"/>
+                <syncfusion:GridCurrencyColumn MappingName="Prices" HeaderText="Precio Actual" TextAlignment="Center"/>
+                <syncfusion:GridCurrencyColumn MappingName="MarketValue" HeaderText="Valor Mercado" TextAlignment="Center"/>
+                <syncfusion:GridCurrencyColumn MappingName="Profit" HeaderText="Beneficio" TextAlignment="Center"/>
+                <syncfusion:GridPercentColumn MappingName="ProfitPorcent" HeaderText="% Beneficio" TextAlignment="Center"/>
+            </syncfusion:SfDataGrid.Columns>
+
+            <syncfusion:SfDataGrid.GroupSummaryRows>
+                <syncfusion:GridSummaryRow ShowSummaryInRow="False">
+                    <syncfusion:GridSummaryRow.SummaryColumns>
+                        <syncfusion:GridSummaryColumn Name="tCostShares" 
+                                              Format="'{Sum:c}'"
+                                              MappingName="CostShares"
+                                              SummaryType="DoubleAggregate" />
+                        <syncfusion:GridSummaryColumn Name="tMarketValue"
+                                              Format="'{Sum:c}'"
+                                              MappingName="MarketValue"
+                                              SummaryType="DoubleAggregate" />
+                        <syncfusion:GridSummaryColumn Name="tProfit"
+                                              Format="'{Sum:c}'"
+                                              MappingName="Profit"
+                                              SummaryType="DoubleAggregate" />
+                    </syncfusion:GridSummaryRow.SummaryColumns>
+                </syncfusion:GridSummaryRow>
+            </syncfusion:SfDataGrid.GroupSummaryRows>
+
+            <syncfusion:SfDataGrid.TableSummaryRows>
+                <syncfusion:GridTableSummaryRow ShowSummaryInRow="False" Position="Bottom">
+                    <syncfusion:GridSummaryRow.SummaryColumns>
+                        <syncfusion:GridSummaryColumn Name="tCostShares" 
+                                              Format="'{Sum:c}'"
+                                              MappingName="CostShares"
+                                              SummaryType="DoubleAggregate" />
+                        <syncfusion:GridSummaryColumn Name="tMarketValue"
+                                              Format="'{Sum:c}'"
+                                              MappingName="MarketValue"
+                                              SummaryType="DoubleAggregate" />
+                        <syncfusion:GridSummaryColumn Name="tProfit"
+                                              Format="'{Sum:c}'"
+                                              MappingName="Profit"
+                                              SummaryType="DoubleAggregate" />
+                    </syncfusion:GridSummaryRow.SummaryColumns>
+                </syncfusion:GridTableSummaryRow>
+            </syncfusion:SfDataGrid.TableSummaryRows>
+        </syncfusion:SfDataGrid>
+    </Grid>
+</Page>
