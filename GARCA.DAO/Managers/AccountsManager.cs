@@ -21,15 +21,6 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public List<AccountsDAO>? getAllOrderByAccountsTypesId()
-        {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<AccountsDAO>();
-                return getEntyWithInclude(repository)?.OrderBy(x => x.accountsTypesid).ToList();
-            }
-        }
-
         public List<AccountsDAO>? getAllOpened()
         {
             using (var unitOfWork = new UnitOfWork(new RYCContext()))

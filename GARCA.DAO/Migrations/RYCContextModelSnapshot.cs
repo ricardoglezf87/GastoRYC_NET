@@ -355,6 +355,9 @@ namespace GARCA.DAO.Migrations
                     b.Property<decimal?>("numShares")
                         .HasColumnType("TEXT");
 
+                    b.Property<double?>("orden")
+                        .HasColumnType("REAL");
+
                     b.Property<int?>("personid")
                         .HasColumnType("INTEGER");
 

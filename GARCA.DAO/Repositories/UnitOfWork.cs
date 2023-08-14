@@ -30,11 +30,6 @@ namespace GARCA.DAO.Repositories
             return context.Database;
         }
 
-        public void SaveChanges()
-        {
-            context.SaveChanges();
-        }
-
         public virtual void Dispose(bool disposing)
         {
             if (!disposed)

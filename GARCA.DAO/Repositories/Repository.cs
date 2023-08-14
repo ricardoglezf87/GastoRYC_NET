@@ -19,22 +19,12 @@ namespace GARCA.DAO.Repositories
             context = dbContext;
             _entities = context.Set<TEntity>();
         }
-
-        public TEntity? GetById(int? id)
-        {
-            return _entities.Find(id);
-        }
-
+        
         public List<TEntity> GetAll()
         {
             return _entities.ToList();
         }
-
-        public TEntity Add(TEntity entity)
-        {
-            return _entities.Add(entity).Entity;
-        }
-
+        
         public TEntity Update(TEntity entity)
         {
             return _entities.Update(entity).Entity;
@@ -63,7 +53,7 @@ namespace GARCA.DAO.Repositories
             return query.FirstOrDefault(e => e.id == id);
         }
 
-        public List<TEntity> GetAllWithInclude(params Expression<Func<TEntity, object>>[] includes)
+        public HashSet<TEntity> GetAllWithInclude(params Expression<Func<TEntity, object>>[] includes)
         {
             var query = _entities.AsQueryable();
             if (includes != null)
@@ -73,7 +63,7 @@ namespace GARCA.DAO.Repositories
                     query = query.Include(include);
                 }
             }
-            return query.ToList();
+            return query.ToHashSet();
         }
     }
 

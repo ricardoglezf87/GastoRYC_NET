@@ -8,16 +8,6 @@ namespace GARCA.DAO.Managers
 {
     public class DateCalendarManager
     {
-        private readonly DateTime initDate = new(2001, 01, 01);
-
-        public List<DateCalendarDAO>? getAll()
-        {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
-            {
-                var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
-                return repository.GetAll();
-            }
-        }
 
         public DateCalendarDAO? getByID(DateTime? id)
         {
@@ -46,26 +36,6 @@ namespace GARCA.DAO.Managers
             using (var unitOfWork = new UnitOfWork(new RYCContext()))
             {
                 var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
-                repository.saveChanges();
-            }
-        }
-
-        public void update(DateCalendarDAO dateCalendar)
-        {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
-            {
-                var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
-                repository.Update(dateCalendar);
-                repository.saveChanges();
-            }
-        }
-
-        public void delete(DateCalendarDAO dateCalendar)
-        {
-            using (var unitOfWork = new UnitOfWork(new RYCContext()))
-            {
-                var repository = unitOfWork.GetRepositoryGeneral<DateCalendarDAO>();
-                repository.Delete(dateCalendar);
                 repository.saveChanges();
             }
         }

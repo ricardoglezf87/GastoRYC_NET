@@ -60,7 +60,7 @@ namespace GARCA.BO.Services
                 }
             }
 
-            List<Transactions?>? transactions = TransactionsService.Instance.getAll();
+            List<Transactions?>? transactions = TransactionsService.Instance.getAll()?.ToList();
 
             if (transactions != null)
             {

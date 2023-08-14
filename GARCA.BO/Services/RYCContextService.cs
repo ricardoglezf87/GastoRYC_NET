@@ -33,11 +33,6 @@ namespace GARCA.BO.Services
             contextManager.migrateDataBase();
         }
 
-        public void loadContext()
-        {
-            contextManager.loadContext();
-        }
-
         public void makeBackup()
         {
             contextManager.makeBackup();

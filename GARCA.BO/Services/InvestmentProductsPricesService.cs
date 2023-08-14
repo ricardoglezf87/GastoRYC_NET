@@ -2,7 +2,6 @@
 
 using GARCA.BO.Models;
 using GARCA.DAO.Managers;
-using GARCA.DAO.Models;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using System;
@@ -10,9 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Security.Policy;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace GARCA.BO.Services
 {
@@ -42,34 +39,9 @@ namespace GARCA.BO.Services
             investmentProductsPricesManager = new();
         }
 
-        public List<InvestmentProductsPrices?>? getAll()
-        {
-            return investmentProductsPricesManager.getAll()?.toListBO();
-        }
-
-        public InvestmentProductsPrices? getByID(int? id)
-        {
-            return (InvestmentProductsPrices?)investmentProductsPricesManager.getByID(id);
-        }
-
         public bool exists(int? investmentProductId, DateTime? date)
         {
             return investmentProductsPricesManager.exists(investmentProductId, date);
-        }
-
-        public void update(InvestmentProductsPrices investmentProductsPrices)
-        {
-            investmentProductsPricesManager.update(investmentProductsPrices.toDAO());
-        }
-
-        public void delete(InvestmentProductsPrices investmentProductsPrices)
-        {
-            investmentProductsPricesManager.delete(investmentProductsPrices.toDAO());
-        }
-
-        public void saveChanges()
-        {
-            investmentProductsPricesManager.saveChanges();
         }
 
         public Decimal? getActualPrice(InvestmentProducts investmentProducts)
@@ -139,7 +111,7 @@ namespace GARCA.BO.Services
         {
             List<InvestmentProductsPrices> lproductsPrices = new();
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = new())
             {
                 HttpResponseMessage response = await client.GetAsync(investmentProducts.url);
 
@@ -154,16 +126,16 @@ namespace GARCA.BO.Services
                     {
                         for (int i = 0; i < timestamps.Count; i++)
                         {
-                            if (timestamps[i] != null && !String.IsNullOrEmpty(timestamps[i].ToString()) && 
+                            if (timestamps[i] != null && !String.IsNullOrEmpty(timestamps[i].ToString()) &&
                                 prices[i] != null && !String.IsNullOrEmpty(prices[i].ToString()))
                             {
-                                    long timestamp = (long)timestamps[i];
+                                long timestamp = (long)timestamps[i];
 
-                                    InvestmentProductsPrices productsPrices = new();
-                                    productsPrices.investmentProductsid = investmentProducts.id;
-                                    productsPrices.date = DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
-                                    productsPrices.prices = (decimal)prices[i];
-                                    lproductsPrices.Add(productsPrices);                                
+                                InvestmentProductsPrices productsPrices = new();
+                                productsPrices.investmentProductsid = investmentProducts.id;
+                                productsPrices.date = DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
+                                productsPrices.prices = (decimal)prices[i];
+                                lproductsPrices.Add(productsPrices);
                             }
                         }
                     }

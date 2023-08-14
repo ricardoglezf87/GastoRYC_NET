@@ -6,37 +6,37 @@ namespace GARCA.BO.Extensions
     {
         public static String toShortDateString(this DateTime? date)
         {
-            return date != null ? date?.Day.ToString("00") + "/" + date?.Month.ToString("00") + "/" + date?.Year.ToString() : "";
+            return date != null ? date?.Day.ToString("00") + "/" + date?.Month.ToString("00") + "/" + date?.Year : "";
         }
 
         public static DateTime? addDay(this DateTime? date)
         {
-            return date != null ? (date?.Date.AddDays(1)) : null;
+            return  (date?.Date.AddDays(1)) ;
         }
 
         public static DateTime? addDay(this DateTime? date, int n)
         {
-            return date != null ? (date?.Date.AddDays(n)) : null;
+            return date?.Date.AddDays(n);
         }
 
         public static DateTime? addWeek(this DateTime? date)
         {
-            return date != null ? (date?.Date.AddDays(7)) : null;
+            return date?.Date.AddDays(7);
         }
 
         public static DateTime? addMonth(this DateTime? date)
         {
-            return date != null ? (date?.Date.AddMonths(1)) : null;
+            return date?.Date.AddMonths(1);
         }
 
         public static DateTime? addMonth(this DateTime? date, int amount)
         {
-            return date != null ? (date?.Date.AddMonths(amount)) : null;
+            return date?.Date.AddMonths(amount);
         }
 
         public static DateTime? addYear(this DateTime? date)
         {
-            return date != null ? (date?.Date.AddYears(1)) : null;
+            return date?.Date.AddYears(1);
         }
 
         public static DateTime? removeTime(this DateTime? date)

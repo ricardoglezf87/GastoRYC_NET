@@ -1,0 +1,75 @@
+﻿<Page x:Class="GARCA.View.Views.PartialTransactions"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" xmlns:local1="clr-namespace:GARCA.View.ViewModels"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
+        mc:Ignorable="d"
+        Title="partialTransactions" Loaded="Page_Loaded">
+    <Page.DataContext>
+        <local1:TransactionViewModel/>
+    </Page.DataContext>
+    <Grid>
+
+        <syncfusion:SfDataGrid  x:Name="gvTransactions"
+                               AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
+                               CanMaintainScrollPosition="True" 
+                               AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
+                               AllowDeleting="True"
+                               MouseDoubleClick="gvTransactions_MouseDoubleClick"
+                               RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
+                               ShowRowHeader="True" SelectionMode="Extended"
+                                ItemsSource="{Binding IncrementalItemsSource}">
+            <syncfusion:SfDataGrid.SortColumnDescriptions>
+                <syncfusion:SortColumnDescription ColumnName="Orden" SortDirection="Descending"/>
+            </syncfusion:SfDataGrid.SortColumnDescriptions>
+            <syncfusion:SfDataGrid.RecordContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Estado Movimiento">
+                        <MenuItem x:Name="btnPending" Header="Pendiente" Click="btnPending_Click"/>
+                        <MenuItem x:Name="btnProvisional" Header="Provisional" Click="btnProvisional_Click"/>
+                        <MenuItem x:Name="btnReconciled" Header="Conciliado" Click="btnReconciled_Click"/>
+                    </MenuItem>
+                    <MenuItem x:Name="btnAddReminder" Header="Crear Recordatorio" Click="btnAddReminder_Click" />
+                    <MenuItem x:Name="btnCut" Header="Cortar" Click="btnCut_Click" />
+                    <MenuItem x:Name="btnCopy" Header="Copiar" Click="btnCopy_Click" />
+                    <MenuItem x:Name="btnPaste" Header="Pegar" Click="btnPaste_Click" />
+                    <MenuItem x:Name="btnDelete" Header="Borrar" Click="btnDelete_Click" />
+                </ContextMenu>
+            </syncfusion:SfDataGrid.RecordContextMenu>
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
+                <syncfusion:GridDateTimeColumn MappingName="Date" HeaderText="Fecha"/>
+                <syncfusion:GridTextColumn MappingName="Account.Description" HeaderText="Cuenta"/>
+                <syncfusion:GridTextColumn MappingName="PersonDescripGrid" HeaderText="Persona"/>
+                <syncfusion:GridTextColumn MappingName="Memo" HeaderText="Memo"/>
+                <syncfusion:GridTextColumn MappingName="CategoryDescripGrid" HeaderText="Categoría"/>
+                <syncfusion:GridTextColumn MappingName="TransactionStatus.Description" HeaderText="Estado"/>
+                <syncfusion:GridTextColumn MappingName="Tag.Description" HeaderText="Tag"/>
+                <syncfusion:GridTextColumn MappingName="NumShares" HeaderText="Num. Participaciones" IsHidden="True" />
+                <syncfusion:GridTextColumn MappingName="PricesShares" HeaderText="Precio Part." IsHidden="True" />
+                <syncfusion:GridCurrencyColumn MappingName="AmountIn" HeaderText="Entrada"/>
+                <syncfusion:GridCurrencyColumn MappingName="AmountOut" HeaderText="Salida"/>
+                <syncfusion:GridCurrencyColumn MappingName="Amount" HeaderText="Importe"/>
+                <syncfusion:GridCurrencyColumn MappingName="Balance" HeaderText="Saldo"/>
+                <syncfusion:GridTemplateColumn Width="25"
+                                               MappingName="id"
+                                               HeaderText=""
+                                               AllowFiltering="False"
+                                               AllowSorting="False">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button syncfusion:FocusManagerHelper.FocusedElement="True"
+                                    Background="Transparent"                                    
+                                    Click="ButtonSplit_Click">
+                                <Image Source="/Resources/Split-16.png" />
+                            </Button>
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
+            </syncfusion:SfDataGrid.Columns>
+        </syncfusion:SfDataGrid>
+    </Grid>
+</Page>
