@@ -27,6 +27,11 @@ namespace GARCA.View.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = DependencyConfig.CategoriesService.GetAll();
+            loadSplits();
+        }
+
+        private void loadSplits()
+        {
             gvSplits.ItemsSource = transactions != null && transactions.Id > 0
                 ? DependencyConfig.SplitsService.GetbyTransactionid(transactions.Id)
                 : (object?)DependencyConfig.SplitsService.GetbyTransactionidNull();
@@ -88,6 +93,8 @@ namespace GARCA.View.Views
                 }
                 DependencyConfig.SplitsService.Delete(splits);
             }
+
+            loadSplits();
         }
 
         private void gvSplits_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

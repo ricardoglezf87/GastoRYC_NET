@@ -26,6 +26,11 @@ namespace GARCA.View.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = DependencyConfig.CategoriesService.GetAll();
+            loadSplits();
+        }
+
+        private void loadSplits()
+        {
             gvSplitsReminders.ItemsSource = transactionsReminders != null && transactionsReminders.Id > 0
                 ? DependencyConfig.SplitsRemindersService.GetbyTransactionid(transactionsReminders.Id)
                 : (object?)DependencyConfig.SplitsRemindersService.GetbyTransactionidNull();
@@ -98,6 +103,7 @@ namespace GARCA.View.Views
                 }
                 DependencyConfig.SplitsRemindersService.Delete(splitsReminders);
             }
+            loadSplits();
         }
 
         private void gvSplitsReminders_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
