@@ -15,7 +15,7 @@ namespace GARCA.View.ViewModels
 
         public TransactionViewModel()
         {
-            IncrementalItemsSource = new IncrementalList<Transactions>(LoadMoreItems) { MaxItemCount = 100 };
+            IncrementalItemsSource = new IncrementalList<Transactions>(LoadMoreItems) { MaxItemCount = 200 };
         }
 
         /// <summary>
@@ -29,8 +29,8 @@ namespace GARCA.View.ViewModels
 
             IncrementalItemsSource.Clear();
             var item = AccountsSelected != null
-                ? await Task.Run(() => DependencyConfig.TransactionsService.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, 50))
-                : await Task.Run(() => DependencyConfig.TransactionsService.GetAllOpennedOrderByOrderDesc(baseIndex, 50));
+                ? await Task.Run(() => DependencyConfig.TransactionsService.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, 100))
+                : await Task.Run(() => DependencyConfig.TransactionsService.GetAllOpennedOrderByOrderDesc(baseIndex, 100));
 
             if (item != null)
             {

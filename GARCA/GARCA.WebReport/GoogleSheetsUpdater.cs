@@ -118,7 +118,7 @@ namespace GARCA.WebReport
                 }
             }
 
-            await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "Data");
+            await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "PYG");
         }
 
         private async Task UploadInvest(SheetsService service)
@@ -137,11 +137,14 @@ namespace GARCA.WebReport
                 DateTime? actualDate = DependencyConfig.InvestmentProductsPricesService.GetLastValueDate(investmentProducts);
                 Decimal? actualPrices = DependencyConfig.InvestmentProductsPricesService.GetActualPrice(investmentProducts);
 
+                List<string[]> pre = new();
+                Decimal? shares = 0;
+
                 foreach (var i in await Task.Run(() => DependencyConfig.TransactionsService.GetByInvestmentProduct(investmentProducts)))
                 {
                     Decimal? cost = i.PricesShares * -i.NumShares;
                     Decimal? market = actualPrices * -i.NumShares;
-                    filasDeDatos.Add(
+                    pre.Add(
                         new[] {
                         investmentProducts.Description ?? "Sin Descripción",
                         investmentProducts.InvestmentProductsTypesid?.ToString(),
@@ -157,6 +160,18 @@ namespace GARCA.WebReport
                         DecimalToStringJs(market - cost),
                         DecimalToStringJs((cost == 0 ? 100 : (market / cost - 1) * 100))
                         });
+
+                    shares += -i.NumShares;
+
+                    if(shares == 0 || Math.Round(shares??0 * actualPrices??0, 2) == 0)
+                    {
+                        pre.Clear();
+                    }
+                }
+
+                if (pre.Count > 0)
+                {
+                    filasDeDatos.AddRange(pre);
                 }
             }
 
