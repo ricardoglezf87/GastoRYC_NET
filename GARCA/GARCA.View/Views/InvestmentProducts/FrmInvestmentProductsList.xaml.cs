@@ -23,6 +23,11 @@ namespace GARCA.View.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbInvestmentProductsTypes.ItemsSource = DependencyConfig.InvestmentProductsTypesService.GetAll();
+            LoadItemSource();            
+        }
+
+        private void LoadItemSource()
+        {
             gvInvestmentProducts.ItemsSource = DependencyConfig.InvestmentProductsService.GetAll()?.ToList();
         }
 
@@ -67,6 +72,7 @@ namespace GARCA.View.Views
             }
 
             DependencyConfig.InvestmentProductsService.Update(investmentProducts);
+            LoadItemSource();
         }
 
         private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -75,6 +81,7 @@ namespace GARCA.View.Views
             {
                 DependencyConfig.InvestmentProductsService.Delete(investmentProducts);
             }
+            LoadItemSource();
         }
 
         private void gvInvestmentProducts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

@@ -18,6 +18,10 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            LoadItemSource();
+        }
+        private void LoadItemSource()
+        {
             gvPersons.ItemsSource = DependencyConfig.PersonsService.GetAll()?.ToList();
         }
 
@@ -37,6 +41,7 @@ namespace GARCA.View.Views
         {
             var persons = (Persons)e.RowData;
             persons = DependencyConfig.PersonsService.Update(persons);
+            LoadItemSource();
         }
 
         private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -45,6 +50,7 @@ namespace GARCA.View.Views
             {
                 DependencyConfig.PersonsService.Delete(persons);
             }
+            LoadItemSource();
         }
 
         private void gvPersons_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
