@@ -125,7 +125,7 @@ namespace GARCA.View.Views
                     }
                     break;
                 case Key.F2:
-                    SaveTransaction();
+                    await SaveTransaction();
                     break;
                 case Key.F3:
                     transaction.InvestmentCategory = !transaction.InvestmentCategory ?? false;
