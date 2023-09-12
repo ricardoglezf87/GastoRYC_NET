@@ -122,6 +122,7 @@ namespace GARCA.View.Views
 
                         transaction.InvestmentCategory = investmentCategory;
                         dtpDate.SelectedDate = previousDate;
+                        cbCategory.searchText = null;
                     }
                     break;
                 case Key.F2:
