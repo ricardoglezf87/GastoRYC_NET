@@ -1,6 +1,7 @@
 ﻿using GARCA.BO.Models;
 using GARCA.BO.Services;
 using GARCA.Utils.IOC;
+using GARCA.View.Views.Common;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
@@ -16,6 +17,13 @@ namespace GARCA.WebReport
 {
     public class GoogleSheetsUpdater
     {
+        private readonly LoadDialog loadDialog;
+
+        public GoogleSheetsUpdater()
+        {
+            loadDialog = new(3);
+        }
+
         private const string JsonKey = @"{
                                           ""type"": ""service_account"",
                                           ""project_id"": ""garca-393321"",
@@ -32,12 +40,19 @@ namespace GARCA.WebReport
                                         ";
 
         public async Task UpdateSheet()
-        {
+        {            
+            loadDialog.Show();
             var service = await GetSheetsService();
-
-            await UploadTransactions(service);
-            await UploadInvest(service);
+            loadDialog.PerformeStep();
+            
+            await UploadTransactions(service);            
+            loadDialog.PerformeStep();
+            
+            await UploadInvest(service);           
+            loadDialog.PerformeStep();
+            
             await UploadForecast(service);
+            loadDialog.Close();
         }
 
         private async Task UploadTransactions(SheetsService service)
@@ -49,6 +64,7 @@ namespace GARCA.WebReport
 
             var accountsTypes = DependencyConfig.AccountsTypesService.GetAll();
             var transactions = await Task.Run(() => DependencyConfig.TransactionsService.GetAll());
+            loadDialog.setMax(transactions.Count);
 
             foreach (var trans in transactions)
             {
@@ -125,7 +141,7 @@ namespace GARCA.WebReport
                                 trans.Account.Closed.ToString() ?? "False"
                         });
                 }
-
+                loadDialog.PerformeStep();
             }
 
             await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "PYG");
@@ -139,6 +155,9 @@ namespace GARCA.WebReport
                 };
 
             var linvestmentProducts = await DependencyConfig.InvestmentProductsService.GetAllOpened();
+
+            loadDialog.setMax(linvestmentProducts.Count);
+
             foreach (var investmentProducts in linvestmentProducts)
             {
                 if (investmentProducts == null)
@@ -183,6 +202,8 @@ namespace GARCA.WebReport
                 {
                     filasDeDatos.AddRange(pre);
                 }
+
+                loadDialog.PerformeStep();
             }
 
             await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "Portfolio");
