@@ -44,10 +44,12 @@ namespace GARCA.WebReport
         {
             List<string[]> filasDeDatos = new()
                 {
-                    new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
+                    new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo" }
                 };
 
-            foreach (var trans in await Task.Run(() => DependencyConfig.TransactionsService.GetAllOpenned()))
+            HashSet<AccountsTypes?>? accountsTypes = DependencyConfig.AccountsTypesService.GetAll();
+
+            foreach (var trans in await Task.Run(() => DependencyConfig.TransactionsService.GetAll()))
             {
                 var splits = await Task.Run(() => DependencyConfig.SplitsService.GetbyTransactionid(trans.Id));
 
@@ -56,11 +58,9 @@ namespace GARCA.WebReport
                     Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
                     foreach (var spl in splits)
                     {
-                        if (spl.Category == null || spl.Category?.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
-                        {
-                            balance += spl.Amount ?? 0;
-                            filasDeDatos.Add(
-                               new[] {
+                        balance += spl.Amount ?? 0;
+                        filasDeDatos.Add(
+                           new[] {
                                         trans.Id.ToString(),
                                         DateToStringJs(trans.Date),
                                         trans.Account?.Description ?? "Sin Cuenta",
@@ -73,29 +73,11 @@ namespace GARCA.WebReport
                                         trans.Tag?.Description ?? "Sin Tag",
                                         (trans.Tagid??-99).ToString(),
                                         trans.Memo ?? String.Empty,
-                                        DecimalToStringJs(balance)
-                               });
-                        }
+                                        DecimalToStringJs(balance),
+                                        (trans.Account.AccountsTypesid ?? -99).ToString(),
+                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta"
+                           });
                     }
-                }
-                else if (trans.Category == null || trans.Category?.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
-                {
-                    filasDeDatos.Add(
-                        new[] {
-                                trans.Id.ToString(),
-                                DateToStringJs(trans.Date),
-                                trans.Account?.Description ?? "Sin Cuenta",
-                                (trans.Accountid ?? -99).ToString(),
-                                trans.PersonDescripGrid ?? "Sin Persona",
-                                (trans.Personid ?? -99).ToString(),
-                                trans.CategoryDescripGrid ?? "Sin Categoria",
-                                (trans.Categoryid??-99).ToString(),
-                                DecimalToStringJs(trans.Amount),
-                                trans.Tag?.Description ?? "Sin Tag",
-                                (trans.Tagid??-99).ToString(),
-                                trans.Memo ?? String.Empty,
-                                DecimalToStringJs(trans.Balance)
-                        });
                 }
                 else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Loans)
                 {
@@ -113,9 +95,33 @@ namespace GARCA.WebReport
                                 trans.Tag?.Description ?? "Sin Tag",
                                 (trans.Tagid??-99).ToString(),
                                 trans.Memo ?? String.Empty,
-                                DecimalToStringJs(trans.Balance)
+                                DecimalToStringJs(trans.Balance),
+                                (trans.Account.AccountsTypesid ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta"
                         });
                 }
+                else
+                {
+                    filasDeDatos.Add(
+                        new[] {
+                                trans.Id.ToString(),
+                                DateToStringJs(trans.Date),
+                                trans.Account?.Description ?? "Sin Cuenta",
+                                (trans.Accountid ?? -99).ToString(),
+                                trans.PersonDescripGrid ?? "Sin Persona",
+                                (trans.Personid ?? -99).ToString(),
+                                trans.CategoryDescripGrid ?? "Sin Categoria",
+                                (trans.Categoryid??-99).ToString(),
+                                DecimalToStringJs(trans.Amount),
+                                trans.Tag?.Description ?? "Sin Tag",
+                                (trans.Tagid??-99).ToString(),
+                                trans.Memo ?? String.Empty,
+                                DecimalToStringJs(trans.Balance),
+                                (trans.Account.AccountsTypesid ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta"
+                        });
+                }
+
             }
 
             await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "PYG");
@@ -163,7 +169,7 @@ namespace GARCA.WebReport
 
                     shares += -i.NumShares;
 
-                    if(shares == 0 || Math.Round(shares??0 * actualPrices??0, 2) == 0)
+                    if (shares == 0 || Math.Round(shares ?? 0 * actualPrices ?? 0, 2) == 0)
                     {
                         pre.Clear();
                     }
