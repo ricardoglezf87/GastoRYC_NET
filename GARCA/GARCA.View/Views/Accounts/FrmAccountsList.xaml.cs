@@ -22,6 +22,11 @@ namespace GARCA.View.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbAccountsTypes.ItemsSource = DependencyConfig.AccountsTypesService.GetAll();
+            LoadItemSource();
+        }
+
+        private void LoadItemSource()
+        {
             gvAccounts.ItemsSource = DependencyConfig.AccountsService.GetAll()?.ToList();
         }
 
@@ -96,6 +101,7 @@ namespace GARCA.View.Views
 
             UpdateCategory(accounts);
             DependencyConfig.AccountsService.Update(accounts);
+            LoadItemSource();
         }
 
         private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -110,6 +116,7 @@ namespace GARCA.View.Views
 
                 DependencyConfig.AccountsService.Delete(accounts);
             }
+            LoadItemSource();
         }
 
         private void gvAccounts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

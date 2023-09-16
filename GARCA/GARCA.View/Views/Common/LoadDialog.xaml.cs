@@ -15,6 +15,18 @@ namespace GARCA.View.Views.Common
             lblProgreso.Content = "(0 / " + max + ") Elementos procesados";
         }
 
+        public void setMax(int max, bool replace = false)
+        {
+            if (replace)
+            {
+                pbProgreso.Maximum = max;
+            }
+            else
+            {
+                pbProgreso.Maximum += max;
+            }
+        }
+
         public void PerformeStep()
         {
             pbProgreso.Value += 1;

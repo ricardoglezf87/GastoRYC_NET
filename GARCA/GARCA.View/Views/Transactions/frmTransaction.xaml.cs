@@ -2,6 +2,7 @@
 using GARCA.BO.Services;
 using GARCA.Utils.IOC;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -66,15 +67,15 @@ namespace GARCA.View.Views
             LoadTransaction();
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private async void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            if (SaveTransaction())
+            if (await SaveTransaction())
             {
                 Close();
             }
         }
 
-        private void btnSplit_Click(object sender, RoutedEventArgs e)
+        private async void btnSplit_Click(object sender, RoutedEventArgs e)
         {
             if (cbCategory.SelectedValue == null && txtAmount.Value == null)
             {
@@ -90,7 +91,7 @@ namespace GARCA.View.Views
                 }
             }
 
-            if (transaction == null || !SaveTransaction())
+            if (transaction == null || ! await SaveTransaction())
             {
                 MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
                 return;
@@ -102,12 +103,12 @@ namespace GARCA.View.Views
             LoadTransaction();
         }
 
-        private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
+        private async void Window_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
                 case Key.F1:
-                    if (SaveTransaction())
+                    if (await SaveTransaction())
                     {
                         var previousDate = DateTime.Now;
                         if (dtpDate.SelectedDate != null)
@@ -121,10 +122,11 @@ namespace GARCA.View.Views
 
                         transaction.InvestmentCategory = investmentCategory;
                         dtpDate.SelectedDate = previousDate;
+                        cbCategory.searchText = null;
                     }
                     break;
                 case Key.F2:
-                    SaveTransaction();
+                    await SaveTransaction();
                     break;
                 case Key.F3:
                     transaction.InvestmentCategory = !transaction.InvestmentCategory ?? false;
@@ -179,11 +181,6 @@ namespace GARCA.View.Views
         private void txtPriceShares_ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             CalculateValueShares();
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            DependencyConfig.TransactionsService.RefreshBalanceTransactions(transaction);
         }
 
         #endregion
@@ -441,7 +438,7 @@ namespace GARCA.View.Views
             return valid;
         }
 
-        private bool SaveTransaction()
+        private async Task<bool> SaveTransaction()
         {
             if (IsTransactionValid())
             {
@@ -452,6 +449,7 @@ namespace GARCA.View.Views
                     if (transaction != null)
                     {
                         DependencyConfig.TransactionsService.SaveChanges(ref transaction);
+                        await Task.Run(()=>DependencyConfig.TransactionsService.RefreshBalanceTransactions(transaction));
                     }
                     return true;
                 }
