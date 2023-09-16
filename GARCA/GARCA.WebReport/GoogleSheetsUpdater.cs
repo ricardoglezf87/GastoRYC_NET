@@ -44,12 +44,13 @@ namespace GARCA.WebReport
         {
             List<string[]> filasDeDatos = new()
                 {
-                    new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo" }
+                    new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo", "Cerrada" }
                 };
 
-            HashSet<AccountsTypes?>? accountsTypes = DependencyConfig.AccountsTypesService.GetAll();
+            var accountsTypes = DependencyConfig.AccountsTypesService.GetAll();
+            var transactions = await Task.Run(() => DependencyConfig.TransactionsService.GetAll());
 
-            foreach (var trans in await Task.Run(() => DependencyConfig.TransactionsService.GetAll()))
+            foreach (var trans in transactions)
             {
                 var splits = await Task.Run(() => DependencyConfig.SplitsService.GetbyTransactionid(trans.Id));
 
@@ -75,7 +76,8 @@ namespace GARCA.WebReport
                                         trans.Memo ?? String.Empty,
                                         DecimalToStringJs(balance),
                                         (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta"
+                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                        trans.Account.Closed.ToString() ?? "False"
                            });
                     }
                 }
@@ -97,7 +99,8 @@ namespace GARCA.WebReport
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
                                 (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta"
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                trans.Account.Closed.ToString() ?? "False"
                         });
                 }
                 else
@@ -118,7 +121,8 @@ namespace GARCA.WebReport
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
                                 (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta"
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                trans.Account.Closed.ToString() ?? "False"
                         });
                 }
 
@@ -134,8 +138,8 @@ namespace GARCA.WebReport
                     new[] { "Description", "InvestmentProductsTypesid", "InvestmentProductsTypes", "Symbol", "Date", "Prices", "NumShares", "CostShares","DateActualValue","ActualPrice", "MarketValue", "Profit", "ProfitPorcent" }
                 };
 
-            foreach (var investmentProducts in
-                await DependencyConfig.InvestmentProductsService.GetAllOpened())
+            var linvestmentProducts = await DependencyConfig.InvestmentProductsService.GetAllOpened();
+            foreach (var investmentProducts in linvestmentProducts)
             {
                 if (investmentProducts == null)
                     continue;
