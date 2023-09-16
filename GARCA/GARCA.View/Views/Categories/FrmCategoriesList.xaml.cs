@@ -20,6 +20,11 @@ namespace GARCA.View.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategoriesTypes.ItemsSource = DependencyConfig.CategoriesTypesService.GetAllWithoutSpecialTransfer();
+            LoadItemSource();            
+        }
+
+        private void LoadItemSource()
+        {
             gvCategories.ItemsSource = DependencyConfig.CategoriesService.GetAllWithoutSpecialTransfer()?.ToList();
         }
 
@@ -65,6 +70,7 @@ namespace GARCA.View.Views
             }
 
             DependencyConfig.CategoriesService.Update(categories);
+            LoadItemSource();
         }
 
         private void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
@@ -73,6 +79,7 @@ namespace GARCA.View.Views
             {
                 DependencyConfig.CategoriesService.Delete(categories);
             }
+            LoadItemSource();
         }
 
         private void gvCategories_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

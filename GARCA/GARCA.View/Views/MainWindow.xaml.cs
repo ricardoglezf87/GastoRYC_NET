@@ -123,15 +123,27 @@ namespace GARCA
                 case Key.F1:
                     OpenNewTransaction();
                     break;
+                case Key.F4:
+                    var maxItem = Microsoft.VisualBasic.Interaction.InputBox("Inserte un numero elementos a cargar:", "Transacción");
+                    if (!String.IsNullOrWhiteSpace(maxItem))
+                    {
+                        TransactionViewModel.maxItem = Int32.Parse(maxItem);
+                        if(actualPrincipalContent is PartialTransactions transactions)
+                        {
+                            LoadAccounts();
+                            transactions.LoadTransactions();
+                        }
+                    }
+                    break;
                 case Key.F5:
                     switch (actualPrincipalContent)
                     {
                         case PartialHome home:
                             await home.LoadCharts();
                             break;
-                        case PartialTransactions:
+                        case PartialTransactions transactions:
                             LoadAccounts();
-                            ((PartialTransactions)actualPrincipalContent).LoadTransactions();
+                            transactions.LoadTransactions();
                             break;
                         case PartialReminders reminders:
                             reminders.LoadReminders();
