@@ -7,6 +7,23 @@ namespace GARCA.Utlis.Extensions
 {
     public static class EnumerableExtension
     {
+        public static SortedSet<TransactionsArchived> ToSortedSetBo(this IEnumerable<TransactionsArchivedDao>? source)
+        {
+            SortedSet<TransactionsArchived> list = new();
+            if (source != null)
+            {
+                foreach (var obj in source)
+                {
+                    TransactionsArchived? t = (TransactionsArchived?)obj;
+                    if (t != null)
+                    {
+                        list.Add(t);
+                    }
+                }
+            }
+            return list;
+        }
+
         public static SortedSet<Transactions> ToSortedSetBo(this IEnumerable<TransactionsDao>? source)
         {
             SortedSet<Transactions> list = new();
@@ -84,6 +101,18 @@ namespace GARCA.Utlis.Extensions
             return list;
         }
 
+        public static HashSet<SplitsArchived?> ToHashSetBo(this IEnumerable<SplitsArchivedDao> source)
+        {
+            HashSet<SplitsArchived?> list = new();
+
+            foreach (var obj in source)
+            {
+                list.Add((SplitsArchived?)obj);
+            }
+
+            return list;
+        }
+
         public static HashSet<TransactionsReminders?> ToHashSetBo(this IEnumerable<TransactionsRemindersDao> source)
         {
             HashSet<TransactionsReminders?> list = new();
@@ -103,6 +132,18 @@ namespace GARCA.Utlis.Extensions
             foreach (var obj in source)
             {
                 list.Add((Transactions?)obj);
+            }
+
+            return list;
+        }
+
+        public static HashSet<TransactionsArchived?> ToHashSetBo(this IEnumerable<TransactionsArchivedDao> source)
+        {
+            HashSet<TransactionsArchived?> list = new();
+
+            foreach (var obj in source)
+            {
+                list.Add((TransactionsArchived?)obj);
             }
 
             return list;
