@@ -77,7 +77,7 @@ namespace GARCA.BO.Services
             {
 
                 LoadDialog loadDialog = new(lTrans.Count());
-                loadDialog.Show();
+                loadDialog.Show();                
 
                 foreach (var trans in lTrans)
                 {
@@ -103,6 +103,44 @@ namespace GARCA.BO.Services
                         DependencyConfig.TransactionsService.Delete(trans);
                     }
                     loadDialog.PerformeStep();
+                }
+
+                HashSet<Accounts?>? lAcc = await Task.Run(() => DependencyConfig.AccountsService.GetAllOpened());
+
+                if (lAcc != null)
+                {
+                    loadDialog.setMax(lAcc.Count);
+                    foreach (var acc in lAcc)
+                    {
+                        Decimal? total = await Task.Run(() => DependencyConfig.TransactionsArchivedService.GetAll()?
+                            .Where(x => x.Date != null && x.Date <= date && x.Accountid == acc.Id).Sum(x => x.Amount));
+
+                        if (total != null && total != 0)
+                        {
+                            Transactions? t = new Transactions()
+                            {
+                                Accountid = acc.Id,
+                                Date = date,
+                                Categoryid = (int)CategoriesService.ESpecialCategories.Cierre,
+                                AmountIn = (total > 0 ? total : 0),
+                                AmountOut = (total < 0 ? -total : 0),
+                                Balance = total,
+                                TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Reconciled
+                            };
+
+                            t = DependencyConfig.TransactionsService.Update(t);
+
+                            TransactionsArchived? at = t.ToArchived();
+                            at.AmountIn = (total < 0 ? -total : 0);
+                            at.AmountOut = (total > 0 ? total : 0);
+                            at.Balance = 0;
+
+                            DependencyConfig.TransactionsArchivedService.Update(at);
+
+                        }
+
+                        loadDialog.PerformeStep();
+                    }
                 }
 
                 loadDialog.Close();

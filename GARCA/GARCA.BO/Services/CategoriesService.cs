@@ -12,7 +12,8 @@ namespace GARCA.BO.Services
 
         public enum ESpecialCategories
         {
-            Split = -1,
+            Cierre = -2,
+            Split = -1,            
             WithoutCategory = 0
         }
 
