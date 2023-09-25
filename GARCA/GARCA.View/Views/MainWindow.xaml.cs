@@ -6,6 +6,7 @@ using GARCA.WebReport;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Windows.Tools.Controls;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -53,13 +54,32 @@ namespace GARCA
 
         private async void btnArchiveTransactions_Click(object sender, RoutedEventArgs e)
         {
-            DateTime date;
-            date = new DateTime(2023,03,31);
-            Mouse.OverrideCursor = Cursors.Wait;
-            DependencyConfig.RycContextService.MakeBackup();
-            await DependencyConfig.TransactionsArchivedService.ArchiveTransactions(date);
-            Mouse.OverrideCursor = null;
-            MessageBox.Show("Transacciones archivadas!","Archivar transacciones");
+            String strDate = Microsoft.VisualBasic.Interaction.InputBox("Inserte la fecha(dd/mm/yyyy) a archivar:", "Archivar transacciones");
+            if (strDate == null || !strDate.Contains("/") || strDate.Split("/").Count() != 3)
+            {
+                MessageBox.Show("Debe colocar una fecha valida", "Archivar transacciones");
+            }
+            else
+            {                
+                DateTime date;                
+                date = DateTime.Parse(strDate);
+                
+                Mouse.OverrideCursor = Cursors.Wait;
+                
+                DependencyConfig.RycContextService.MakeBackup();
+                
+                await DependencyConfig.TransactionsArchivedService.ArchiveTransactions(date);
+                
+                if (actualPrincipalContent is PartialTransactions transactions)
+                {
+                    transactions.LoadTransactions();
+                    LoadAccounts();
+                }
+                
+                Mouse.OverrideCursor = null;
+                
+                MessageBox.Show("Transacciones archivadas!", "Archivar transacciones");
+            }
         }
 
         private void btnUpdateBalances_Click(object sender, RoutedEventArgs e)
