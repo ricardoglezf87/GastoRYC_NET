@@ -126,9 +126,11 @@ namespace GARCA.BO.Services
                                 sArchived.Transactionid = tArchived.Id;
                                 sArchived.Transaction = tArchived;
                                 await Task.Run(() => DependencyConfig.SplitsArchivedService.Update(sArchived));
-                                loadDialog.PerformeStep();
+                                DependencyConfig.SplitsService.Delete(splits);
+                                loadDialog.PerformeStep();                                
                             }
                         }
+                        DependencyConfig.TransactionsService.Delete(trans);
                     }
                     loadDialog.PerformeStep();
                 }
