@@ -7,6 +7,8 @@ namespace GARCA.BO.Models
 {
     public class TransactionsArchived : ModelBase
     {
+        public virtual int? IdOriginal { get; set; }
+
         public virtual DateTime? Date { set; get; }
 
         public virtual int? Accountid { set; get; }

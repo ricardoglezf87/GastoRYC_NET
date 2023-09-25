@@ -46,6 +46,24 @@ namespace GARCA.BO.Models
             };
         }
 
+        internal SplitsArchived ToArchived()
+        {
+            return new SplitsArchived
+            {
+                IdOriginal = Id,
+                Transactionid = Transactionid,
+                Transaction = null,
+                Categoryid = Categoryid,
+                Category = null,
+                AmountOut = AmountOut,
+                AmountIn = AmountIn,
+                Memo = Memo,
+                Tranferid = Tranferid,
+                Tagid = Tagid,
+                Tag = null
+            };
+        }
+
         public static explicit operator Splits?(SplitsDao? v)
         {
             return v == null

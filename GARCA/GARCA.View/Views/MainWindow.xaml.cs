@@ -51,6 +51,17 @@ namespace GARCA
 
         #region Events
 
+        private async void btnArchiveTransactions_Click(object sender, RoutedEventArgs e)
+        {
+            DateTime date;
+            date = new DateTime(2023,03,31);
+            Mouse.OverrideCursor = Cursors.Wait;
+            DependencyConfig.RycContextService.MakeBackup();
+            await DependencyConfig.TransactionsArchivedService.ArchiveTransactions(date);
+            Mouse.OverrideCursor = null;
+            MessageBox.Show("Transacciones archivadas!","Archivar transacciones");
+        }
+
         private void btnUpdateBalances_Click(object sender, RoutedEventArgs e)
         {
             UpdateBalances();

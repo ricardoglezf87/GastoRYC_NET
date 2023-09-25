@@ -6,6 +6,9 @@ namespace GARCA.DAO.Models
     [Table("SplitsArchived")]
     public class SplitsArchivedDao : ModelBaseDao
     {
+        [Column("idOriginal")]
+        public virtual int? IdOriginal { get; set; }
+
         [Column("transactionid")]
         public virtual int? Transactionid { set; get; }
 

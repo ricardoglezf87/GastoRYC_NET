@@ -69,6 +69,10 @@ namespace GARCA.BO.Services
         {
             transactionsManager.Delete(transactions?.ToDao());
         }
+        public void Delete(int? id)
+        {
+            transactionsManager.Delete(id);
+        }
 
         public HashSet<Transactions?>? GetByAccount(int? id)
         {

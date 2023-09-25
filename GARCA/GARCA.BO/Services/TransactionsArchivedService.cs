@@ -2,9 +2,11 @@
 using GARCA.DAO.Managers;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
+using GARCA.View.Views.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {
@@ -55,8 +57,6 @@ namespace GARCA.BO.Services
 
         public TransactionsArchived? Update(TransactionsArchived transactions)
         {
-            transactions.Date = transactions.Date.RemoveTime();
-            transactions.Orden = CreateOrden(transactions);
             return (TransactionsArchived?)transactionsManager.Update(transactions.ToDao());
         }
 
@@ -98,6 +98,44 @@ namespace GARCA.BO.Services
         public HashSet<TransactionsArchived?>? GetByPerson(Persons? person)
         {
             return GetByPerson(person?.Id);
+        }
+
+        public async Task ArchiveTransactions(DateTime date)
+        {
+            IEnumerable<Transactions?>? lTrans = await Task.Run(() => DependencyConfig.TransactionsService.GetAll()?.Where(x => x.Date != null && x.Date <= date));
+            if (lTrans != null)
+            {
+
+                LoadDialog loadDialog = new(lTrans.Count());
+                loadDialog.Show();
+
+                foreach (var trans in lTrans)
+                {
+                    if (trans != null)
+                    {
+                        TransactionsArchived? tArchived;
+                        tArchived = await Task.Run(() => Update(trans.ToArchived()));
+                        HashSet<Splits?>? lSplits = await Task.Run(() => DependencyConfig.SplitsService.GetbyTransactionid(trans.Id));
+                        if (lSplits != null)
+                        {
+                            loadDialog.setMax(lSplits.Count);
+
+                            foreach (var splits in lSplits)
+                            {
+                                SplitsArchived sArchived = splits.ToArchived();
+                                sArchived.Transactionid = tArchived.Id;
+                                sArchived.Transaction = tArchived;
+                                await Task.Run(() => DependencyConfig.SplitsArchivedService.Update(sArchived));
+                                loadDialog.PerformeStep();
+                            }
+                        }
+                    }
+                    loadDialog.PerformeStep();
+                }
+
+                loadDialog.Close();
+            }
+
         }
 
         private int GetNextId()

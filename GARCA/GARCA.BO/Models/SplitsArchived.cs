@@ -5,6 +5,8 @@ namespace GARCA.BO.Models
 {
     public class SplitsArchived : ModelBase
     {
+        public virtual int? IdOriginal { get; set; }
+
         public virtual int? Transactionid { set; get; }
 
         public virtual TransactionsArchived? Transaction { set; get; }
@@ -33,6 +35,7 @@ namespace GARCA.BO.Models
             return new SplitsArchivedDao
             {
                 Id = Id,
+                IdOriginal = IdOriginal,
                 Transactionid = Transactionid,
                 Transaction = null,
                 Categoryid = Categoryid,
@@ -45,7 +48,7 @@ namespace GARCA.BO.Models
                 Tag = null
             };
         }
-
+        
         public static explicit operator SplitsArchived?(SplitsArchivedDao? v)
         {
             return v == null
@@ -53,6 +56,7 @@ namespace GARCA.BO.Models
                 : new SplitsArchived
                 {
                     Id = v.Id,
+                    IdOriginal = v.IdOriginal,
                     Transactionid = v.Transactionid,
                     Transaction = v.Transaction != null ? (TransactionsArchived?)v.Transaction : null,
                     Categoryid = v.Categoryid,

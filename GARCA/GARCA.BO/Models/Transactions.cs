@@ -96,6 +96,37 @@ namespace GARCA.BO.Models
             };
         }
 
+        internal TransactionsArchived ToArchived()
+        {
+            return new TransactionsArchived
+            {
+                IdOriginal = Id,
+                Date = Date,
+                Accountid = Accountid,
+                Account = null,
+                Personid = Personid,
+                Person = null,
+                Categoryid = Categoryid,
+                Category = null,
+                AmountIn = AmountIn,
+                AmountOut = AmountOut,
+                Memo = Memo,
+                InvestmentCategory = InvestmentCategory,
+                InvestmentProducts = null,
+                InvestmentProductsid = InvestmentProductsid,
+                Tranferid = Tranferid,
+                TranferSplitid = TranferSplitid,
+                TransactionStatus = null,
+                TransactionStatusid = TransactionStatusid,
+                NumShares = NumShares,
+                PricesShares = PricesShares,
+                Tagid = Tagid,
+                Tag = null,
+                Balance = Balance,
+                Orden = Orden
+            };
+        }
+
 
         public static explicit operator Transactions?(TransactionsDao? v)
         {

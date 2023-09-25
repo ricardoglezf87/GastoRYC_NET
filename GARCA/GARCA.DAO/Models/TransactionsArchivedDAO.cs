@@ -7,6 +7,9 @@ namespace GARCA.DAO.Models
     [Table("TransactionsArchived")]
     public class TransactionsArchivedDao : ModelBaseDao
     {
+        [Column("idOriginal")]
+        public virtual int? IdOriginal { get; set; }
+
         [Column("date")]
         public virtual DateTime? Date { set; get; }
 

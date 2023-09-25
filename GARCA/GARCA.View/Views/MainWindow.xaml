@@ -61,6 +61,7 @@
                     <syncfusion:RibbonButton Name="btnUpdatePrices" SizeForm="Large" Label="Actualizar Precios" LargeIcon="/Resources/syncPrices-32.png" Click="btnUpdatePrices_Click" />
                     <syncfusion:RibbonButton Name="btnUpdateBalances" SizeForm="Large" Label="Actualizar Saldos" LargeIcon="/Resources/refreshBalance-32.png" Click="btnUpdateBalances_Click"  />
                     <syncfusion:RibbonButton Name="btnUpdateReportWeb" SizeForm="Large" Label="Actualizar ReportWeb" LargeIcon="/Resources/reportWeb-32.png" Click="btnUpdateReportWeb_Click"  />
+                    <syncfusion:RibbonButton Name="btnArchiveTransactions" SizeForm="Large" Label="Archivar Transacciones" LargeIcon="/Resources/reportWeb-32.png" Click="btnArchiveTransactions_Click"  />
                 </syncfusion:RibbonBar>
             </syncfusion:RibbonTab>
         </syncfusion:Ribbon>
