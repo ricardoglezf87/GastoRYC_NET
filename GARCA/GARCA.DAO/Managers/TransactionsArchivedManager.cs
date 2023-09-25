@@ -63,34 +63,7 @@ namespace GARCA.DAO.Managers
                 }
             }
         }
-        public IEnumerable<TransactionsArchivedDao>? GetByAccountOrderByOrdenDesc(int? id, int startIndex, int nPage)
-        {
-            return GetByAccountOrderByOrdenDesc(id)?.Skip(startIndex).Take(nPage);
-        }
-
-        public IEnumerable<TransactionsArchivedDao>? GetAllOpenned()
-        {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<TransactionsArchivedDao>();
-                var query = GetEntyWithInclude(repository)?
-                    .Where(x => !x.Account.Closed.HasValue || !x.Account.Closed.Value);
-
-                if (query != null)
-                {
-                    foreach (var item in query)
-                    {
-                        yield return item;
-                    }
-                }
-            }
-        }
-
-        public IEnumerable<TransactionsArchivedDao>? GetAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
-        {
-            return GetAllOpennedOrderByOrdenDesc()?.Skip(startIndex).Take(nPage);
-        }
-
+        
         private IEnumerable<TransactionsArchivedDao>? GetAllOpennedOrderByOrdenDesc()
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
@@ -99,24 +72,6 @@ namespace GARCA.DAO.Managers
                 var query = GetEntyWithInclude(repository)?
                     .Where(x => !x.Account.Closed.HasValue || !x.Account.Closed.Value)
                     .OrderByDescending(x => x.Orden);
-
-                if (query != null)
-                {
-                    foreach (var item in query)
-                    {
-                        yield return item;
-                    }
-                }
-            }
-        }
-
-        public IEnumerable<TransactionsArchivedDao>? GetByPerson(int? id)
-        {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<TransactionsArchivedDao>();
-                var query = GetEntyWithInclude(repository)?
-                    .Where(x => id.Equals(x.Personid));
 
                 if (query != null)
                 {
@@ -144,24 +99,6 @@ namespace GARCA.DAO.Managers
                     }
                 }
             }
-        }
-
-        public int GetNextId()
-        {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var cmd = unitOfWork.GetDataBase().
-                    GetDbConnection().CreateCommand();
-                cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactionsArchived';";
-
-                unitOfWork.GetDataBase().OpenConnection();
-                var result = cmd.ExecuteReader();
-                result.Read();
-                var id = Convert.ToInt32(result[0]);
-                result.Close();
-
-                return id;
-            }
-        }
+        }        
     }
 }

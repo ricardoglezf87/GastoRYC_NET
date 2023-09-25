@@ -21,23 +21,6 @@ namespace GARCA.DAO.Managers
         }
 #pragma warning restore CS8603
 
-        public IEnumerable<SplitsArchivedDao>? GetbyTransactionidNull()
-        {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<SplitsArchivedDao>();
-                var query = GetEntyWithInclude(repository)?.Where(x => x.Transactionid == null);
-
-                if (query != null)
-                {
-                    foreach (var item in query)
-                    {
-                        yield return item;
-                    }
-                }
-            }
-        }
-
         public IEnumerable<SplitsArchivedDao>? GetbyTransactionid(int transactionid)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))
