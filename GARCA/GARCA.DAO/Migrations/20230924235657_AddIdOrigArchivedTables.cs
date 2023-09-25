@@ -21,6 +21,8 @@ namespace GARCA.DAO.Migrations
                 table: "SplitsArchived",
                 type: "INTEGER",
                 nullable: true);
+
+            migrationBuilder.Sql("INSERT INTO categories(id,description,categoriesTypesid) VALUES (-2,'Regulación Cierre',4);");
         }
 
         /// <inheritdoc />
@@ -33,6 +35,8 @@ namespace GARCA.DAO.Migrations
             migrationBuilder.DropColumn(
                 name: "idOriginal",
                 table: "SplitsArchived");
+
+            migrationBuilder.Sql("delete from categories where id = -2;");
         }
     }
 }
