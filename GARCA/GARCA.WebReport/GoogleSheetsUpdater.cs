@@ -45,10 +45,12 @@ namespace GARCA.WebReport
             var service = await GetSheetsService();
             loadDialog.PerformeStep();
             
-            await UploadTransactions(service);            
+            await UploadTransactions(service);
+            await UploadTransactionsArchived(service);
             loadDialog.PerformeStep();
             
-            await UploadInvest(service);           
+            await UploadInvest(service);
+            await UploadInvestArchived(service);
             loadDialog.PerformeStep();
             
             await UploadForecast(service);
@@ -79,6 +81,98 @@ namespace GARCA.WebReport
                         filasDeDatos.Add(
                            new[] {
                                         trans.Id.ToString(),
+                                        DateToStringJs(trans.Date),
+                                        trans.Account?.Description ?? "Sin Cuenta",
+                                        (trans.Accountid ?? -99).ToString(),
+                                        trans.PersonDescripGrid ?? "Sin Persona",
+                                        (trans.Personid ?? -99).ToString(),
+                                        spl.Category?.Description ?? "Sin Categoria",
+                                        (spl.Categoryid??-99).ToString(),
+                                        DecimalToStringJs(spl.Amount),
+                                        trans.Tag?.Description ?? "Sin Tag",
+                                        (trans.Tagid??-99).ToString(),
+                                        trans.Memo ?? String.Empty,
+                                        DecimalToStringJs(balance),
+                                        (trans.Account.AccountsTypesid ?? -99).ToString(),
+                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                        trans.Account.Closed.ToString() ?? "False"
+                           });
+                    }
+                }
+                else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Loans)
+                {
+                    filasDeDatos.Add(
+                        new[] {
+                                trans.Id.ToString(),
+                                DateToStringJs(trans.Date),
+                                trans.Account?.Description ?? "Sin Cuenta",
+                                (trans.Accountid ?? -99).ToString(),
+                                trans.PersonDescripGrid ?? "Sin Persona",
+                                (trans.Personid ?? -99).ToString(),
+                                "Prestamos:Amortización",
+                                (trans.Categoryid??-99).ToString(),
+                                DecimalToStringJs(-trans.Amount),
+                                trans.Tag?.Description ?? "Sin Tag",
+                                (trans.Tagid??-99).ToString(),
+                                trans.Memo ?? String.Empty,
+                                DecimalToStringJs(trans.Balance),
+                                (trans.Account.AccountsTypesid ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                trans.Account.Closed.ToString() ?? "False"
+                        });
+                }
+                else
+                {
+                    filasDeDatos.Add(
+                        new[] {
+                                trans.Id.ToString(),
+                                DateToStringJs(trans.Date),
+                                trans.Account?.Description ?? "Sin Cuenta",
+                                (trans.Accountid ?? -99).ToString(),
+                                trans.PersonDescripGrid ?? "Sin Persona",
+                                (trans.Personid ?? -99).ToString(),
+                                trans.CategoryDescripGrid ?? "Sin Categoria",
+                                (trans.Categoryid??-99).ToString(),
+                                DecimalToStringJs(trans.Amount),
+                                trans.Tag?.Description ?? "Sin Tag",
+                                (trans.Tagid??-99).ToString(),
+                                trans.Memo ?? String.Empty,
+                                DecimalToStringJs(trans.Balance),
+                                (trans.Account.AccountsTypesid ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                trans.Account.Closed.ToString() ?? "False"
+                        });
+                }
+                loadDialog.PerformeStep();
+            }
+
+            await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "PYG");
+        }
+
+        private async Task UploadTransactionsArchived(SheetsService service)
+        {
+            List<string[]> filasDeDatos = new()
+                {
+                    new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo", "Cerrada" }
+                };
+
+            var accountsTypes = DependencyConfig.AccountsTypesService.GetAll();
+            var transactions = await Task.Run(() => DependencyConfig.TransactionsArchivedService.GetAll());
+            loadDialog.setMax(transactions.Count);
+
+            foreach (var trans in transactions)
+            {
+                var splits = await Task.Run(() => DependencyConfig.SplitsArchivedService.GetbyTransactionid(trans.Id));
+
+                if (splits != null && splits.Count > 0)
+                {
+                    Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
+                    foreach (var spl in splits)
+                    {
+                        balance += spl.Amount ?? 0;
+                        filasDeDatos.Add(
+                           new[] {
+                                        trans.IdOriginal.ToString() ?? "0",
                                         DateToStringJs(trans.Date),
                                         trans.Account?.Description ?? "Sin Cuenta",
                                         (trans.Accountid ?? -99).ToString(),
@@ -208,6 +302,69 @@ namespace GARCA.WebReport
 
             await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "Portfolio");
         }
+
+        private async Task UploadInvestArchived(SheetsService service)
+        {
+            List<string[]> filasDeDatos = new()
+                {
+                    new[] { "Description", "InvestmentProductsTypesid", "InvestmentProductsTypes", "Symbol", "Date", "Prices", "NumShares", "CostShares","DateActualValue","ActualPrice", "MarketValue", "Profit", "ProfitPorcent" }
+                };
+
+            var linvestmentProducts = await DependencyConfig.InvestmentProductsService.GetAllOpened();
+
+            loadDialog.setMax(linvestmentProducts.Count);
+
+            foreach (var investmentProducts in linvestmentProducts)
+            {
+                if (investmentProducts == null)
+                    continue;
+
+                DateTime? actualDate = DependencyConfig.InvestmentProductsPricesService.GetLastValueDate(investmentProducts);
+                Decimal? actualPrices = DependencyConfig.InvestmentProductsPricesService.GetActualPrice(investmentProducts);
+
+                List<string[]> pre = new();
+                Decimal? shares = 0;
+
+                foreach (var i in await Task.Run(() => DependencyConfig.TransactionsArchivedService.GetByInvestmentProduct(investmentProducts)))
+                {
+                    Decimal? cost = i.PricesShares * -i.NumShares;
+                    Decimal? market = actualPrices * -i.NumShares;
+                    pre.Add(
+                        new[] {
+                        investmentProducts.Description ?? "Sin Descripción",
+                        investmentProducts.InvestmentProductsTypesid?.ToString(),
+                        investmentProducts.InvestmentProductsTypes?.Description ?? "Sin Tipo",
+                        investmentProducts.Symbol ?? "Sin Simbolo",
+                        DateToStringJs(i.Date),
+                        DecimalToStringJs(i.PricesShares),
+                        DecimalToStringJs(-i.NumShares),
+                        DecimalToStringJs(cost),
+                        DateToStringJs(actualDate),
+                        DecimalToStringJs(actualPrices),
+                        DecimalToStringJs(market),
+                        DecimalToStringJs(market - cost),
+                        DecimalToStringJs((cost == 0 ? 100 : (market / cost - 1) * 100))
+                        });
+
+                    shares += -i.NumShares;
+
+                    if (shares == 0 || Math.Round(shares ?? 0 * actualPrices ?? 0, 2) == 0)
+                    {
+                        pre.Clear();
+                    }
+                }
+
+                if (pre.Count > 0)
+                {
+                    filasDeDatos.AddRange(pre);
+                }
+
+                loadDialog.PerformeStep();
+            }
+
+            await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "Portfolio");
+        }
+
         private async Task UploadForecast(SheetsService service)
         {
             await Task.Run(() => new Exception("Funcion no implementada"));
