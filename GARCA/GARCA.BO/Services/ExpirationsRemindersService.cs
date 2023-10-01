@@ -5,6 +5,8 @@ using GARCA.Utlis.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {
@@ -52,13 +54,13 @@ namespace GARCA.BO.Services
             }
         }
 
-        public void GenerateAutoregister()
+        public async Task GenerateAutoregister()
         {
             foreach (var exp in GetAllPendingWithGeneration()?
                 .Where(x => x.Date <= DateTime.Now && //x.transactionsReminders != null &&
                     x.TransactionsReminders.AutoRegister.HasValue && x.TransactionsReminders.AutoRegister.Value))
             {
-                RegisterTransactionfromReminder(exp.Id);
+                await RegisterTransactionfromReminder(exp.Id);
                 exp.Done = true;
                 Update(exp);
             }
@@ -87,7 +89,7 @@ namespace GARCA.BO.Services
             }
         }
 
-        public Transactions? RegisterTransactionfromReminder(int? id)
+        public async Task<Transactions?> RegisterTransactionfromReminder(int? id)
         {
             if (id != null)
             {
@@ -121,6 +123,8 @@ namespace GARCA.BO.Services
                         DependencyConfig.TransactionsService.UpdateTranferSplits(transactions, ref splits);
                         DependencyConfig.SplitsService.SaveChanges(splits);
                     }
+
+                    await Task.Run(() => DependencyConfig.TransactionsService.RefreshBalanceTransactions(transactions));
 
                     return transactions;
                 }
