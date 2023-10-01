@@ -180,6 +180,7 @@ namespace GARCA.View.Views
                     transactions.TransactionStatus = DependencyConfig.TransactionsStatusService.GetById(transactions.TransactionStatusid);
                     DependencyConfig.TransactionsService.Update(transactions);
                 }
+                parentForm.LoadAccounts();
                 LoadTransactions();
             }
             else
@@ -198,6 +199,7 @@ namespace GARCA.View.Views
                     transactions.TransactionStatus = DependencyConfig.TransactionsStatusService.GetById(transactions.TransactionStatusid);
                     DependencyConfig.TransactionsService.Update(transactions);
                 }
+                parentForm.LoadAccounts();
                 LoadTransactions();
             }
             else
@@ -216,6 +218,7 @@ namespace GARCA.View.Views
                     transactions.TransactionStatus = DependencyConfig.TransactionsStatusService.GetById(transactions.TransactionStatusid);
                     DependencyConfig.TransactionsService.Update(transactions);
                 }
+                parentForm.LoadAccounts();
                 LoadTransactions();
             }
             else
