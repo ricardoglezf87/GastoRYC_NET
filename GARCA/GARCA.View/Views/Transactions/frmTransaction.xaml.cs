@@ -448,7 +448,7 @@ namespace GARCA.View.Views
                     UpdateTransaction();
                     if (transaction != null)
                     {
-                        DependencyConfig.TransactionsService.SaveChanges(ref transaction);
+                        transaction = await DependencyConfig.TransactionsService.SaveChanges(transaction);
                         await Task.Run(()=>DependencyConfig.TransactionsService.RefreshBalanceTransactions(transaction));
                     }
                     return true;

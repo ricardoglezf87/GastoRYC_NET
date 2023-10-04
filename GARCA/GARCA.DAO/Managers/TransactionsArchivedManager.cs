@@ -45,6 +45,24 @@ namespace GARCA.DAO.Managers
             }
         }
 
+        public IEnumerable<TransactionsArchivedDao>? GetByPerson(int? id)
+        {
+            using (var unitOfWork = new UnitOfWork(new RycContext()))
+            {
+                var repository = unitOfWork.GetRepositoryModelBase<TransactionsArchivedDao>();
+                var query = GetEntyWithInclude(repository)?
+                    .Where(x => id.Equals(x.Personid));
+
+                if (query != null)
+                {
+                    foreach (var item in query)
+                    {
+                        yield return item;
+                    }
+                }
+            }
+        }
+
         public IEnumerable<TransactionsArchivedDao>? GetByAccountOrderByOrdenDesc(int? id)
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))

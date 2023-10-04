@@ -107,7 +107,7 @@ namespace GARCA.BO.Services
                     transactions.AmountOut = expirationsReminders.TransactionsReminders.AmountOut;
                     transactions.Tagid = expirationsReminders.TransactionsReminders.Tagid;
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
-                    DependencyConfig.TransactionsService.SaveChanges(ref transactions);
+                    transactions = await DependencyConfig.TransactionsService.SaveChanges(transactions);
 
                     foreach (var splitsReminders in
                         DependencyConfig.SplitsRemindersService.GetbyTransactionid(expirationsReminders.TransactionsReminders.Id))

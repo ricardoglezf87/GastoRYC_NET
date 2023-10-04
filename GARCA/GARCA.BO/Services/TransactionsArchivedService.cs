@@ -40,6 +40,16 @@ namespace GARCA.BO.Services
             return transactionsManager.GetByInvestmentProduct(id)?.ToHashSetBo();
         }
 
+        public HashSet<TransactionsArchived?>? GetByPerson(int? id)
+        {
+            return transactionsManager.GetByPerson(id)?.ToHashSetBo();
+        }
+
+        public HashSet<TransactionsArchived?>? GetByPerson(Persons? person)
+        {
+            return GetByPerson(person?.Id);
+        }
+
         public HashSet<TransactionsArchived?>? GetByInvestmentProduct(InvestmentProducts? investment)
         {
             return GetByInvestmentProduct(investment.Id);
