@@ -8,10 +8,10 @@
     <Authors>Ricardo González Fabelo</Authors>
     <NeutralLanguage>es-ES</NeutralLanguage>
     <PackageIcon>Logo-100.png</PackageIcon>
-    <AssemblyVersion>2.2.0.17</AssemblyVersion>
-    <FileVersion>2.2.0.0</FileVersion>
-    <InformationalVersion>2.2.0-alpha.17+Branch.develop.Sha.e175b3b5f6d05840175250b361cf2683dc9e08b5</InformationalVersion>
-    <Version>2.2.0-alpha0017</Version>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion>
+    <InformationalVersion>3.0.0-beta.0+Branch.release-V3.0.Sha.767ebfe6666cb530ae3e270ffbbfe9b7d46557eb</InformationalVersion>
+    <Version>3.0.0-beta0000</Version>
     <RootNamespace />
   </PropertyGroup>
   <ItemGroup>
