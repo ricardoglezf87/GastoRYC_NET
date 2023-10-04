@@ -3,6 +3,7 @@ using System;
 using GARCA.DAO.Managers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GARCA.DAO.Migrations
 {
     [DbContext(typeof(RycContext))]
-    partial class RYCContextModelSnapshot : ModelSnapshot
+    [Migration("20230924220228_createArchivedTables")]
+    partial class createArchivedTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.9");
@@ -285,10 +288,6 @@ namespace GARCA.DAO.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("categoryid");
 
-                    b.Property<int?>("IdOriginal")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("idOriginal");
-
                     b.Property<string>("Memo")
                         .HasColumnType("TEXT")
                         .HasColumnName("memo");
@@ -454,10 +453,6 @@ namespace GARCA.DAO.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("TEXT")
                         .HasColumnName("date");
-
-                    b.Property<int?>("IdOriginal")
-                        .HasColumnType("INTEGER")
-                        .HasColumnName("idOriginal");
 
                     b.Property<bool?>("InvestmentCategory")
                         .HasColumnType("INTEGER")

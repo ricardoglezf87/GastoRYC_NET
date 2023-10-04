@@ -5,6 +5,7 @@ using GARCA.Utlis.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {
@@ -69,6 +70,10 @@ namespace GARCA.BO.Services
         {
             transactionsManager.Delete(transactions?.ToDao());
         }
+        public void Delete(int? id)
+        {
+            transactionsManager.Delete(id);
+        }
 
         public HashSet<Transactions?>? GetByAccount(int? id)
         {
@@ -90,7 +95,7 @@ namespace GARCA.BO.Services
             return GetByAccount(accounts?.Id);
         }
 
-        private HashSet<Transactions?>? GetByPerson(int? id)
+        public HashSet<Transactions?>? GetByPerson(int? id)
         {
             return transactionsManager.GetByPerson(id)?.ToHashSetBo();
         }
@@ -115,7 +120,7 @@ namespace GARCA.BO.Services
                     + (transactions.AmountIn != 0 ? "1" : "0"));
         }
 
-        public void SaveChanges(ref Transactions? transactions)
+        public async Task<Transactions?> SaveChanges(Transactions? transactions)
         {
             transactions.AmountIn ??= 0;
 
@@ -123,8 +128,9 @@ namespace GARCA.BO.Services
 
             UpdateTranfer(transactions);
             UpdateTranferFromSplit(transactions);
-            transactions = Update(transactions);
-            DependencyConfig.PersonsService.SetCategoryDefault(transactions.Person);            
+            transactions = Update(transactions);            
+            await Task.Run(() => DependencyConfig.PersonsService.SetCategoryDefault(transactions.Personid));
+            return transactions;
         }
 
         public void RefreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false, bool pararRec = false)

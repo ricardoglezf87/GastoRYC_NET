@@ -5,8 +5,10 @@ using System.Collections.Generic;
 
 namespace GARCA.BO.Models
 {
-    public class Transactions : ModelBase
+    public class TransactionsArchived : ModelBase
     {
+        public virtual int? IdOriginal { get; set; }
+
         public virtual DateTime? Date { set; get; }
 
         public virtual int? Accountid { set; get; }
@@ -43,7 +45,7 @@ namespace GARCA.BO.Models
 
         public virtual InvestmentProducts? InvestmentProducts { set; get; }
 
-        public virtual HashSet<Splits?>? Splits { set; get; }
+        public virtual HashSet<SplitsArchived?>? Splits { set; get; }
 
         public virtual Decimal? NumShares { set; get; }
 
@@ -63,11 +65,9 @@ namespace GARCA.BO.Models
 
         public virtual Decimal? Balance { set; get; }
 
-
-
-        internal TransactionsDao ToDao()
+        internal TransactionsArchivedDao ToDao()
         {
-            return new TransactionsDao
+            return new TransactionsArchivedDao
             {
                 Id = Id,
                 Date = Date,
@@ -96,43 +96,12 @@ namespace GARCA.BO.Models
             };
         }
 
-        internal TransactionsArchived ToArchived()
-        {
-            return new TransactionsArchived
-            {
-                IdOriginal = Id,
-                Date = Date,
-                Accountid = Accountid,
-                Account = null,
-                Personid = Personid,
-                Person = null,
-                Categoryid = Categoryid,
-                Category = null,
-                AmountIn = AmountIn,
-                AmountOut = AmountOut,
-                Memo = Memo,
-                InvestmentCategory = InvestmentCategory,
-                InvestmentProducts = null,
-                InvestmentProductsid = InvestmentProductsid,
-                Tranferid = Tranferid,
-                TranferSplitid = TranferSplitid,
-                TransactionStatus = null,
-                TransactionStatusid = TransactionStatusid,
-                NumShares = NumShares,
-                PricesShares = PricesShares,
-                Tagid = Tagid,
-                Tag = null,
-                Balance = Balance,
-                Orden = Orden
-            };
-        }
 
-
-        public static explicit operator Transactions?(TransactionsDao? v)
+        public static explicit operator TransactionsArchived?(TransactionsArchivedDao? v)
         {
             return v == null
                 ? null
-                : new Transactions
+                : new TransactionsArchived
                 {
                     Id = v.Id,
                     Date = v.Date,
@@ -161,13 +130,13 @@ namespace GARCA.BO.Models
                 };
         }
 
-        public static explicit operator Transactions?(TransactionsArchived? v)
+        public static explicit operator TransactionsArchived?(Transactions? v)
         {
             return v == null
                 ? null
-                : new Transactions
+                : new TransactionsArchived
                 {
-                    Id = v.Id,
+                    IdOriginal = v.Id,
                     Date = v.Date,
                     Accountid = v.Accountid,
                     Account = v.Account != null ? (Accounts?)v.Account : null,
@@ -198,7 +167,7 @@ namespace GARCA.BO.Models
         {
             return obj == null
                 ? 1
-                : obj is not Transactions otherTransaction
+                : obj is not TransactionsArchived otherTransaction
                 ? throw new ArgumentException("El objeto proporcionado no es de tipo Transactions.")
                 : otherTransaction.Orden.CompareTo(Orden);
         }

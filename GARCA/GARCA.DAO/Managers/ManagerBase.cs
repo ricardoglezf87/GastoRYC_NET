@@ -100,6 +100,14 @@ namespace GARCA.DAO.Managers
             }
         }
 
+        public void Delete(int? id)
+        {
+            if (id != null)
+            {
+               Delete(GetById(id));
+            }
+        }
+
         public void SaveChanges()
         {
             using (var unitOfWork = new UnitOfWork(new RycContext()))

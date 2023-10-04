@@ -1,5 +1,6 @@
 ﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
+using GARCA.Utils.Extensions;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
 using System.Collections.Generic;
@@ -36,14 +37,18 @@ namespace GARCA.BO.Services
             personsManager.Delete(persons.ToDao());
         }
 
-        public void SetCategoryDefault(Persons? persons)
+        public void SetCategoryDefault(int? id)
         {
-            if (persons == null)
+            if (id == null)
             {
                 return;
             }
 
-            var result = (from x in DependencyConfig.TransactionsService.GetByPerson(persons)
+            var trans = DependencyConfig.TransactionsArchivedService.GetByPerson(id)?.ToTransactionHashSet();
+            trans.AddRange(DependencyConfig.TransactionsService.GetByPerson(id)?.ToHashSet());
+            
+
+            var result = (from x in trans
                           group x by x.Categoryid into g
                           select new
                           {
@@ -58,6 +63,7 @@ namespace GARCA.BO.Services
                                  where c.count == maxCount
                                  select c.categoryid).FirstOrDefault();
 
+                Persons persons = DependencyConfig.PersonsService.GetById(id);
                 persons.Categoryid = maxCounts;
                 Update(persons);
             }
