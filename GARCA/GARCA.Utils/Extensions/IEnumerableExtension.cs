@@ -2,11 +2,62 @@
 using GARCA.DAO.Models;
 using GARCA.View.ViewModels;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GARCA.Utlis.Extensions
 {
     public static class EnumerableExtension
     {
+        public static SortedSet<Transactions?>? ToTransactionSortedSet(this IOrderedEnumerable<TransactionsArchived?>? source)
+        {
+            SortedSet<Transactions?>? list = new();            
+            if (source != null)
+            {
+                foreach (var obj in source)
+                {
+                    Transactions? t = (Transactions?)obj;
+                    if (t != null)
+                    {
+                        list.Add(t);
+                    }
+                }
+            }
+            return list;
+        }
+
+        public static HashSet<Transactions?>? ToTransactionHashSet(this IEnumerable<TransactionsArchived?>? source)
+        {
+            HashSet<Transactions?>? list = new();
+            if (source != null)
+            {
+                foreach (var obj in source)
+                {
+                    Transactions? t = (Transactions?)obj;
+                    if (t != null)
+                    {
+                        list.Add(t);
+                    }
+                }
+            }
+            return list;
+        }
+
+        public static SortedSet<Transactions?>? ToSortedSet(this IOrderedEnumerable<Transactions?>? source)
+        {
+            SortedSet<Transactions> list = new();
+            if (source != null)
+            {
+                foreach (var obj in source)
+                {
+                    if (obj != null)
+                    {
+                        list.Add(obj);
+                    }
+                }
+            }
+            return list;
+        }
+
         public static SortedSet<TransactionsArchived> ToSortedSetBo(this IEnumerable<TransactionsArchivedDao>? source)
         {
             SortedSet<TransactionsArchived> list = new();
@@ -22,7 +73,7 @@ namespace GARCA.Utlis.Extensions
                 }
             }
             return list;
-        }
+        }        
 
         public static SortedSet<Transactions> ToSortedSetBo(this IEnumerable<TransactionsDao>? source)
         {

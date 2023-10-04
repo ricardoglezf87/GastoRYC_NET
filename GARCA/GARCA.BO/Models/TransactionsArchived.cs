@@ -130,11 +130,44 @@ namespace GARCA.BO.Models
                 };
         }
 
+        public static explicit operator TransactionsArchived?(Transactions? v)
+        {
+            return v == null
+                ? null
+                : new TransactionsArchived
+                {
+                    IdOriginal = v.Id,
+                    Date = v.Date,
+                    Accountid = v.Accountid,
+                    Account = v.Account != null ? (Accounts?)v.Account : null,
+                    Personid = v.Personid,
+                    Person = v.Person != null ? (Persons?)v.Person : null,
+                    Categoryid = v.Categoryid,
+                    Category = v.Category != null ? (Categories?)v.Category : null,
+                    AmountIn = v.AmountIn,
+                    AmountOut = v.AmountOut,
+                    Memo = v.Memo,
+                    InvestmentCategory = v.InvestmentCategory,
+                    InvestmentProducts = v.InvestmentProducts != null ? (InvestmentProducts?)v.InvestmentProducts : null,
+                    InvestmentProductsid = v.InvestmentProductsid,
+                    Tranferid = v.Tranferid,
+                    TranferSplitid = v.TranferSplitid,
+                    TransactionStatus = v.TransactionStatus != null ? (TransactionsStatus?)v.TransactionStatus : null,
+                    TransactionStatusid = v.TransactionStatusid,
+                    NumShares = v.NumShares,
+                    PricesShares = v.PricesShares,
+                    Tagid = v.Tagid,
+                    Tag = v.Tag != null ? (Tags?)v.Tag : null,
+                    Balance = v.Balance,
+                    Orden = v.Orden
+                };
+        }
+
         public override int CompareTo(object? obj)
         {
             return obj == null
                 ? 1
-                : obj is not Transactions otherTransaction
+                : obj is not TransactionsArchived otherTransaction
                 ? throw new ArgumentException("El objeto proporcionado no es de tipo Transactions.")
                 : otherTransaction.Orden.CompareTo(Orden);
         }
