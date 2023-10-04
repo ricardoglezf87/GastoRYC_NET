@@ -13,12 +13,14 @@ namespace GARCA.DAO.Managers
         public DbSet<AccountsDao>? Accounts { get; set; }
         public DbSet<AccountsTypesDao>? AccountsTypes { get; set; }
         public DbSet<TransactionsDao>? Transactions { get; set; }
+        public DbSet<TransactionsArchivedDao>? TransactionsArchived { get; set; }
         public DbSet<PersonsDao>? Persons { get; set; }
         public DbSet<CategoriesDao>? Categories { get; set; }
         public DbSet<CategoriesTypesDao>? CategoriesTypes { get; set; }
         public DbSet<TagsDao>? Tags { get; set; }
         public DbSet<TransactionsStatusDao>? TransactionsStatus { get; set; }
         public DbSet<SplitsDao>? Splits { get; set; }
+        public DbSet<SplitsArchivedDao>? SplitsArchived { get; set; }
         public DbSet<PeriodsRemindersDao>? PeriodsReminders { get; set; }
         public DbSet<TransactionsRemindersDao>? TransactionsReminders { get; set; }
         public DbSet<SplitsRemindersDao>? SplitsReminders { get; set; }

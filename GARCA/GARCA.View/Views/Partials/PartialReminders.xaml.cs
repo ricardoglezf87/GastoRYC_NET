@@ -101,9 +101,9 @@ namespace GARCA.View.Views
             LoadReminders();
         }
 
-        private void MakeTransactionFromReminder(int? id)
+        private async Task MakeTransactionFromReminder(int? id)
         {
-            var transaction = DependencyConfig.ExpirationsRemindersService.RegisterTransactionfromReminder(id);
+            var transaction = await DependencyConfig.ExpirationsRemindersService.RegisterTransactionfromReminder(id);
             if (transaction != null)
             {
                 FrmTransaction frm = new(transaction);

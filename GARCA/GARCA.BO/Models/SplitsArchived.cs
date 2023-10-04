@@ -3,11 +3,13 @@ using System;
 
 namespace GARCA.BO.Models
 {
-    public class Splits : ModelBase
+    public class SplitsArchived : ModelBase
     {
+        public virtual int? IdOriginal { get; set; }
+
         public virtual int? Transactionid { set; get; }
 
-        public virtual Transactions? Transaction { set; get; }
+        public virtual TransactionsArchived? Transaction { set; get; }
 
         public virtual int? Tagid { set; get; }
 
@@ -28,11 +30,12 @@ namespace GARCA.BO.Models
         public virtual Decimal? Amount => AmountIn - AmountOut;
 
 
-        internal SplitsDao ToDao()
+        internal SplitsArchivedDao ToDao()
         {
-            return new SplitsDao
+            return new SplitsArchivedDao
             {
                 Id = Id,
+                IdOriginal = IdOriginal,
                 Transactionid = Transactionid,
                 Transaction = null,
                 Categoryid = Categoryid,
@@ -45,34 +48,17 @@ namespace GARCA.BO.Models
                 Tag = null
             };
         }
-
-        internal SplitsArchived ToArchived()
-        {
-            return new SplitsArchived
-            {
-                IdOriginal = Id,
-                Transactionid = Transactionid,
-                Transaction = null,
-                Categoryid = Categoryid,
-                Category = null,
-                AmountOut = AmountOut,
-                AmountIn = AmountIn,
-                Memo = Memo,
-                Tranferid = Tranferid,
-                Tagid = Tagid,
-                Tag = null
-            };
-        }
-
-        public static explicit operator Splits?(SplitsDao? v)
+        
+        public static explicit operator SplitsArchived?(SplitsArchivedDao? v)
         {
             return v == null
                 ? null
-                : new Splits
+                : new SplitsArchived
                 {
                     Id = v.Id,
+                    IdOriginal = v.IdOriginal,
                     Transactionid = v.Transactionid,
-                    Transaction = v.Transaction != null ? (Transactions?)v.Transaction : null,
+                    Transaction = v.Transaction != null ? (TransactionsArchived?)v.Transaction : null,
                     Categoryid = v.Categoryid,
                     Category = v.Category != null ? (Categories?)v.Category : null,
                     AmountOut = v.AmountOut,
