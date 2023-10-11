@@ -46,7 +46,7 @@ namespace GARCA.BO.Models
             };
         }
 
-        internal SplitsArchived ToArchived()
+        public SplitsArchived ToArchived()
         {
             return new SplitsArchived
             {

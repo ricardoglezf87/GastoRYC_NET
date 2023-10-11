@@ -2,7 +2,6 @@
 using GARCA.DAO.Managers;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
-using GARCA.View.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace GARCA.BO.Services
 {
     public class AccountsService
     {
-        private readonly AccountsManager accountsManager;
+        protected readonly AccountsManager accountsManager;
 
         public AccountsService()
         {
@@ -32,12 +31,7 @@ namespace GARCA.BO.Services
         public async Task<HashSet<Accounts?>?> GetAllOpenedAync()
         {
             return await Task.Run(() => GetAllOpened());
-        }
-
-        public HashSet<AccountsView>? GetAllOpenedListView()
-        {
-            return accountsManager.GetAllOpened()?.ToHashSetViewBo();
-        }
+        }        
 
         public Accounts? GetById(int? id)
         {

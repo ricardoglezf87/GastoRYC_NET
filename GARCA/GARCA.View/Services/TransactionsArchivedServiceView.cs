@@ -1,93 +1,26 @@
 ﻿using GARCA.BO.Models;
-using GARCA.DAO.Managers;
+using GARCA.BO.Services;
 using GARCA.Utils.IOC;
-using GARCA.Utlis.Extensions;
 using GARCA.View.Views.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace GARCA.BO.Services
+namespace GARCA.View.Services
 {
-    public class TransactionsArchivedService
+    public class TransactionsArchivedServiceView: TransactionsArchivedService
     {
-        #region Propiedades y Contructor
-
-        private readonly TransactionsArchivedManager transactionsManager;
-
-        public TransactionsArchivedService()
-        {
-            transactionsManager = new TransactionsArchivedManager();
-        }
-
-        #endregion Propiedades y Contructor
-
-        #region TransactionsArchivedActions
-
-        public HashSet<TransactionsArchived?>? GetAll()
-        {
-            return transactionsManager.GetAll()?.ToHashSetBo();
-        }
-
-        public TransactionsArchived? GetById(int? id)
-        {
-            return (TransactionsArchived?)transactionsManager.GetById(id);
-        }
-
-        private HashSet<TransactionsArchived?>? GetByInvestmentProduct(int? id)
-        {
-            return transactionsManager.GetByInvestmentProduct(id)?.ToHashSetBo();
-        }
-
-        public HashSet<TransactionsArchived?>? GetByPerson(int? id)
-        {
-            return transactionsManager.GetByPerson(id)?.ToHashSetBo();
-        }
-
-        public HashSet<TransactionsArchived?>? GetByPerson(Persons? person)
-        {
-            return GetByPerson(person?.Id);
-        }
-
-        public HashSet<TransactionsArchived?>? GetByInvestmentProduct(InvestmentProducts? investment)
-        {
-            return GetByInvestmentProduct(investment.Id);
-        }
-
-        public TransactionsArchived? Update(TransactionsArchived transactions)
-        {
-            return (TransactionsArchived?)transactionsManager.Update(transactions.ToDao());
-        }
-
-        public void Delete(TransactionsArchived? transactions)
-        {
-            transactionsManager.Delete(transactions?.ToDao());
-        }
-
-        public HashSet<TransactionsArchived?>? GetByAccount(int? id)
-        {
-            return transactionsManager.GetByAccount(id)?.ToHashSetBo();
-        }
-
-        private IEnumerable<TransactionsArchived?>? GetByAccountOrderByOrderDesc(int? id)
-        {
-            return transactionsManager.GetByAccountOrderByOrdenDesc(id)?.ToSortedSetBo();
-        }
-
-        public HashSet<TransactionsArchived?>? GetByAccount(Accounts? accounts)
-        {
-            return GetByAccount(accounts?.Id);
-        }
         
-        public async Task ArchiveTransactions(DateTime date)
+        public async override Task ArchiveTransactions(DateTime date)
         {
             IEnumerable<Transactions?>? lTrans = await Task.Run(() => DependencyConfig.TransactionsService.GetAll()?.Where(x => x.Date != null && x.Date <= date));
             if (lTrans != null)
             {
 
                 LoadDialog loadDialog = new(lTrans.Count());
-                loadDialog.Show();                
+                loadDialog.Show();
 
                 foreach (var trans in lTrans)
                 {
@@ -107,7 +40,7 @@ namespace GARCA.BO.Services
                                 sArchived.Transaction = tArchived;
                                 await Task.Run(() => DependencyConfig.SplitsArchivedService.Update(sArchived));
                                 DependencyConfig.SplitsService.Delete(splits);
-                                loadDialog.PerformeStep();                                
+                                loadDialog.PerformeStep();
                             }
                         }
                         DependencyConfig.TransactionsService.Delete(trans);
@@ -157,8 +90,5 @@ namespace GARCA.BO.Services
             }
 
         }
-
-        #endregion
-
     }
 }

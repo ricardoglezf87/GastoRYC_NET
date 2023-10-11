@@ -411,7 +411,7 @@ namespace GARCA
                 accountsView = lvAccounts.SelectedValue as AccountsView;
             }
 
-            var accountsViews = DependencyConfig.AccountsService.GetAllOpenedListView();
+            var accountsViews = DependencyConfigView.AccountsServiceView.GetAllOpenedListView();
             viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
             lvAccounts.ItemsSource = viewAccounts;
             viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("AccountsTypesdescription"));

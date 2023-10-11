@@ -1,6 +1,5 @@
 ﻿using GARCA.BO.Models;
 using GARCA.DAO.Models;
-using GARCA.View.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -295,19 +294,7 @@ namespace GARCA.Utlis.Extensions
 
             return list;
         }
-
-        public static HashSet<AccountsView> ToHashSetViewBo(this IEnumerable<AccountsDao> source)
-        {
-            HashSet<AccountsView> list = new();
-
-            foreach (var obj in source)
-            {
-                list.Add((AccountsView)obj);
-            }
-
-            return list;
-        }
-
+        
         public static HashSet<AccountsTypes?> ToHashSetBo(this IEnumerable<AccountsTypesDao> source)
         {
             HashSet<AccountsTypes?> list = new();

@@ -96,7 +96,7 @@ namespace GARCA.BO.Models
             };
         }
 
-        internal TransactionsArchived ToArchived()
+        public TransactionsArchived ToArchived()
         {
             return new TransactionsArchived
             {
