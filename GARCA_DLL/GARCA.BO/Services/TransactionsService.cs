@@ -2,10 +2,6 @@
 using GARCA.DAO.Managers;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {
@@ -128,7 +124,7 @@ namespace GARCA.BO.Services
 
             UpdateTranfer(transactions);
             UpdateTranferFromSplit(transactions);
-            transactions = Update(transactions);            
+            transactions = Update(transactions);
             await Task.Run(() => DependencyConfig.PersonsService.SetCategoryDefault(transactions.Personid));
             return transactions;
         }

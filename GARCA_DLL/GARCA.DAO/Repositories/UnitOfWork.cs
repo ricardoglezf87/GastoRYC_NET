@@ -1,7 +1,6 @@
 ﻿using GARCA.DAO.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using System;
 
 namespace GARCA.DAO.Repositories
 {

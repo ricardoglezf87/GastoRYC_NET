@@ -1,9 +1,6 @@
 ﻿using GARCA.DAO.Models;
 using GARCA.DAO.Repositories;
 
-using System.Collections.Generic;
-using System.Linq;
-
 namespace GARCA.DAO.Managers
 {
     public class CategoriesTypesManager : ManagerBase<CategoriesTypesDao>

@@ -1,8 +1,6 @@
 ﻿using GARCA.DAO.Models;
 using GARCA.DAO.Repositories;
 
-using System;
-
 namespace GARCA.DAO.Managers
 {
     public class DateCalendarManager

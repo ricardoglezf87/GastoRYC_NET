@@ -1,8 +1,8 @@
 ﻿using GARCA.BO.Models;
-using GARCA.BO.Services;
 using GARCA.Utils.IOC;
-using Syncfusion.UI.Xaml.Grid.Helpers;
+using GARCA.View.Services;
 using Syncfusion.UI.Xaml.Grid;
+using Syncfusion.UI.Xaml.Grid.Helpers;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,13 +21,13 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = DependencyConfig.AccountsTypesService.GetAll();
+            cbAccountsTypes.ItemsSource = DependencyConfigView.AccountsTypesServiceView.GetAll();
             LoadItemSource();
         }
 
         private void LoadItemSource()
         {
-            gvAccounts.ItemsSource = DependencyConfig.AccountsService.GetAll()?.ToList();
+            gvAccounts.ItemsSource = DependencyConfigView.AccountsServiceView.GetAll()?.ToList();
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -38,7 +38,7 @@ namespace GARCA.View.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.AccountsTypes = DependencyConfig.AccountsTypesService.GetById(accounts.AccountsTypesid);
+                        accounts.AccountsTypes = DependencyConfigView.AccountsTypesServiceView.GetById(accounts.AccountsTypesid);
                         break;
                 }
             }
@@ -68,25 +68,25 @@ namespace GARCA.View.Views
 
             if (accounts.Categoryid != null)
             {
-                categories = DependencyConfig.CategoriesService.GetById(accounts.Categoryid);
+                categories = DependencyConfigView.CategoriesServiceView.GetById(accounts.Categoryid);
                 if (categories != null)
                 {
                     categories.Description = "[" + accounts.Description + "]";
-                    DependencyConfig.CategoriesService.Update(categories);
+                    DependencyConfigView.CategoriesServiceView.Update(categories);
                 }
             }
             else
             {
                 categories = new Categories();
-                accounts.Categoryid = DependencyConfig.CategoriesService.GetNextId();
+                accounts.Categoryid = DependencyConfigView.CategoriesServiceView.GetNextId();
                 categories.Description = "[" + accounts.Description + "]";
-                categories.CategoriesTypesid = (int)CategoriesTypesService.ECategoriesTypes.Transfers;
+                categories.CategoriesTypesid = (int)CategoriesTypesServiceView.ECategoriesTypes.Transfers;
 
             }
 
             if (categories != null)
             {
-                DependencyConfig.CategoriesService.Update(categories);
+                DependencyConfigView.CategoriesServiceView.Update(categories);
             }
         }
 
@@ -96,11 +96,11 @@ namespace GARCA.View.Views
 
             if (accounts.AccountsTypes == null && accounts.AccountsTypesid != null)
             {
-                accounts.AccountsTypes = DependencyConfig.AccountsTypesService.GetById(accounts.AccountsTypesid);
+                accounts.AccountsTypes = DependencyConfigView.AccountsTypesServiceView.GetById(accounts.AccountsTypesid);
             }
 
             UpdateCategory(accounts);
-            DependencyConfig.AccountsService.Update(accounts);
+            DependencyConfigView.AccountsServiceView.Update(accounts);
             LoadItemSource();
         }
 
@@ -108,13 +108,13 @@ namespace GARCA.View.Views
         {
             foreach (Accounts accounts in e.Items)
             {
-                var categories = DependencyConfig.CategoriesService.GetById(accounts.Categoryid);
+                var categories = DependencyConfigView.CategoriesServiceView.GetById(accounts.Categoryid);
                 if (categories != null)
                 {
-                    DependencyConfig.CategoriesService.Delete(categories);
+                    DependencyConfigView.CategoriesServiceView.Delete(categories);
                 }
 
-                DependencyConfig.AccountsService.Delete(accounts);
+                DependencyConfigView.AccountsServiceView.Delete(accounts);
             }
             LoadItemSource();
         }
@@ -139,7 +139,7 @@ namespace GARCA.View.Views
             int columnIndex = this.gvAccounts.ResolveToGridVisibleColumnIndex(e.RowColumnIndex.ColumnIndex);
 
             if (this.gvAccounts.Columns[columnIndex].CellType == "CheckBox")
-            { 
+            {
                 this.gvAccounts.GetValidationHelper().SetCurrentRowValidated(false);
             }
         }

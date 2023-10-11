@@ -1,6 +1,4 @@
 ﻿using GARCA.DAO.Models;
-using System;
-using System.Collections.Generic;
 
 namespace GARCA.BO.Models
 {

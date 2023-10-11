@@ -1,6 +1,5 @@
 ﻿using GARCA.DAO.Models;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
 
 namespace GARCA.DAO.Managers
 {

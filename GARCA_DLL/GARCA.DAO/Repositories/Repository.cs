@@ -1,8 +1,5 @@
 ﻿using GARCA.DAO.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace GARCA.DAO.Repositories
@@ -55,7 +52,7 @@ namespace GARCA.DAO.Repositories
         public HashSet<TEntity> GetAllWithInclude(params Expression<Func<TEntity, object>>[] includes)
         {
             var query = Entities.AsQueryable();
-            
+
             if (includes is not null)
             {
                 foreach (var include in includes)

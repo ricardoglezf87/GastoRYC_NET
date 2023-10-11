@@ -1,11 +1,6 @@
 ﻿using GARCA.DAO.Models;
-using GARCA.Utlis.Extensions;
 using GARCA.View.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GARCA.View.Utils.Extensions
 {

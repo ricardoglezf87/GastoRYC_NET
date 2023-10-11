@@ -1,5 +1,4 @@
 ﻿using GARCA.DAO.Models;
-using System;
 
 namespace GARCA.BO.Models
 {
@@ -48,7 +47,7 @@ namespace GARCA.BO.Models
                 Tag = null
             };
         }
-        
+
         public static explicit operator SplitsArchived?(SplitsArchivedDao? v)
         {
             return v == null

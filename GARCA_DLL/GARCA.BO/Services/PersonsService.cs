@@ -3,8 +3,6 @@ using GARCA.DAO.Managers;
 using GARCA.Utils.Extensions;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GARCA.BO.Services
 {
@@ -46,7 +44,7 @@ namespace GARCA.BO.Services
 
             var trans = DependencyConfig.TransactionsArchivedService.GetByPerson(id)?.ToTransactionHashSet();
             trans.AddRange(DependencyConfig.TransactionsService.GetByPerson(id)?.ToHashSet());
-            
+
 
             var result = (from x in trans
                           group x by x.Categoryid into g

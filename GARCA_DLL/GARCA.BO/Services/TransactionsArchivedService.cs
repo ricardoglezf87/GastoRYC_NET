@@ -2,10 +2,6 @@
 using GARCA.DAO.Managers;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {
@@ -78,12 +74,12 @@ namespace GARCA.BO.Services
         {
             return GetByAccount(accounts?.Id);
         }
-        
+
         public virtual async Task ArchiveTransactions(DateTime date)
         {
             IEnumerable<Transactions?>? lTrans = await Task.Run(() => DependencyConfig.TransactionsService.GetAll()?.Where(x => x.Date != null && x.Date <= date));
             if (lTrans != null)
-            {          
+            {
 
                 foreach (var trans in lTrans)
                 {
@@ -100,7 +96,7 @@ namespace GARCA.BO.Services
                                 sArchived.Transactionid = tArchived.Id;
                                 sArchived.Transaction = tArchived;
                                 await Task.Run(() => DependencyConfig.SplitsArchivedService.Update(sArchived));
-                                DependencyConfig.SplitsService.Delete(splits);                               
+                                DependencyConfig.SplitsService.Delete(splits);
                             }
                         }
                         DependencyConfig.TransactionsService.Delete(trans);
@@ -116,9 +112,9 @@ namespace GARCA.BO.Services
                         Decimal? total = await Task.Run(() => DependencyConfig.TransactionsArchivedService.GetAll()?
                             .Where(x => x.Date != null && x.Date <= date && x.Accountid == acc.Id).Sum(x => x.Amount));
 
-                        if (total != null && total != 0)
+                        if (total is not null and not 0)
                         {
-                            Transactions? t = new Transactions()
+                            Transactions? t = new()
                             {
                                 Accountid = acc.Id,
                                 Date = date,

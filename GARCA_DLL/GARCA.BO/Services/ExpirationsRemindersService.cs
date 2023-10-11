@@ -2,11 +2,6 @@
 using GARCA.DAO.Managers;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {
@@ -119,7 +114,7 @@ namespace GARCA.BO.Services
                         splits.AmountIn = splitsReminders.AmountIn;
                         splits.AmountOut = splitsReminders.AmountOut;
                         splits.Tagid = splitsReminders.Tagid;
-                        
+
                         DependencyConfig.TransactionsService.UpdateTranferSplits(transactions, ref splits);
                         DependencyConfig.SplitsService.SaveChanges(splits);
                     }

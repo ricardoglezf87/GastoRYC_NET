@@ -1,9 +1,4 @@
 ﻿using GARCA.BO.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GARCA.Utils.Extensions
 {
@@ -34,7 +29,7 @@ namespace GARCA.Utils.Extensions
                 {
                     if (obj != null)
                     {
-                        source.Add((Transactions?) obj);
+                        source.Add((Transactions?)obj);
                     }
                 }
             }

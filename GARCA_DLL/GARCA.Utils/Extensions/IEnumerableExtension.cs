@@ -1,7 +1,5 @@
 ﻿using GARCA.BO.Models;
 using GARCA.DAO.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GARCA.Utlis.Extensions
 {
@@ -9,7 +7,7 @@ namespace GARCA.Utlis.Extensions
     {
         public static SortedSet<Transactions?>? ToTransactionSortedSet(this IOrderedEnumerable<TransactionsArchived?>? source)
         {
-            SortedSet<Transactions?>? list = new();            
+            SortedSet<Transactions?>? list = new();
             if (source != null)
             {
                 foreach (var obj in source)
@@ -72,7 +70,7 @@ namespace GARCA.Utlis.Extensions
                 }
             }
             return list;
-        }        
+        }
 
         public static SortedSet<Transactions> ToSortedSetBo(this IEnumerable<TransactionsDao>? source)
         {
@@ -294,7 +292,7 @@ namespace GARCA.Utlis.Extensions
 
             return list;
         }
-        
+
         public static HashSet<AccountsTypes?> ToHashSetBo(this IEnumerable<AccountsTypesDao> source)
         {
             HashSet<AccountsTypes?> list = new();

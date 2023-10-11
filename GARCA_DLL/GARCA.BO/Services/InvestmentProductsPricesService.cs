@@ -3,12 +3,7 @@ using GARCA.DAO.Managers;
 using GARCA.Utils.IOC;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {

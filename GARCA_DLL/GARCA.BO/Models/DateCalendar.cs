@@ -1,5 +1,4 @@
 ﻿using GARCA.DAO.Models;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace GARCA.BO.Models

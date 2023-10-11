@@ -1,8 +1,5 @@
 ﻿using GARCA.DAO.Models;
 using GARCA.DAO.Repositories;
-
-using System;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace GARCA.DAO.Managers

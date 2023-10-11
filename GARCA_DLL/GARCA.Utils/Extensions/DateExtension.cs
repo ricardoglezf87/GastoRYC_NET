@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GARCA.Utlis.Extensions
+﻿namespace GARCA.Utlis.Extensions
 {
     public static class DateExtension
     {

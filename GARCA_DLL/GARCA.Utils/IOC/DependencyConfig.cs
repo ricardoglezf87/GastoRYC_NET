@@ -3,7 +3,7 @@ using SimpleInjector;
 
 namespace GARCA.Utils.IOC
 {
-    public static class DependencyConfig
+    internal static class DependencyConfig
     {
         private static readonly Container Container;
         public static AccountsService AccountsService => Container.GetInstance<AccountsService>();
@@ -62,7 +62,5 @@ namespace GARCA.Utils.IOC
             Container.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
             Container.Register<VPortfolioService>(Lifestyle.Singleton);
         }
-
-
     }
 }

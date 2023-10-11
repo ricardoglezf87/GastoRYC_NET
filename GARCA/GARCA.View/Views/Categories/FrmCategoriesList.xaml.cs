@@ -1,6 +1,5 @@
 ﻿using GARCA.BO.Models;
 using GARCA.Utils.IOC;
-using Syncfusion.Windows.Shared;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,13 +18,13 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategoriesTypes.ItemsSource = DependencyConfig.CategoriesTypesService.GetAllWithoutSpecialTransfer();
-            LoadItemSource();            
+            cbCategoriesTypes.ItemsSource = DependencyConfigView.CategoriesTypesServiceView.GetAllWithoutSpecialTransfer();
+            LoadItemSource();
         }
 
         private void LoadItemSource()
         {
-            gvCategories.ItemsSource = DependencyConfig.CategoriesService.GetAllWithoutSpecialTransfer()?.ToList();
+            gvCategories.ItemsSource = DependencyConfigView.CategoriesServiceView.GetAllWithoutSpecialTransfer()?.ToList();
         }
 
         private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -36,7 +35,7 @@ namespace GARCA.View.Views
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
                 {
                     case "categoriesTypesid":
-                        categories.CategoriesTypes = DependencyConfig.CategoriesTypesService.GetById(categories.CategoriesTypesid);
+                        categories.CategoriesTypes = DependencyConfigView.CategoriesTypesServiceView.GetById(categories.CategoriesTypesid);
                         break;
                 }
             }
@@ -66,10 +65,10 @@ namespace GARCA.View.Views
 
             if (categories.CategoriesTypes == null && categories.CategoriesTypesid != null)
             {
-                categories.CategoriesTypes = DependencyConfig.CategoriesTypesService.GetById(categories.CategoriesTypesid);
+                categories.CategoriesTypes = DependencyConfigView.CategoriesTypesServiceView.GetById(categories.CategoriesTypesid);
             }
 
-            DependencyConfig.CategoriesService.Update(categories);
+            DependencyConfigView.CategoriesServiceView.Update(categories);
             LoadItemSource();
         }
 
@@ -77,7 +76,7 @@ namespace GARCA.View.Views
         {
             foreach (Categories categories in e.Items)
             {
-                DependencyConfig.CategoriesService.Delete(categories);
+                DependencyConfigView.CategoriesServiceView.Delete(categories);
             }
             LoadItemSource();
         }

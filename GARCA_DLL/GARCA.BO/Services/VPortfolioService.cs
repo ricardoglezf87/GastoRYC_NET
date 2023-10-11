@@ -2,9 +2,6 @@
 using GARCA.Utils.Extensions;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {
@@ -63,7 +60,7 @@ namespace GARCA.BO.Services
 
         private async Task<decimal?> GetNumShares(InvestmentProducts? investmentProducts)
         {
-            var res = await Task.Run(() => DependencyConfig.TransactionsArchivedService.GetByInvestmentProduct(investmentProducts).ToTransactionHashSet());            
+            var res = await Task.Run(() => DependencyConfig.TransactionsArchivedService.GetByInvestmentProduct(investmentProducts).ToTransactionHashSet());
             res.AddRange(await Task.Run(() => DependencyConfig.TransactionsService.GetByInvestmentProduct(investmentProducts)));
             return res?.Sum(x => -x.NumShares);
         }

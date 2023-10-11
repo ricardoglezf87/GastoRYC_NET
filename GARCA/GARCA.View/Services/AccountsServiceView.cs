@@ -1,9 +1,7 @@
 ﻿using GARCA.BO.Services;
-using GARCA.DAO.Managers;
-using GARCA.View.ViewModels;
-using System;
-using System.Collections.Generic;
 using GARCA.View.Utils.Extensions;
+using GARCA.View.ViewModels;
+using System.Collections.Generic;
 
 namespace GARCA.View.Services
 {

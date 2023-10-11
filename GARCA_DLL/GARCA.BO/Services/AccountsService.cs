@@ -2,10 +2,6 @@
 using GARCA.DAO.Managers;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GARCA.BO.Services
 {
@@ -31,7 +27,7 @@ namespace GARCA.BO.Services
         public async Task<HashSet<Accounts?>?> GetAllOpenedAync()
         {
             return await Task.Run(() => GetAllOpened());
-        }        
+        }
 
         public Accounts? GetById(int? id)
         {

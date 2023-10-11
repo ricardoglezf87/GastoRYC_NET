@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GARCA.BO.Models
+﻿namespace GARCA.BO.Models
 {
     public class VPortfolio : ModelBase
     {

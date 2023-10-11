@@ -1,7 +1,6 @@
 ﻿using GARCA.BO.Models;
 using GARCA.DAO.Managers;
 using GARCA.Utlis.Extensions;
-using System.Collections.Generic;
 
 namespace GARCA.BO.Services
 {
@@ -13,7 +12,7 @@ namespace GARCA.BO.Services
         public enum ESpecialCategories
         {
             Cierre = -2,
-            Split = -1,            
+            Split = -1,
             WithoutCategory = 0
         }
 
