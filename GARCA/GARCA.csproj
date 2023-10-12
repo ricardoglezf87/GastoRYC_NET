@@ -8,10 +8,10 @@
     <Authors>Ricardo González Fabelo</Authors>
     <NeutralLanguage>es-ES</NeutralLanguage>
     <PackageIcon>Logo-100.png</PackageIcon>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
-    <FileVersion>3.0.0.0</FileVersion>
-    <InformationalVersion>3.0.0-beta.0+Branch.release-V3.0.Sha.767ebfe6666cb530ae3e270ffbbfe9b7d46557eb</InformationalVersion>
-    <Version>3.0.0-beta0000</Version>
+    <AssemblyVersion>3.1.0.0</AssemblyVersion>
+    <FileVersion>3.1.0.0</FileVersion>
+    <InformationalVersion>3.1.0-beta.0+Branch.release-V3.1.Sha.fbfdc70b7d1e3204cbc77946a815089831c96f9f</InformationalVersion>
+    <Version>3.1.0-beta0000</Version>
     <RootNamespace />
   </PropertyGroup>
   <ItemGroup>
@@ -151,31 +151,24 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Auth" Version="1.61.0" />
-    <PackageReference Include="Google.Apis.Core" Version="1.61.0" />
-    <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.61.0.1869" />
-    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.61.0.3113" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.50" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.9">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SimpleInjector" Version="5.4.1" />
-    <PackageReference Include="Syncfusion.SfChart.WPF" Version="22.2.5" />
-    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="22.2.5" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="22.2.5" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="22.2.5" />
-    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="22.2.5" />
-    <PackageReference Include="Syncfusion.Tools.WPF" Version="22.2.5" />
+    <PackageReference Include="Syncfusion.SfChart.WPF" Version="23.1.39" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="23.1.39" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="23.1.39" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="23.1.39" />
+    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="23.1.39" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="23.1.39" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\options.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GARCA_DLL\GARCA_DLL.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="GARCA.View\Views\InvestmentProducts\FrmInvestmentProductsList.xaml.cs">

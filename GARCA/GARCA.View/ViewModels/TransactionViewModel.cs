@@ -16,7 +16,7 @@ namespace GARCA.View.ViewModels
 
         public TransactionViewModel()
         {
-            if(maxItem == 0)
+            if (maxItem == 0)
             {
                 maxItem = 200;
             }
@@ -31,12 +31,15 @@ namespace GARCA.View.ViewModels
         /// <param name="baseIndex"></param>
         private async void LoadMoreItems(uint count, int baseIndex)
         {
-            if (baseIndex % 50 != 0) return;
+            if (baseIndex % 50 != 0)
+            {
+                return;
+            }
 
             IncrementalItemsSource.Clear();
             var item = AccountsSelected != null
-                ? await Task.Run(() => DependencyConfig.TransactionsService.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, maxItem))
-                : await Task.Run(() => DependencyConfig.TransactionsService.GetAllOpennedOrderByOrderDesc(baseIndex, maxItem));
+                ? await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, maxItem))
+                : await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetAllOpennedOrderByOrderDesc(baseIndex, maxItem));
 
             if (item != null)
             {
