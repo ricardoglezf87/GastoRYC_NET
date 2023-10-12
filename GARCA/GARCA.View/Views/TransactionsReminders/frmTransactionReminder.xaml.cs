@@ -1,6 +1,6 @@
 ﻿using GARCA.BO.Models;
-using GARCA.BO.Services;
 using GARCA.Utils.IOC;
+using GARCA.View.Services;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -64,7 +64,7 @@ namespace GARCA.View.Views
 
             FrmSplitsRemindersList frm = new(transaction);
             frm.ShowDialog();
-            DependencyConfig.TransactionsRemindersService.UpdateSplitsReminders(transaction);
+            DependencyConfigView.TransactionsRemindersServiceView.UpdateSplitsReminders(transaction);
             LoadTransaction();
         }
 
@@ -116,7 +116,7 @@ namespace GARCA.View.Views
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = DependencyConfig.ExpirationsRemindersService.GetNextReminder(transaction.Id) ?? transaction.Date;
+                dtpDate.SelectedDate = DependencyConfigView.ExpirationsRemindersServiceView.GetNextReminder(transaction.Id) ?? transaction.Date;
                 cbPeriodTransaction.SelectedValue = transaction.PeriodsRemindersid;
                 cbAccount.SelectedValue = transaction.Accountid;
                 cbPerson.SelectedValue = transaction.Personid;
@@ -139,7 +139,7 @@ namespace GARCA.View.Views
                 txtMemo.Text = null;
                 txtAmount.Value = null;
                 cbTag.SelectedIndex = -1;
-                cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.ETransactionsTypes.Pending;
+                cbTransactionStatus.SelectedValue = (int)TransactionsStatusServiceView.ETransactionsTypes.Pending;
 
                 dtpDate.Focus();
             }
@@ -152,21 +152,21 @@ namespace GARCA.View.Views
             transaction.Date = dtpDate.SelectedDate;
 
             transaction.PeriodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
-            transaction.PeriodsReminders = DependencyConfig.PeriodsReminderService.GetById(transaction.PeriodsRemindersid);
+            transaction.PeriodsReminders = DependencyConfigView.PeriodsReminderServiceView.GetById(transaction.PeriodsRemindersid);
 
             transaction.Accountid = (int)cbAccount.SelectedValue;
-            transaction.Account = DependencyConfig.AccountsService.GetById(transaction.Accountid);
+            transaction.Account = DependencyConfigView.AccountsServiceView.GetById(transaction.Accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.Personid = (int)cbPerson.SelectedValue;
-                transaction.Person = DependencyConfig.PersonsService.GetById(transaction.Personid);
+                transaction.Person = DependencyConfigView.PersonsServiceView.GetById(transaction.Personid);
             }
 
             transaction.Memo = txtMemo.Text;
 
             transaction.Categoryid = (int)cbCategory.SelectedValue;
-            transaction.Category = DependencyConfig.CategoriesService.GetById(transaction.Categoryid);
+            transaction.Category = DependencyConfigView.CategoriesServiceView.GetById(transaction.Categoryid);
 
             if (txtAmount.Value > 0)
             {
@@ -182,24 +182,24 @@ namespace GARCA.View.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.Tagid = (int)cbTag.SelectedValue;
-                transaction.Tag = DependencyConfig.TagsService.GetById(transaction.Tagid);
+                transaction.Tag = DependencyConfigView.TagsServiceView.GetById(transaction.Tagid);
             }
 
             transaction.TransactionStatusid = (int)cbTransactionStatus.SelectedValue;
 
             transaction.AutoRegister = chkAutoregister.IsChecked ?? false;
 
-            transaction.TransactionStatus = DependencyConfig.TransactionsStatusService.GetById(transaction.TransactionStatusid);
+            transaction.TransactionStatus = DependencyConfigView.TransactionsStatusServiceView.GetById(transaction.TransactionStatusid);
         }
 
         private void LoadComboBox()
         {
-            cbAccount.ItemsSource = DependencyConfig.AccountsService.GetAll();
-            cbPerson.ItemsSource = DependencyConfig.PersonsService.GetAll();
-            cbCategory.ItemsSource = DependencyConfig.CategoriesService.GetAll();
-            cbTag.ItemsSource = DependencyConfig.TagsService.GetAll();
-            cbTransactionStatus.ItemsSource = DependencyConfig.TransactionsStatusService.GetAll();
-            cbPeriodTransaction.ItemsSource = DependencyConfig.PeriodsReminderService.GetAll();
+            cbAccount.ItemsSource = DependencyConfigView.AccountsServiceView.GetAll();
+            cbPerson.ItemsSource = DependencyConfigView.PersonsServiceView.GetAll();
+            cbCategory.ItemsSource = DependencyConfigView.CategoriesServiceView.GetAll();
+            cbTag.ItemsSource = DependencyConfigView.TagsServiceView.GetAll();
+            cbTransactionStatus.ItemsSource = DependencyConfigView.TransactionsStatusServiceView.GetAll();
+            cbPeriodTransaction.ItemsSource = DependencyConfigView.PeriodsReminderServiceView.GetAll();
         }
 
         private bool SaveTransaction()
@@ -212,7 +212,7 @@ namespace GARCA.View.Views
                     UpdateTransaction();
                     if (transaction != null)
                     {
-                        DependencyConfig.TransactionsRemindersService.SaveChanges(transaction);
+                        DependencyConfigView.TransactionsRemindersServiceView.SaveChanges(transaction);
                     }
                     return true;
                 }

@@ -1,0 +1,12 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace GARCA.DAO.Models
+{
+    [Table("PeriodsReminders")]
+    public class PeriodsRemindersDao : ModelBaseDao
+    {
+        [Column("description")]
+        public virtual String? Description { set; get; }
+
+    }
+}
