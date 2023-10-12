@@ -449,7 +449,7 @@ namespace GARCA.View.Views
                     if (transaction != null)
                     {
                         transaction = await DependencyConfigView.TransactionsServiceView.SaveChanges(transaction);
-                        await Task.Run(() => DependencyConfigView.TransactionsServiceView.RefreshBalanceTransactions(transaction));
+                        await DependencyConfigView.TransactionsServiceView.RefreshBalanceAllTransactions();
                     }
                     return true;
                 }

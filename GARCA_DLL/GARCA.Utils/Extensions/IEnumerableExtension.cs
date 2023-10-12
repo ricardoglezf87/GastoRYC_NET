@@ -280,6 +280,18 @@ namespace GARCA.Utlis.Extensions
 
             return list;
         }
+        public static List<TransactionsDao?> ToListDao(this IEnumerable<Transactions?>? source)
+        {
+            List<TransactionsDao?> list = new();
+            if (source != null)
+            {
+                foreach (var obj in source)
+                {
+                    list.Add(obj.ToDao());
+                }
+            }
+            return list;
+        }
 
         public static HashSet<Accounts?> ToHashSetBo(this IEnumerable<AccountsDao> source)
         {

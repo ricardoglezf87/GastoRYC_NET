@@ -48,13 +48,13 @@ namespace GARCA.View.Views
             }
         }
 
-        private void ButtonSplit_Click(object sender, RoutedEventArgs e)
+        private async void ButtonSplit_Click(object sender, RoutedEventArgs e)
         {
             var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
             DependencyConfigView.TransactionsServiceView.UpdateTransactionAfterSplits(transactions);
-            DependencyConfigView.TransactionsServiceView.RefreshBalanceTransactions(transactions);
+            await DependencyConfigView.TransactionsServiceView.RefreshBalanceAllTransactions();
             LoadTransactions();
             parentForm.LoadAccounts();
         }

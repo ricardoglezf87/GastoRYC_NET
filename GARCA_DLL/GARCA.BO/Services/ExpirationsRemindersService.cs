@@ -119,7 +119,7 @@ namespace GARCA.BO.Services
                         DependencyConfig.SplitsService.SaveChanges(splits);
                     }
 
-                    await Task.Run(() => DependencyConfig.TransactionsService.RefreshBalanceTransactions(transactions));
+                    await  DependencyConfig.TransactionsService.RefreshBalanceAllTransactions();
 
                     return transactions;
                 }

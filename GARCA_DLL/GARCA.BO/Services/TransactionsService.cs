@@ -2,6 +2,7 @@
 using GARCA.DAO.Managers;
 using GARCA.Utils.IOC;
 using GARCA.Utlis.Extensions;
+using System.Runtime.Intrinsics.X86;
 
 namespace GARCA.BO.Services
 {
@@ -58,6 +59,11 @@ namespace GARCA.BO.Services
         }
 
         private void UpdateList(List<Transactions?>? lObj)
+        {
+            transactionsManager.UpdateList(lObj.ToListDao());
+        }
+
+        private void UpdateList(IEnumerable<Transactions?>? lObj)
         {
             transactionsManager.UpdateList(lObj.ToListDao());
         }
@@ -129,47 +135,33 @@ namespace GARCA.BO.Services
             return transactions;
         }
 
-        public void RefreshBalanceTransactions(Transactions? tUpdate, bool dateFilter = false, bool pararRec = false)
+        public async Task RefreshBalanceTransactions(Accounts acc)
         {
-            var tList = GetByAccountOrderByOrderDesc(tUpdate.Accountid);
             decimal? balanceTotal = 0;
+            var tList = await Task.Run(() => GetByAccountOrderByOrderDesc(acc.Id));
 
             if (tList != null)
             {
                 balanceTotal = tList.Sum(x => x.Amount);
-            }
 
-            if (tUpdate.Date != null)
-            {
-                var aux = tList?.Where(x => x.Date >= tUpdate.Date.AddDay(-1) || dateFilter).ToList();
-                for (var i = 0; i < aux.Count; i++)
+                foreach (var t in tList)
                 {
-                    if (aux[i].Amount != null)
+                    if (t.Amount != null)
                     {
-                        aux[i].Balance = balanceTotal;
-                        balanceTotal -= aux[i].Amount;
+                        t.Balance = balanceTotal;
+                        balanceTotal -= t.Amount;
                     }
-                    aux[i].Orden = CreateOrden(aux[i]);
-
-                    if (!pararRec)
-                    {
-                        if (tUpdate.Tranferid != null)
-                        {
-                            RefreshBalanceTransactions(DependencyConfig.TransactionsService.GetById(tUpdate.Tranferid), false, true);
-                        }
-
-                        HashSet<Splits?>? lsplits = DependencyConfig.SplitsService.GetbyTransactionid(aux[i].Id);
-
-                        if (lsplits != null)
-                        {
-                            foreach (var splits in lsplits.Where(splits => splits.Tranferid != null))
-                            {
-                                RefreshBalanceTransactions(DependencyConfig.TransactionsService.GetById(splits.Tranferid), false, true);
-                            }
-                        }
-                    }
+                    t.Orden = CreateOrden(t);
                 }
-                UpdateList(aux);
+                await Task.Run(() => UpdateList(tList));
+            }
+        }
+
+        public async Task RefreshBalanceAllTransactions()
+        {
+            foreach(var acc in await Task.Run(() => DependencyConfig.AccountsService.GetAll()))
+            {
+                await RefreshBalanceTransactions(acc);
             }
         }
 
@@ -224,7 +216,7 @@ namespace GARCA.BO.Services
                     tContraria.AmountOut = transactions.AmountIn;
                     tContraria.TransactionStatusid = transactions.TransactionStatusid;
                     Update(tContraria);
-                    RefreshBalanceTransactions(tContraria);
+                    RefreshBalanceAllTransactions();
                 }
             }
         }

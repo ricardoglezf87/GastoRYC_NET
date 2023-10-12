@@ -454,11 +454,7 @@ namespace GARCA
 
                     foreach (var accounts in laccounts)
                     {
-                        var tFirst = DependencyConfigView.TransactionsServiceView.GetByAccount(accounts)?.FirstOrDefault();
-                        if (tFirst != null)
-                        {
-                            await Task.Run(() => DependencyConfigView.TransactionsServiceView.RefreshBalanceTransactions(tFirst, true, true));
-                        }
+                        await DependencyConfigView.TransactionsServiceView.RefreshBalanceTransactions(accounts);
                         loadDialog.PerformeStep();
                     }
 
