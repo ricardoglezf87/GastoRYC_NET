@@ -18,9 +18,12 @@ Including another URLconf
 
 # Uncomment next two lines to enable admin:
 #from django.contrib import admin
-#from django.urls import path
+from django.urls import include,path
+import GARCA.views
 
 urlpatterns = [
     # Uncomment the next line to enable the admin:
     #path('admin/', admin.site.urls)
+    path('', GARCA.views.index, name='index'),
+    path('home/', GARCA.views.index, name='home')
 ]
