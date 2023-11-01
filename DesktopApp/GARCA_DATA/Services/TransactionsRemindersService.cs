@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
 using GARCA.Data.Managers;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
@@ -28,7 +28,7 @@ namespace GARCA.Data.Services
 
         public TransactionsReminders? Update(TransactionsReminders transactionsReminders)
         {
-            DependencyConfig.ExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
+            iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
             return (TransactionsReminders)transactionsRemindersManager.Update(transactionsReminders);
         }
 
@@ -36,7 +36,7 @@ namespace GARCA.Data.Services
         {
             if (transactionsReminders != null)
             {
-                DependencyConfig.ExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
+                iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
                 transactionsRemindersManager.Delete(transactionsReminders);
             }
         }
@@ -56,7 +56,7 @@ namespace GARCA.Data.Services
 
         public void UpdateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            var lSplitsReminders = DependencyConfig.SplitsRemindersService.GetbyTransactionid(transactionsReminders.Id);
+            var lSplitsReminders = iSplitsRemindersService.GetbyTransactionid(transactionsReminders.Id);
 
             if (lSplitsReminders != null && lSplitsReminders.Count != 0)
             {
@@ -70,13 +70,13 @@ namespace GARCA.Data.Services
                 }
 
                 transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
-                transactionsReminders.Category = DependencyConfig.CategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
+                transactionsReminders.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
             else if (transactionsReminders.Categoryid is not null
                 and ((int)CategoriesService.ESpecialCategories.Split))
             {
                 transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
-                transactionsReminders.Category = DependencyConfig.CategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
+                transactionsReminders.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.Id == 0)
@@ -85,7 +85,7 @@ namespace GARCA.Data.Services
                 foreach (var splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.Transactionid = transactionsReminders.Id;
-                    DependencyConfig.SplitsRemindersService.Update(splitsReminders);
+                    iSplitsRemindersService.Update(splitsReminders);
                 }
             }
             else

@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
 using GARCA.Data.Managers;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 using GARCA.Utils.Extensions;
 
 namespace GARCA.Data.Services
@@ -41,8 +41,8 @@ namespace GARCA.Data.Services
                 return;
             }
 
-            var trans = DependencyConfig.TransactionsArchivedService.GetByPerson(id);
-            trans.AddRange(DependencyConfig.TransactionsService.GetByPerson(id));
+            var trans = iTransactionsArchivedService.GetByPerson(id);
+            trans.AddRange(iTransactionsService.GetByPerson(id));
 
 
             var result = (from x in trans
@@ -60,7 +60,7 @@ namespace GARCA.Data.Services
                                  where c.count == maxCount
                                  select c.categoryid).FirstOrDefault();
 
-                Persons persons = DependencyConfig.PersonsService.GetById(id);
+                Persons persons = iPersonsService.GetById(id);
                 persons.Categoryid = maxCounts;
                 Update(persons);
             }

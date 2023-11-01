@@ -1,5 +1,5 @@
 ﻿using GARCA.Models;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 using System.Linq;
@@ -20,13 +20,13 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbInvestmentProductsTypes.ItemsSource = DependencyConfigView.InvestmentProductsTypesServiceView.GetAll();
+            cbInvestmentProductsTypes.ItemsSource = iInvestmentProductsTypesService.GetAll();
             LoadItemSource();
         }
 
         private void LoadItemSource()
         {
-            gvInvestmentProducts.ItemsSource = DependencyConfigView.InvestmentProductsServiceView.GetAll()?.ToList();
+            gvInvestmentProducts.ItemsSource = iInvestmentProductsService.GetAll()?.ToList();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -54,7 +54,7 @@ namespace GARCA.View.Views
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "investmentProductsTypesid":
-                        investmentProducts.InvestmentProductsTypes = DependencyConfigView.InvestmentProductsTypesServiceView.GetById(investmentProducts.InvestmentProductsTypesid);
+                        investmentProducts.InvestmentProductsTypes = iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
                         break;
                 }
             }
@@ -66,10 +66,10 @@ namespace GARCA.View.Views
 
             if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesid != null)
             {
-                investmentProducts.InvestmentProductsTypes = DependencyConfigView.InvestmentProductsTypesServiceView.GetById(investmentProducts.InvestmentProductsTypesid);
+                investmentProducts.InvestmentProductsTypes = iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
             }
 
-            DependencyConfigView.InvestmentProductsServiceView.Update(investmentProducts);
+            iInvestmentProductsService.Update(investmentProducts);
             LoadItemSource();
         }
 
@@ -77,7 +77,7 @@ namespace GARCA.View.Views
         {
             foreach (InvestmentProducts investmentProducts in e.Items)
             {
-                DependencyConfigView.InvestmentProductsServiceView.Delete(investmentProducts);
+                iInvestmentProductsService.Delete(investmentProducts);
             }
             LoadItemSource();
         }

@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
 using GARCA.Data.Managers;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
@@ -44,7 +44,7 @@ namespace GARCA.Data.Services
         {
             if (splits.Category == null && splits.Categoryid != null)
             {
-                splits.Category = DependencyConfig.CategoriesService.GetById(splits.Categoryid);
+                splits.Category = iCategoriesService.GetById(splits.Categoryid);
             }
 
             splits.AmountIn ??= 0;

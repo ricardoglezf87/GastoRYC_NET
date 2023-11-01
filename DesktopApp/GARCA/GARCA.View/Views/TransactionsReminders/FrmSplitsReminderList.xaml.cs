@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
-using GARCA.Data.IOC;
-using GARCA.View.Services;
+using static GARCA.Data.IOC.DependencyConfig;
+using GARCA.Data.Services;
 using System.Windows;
 
 namespace GARCA.View.Views
@@ -25,15 +25,15 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = DependencyConfigView.CategoriesServiceView.GetAll();
+            cbCategories.ItemsSource = iCategoriesService.GetAll();
             loadSplits();
         }
 
         private void loadSplits()
         {
             gvSplitsReminders.ItemsSource = transactionsReminders != null && transactionsReminders.Id > 0
-                ? DependencyConfigView.SplitsRemindersServiceView.GetbyTransactionid(transactionsReminders.Id)
-                : (object)DependencyConfigView.SplitsRemindersServiceView.GetbyTransactionidNull();
+                ? iSplitsRemindersService.GetbyTransactionid(transactionsReminders.Id)
+                : (object)iSplitsRemindersService.GetbyTransactionidNull();
         }
 
         private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -44,7 +44,7 @@ namespace GARCA.View.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.Category = DependencyConfigView.CategoriesServiceView.GetById(splitsReminders.Categoryid);
+                        splitsReminders.Category = iCategoriesService.GetById(splitsReminders.Categoryid);
                         break;
                 }
             }
@@ -59,7 +59,7 @@ namespace GARCA.View.Views
                 e.IsValid = false;
                 e.ErrorMessages.Add("Categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if (splitsReminders.Categoryid == (int)CategoriesServiceView.ESpecialCategories.Split)
+            else if (splitsReminders.Categoryid == (int)CategoriesService.ESpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("Categoryid", "No se puede utilizar esta categoría en un split");
@@ -84,14 +84,14 @@ namespace GARCA.View.Views
         {
             if (splitsReminders.Category == null && splitsReminders.Categoryid != null)
             {
-                splitsReminders.Category = DependencyConfigView.CategoriesServiceView.GetById(splitsReminders.Categoryid);
+                splitsReminders.Category = iCategoriesService.GetById(splitsReminders.Categoryid);
             }
 
             splitsReminders.AmountIn ??= 0;
 
             splitsReminders.AmountOut ??= 0;
 
-            DependencyConfigView.SplitsRemindersServiceView.Update(splitsReminders);
+            iSplitsRemindersService.Update(splitsReminders);
         }
         private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
@@ -99,9 +99,9 @@ namespace GARCA.View.Views
             {
                 if (splitsReminders.Tranferid != null)
                 {
-                    DependencyConfigView.TransactionsRemindersServiceView.Delete(DependencyConfigView.TransactionsRemindersServiceView.GetById(splitsReminders.Tranferid));
+                    iTransactionsRemindersService.Delete(iTransactionsRemindersService.GetById(splitsReminders.Tranferid));
                 }
-                DependencyConfigView.SplitsRemindersServiceView.Delete(splitsReminders);
+                iSplitsRemindersService.Delete(splitsReminders);
             }
             loadSplits();
         }

@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
 using GARCA.Data.Managers;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 using GARCA.Utils.Extensions;
 
 
@@ -78,7 +78,7 @@ namespace GARCA.Data.Services
 
         public virtual async Task ArchiveTransactions(DateTime date)
         {
-            IEnumerable<Transactions?>? lTrans = await Task.Run(() => DependencyConfig.TransactionsService.GetAll()?.Where(x => x.Date != null && x.Date <= date));
+            IEnumerable<Transactions?>? lTrans = await Task.Run(() => iTransactionsService.GetAll()?.Where(x => x.Date != null && x.Date <= date));
             if (lTrans != null)
             {
 
@@ -88,7 +88,7 @@ namespace GARCA.Data.Services
                     {
                         TransactionsArchived? tArchived;
                         tArchived = await Task.Run(() => Update(trans.ToArchived()));
-                        HashSet<Splits?>? lSplits = await Task.Run(() => DependencyConfig.SplitsService.GetbyTransactionid(trans.Id));
+                        HashSet<Splits?>? lSplits = await Task.Run(() => iSplitsService.GetbyTransactionid(trans.Id));
                         if (lSplits != null)
                         {
                             foreach (var splits in lSplits)
@@ -96,21 +96,21 @@ namespace GARCA.Data.Services
                                 SplitsArchived sArchived = splits.ToArchived();
                                 sArchived.Transactionid = tArchived.Id;
                                 sArchived.Transaction = tArchived;
-                                await Task.Run(() => DependencyConfig.SplitsArchivedService.Update(sArchived));
-                                DependencyConfig.SplitsService.Delete(splits);
+                                await Task.Run(() => iSplitsArchivedService.Update(sArchived));
+                                iSplitsService.Delete(splits);
                             }
                         }
-                        DependencyConfig.TransactionsService.Delete(trans);
+                        iTransactionsService.Delete(trans);
                     }
                 }
 
-                HashSet<Accounts?>? lAcc = await Task.Run(() => DependencyConfig.AccountsService.GetAllOpened());
+                HashSet<Accounts?>? lAcc = await Task.Run(() => iAccountsService.GetAllOpened());
 
                 if (lAcc != null)
                 {
                     foreach (var acc in lAcc)
                     {
-                        Decimal? total = await Task.Run(() => DependencyConfig.TransactionsArchivedService.GetAll()?
+                        Decimal? total = await Task.Run(() => iTransactionsArchivedService.GetAll()?
                             .Where(x => x.Date != null && x.Date <= date && x.Accountid == acc.Id).Sum(x => x.Amount));
 
                         if (total is not null and not 0)
@@ -126,14 +126,14 @@ namespace GARCA.Data.Services
                                 TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Reconciled
                             };
 
-                            t = DependencyConfig.TransactionsService.Update(t);
+                            t = iTransactionsService.Update(t);
 
                             TransactionsArchived? at = t.ToArchived();
                             at.AmountIn = (total < 0 ? -total : 0);
                             at.AmountOut = (total > 0 ? total : 0);
                             at.Balance = 0;
 
-                            DependencyConfig.TransactionsArchivedService.Update(at);
+                            iTransactionsArchivedService.Update(at);
 
                         }
 

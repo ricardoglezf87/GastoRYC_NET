@@ -25,5 +25,11 @@ namespace GARCA.Models
         [Column("closed")]
         [DefaultValue(false)]
         public virtual Boolean? Closed { set; get; }
+
+        [NotMapped]
+        public virtual Decimal? Balance { set; get; }
+
+        [NotMapped]
+        public String? AccountsTypesdescription => AccountsTypes.Description;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
 using GARCA.Data.Managers;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
@@ -51,7 +51,7 @@ namespace GARCA.Data.Services
 
         public Decimal GetBalanceByAccount(int? id)
         {
-            return DependencyConfig.TransactionsService.GetByAccount(id)?.Sum(x => x.Amount) ?? 0;
+            return iTransactionsService.GetByAccount(id)?.Sum(x => x.Amount) ?? 0;
         }
     }
 }

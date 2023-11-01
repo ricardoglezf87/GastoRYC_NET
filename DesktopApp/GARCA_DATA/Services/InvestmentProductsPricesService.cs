@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
 using GARCA.Data.Managers;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
@@ -34,7 +34,7 @@ namespace GARCA.Data.Services
         public async Task getPricesOnlineAsync(InvestmentProducts? investmentProducts)
         {
             //Get prices from buy and sell ins transactions
-            foreach (var transactions in DependencyConfig.TransactionsService.GetByInvestmentProduct(investmentProducts)?
+            foreach (var transactions in iTransactionsService.GetByInvestmentProduct(investmentProducts)?
                          .GroupBy(g => g.Date).Select(x => new { date = x.Key, price = x.Average(y => y.PricesShares) }))
             {
                 if (!Exists(investmentProducts.Id, transactions.date))

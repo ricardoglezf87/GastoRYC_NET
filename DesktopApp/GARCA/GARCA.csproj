@@ -189,4 +189,7 @@
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GARCA.View\ViewModels\" />
+  </ItemGroup>
 </Project>

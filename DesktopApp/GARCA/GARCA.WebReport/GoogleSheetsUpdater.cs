@@ -1,5 +1,5 @@
-﻿using GARCA.Data.IOC;
-using GARCA.View.Services;
+﻿using static GARCA.Data.IOC.DependencyConfig;
+using GARCA.Data.Services;
 using GARCA.View.Views.Common;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
@@ -61,13 +61,13 @@ namespace GARCA.WebReport
                     new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo", "Cerrada" }
                 };
 
-            var accountsTypes = DependencyConfigView.AccountsTypesServiceView.GetAll();
-            var transactions = await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetAll());
+            var accountsTypes = iAccountsTypesService.GetAll();
+            var transactions = await Task.Run(() => iTransactionsService.GetAll());
             loadDialog.setMax(transactions.Count);
 
             foreach (var trans in transactions)
             {
-                var splits = await Task.Run(() => DependencyConfigView.SplitsServiceView.GetbyTransactionid(trans.Id));
+                var splits = await Task.Run(() => iSplitsService.GetbyTransactionid(trans.Id));
 
                 if (splits != null && splits.Count > 0)
                 {
@@ -96,7 +96,7 @@ namespace GARCA.WebReport
                            });
                     }
                 }
-                else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesServiceView.EAccountsTypes.Loans)
+                else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Loans)
                 {
                     filasDeDatos.Add(
                         new[] {
@@ -153,13 +153,13 @@ namespace GARCA.WebReport
                     new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo", "Cerrada" }
                 };
 
-            var accountsTypes = DependencyConfigView.AccountsTypesServiceView.GetAll();
-            var transactions = await Task.Run(() => DependencyConfigView.TransactionsArchivedServiceView.GetAll());
+            var accountsTypes = iAccountsTypesService.GetAll();
+            var transactions = await Task.Run(() => iTransactionsArchivedService.GetAll());
             loadDialog.setMax(transactions.Count);
 
             foreach (var trans in transactions)
             {
-                var splits = await Task.Run(() => DependencyConfigView.SplitsArchivedServiceView.GetbyTransactionid(trans.Id));
+                var splits = await Task.Run(() => iSplitsArchivedService.GetbyTransactionid(trans.Id));
 
                 if (splits != null && splits.Count > 0)
                 {
@@ -188,7 +188,7 @@ namespace GARCA.WebReport
                            });
                     }
                 }
-                else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesServiceView.EAccountsTypes.Loans)
+                else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Loans)
                 {
                     filasDeDatos.Add(
                         new[] {
@@ -245,7 +245,7 @@ namespace GARCA.WebReport
                     new[] { "Description", "InvestmentProductsTypesid", "InvestmentProductsTypes", "Symbol", "Date", "Prices", "NumShares", "CostShares","DateActualValue","ActualPrice", "MarketValue", "Profit", "ProfitPorcent" }
                 };
 
-            var linvestmentProducts = await DependencyConfigView.InvestmentProductsServiceView.GetAllOpened();
+            var linvestmentProducts = await iInvestmentProductsService.GetAllOpened();
 
             loadDialog.setMax(linvestmentProducts.Count);
 
@@ -256,13 +256,13 @@ namespace GARCA.WebReport
                     continue;
                 }
 
-                DateTime? actualDate = DependencyConfigView.InvestmentProductsPricesServiceView.GetLastValueDate(investmentProducts);
-                Decimal? actualPrices = DependencyConfigView.InvestmentProductsPricesServiceView.GetActualPrice(investmentProducts);
+                DateTime? actualDate = iInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
+                Decimal? actualPrices = iInvestmentProductsPricesService.GetActualPrice(investmentProducts);
 
                 List<string[]> pre = new();
                 Decimal? shares = 0;
 
-                foreach (var i in await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetByInvestmentProduct(investmentProducts)))
+                foreach (var i in await Task.Run(() => iTransactionsService.GetByInvestmentProduct(investmentProducts)))
                 {
                     Decimal? cost = i.PricesShares * -i.NumShares;
                     Decimal? market = actualPrices * -i.NumShares;
@@ -309,7 +309,7 @@ namespace GARCA.WebReport
                     new[] { "Description", "InvestmentProductsTypesid", "InvestmentProductsTypes", "Symbol", "Date", "Prices", "NumShares", "CostShares","DateActualValue","ActualPrice", "MarketValue", "Profit", "ProfitPorcent" }
                 };
 
-            var linvestmentProducts = await DependencyConfigView.InvestmentProductsServiceView.GetAllOpened();
+            var linvestmentProducts = await iInvestmentProductsService.GetAllOpened();
 
             loadDialog.setMax(linvestmentProducts.Count);
 
@@ -320,13 +320,13 @@ namespace GARCA.WebReport
                     continue;
                 }
 
-                DateTime? actualDate = DependencyConfigView.InvestmentProductsPricesServiceView.GetLastValueDate(investmentProducts);
-                Decimal? actualPrices = DependencyConfigView.InvestmentProductsPricesServiceView.GetActualPrice(investmentProducts);
+                DateTime? actualDate = iInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
+                Decimal? actualPrices = iInvestmentProductsPricesService.GetActualPrice(investmentProducts);
 
                 List<string[]> pre = new();
                 Decimal? shares = 0;
 
-                foreach (var i in await Task.Run(() => DependencyConfigView.TransactionsArchivedServiceView.GetByInvestmentProduct(investmentProducts)))
+                foreach (var i in await Task.Run(() => iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts)))
                 {
                     Decimal? cost = i.PricesShares * -i.NumShares;
                     Decimal? market = actualPrices * -i.NumShares;
@@ -369,7 +369,7 @@ namespace GARCA.WebReport
         private async Task UploadForecast(SheetsService service)
         {
             await Task.Run(() => new Exception("Funcion no implementada"));
-            //var transactions = await Task.Run(() => DependencyConfigView.iTransactionsServiceView.getAllOpenned());
+            //var transactions = await Task.Run(() => iiTransactionsService.getAllOpenned());
             //List<string[]> filasDeDatos = new()
             //    {
             //        new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
@@ -379,14 +379,14 @@ namespace GARCA.WebReport
             //{
             //    Transactions? trans = transactions[i];
 
-            //    List<Splits?>? splits = await Task.Run(() => DependencyConfigView.iSplitsServiceView.getbyTransactionid(trans.id));
+            //    List<Splits?>? splits = await Task.Run(() => iiSplitsService.getbyTransactionid(trans.id));
 
             //    if (splits != null && splits.Count > 0)
             //    {
             //        Decimal? balance = trans.balance ?? 0 - trans.amount ?? 0;
             //        foreach (var spl in splits)
             //        {
-            //            if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesServiceView.eCategoriesTypes.Transfers)
+            //            if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             //            {
             //                balance += spl.amount ?? 0;
             //                filasDeDatos.Add(
@@ -408,7 +408,7 @@ namespace GARCA.WebReport
             //            }
             //        }
             //    }
-            //    else if (trans.category == null || trans.category?.categoriesTypesid != (int)CategoriesTypesServiceView.eCategoriesTypes.Transfers)
+            //    else if (trans.category == null || trans.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             //    {
             //        filasDeDatos.Add(
             //            new string[] {

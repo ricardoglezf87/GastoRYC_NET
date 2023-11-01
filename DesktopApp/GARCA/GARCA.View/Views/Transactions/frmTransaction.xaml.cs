@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
-using GARCA.Data.IOC;
-using GARCA.View.Services;
+using static GARCA.Data.IOC.DependencyConfig;
+using GARCA.Data.Services;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -56,7 +56,7 @@ namespace GARCA.View.Views
             if (cbAccount?.SelectedItem != null && !transaction.InvestmentCategory.HasValue)
             {
                 transaction.InvestmentCategory = ((Accounts)cbAccount.SelectedItem).AccountsTypesid !=
-                    (int)AccountsTypesServiceView.EAccountsTypes.Invests;
+                    (int)AccountsTypesService.EAccountsTypes.Invests;
             }
             ToggleViews();
         }
@@ -81,7 +81,7 @@ namespace GARCA.View.Views
             {
                 if (MessageBox.Show("Para hacer una división se tiene que asignar una categoría especial, ¿Esta de acuerdo?", "inserción movimiento", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    cbCategory.SelectedValue = (int)CategoriesServiceView.ESpecialCategories.Split;
+                    cbCategory.SelectedValue = (int)CategoriesService.ESpecialCategories.Split;
                     txtAmount.Value = 0;
                 }
                 else
@@ -99,7 +99,7 @@ namespace GARCA.View.Views
 
             FrmSplitsList frm = new(transaction);
             frm.ShowDialog();
-            DependencyConfigView.TransactionsServiceView.UpdateTransactionAfterSplits(transaction);
+            iTransactionsService.UpdateTransactionAfterSplits(transaction);
             LoadTransaction();
         }
 
@@ -297,7 +297,7 @@ namespace GARCA.View.Views
                 cbInvestmentProduct.Text = String.Empty;
                 txtNumShares.Value = null;
                 txtPriceShares.Value = null;
-                cbTransactionStatus.SelectedValue = (int)TransactionsStatusServiceView.ETransactionsTypes.Pending;
+                cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.ETransactionsTypes.Pending;
 
                 dtpDate.Focus();
             }
@@ -309,17 +309,17 @@ namespace GARCA.View.Views
 
             transaction.Date = dtpDate.SelectedDate;
             transaction.Accountid = (int)cbAccount.SelectedValue;
-            transaction.Account = DependencyConfigView.AccountsServiceView.GetById(transaction.Accountid);
+            transaction.Account = iAccountsService.GetById(transaction.Accountid);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.Personid = (int)cbPerson.SelectedValue;
-                transaction.Person = DependencyConfigView.PersonsServiceView.GetById(transaction.Personid);
+                transaction.Person = iPersonsService.GetById(transaction.Personid);
             }
 
             transaction.Memo = txtMemo.Text;
             if (cbCategory.SelectedValue == null && cbAccount?.SelectedItem != null &&
-                ((Accounts)cbAccount.SelectedItem).AccountsTypesid == (int)AccountsTypesServiceView.EAccountsTypes.Invests)
+                ((Accounts)cbAccount.SelectedItem).AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Invests)
             {
                 cbCategory.SelectedValue = 0;
             }
@@ -327,13 +327,13 @@ namespace GARCA.View.Views
             if (cbCategory.SelectedValue != null)
             {
                 transaction.Categoryid = (int)cbCategory.SelectedValue;
-                transaction.Category = DependencyConfigView.CategoriesServiceView.GetById(transaction.Categoryid);
+                transaction.Category = iCategoriesService.GetById(transaction.Categoryid);
             }
 
             if (cbInvestmentProduct.SelectedValue != null)
             {
                 transaction.InvestmentProductsid = (int)cbInvestmentProduct.SelectedValue;
-                transaction.InvestmentProducts = DependencyConfigView.InvestmentProductsServiceView.GetById(transaction.InvestmentProductsid);
+                transaction.InvestmentProducts = iInvestmentProductsService.GetById(transaction.InvestmentProductsid);
             }
 
             transaction.NumShares = (decimal)Convert.ToDouble(txtNumShares.Value);
@@ -353,21 +353,21 @@ namespace GARCA.View.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.Tagid = (int)cbTag.SelectedValue;
-                transaction.Tag = DependencyConfigView.TagsServiceView.GetById(transaction.Tagid);
+                transaction.Tag = iTagsService.GetById(transaction.Tagid);
             }
 
             transaction.TransactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.TransactionStatus = DependencyConfigView.TransactionsStatusServiceView.GetById(transaction.TransactionStatusid);
+            transaction.TransactionStatus = iTransactionsStatusService.GetById(transaction.TransactionStatusid);
         }
 
         private void LoadComboBox()
         {
-            cbAccount.ItemsSource = DependencyConfigView.AccountsServiceView.GetAll();
-            cbPerson.ItemsSource = DependencyConfigView.PersonsServiceView.GetAll();
-            cbCategory.ItemsSource = DependencyConfigView.CategoriesServiceView.GetAll();
-            cbInvestmentProduct.ItemsSource = DependencyConfigView.InvestmentProductsServiceView.GetAll();
-            cbTag.ItemsSource = DependencyConfigView.TagsServiceView.GetAll();
-            cbTransactionStatus.ItemsSource = DependencyConfigView.TransactionsStatusServiceView.GetAll();
+            cbAccount.ItemsSource = iAccountsService.GetAll();
+            cbPerson.ItemsSource = iPersonsService.GetAll();
+            cbCategory.ItemsSource = iCategoriesService.GetAll();
+            cbInvestmentProduct.ItemsSource = iInvestmentProductsService.GetAll();
+            cbTag.ItemsSource = iTagsService.GetAll();
+            cbTransactionStatus.ItemsSource = iTransactionsStatusService.GetAll();
         }
 
         private bool IsTransactionValid()
@@ -386,7 +386,7 @@ namespace GARCA.View.Views
                 errorMessage += "- Cuenta\n";
                 valid = false;
             }
-            else if (((Accounts)cbAccount.SelectedItem).AccountsTypesid != (int)AccountsTypesServiceView.EAccountsTypes.Invests &&
+            else if (((Accounts)cbAccount.SelectedItem).AccountsTypesid != (int)AccountsTypesService.EAccountsTypes.Invests &&
                     transaction.InvestmentCategory == false)
             {
                 errorMessage += "- No se puede realizar una transacción de inversión en una cuenta que no sea de inversión\n";
@@ -448,8 +448,8 @@ namespace GARCA.View.Views
                     UpdateTransaction();
                     if (transaction != null)
                     {
-                        transaction = await DependencyConfigView.TransactionsServiceView.SaveChanges(transaction);
-                        await DependencyConfigView.TransactionsServiceView.RefreshBalanceAllTransactions();
+                        transaction = await iTransactionsService.SaveChanges(transaction);
+                        await iTransactionsService.RefreshBalanceAllTransactions();
                     }
                     return true;
                 }

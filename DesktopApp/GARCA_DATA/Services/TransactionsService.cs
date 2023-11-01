@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
 using GARCA.Data.Managers;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 using GARCA.Utils.Extensions;
 using System.Runtime.Intrinsics.X86;
 
@@ -131,7 +131,7 @@ namespace GARCA.Data.Services
             UpdateTranfer(transactions);
             UpdateTranferFromSplit(transactions);
             transactions = Update(transactions);
-            await Task.Run(() => DependencyConfig.PersonsService.SetCategoryDefault(transactions.Personid));
+            await Task.Run(() => iPersonsService.SetCategoryDefault(transactions.Personid));
             return transactions;
         }
 
@@ -159,7 +159,7 @@ namespace GARCA.Data.Services
 
         public async Task RefreshBalanceAllTransactions()
         {
-            foreach(var acc in await Task.Run(() => DependencyConfig.AccountsService.GetAll()))
+            foreach(var acc in await Task.Run(() => iAccountsService.GetAll()))
             {
                 await RefreshBalanceTransactions(acc);
             }
@@ -185,9 +185,9 @@ namespace GARCA.Data.Services
                 Transactions tContraria = new()
                 {
                     Date = transactions.Date,
-                    Accountid = DependencyConfig.AccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
+                    Accountid = iAccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
                     Personid = transactions.Personid,
-                    Categoryid = DependencyConfig.AccountsService.GetById(transactions.Accountid)?.Categoryid,
+                    Categoryid = iAccountsService.GetById(transactions.Accountid)?.Categoryid,
                     Memo = transactions.Memo,
                     Tagid = transactions.Tagid,
                     AmountIn = transactions.AmountOut,
@@ -207,9 +207,9 @@ namespace GARCA.Data.Services
                 if (tContraria != null)
                 {
                     tContraria.Date = transactions.Date;
-                    tContraria.Accountid = DependencyConfig.AccountsService.GetByCategoryId(transactions.Categoryid)?.Id;
+                    tContraria.Accountid = iAccountsService.GetByCategoryId(transactions.Categoryid)?.Id;
                     tContraria.Personid = transactions.Personid;
-                    tContraria.Categoryid = DependencyConfig.AccountsService.GetById(transactions.Accountid)?.Categoryid;
+                    tContraria.Categoryid = iAccountsService.GetById(transactions.Accountid)?.Categoryid;
                     tContraria.Memo = transactions.Memo;
                     tContraria.Tagid = transactions.Tagid;
                     tContraria.AmountIn = transactions.AmountOut;
@@ -230,7 +230,7 @@ namespace GARCA.Data.Services
             if (transactions.TranferSplitid != null &&
                 transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = DependencyConfig.SplitsService.GetById(transactions.TranferSplitid);
+                var tContraria = iSplitsService.GetById(transactions.TranferSplitid);
                 if (tContraria != null)
                 {
                     tContraria.Transaction.Date = transactions.Date;
@@ -241,14 +241,14 @@ namespace GARCA.Data.Services
                     tContraria.AmountIn = transactions.AmountOut;
                     tContraria.AmountOut = transactions.AmountIn;
                     tContraria.Transaction.TransactionStatusid = transactions.TransactionStatusid;
-                    DependencyConfig.SplitsService.Update(tContraria);
+                    iSplitsService.Update(tContraria);
                 }
             }
         }
 
         public void UpdateTransactionAfterSplits(Transactions? transactions)
         {
-            var lSplits = transactions.Splits ?? DependencyConfig.SplitsService.GetbyTransactionid(transactions.Id);
+            var lSplits = transactions.Splits ?? iSplitsService.GetbyTransactionid(transactions.Id);
 
             if (lSplits != null && lSplits.Count != 0)
             {
@@ -262,13 +262,13 @@ namespace GARCA.Data.Services
                 }
 
                 transactions.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
-                transactions.Category = DependencyConfig.CategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
+                transactions.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
             else if (transactions.Categoryid is not null
                 and (int)CategoriesService.ESpecialCategories.Split)
             {
                 transactions.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
-                transactions.Category = DependencyConfig.CategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
+                transactions.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
             }
 
             if (transactions.Id == 0)
@@ -277,7 +277,7 @@ namespace GARCA.Data.Services
                 foreach (var splits in lSplits)
                 {
                     splits.Transactionid = transactions.Id;
-                    DependencyConfig.SplitsService.Update(splits);
+                    iSplitsService.Update(splits);
                 }
             }
             else
@@ -288,7 +288,7 @@ namespace GARCA.Data.Services
 
         public void UpdateTranferSplits(Transactions? transactions, ref Splits splits)
         {
-            Categories? category = DependencyConfig.CategoriesService.GetById(splits.Categoryid);
+            Categories? category = iCategoriesService.GetById(splits.Categoryid);
 
             if (splits.Tranferid != null &&
                 category?.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
@@ -308,9 +308,9 @@ namespace GARCA.Data.Services
                 Transactions tContraria = new()
                 {
                     Date = transactions.Date,
-                    Accountid = DependencyConfig.AccountsService.GetByCategoryId(splits.Categoryid)?.Id,
+                    Accountid = iAccountsService.GetByCategoryId(splits.Categoryid)?.Id,
                     Personid = transactions.Personid,
-                    Categoryid = DependencyConfig.AccountsService.GetById(transactions.Accountid).Categoryid,
+                    Categoryid = iAccountsService.GetById(transactions.Accountid).Categoryid,
                     Memo = splits.Memo,
                     Tagid = transactions.Tagid,
                     AmountIn = splits.AmountOut,
@@ -329,9 +329,9 @@ namespace GARCA.Data.Services
                 if (tContraria != null)
                 {
                     tContraria.Date = transactions.Date;
-                    tContraria.Accountid = DependencyConfig.AccountsService.GetByCategoryId(splits.Categoryid)?.Id;
+                    tContraria.Accountid = iAccountsService.GetByCategoryId(splits.Categoryid)?.Id;
                     tContraria.Personid = transactions.Personid;
-                    tContraria.Categoryid = DependencyConfig.AccountsService.GetById(transactions.Accountid).Categoryid;
+                    tContraria.Categoryid = iAccountsService.GetById(transactions.Accountid).Categoryid;
                     tContraria.Memo = splits.Memo;
                     tContraria.Tagid = transactions.Tagid;
                     tContraria.AmountIn = splits.AmountOut ?? 0;

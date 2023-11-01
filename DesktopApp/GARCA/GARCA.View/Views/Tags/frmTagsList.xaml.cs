@@ -1,5 +1,5 @@
 ﻿using GARCA.Models;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,7 +22,7 @@ namespace GARCA.View.Views
         }
         private void LoadItemSource()
         {
-            gvTags.ItemsSource = DependencyConfigView.TagsServiceView.GetAll()?.ToList();
+            gvTags.ItemsSource = iTagsService.GetAll()?.ToList();
         }
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -40,7 +40,7 @@ namespace GARCA.View.Views
         private void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var tags = (Tags)e.RowData;
-            DependencyConfigView.TagsServiceView.Update(tags);
+            iTagsService.Update(tags);
             LoadItemSource();
         }
 
@@ -48,7 +48,7 @@ namespace GARCA.View.Views
         {
             foreach (Tags tags in e.Items)
             {
-                DependencyConfigView.TagsServiceView.Delete(tags);
+                iTagsService.Delete(tags);
             }
             LoadItemSource();
         }

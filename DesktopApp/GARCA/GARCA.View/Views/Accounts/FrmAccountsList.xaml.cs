@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
-using GARCA.Data.IOC;
-using GARCA.View.Services;
+using static GARCA.Data.IOC.DependencyConfig;
+using GARCA.Data.Services;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 using System.Linq;
@@ -21,13 +21,13 @@ namespace GARCA.View.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = DependencyConfigView.AccountsTypesServiceView.GetAll();
+            cbAccountsTypes.ItemsSource = iAccountsTypesService.GetAll();
             LoadItemSource();
         }
 
         private void LoadItemSource()
         {
-            gvAccounts.ItemsSource = DependencyConfigView.AccountsServiceView.GetAll()?.ToList();
+            gvAccounts.ItemsSource = iAccountsService.GetAll()?.ToList();
         }
 
         private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -38,7 +38,7 @@ namespace GARCA.View.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.AccountsTypes = DependencyConfigView.AccountsTypesServiceView.GetById(accounts.AccountsTypesid);
+                        accounts.AccountsTypes = iAccountsTypesService.GetById(accounts.AccountsTypesid);
                         break;
                 }
             }
@@ -68,25 +68,25 @@ namespace GARCA.View.Views
 
             if (accounts.Categoryid != null)
             {
-                categories = DependencyConfigView.CategoriesServiceView.GetById(accounts.Categoryid);
+                categories = iCategoriesService.GetById(accounts.Categoryid);
                 if (categories != null)
                 {
                     categories.Description = "[" + accounts.Description + "]";
-                    DependencyConfigView.CategoriesServiceView.Update(categories);
+                    iCategoriesService.Update(categories);
                 }
             }
             else
             {
                 categories = new Categories();
-                accounts.Categoryid = DependencyConfigView.CategoriesServiceView.GetNextId();
+                accounts.Categoryid = iCategoriesService.GetNextId();
                 categories.Description = "[" + accounts.Description + "]";
-                categories.CategoriesTypesid = (int)CategoriesTypesServiceView.ECategoriesTypes.Transfers;
+                categories.CategoriesTypesid = (int)CategoriesTypesService.ECategoriesTypes.Transfers;
 
             }
 
             if (categories != null)
             {
-                DependencyConfigView.CategoriesServiceView.Update(categories);
+                iCategoriesService.Update(categories);
             }
         }
 
@@ -96,11 +96,11 @@ namespace GARCA.View.Views
 
             if (accounts.AccountsTypes == null && accounts.AccountsTypesid != null)
             {
-                accounts.AccountsTypes = DependencyConfigView.AccountsTypesServiceView.GetById(accounts.AccountsTypesid);
+                accounts.AccountsTypes = iAccountsTypesService.GetById(accounts.AccountsTypesid);
             }
 
             UpdateCategory(accounts);
-            DependencyConfigView.AccountsServiceView.Update(accounts);
+            iAccountsService.Update(accounts);
             LoadItemSource();
         }
 
@@ -108,13 +108,13 @@ namespace GARCA.View.Views
         {
             foreach (Accounts accounts in e.Items)
             {
-                var categories = DependencyConfigView.CategoriesServiceView.GetById(accounts.Categoryid);
+                var categories = iCategoriesService.GetById(accounts.Categoryid);
                 if (categories != null)
                 {
-                    DependencyConfigView.CategoriesServiceView.Delete(categories);
+                    iCategoriesService.Delete(categories);
                 }
 
-                DependencyConfigView.AccountsServiceView.Delete(accounts);
+                iAccountsService.Delete(accounts);
             }
             LoadItemSource();
         }

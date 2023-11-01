@@ -1,5 +1,5 @@
 ﻿using GARCA.Models;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 using Syncfusion.UI.Xaml.Grid;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace GARCA.View.ViewModels
 {
     public class TransactionViewModel
     {
-        public static AccountsView? AccountsSelected;
+        public static Accounts? AccountsSelected;
         public static int maxItem;
 
         public IncrementalList<Transactions>? IncrementalItemsSource { get; set; }
@@ -38,8 +38,8 @@ namespace GARCA.View.ViewModels
 
             IncrementalItemsSource.Clear();
             var item = AccountsSelected != null
-                ? await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, maxItem))
-                : await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetAllOpennedOrderByOrderDesc(baseIndex, maxItem));
+                ? await Task.Run(() => iTransactionsService.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, maxItem))
+                : await Task.Run(() => iTransactionsService.GetAllOpennedOrderByOrderDesc(baseIndex, maxItem));
 
             if (item != null)
             {

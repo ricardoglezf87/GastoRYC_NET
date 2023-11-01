@@ -1,4 +1,4 @@
-﻿using GARCA.Data.IOC;
+﻿using static GARCA.Data.IOC.DependencyConfig;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -39,7 +39,7 @@ namespace GARCA.View.Views
 
         public async void LoadPortfolio()
         {
-            gvPortfolio.ItemsSource = await DependencyConfigView.IvPortfolioServiceView.GetAllAsync();
+            gvPortfolio.ItemsSource = await iVPortfolioService.GetAllAsync();
             gvPortfolio.ExpandAllGroup();
         }
 

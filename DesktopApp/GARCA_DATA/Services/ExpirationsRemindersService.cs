@@ -1,6 +1,6 @@
 ﻿using GARCA.Models;
 using GARCA.Data.Managers;
-using GARCA.Data.IOC;
+using static GARCA.Data.IOC.DependencyConfig;
 using GARCA.Utils.Extensions;
 
 
@@ -44,7 +44,7 @@ namespace GARCA.Data.Services
 
         private void GenerationAllExpirations()
         {
-            foreach (var transactionsReminders in DependencyConfig.TransactionsRemindersService.GetAll())
+            foreach (var transactionsReminders in iTransactionsRemindersService.GetAll())
             {
                 GenerationExpirations(transactionsReminders);
             }
@@ -79,7 +79,7 @@ namespace GARCA.Data.Services
                         Update(expirationsReminders);
                     }
 
-                    date = DependencyConfig.PeriodsReminderService.GetNextDate(date, DependencyConfig.PeriodsReminderService.ToEnum(transactionsReminders.PeriodsReminders));
+                    date = iPeriodsReminderService.GetNextDate(date, iPeriodsReminderService.ToEnum(transactionsReminders.PeriodsReminders));
 
                 }
             }
@@ -103,10 +103,10 @@ namespace GARCA.Data.Services
                     transactions.AmountOut = expirationsReminders.TransactionsReminders.AmountOut;
                     transactions.Tagid = expirationsReminders.TransactionsReminders.Tagid;
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
-                    transactions = await DependencyConfig.TransactionsService.SaveChanges(transactions);
+                    transactions = await iTransactionsService.SaveChanges(transactions);
 
                     foreach (var splitsReminders in
-                        DependencyConfig.SplitsRemindersService.GetbyTransactionid(expirationsReminders.TransactionsReminders.Id))
+                        iSplitsRemindersService.GetbyTransactionid(expirationsReminders.TransactionsReminders.Id))
                     {
                         Splits splits = new();
                         splits.Transactionid = transactions.Id;
@@ -116,11 +116,11 @@ namespace GARCA.Data.Services
                         splits.AmountOut = splitsReminders.AmountOut;
                         splits.Tagid = splitsReminders.Tagid;
 
-                        DependencyConfig.TransactionsService.UpdateTranferSplits(transactions, ref splits);
-                        DependencyConfig.SplitsService.SaveChanges(splits);
+                        iTransactionsService.UpdateTranferSplits(transactions, ref splits);
+                        iSplitsService.SaveChanges(splits);
                     }
 
-                    await  DependencyConfig.TransactionsService.RefreshBalanceAllTransactions();
+                    await  iTransactionsService.RefreshBalanceAllTransactions();
 
                     return transactions;
                 }
@@ -187,12 +187,12 @@ namespace GARCA.Data.Services
             Transactions tContraria = new()
             {
                 Date = transactions.Date,
-                Accountid = DependencyConfig.AccountsService.GetByCategoryId(splits.Categoryid)?.Id,
-                Account = DependencyConfig.AccountsService.GetByCategoryId(splits.Categoryid),
+                Accountid = iAccountsService.GetByCategoryId(splits.Categoryid)?.Id,
+                Account = iAccountsService.GetByCategoryId(splits.Categoryid),
                 Personid = transactions.Personid,
                 Person = transactions.Person,
                 Categoryid = transactions.Account.Categoryid,
-                Category = DependencyConfig.CategoriesService.GetById(transactions.Account.Categoryid),
+                Category = iCategoriesService.GetById(transactions.Account.Categoryid),
                 Memo = splits.Memo,
                 Tagid = transactions.Tagid,
                 AmountIn = splits.AmountOut,
@@ -208,12 +208,12 @@ namespace GARCA.Data.Services
             Transactions tContraria = new()
             {
                 Date = transactions.Date.RemoveTime(),
-                Accountid = DependencyConfig.AccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
-                Account = DependencyConfig.AccountsService.GetByCategoryId(transactions.Categoryid),
+                Accountid = iAccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
+                Account = iAccountsService.GetByCategoryId(transactions.Categoryid),
                 Personid = transactions.Personid,
                 Person = transactions.Person,
                 Categoryid = transactions.Account?.Categoryid,
-                Category = DependencyConfig.CategoriesService.GetById(transactions.Account?.Categoryid),
+                Category = iCategoriesService.GetById(transactions.Account?.Categoryid),
                 Memo = transactions.Memo,
                 Tagid = transactions.Tagid,
                 Tag = transactions.Tag,

@@ -3,32 +3,32 @@ using SimpleInjector;
 
 namespace GARCA.Data.IOC
 {
-    internal static class DependencyConfig
+    public static class DependencyConfig
     {
         private static readonly Container Container;
-        public static AccountsService AccountsService => Container.GetInstance<AccountsService>();
-        public static AccountsTypesService AccountsTypesService => Container.GetInstance<AccountsTypesService>();
-        public static CategoriesService CategoriesService => Container.GetInstance<CategoriesService>();
-        public static CategoriesTypesService CategoriesTypesService => Container.GetInstance<CategoriesTypesService>();
-        public static DateCalendarService DateCalendarService => Container.GetInstance<DateCalendarService>();
-        public static ExpirationsRemindersService ExpirationsRemindersService => Container.GetInstance<ExpirationsRemindersService>();
-        public static ForecastsChartService ForecastsChartService => Container.GetInstance<ForecastsChartService>();
-        public static InvestmentProductsPricesService InvestmentProductsPricesService => Container.GetInstance<InvestmentProductsPricesService>();
-        public static InvestmentProductsService InvestmentProductsService => Container.GetInstance<InvestmentProductsService>();
-        public static InvestmentProductsTypesService InvestmentProductsTypesService => Container.GetInstance<InvestmentProductsTypesService>();
-        public static PeriodsRemindersService PeriodsReminderService => Container.GetInstance<PeriodsRemindersService>();
-        public static PersonsService PersonsService => Container.GetInstance<PersonsService>();
-        public static RycContextService RycContextService => Container.GetInstance<RycContextService>();
-        public static SplitsRemindersService SplitsRemindersService => Container.GetInstance<SplitsRemindersService>();
-        public static SplitsService SplitsService => Container.GetInstance<SplitsService>();
-        public static SplitsArchivedService SplitsArchivedService => Container.GetInstance<SplitsArchivedService>();
-        public static TagsService TagsService => Container.GetInstance<TagsService>();
-        public static TransactionsRemindersService TransactionsRemindersService => Container.GetInstance<TransactionsRemindersService>();
-        public static TransactionsService TransactionsService => Container.GetInstance<TransactionsService>();
-        public static TransactionsArchivedService TransactionsArchivedService => Container.GetInstance<TransactionsArchivedService>();
-        public static TransactionsStatusService TransactionsStatusService => Container.GetInstance<TransactionsStatusService>();
-        public static VBalancebyCategoryService IvBalancebyCategoryService => Container.GetInstance<VBalancebyCategoryService>();
-        public static VPortfolioService IvPortfolioService => Container.GetInstance<VPortfolioService>();
+        public static AccountsService iAccountsService => Container.GetInstance<AccountsService>();
+        public static AccountsTypesService iAccountsTypesService => Container.GetInstance<AccountsTypesService>();
+        public static CategoriesService iCategoriesService => Container.GetInstance<CategoriesService>();
+        public static CategoriesTypesService iCategoriesTypesService => Container.GetInstance<CategoriesTypesService>();
+        public static DateCalendarService iDateCalendarService => Container.GetInstance<DateCalendarService>();
+        public static ExpirationsRemindersService iExpirationsRemindersService => Container.GetInstance<ExpirationsRemindersService>();
+        public static ForecastsChartService iForecastsChartService => Container.GetInstance<ForecastsChartService>();
+        public static InvestmentProductsPricesService iInvestmentProductsPricesService => Container.GetInstance<InvestmentProductsPricesService>();
+        public static InvestmentProductsService iInvestmentProductsService => Container.GetInstance<InvestmentProductsService>();
+        public static InvestmentProductsTypesService iInvestmentProductsTypesService => Container.GetInstance<InvestmentProductsTypesService>();
+        public static PeriodsRemindersService iPeriodsReminderService => Container.GetInstance<PeriodsRemindersService>();
+        public static PersonsService iPersonsService => Container.GetInstance<PersonsService>();
+        public static RycContextService iRycContextService => Container.GetInstance<RycContextService>();
+        public static SplitsRemindersService iSplitsRemindersService => Container.GetInstance<SplitsRemindersService>();
+        public static SplitsService iSplitsService => Container.GetInstance<SplitsService>();
+        public static SplitsArchivedService iSplitsArchivedService => Container.GetInstance<SplitsArchivedService>();
+        public static TagsService iTagsService => Container.GetInstance<TagsService>();
+        public static TransactionsRemindersService iTransactionsRemindersService => Container.GetInstance<TransactionsRemindersService>();
+        public static TransactionsService iTransactionsService => Container.GetInstance<TransactionsService>();
+        public static TransactionsArchivedService iTransactionsArchivedService => Container.GetInstance<TransactionsArchivedService>();
+        public static TransactionsStatusService iTransactionsStatusService => Container.GetInstance<TransactionsStatusService>();
+        public static VBalancebyCategoryService iVBalancebyCategoryService => Container.GetInstance<VBalancebyCategoryService>();
+        public static VPortfolioService iVPortfolioService => Container.GetInstance<VPortfolioService>();
 
         static DependencyConfig()
         {
