@@ -1,5 +1,5 @@
 ﻿
-using GARCA.BO.Services;
+using GARCA.Data.Services;
 
 namespace GARCA.View.Services
 {

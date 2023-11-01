@@ -1,12 +1,11 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using GARCA.Utlis.Extensions;
+﻿using GARCA.Models;
+using GARCA.Data.IOC;
 using GARCA.View.Services;
 using GARCA.View.ViewModels;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using static GARCA.Utlis.Extensions.WindowsExtension;
+using GARCA.Utils.Extensions;
 
 namespace GARCA.View.Views
 {
@@ -113,7 +112,7 @@ namespace GARCA.View.Views
 
                         FrmTransactionReminders frm = new(transactionsReminders);
                         frm.ShowDialog();
-                        if (frm.WindowsResult == EWindowsResult.Sucess)
+                        if (frm.WindowsResult == WindowsExtension.EWindowsResult.Sucess)
                         {
                             MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
                         }

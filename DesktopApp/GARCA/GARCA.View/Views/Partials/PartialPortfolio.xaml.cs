@@ -1,4 +1,4 @@
-﻿using GARCA.Utils.IOC;
+﻿using GARCA.Data.IOC;
 using System.Windows;
 using System.Windows.Controls;
 

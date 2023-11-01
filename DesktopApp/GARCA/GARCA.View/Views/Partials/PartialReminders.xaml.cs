@@ -1,5 +1,5 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
+﻿using GARCA.Models;
+using GARCA.Data.IOC;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -44,7 +44,7 @@ namespace GARCA.View.Views
             {
                 if (((Button)sender).Tag != null)
                 {
-                    PutDoneReminder((int?)((Button)sender).Tag);
+                    PutDoneReminder((int)((Button)sender).Tag);
                 }
             }
         }
@@ -55,8 +55,8 @@ namespace GARCA.View.Views
             {
                 if (((Button)sender).Tag != null)
                 {
-                    MakeTransactionFromReminder((int?)((Button)sender).Tag);
-                    PutDoneReminder((int?)((Button)sender).Tag);
+                    MakeTransactionFromReminder((int)((Button)sender).Tag);
+                    PutDoneReminder((int)((Button)sender).Tag);
                 }
             }
         }

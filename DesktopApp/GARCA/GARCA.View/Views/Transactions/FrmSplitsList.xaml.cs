@@ -1,5 +1,5 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
+﻿using GARCA.Models;
+using GARCA.Data.IOC;
 using GARCA.View.Services;
 using System.Windows;
 
@@ -34,7 +34,7 @@ namespace GARCA.View.Views
         {
             gvSplits.ItemsSource = transactions != null && transactions.Id > 0
                 ? DependencyConfigView.SplitsServiceView.GetbyTransactionid(transactions.Id)
-                : (object?)DependencyConfigView.SplitsServiceView.GetbyTransactionidNull();
+                : (object)DependencyConfigView.SplitsServiceView.GetbyTransactionidNull();
         }
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)

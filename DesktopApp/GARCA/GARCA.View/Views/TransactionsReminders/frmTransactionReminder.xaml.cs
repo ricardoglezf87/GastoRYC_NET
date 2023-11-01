@@ -1,10 +1,10 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
+﻿using GARCA.Models;
+using GARCA.Data.IOC;
 using GARCA.View.Services;
 using System;
 using System.Windows;
 using System.Windows.Input;
-using static GARCA.Utlis.Extensions.WindowsExtension;
+using static GARCA.Utils.Extensions.WindowsExtension;
 
 namespace GARCA.View.Views
 {
@@ -132,7 +132,7 @@ namespace GARCA.View.Views
 
                 dtpDate.SelectedDate = DateTime.Now;
 
-                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object?)null;
+                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object)null;
 
                 cbPerson.SelectedIndex = -1;
                 cbCategory.SelectedIndex = -1;

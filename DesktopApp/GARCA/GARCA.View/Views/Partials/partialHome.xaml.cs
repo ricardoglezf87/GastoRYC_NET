@@ -1,4 +1,4 @@
-﻿using GARCA.Utils.IOC;
+﻿using GARCA.Data.IOC;
 using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Linq;

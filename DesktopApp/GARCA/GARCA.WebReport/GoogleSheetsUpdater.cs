@@ -1,4 +1,4 @@
-﻿using GARCA.Utils.IOC;
+﻿using GARCA.Data.IOC;
 using GARCA.View.Services;
 using GARCA.View.Views.Common;
 using Google.Apis.Auth.OAuth2;

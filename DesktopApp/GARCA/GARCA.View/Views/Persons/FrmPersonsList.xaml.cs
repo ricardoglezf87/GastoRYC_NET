@@ -1,5 +1,5 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
+﻿using GARCA.Models;
+using GARCA.Data.IOC;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;

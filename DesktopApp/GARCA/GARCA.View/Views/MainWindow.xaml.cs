@@ -1,4 +1,4 @@
-﻿using GARCA.Utils.IOC;
+﻿using GARCA.Data.IOC;
 using GARCA.View.ViewModels;
 using GARCA.View.Views;
 using GARCA.View.Views.Common;
@@ -209,7 +209,7 @@ namespace GARCA
                         reminders.LoadReminders();
                         break;
                     case PartialTransactions transactions:
-                        transactions.SetColumnVisibility((AccountsView?)lvAccounts.SelectedValue);
+                        transactions.SetColumnVisibility((AccountsView)lvAccounts.SelectedValue);
                         break;
                 }
             }

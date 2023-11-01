@@ -165,7 +165,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GARCA_DLL\GARCA_DLL.csproj" />
+    <ProjectReference Include="..\GARCA_DATA\GARCA_DATA.csproj" />
+    <ProjectReference Include="..\GARCA_MODEL\GARCA_MODEL.csproj" />
+    <ProjectReference Include="..\GARCA_UTIL\GARCA_UTIL.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="GARCA.View\Views\InvestmentProducts\FrmInvestmentProductsList.xaml.cs">

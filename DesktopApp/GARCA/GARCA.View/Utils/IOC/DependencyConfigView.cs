@@ -1,7 +1,7 @@
 ﻿using GARCA.View.Services;
 using SimpleInjector;
 
-namespace GARCA.Utils.IOC
+namespace GARCA.Data.IOC
 {
     public static class DependencyConfigView
     {

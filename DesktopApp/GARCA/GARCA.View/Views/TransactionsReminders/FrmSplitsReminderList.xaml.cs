@@ -1,5 +1,5 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
+﻿using GARCA.Models;
+using GARCA.Data.IOC;
 using GARCA.View.Services;
 using System.Windows;
 
@@ -33,7 +33,7 @@ namespace GARCA.View.Views
         {
             gvSplitsReminders.ItemsSource = transactionsReminders != null && transactionsReminders.Id > 0
                 ? DependencyConfigView.SplitsRemindersServiceView.GetbyTransactionid(transactionsReminders.Id)
-                : (object?)DependencyConfigView.SplitsRemindersServiceView.GetbyTransactionidNull();
+                : (object)DependencyConfigView.SplitsRemindersServiceView.GetbyTransactionidNull();
         }
 
         private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)

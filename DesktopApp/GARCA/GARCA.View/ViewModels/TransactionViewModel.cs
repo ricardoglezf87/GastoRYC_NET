@@ -1,5 +1,5 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
+﻿using GARCA.Models;
+using GARCA.Data.IOC;
 using Syncfusion.UI.Xaml.Grid;
 using System.Collections.ObjectModel;
 using System.Linq;

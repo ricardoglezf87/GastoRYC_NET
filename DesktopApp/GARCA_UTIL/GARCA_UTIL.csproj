@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyVersion>3.1.0.0</AssemblyVersion>
+    <FileVersion>3.1.0.0</FileVersion>
+    <InformationalVersion>3.1.0-beta.0+Branch.release-V3.1.Sha.fbfdc70b7d1e3204cbc77946a815089831c96f9f</InformationalVersion>
+    <Version>3.1.0-beta0000</Version>
+    <AssemblyName>GARCA.Utils</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth" Version="1.62.1" />
+    <PackageReference Include="Google.Apis.Core" Version="1.62.1" />
+    <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.62.0.1869" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.62.0.3148" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SimpleInjector" Version="5.4.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GARCA_MODEL\GARCA_MODEL.csproj" />
+  </ItemGroup>
+</Project>

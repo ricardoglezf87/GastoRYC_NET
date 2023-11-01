@@ -1,4 +1,4 @@
-﻿using GARCA.DAO.Models;
+﻿using GARCA.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,7 +17,7 @@ namespace GARCA.View.ViewModels
 
         public virtual Decimal Balance { set; get; }
 
-        public static explicit operator AccountsView(AccountsDao v)
+        public static explicit operator AccountsView(Accounts v)
         {
             return new AccountsView
             {

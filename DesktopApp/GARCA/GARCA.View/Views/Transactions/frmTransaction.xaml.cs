@@ -1,5 +1,5 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
+﻿using GARCA.Models;
+using GARCA.Data.IOC;
 using GARCA.View.Services;
 using System;
 using System.Threading.Tasks;
@@ -209,7 +209,7 @@ namespace GARCA.View.Views
             if (!String.IsNullOrWhiteSpace(importe))
             {
                 var aux = Double.Parse(importe.Replace(".", ",")) / txtNumShares.Value;
-                txtPriceShares.Value = (decimal?)aux;
+                txtPriceShares.Value = (decimal)aux;
             }
         }
 
@@ -219,7 +219,7 @@ namespace GARCA.View.Views
             if (!String.IsNullOrWhiteSpace(importe))
             {
                 var aux = Decimal.Parse(importe.Replace(".", ",")) / txtPriceShares.Value;
-                txtNumShares.Value = (double?)aux;
+                txtNumShares.Value = (double)aux;
             }
         }
 
@@ -283,7 +283,7 @@ namespace GARCA.View.Views
                 transaction = new Transactions();
                 dtpDate.SelectedDate = DateTime.Now;
 
-                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object?)null;
+                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object)null;
 
                 cbPerson.SelectedIndex = -1;
                 cbPerson.Text = String.Empty;
@@ -336,7 +336,7 @@ namespace GARCA.View.Views
                 transaction.InvestmentProducts = DependencyConfigView.InvestmentProductsServiceView.GetById(transaction.InvestmentProductsid);
             }
 
-            transaction.NumShares = (decimal?)Convert.ToDouble(txtNumShares.Value);
+            transaction.NumShares = (decimal)Convert.ToDouble(txtNumShares.Value);
             transaction.PricesShares = txtPriceShares.Value ?? 0;
 
             if (txtAmount.Value > 0)
@@ -466,7 +466,7 @@ namespace GARCA.View.Views
                 && transaction != null && transaction.InvestmentCategory.HasValue
                 && transaction.InvestmentCategory.Value == false)
             {
-                txtAmount.Value = (Decimal?)Convert.ToDouble(txtNumShares.Value) * txtPriceShares.Value;
+                txtAmount.Value = (Decimal)Convert.ToDouble(txtNumShares.Value) * txtPriceShares.Value;
             }
         }
 
