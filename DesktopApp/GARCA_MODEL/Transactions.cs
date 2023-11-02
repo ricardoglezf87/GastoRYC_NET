@@ -78,15 +78,15 @@ namespace GARCA.Models
         public virtual Double? Orden { set; get; }
 
         [NotMapped]
-        public virtual string CategoryDescripGrid => InvestmentCategory.HasValue && InvestmentCategory.Value == false ?
+        public virtual string CategoryDescripGrid => InvestmentCategory.HasValue && !InvestmentCategory.Value  ?
            NumShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra" : Category?.Description ?? string.Empty;
 
         [NotMapped]
-        public virtual string PersonDescripGrid => InvestmentCategory.HasValue && InvestmentCategory.Value == false ?
+        public virtual string PersonDescripGrid => InvestmentCategory.HasValue && !InvestmentCategory.Value ?
             InvestmentProducts?.Description ?? string.Empty : Person?.Name ?? string.Empty;
 
         [NotMapped]
-        public virtual decimal? Amount => InvestmentCategory.HasValue && InvestmentCategory.Value == false ? Math.Round((NumShares ?? 0) * (PricesShares ?? 0), 2) : AmountIn - AmountOut;
+        public virtual decimal? Amount => InvestmentCategory.HasValue && !InvestmentCategory.Value ? Math.Round((NumShares ?? 0) * (PricesShares ?? 0), 2) : AmountIn - AmountOut;
 
         public override int CompareTo(object? obj)
         {

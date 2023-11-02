@@ -40,7 +40,7 @@ namespace GARCA.View.Views
         private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var persons = (Persons)e.RowData;
-            persons = iPersonsService.Update(persons);
+            iPersonsService.Update(persons);
             LoadItemSource();
         }
 

@@ -27,6 +27,7 @@ namespace GARCA.View.Views
         public FrmTransactionReminders()
         {
             InitializeComponent();
+            accountidDefault = null;
         }
 
         public FrmTransactionReminders(TransactionsReminders? transaction) :

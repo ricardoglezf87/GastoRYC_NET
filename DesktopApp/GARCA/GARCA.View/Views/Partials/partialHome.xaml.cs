@@ -17,18 +17,11 @@ namespace GARCA.View.Views
     /// </summary>
     public partial class PartialHome : Page
     {
-        #region Variables
-
-        private readonly MainWindow parentForm;
-
-        #endregion
-
         #region Constructor
 
-        public PartialHome(MainWindow parentForm)
+        public PartialHome()
         {
             InitializeComponent();
-            this.parentForm = parentForm;
         }
 
         #endregion

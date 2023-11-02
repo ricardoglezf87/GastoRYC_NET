@@ -31,13 +31,10 @@ namespace GARCA.DAO.Repositories
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposed)
+            if (!disposed && disposing)
             {
-                if (disposing)
-                {
-                    context.Dispose();
-                }
-            }
+                context.Dispose();
+            }            
             disposed = true;
         }
 

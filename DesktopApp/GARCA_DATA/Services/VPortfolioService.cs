@@ -41,8 +41,7 @@ namespace GARCA.Data.Services
                                 }
                                 else
                                 {
-                                    buy.NumShares += shares;
-                                    shares = 0;
+                                    buy.NumShares += shares;                                    
                                     break;
                                 }
                             }

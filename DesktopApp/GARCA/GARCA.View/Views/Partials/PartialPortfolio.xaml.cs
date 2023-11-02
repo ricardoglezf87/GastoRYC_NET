@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
 
@@ -10,18 +11,11 @@ namespace GARCA.View.Views
     public partial class PartialPortfolio : Page
     {
 
-        #region Variables
-
-        private readonly MainWindow parentForm;
-
-        #endregion
-
         #region Constructor
 
-        public PartialPortfolio(MainWindow parentForm)
+        public PartialPortfolio()
         {
-            InitializeComponent();
-            this.parentForm = parentForm;
+            InitializeComponent();;
         }
 
         #endregion
@@ -37,7 +31,7 @@ namespace GARCA.View.Views
 
         #region Functions        
 
-        public async void LoadPortfolio()
+        public async Task LoadPortfolio()
         {
             gvPortfolio.ItemsSource = await iVPortfolioService.GetAllAsync();
             gvPortfolio.ExpandAllGroup();

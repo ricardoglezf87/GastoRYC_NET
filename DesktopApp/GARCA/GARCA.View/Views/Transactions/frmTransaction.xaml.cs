@@ -464,7 +464,7 @@ namespace GARCA.View.Views
         {
             if (txtNumShares.Value != null && txtPriceShares.Value != null
                 && transaction != null && transaction.InvestmentCategory.HasValue
-                && transaction.InvestmentCategory.Value == false)
+                && !transaction.InvestmentCategory.Value)
             {
                 txtAmount.Value = (Decimal)Convert.ToDouble(txtNumShares.Value) * txtPriceShares.Value;
             }

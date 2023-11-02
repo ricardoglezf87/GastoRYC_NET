@@ -323,7 +323,7 @@ namespace GARCA
 
         #region Functions
 
-        private async void RefreshBalance()
+        private async Task RefreshBalance()
         {
             try
             {
@@ -369,7 +369,7 @@ namespace GARCA
             {
                 case EViews.Home:
                     lvAccounts.SelectedIndex = -1;
-                    win = new PartialHome(this);
+                    win = new PartialHome();
                     break;
                 case EViews.Transactions:
                     win = new PartialTransactions(this);
@@ -380,7 +380,7 @@ namespace GARCA
                     break;
                 case EViews.Portfolio:
                     lvAccounts.SelectedIndex = -1;
-                    win = new PartialPortfolio(this);
+                    win = new PartialPortfolio();
                     break;
             }
 
@@ -442,7 +442,7 @@ namespace GARCA
 
         }
 
-        private async void UpdateBalances()
+        private async Task UpdateBalances()
         {
             try
             {

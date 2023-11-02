@@ -40,24 +40,20 @@ namespace GARCA.View.Views
         private void btnSkip_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Esta seguro de querer saltar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
-                   MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+                   MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes 
+                   && ((Button)sender).Tag != null)
             {
-                if (((Button)sender).Tag != null)
-                {
-                    PutDoneReminder((int)((Button)sender).Tag);
-                }
+                PutDoneReminder((int)((Button)sender).Tag);
             }
         }
         private void btnRegister_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Esta seguro de querer registrar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
-               MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+               MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes
+               && ((Button)sender).Tag != null)
             {
-                if (((Button)sender).Tag != null)
-                {
-                    MakeTransactionFromReminder((int)((Button)sender).Tag);
-                    PutDoneReminder((int)((Button)sender).Tag);
-                }
+                MakeTransactionFromReminder((int)((Button)sender).Tag);
+                PutDoneReminder((int)((Button)sender).Tag);
             }
         }
 
@@ -75,7 +71,7 @@ namespace GARCA.View.Views
 
         #region Functions
 
-        public async void LoadReminders()
+        public async Task LoadReminders()
         {
             var expirationsReminders = await Task.Run(() => iExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration()?.ToList());
 
