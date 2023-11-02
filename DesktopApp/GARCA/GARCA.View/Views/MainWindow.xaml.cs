@@ -1,5 +1,5 @@
-﻿using static GARCA.Data.IOC.DependencyConfig;
-using GARCA.Models;
+﻿using GARCA.Models;
+using GARCA.View.ViewModels;
 using GARCA.View.Views;
 using GARCA.View.Views.Common;
 using GARCA.WebReport;
@@ -14,7 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using GARCA.View.ViewModels;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA
 {

@@ -1,5 +1,5 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 
 
 namespace GARCA.Data.Services
@@ -27,7 +27,7 @@ namespace GARCA.Data.Services
 
         public TransactionsStatus? GetById(int? id)
         {
-            return (TransactionsStatus)transactionsStatusManager.GetById(id);
+            return transactionsStatusManager.GetById(id);
         }
     }
 }

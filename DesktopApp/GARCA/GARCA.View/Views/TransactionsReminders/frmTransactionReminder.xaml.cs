@@ -1,9 +1,9 @@
-﻿using GARCA.Models;
-using static GARCA.Data.IOC.DependencyConfig;
-using GARCA.Data.Services;
+﻿using GARCA.Data.Services;
+using GARCA.Models;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using static GARCA.Data.IOC.DependencyConfig;
 using static GARCA.Utils.Extensions.WindowsExtension;
 
 namespace GARCA.View.Views

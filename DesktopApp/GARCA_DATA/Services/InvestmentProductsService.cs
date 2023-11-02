@@ -1,5 +1,5 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 
 
 namespace GARCA.Data.Services
@@ -20,7 +20,7 @@ namespace GARCA.Data.Services
 
         public InvestmentProducts? GetById(int? id)
         {
-            return (InvestmentProducts)investmentProductsManager.GetById(id);
+            return investmentProductsManager.GetById(id);
         }
 
         public void Update(InvestmentProducts investmentProducts)

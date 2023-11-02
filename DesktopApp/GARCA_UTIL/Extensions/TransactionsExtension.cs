@@ -1,14 +1,9 @@
 ﻿using GARCA.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GARCA.Utils.Extensions
 {
     public static class TransactionsExtension
-    {        
+    {
         public static TransactionsArchived? ToArchived(this Transactions obj)
         {
             return new TransactionsArchived
@@ -38,7 +33,7 @@ namespace GARCA.Utils.Extensions
                 Balance = obj.Balance,
                 Orden = obj.Orden
             };
-        }        
+        }
 
         public static void AddRange(this HashSet<Transactions?>? source, HashSet<Transactions?>? elements)
         {

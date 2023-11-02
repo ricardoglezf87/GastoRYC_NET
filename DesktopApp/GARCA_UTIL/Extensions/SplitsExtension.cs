@@ -1,14 +1,9 @@
 ﻿using GARCA.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GARCA.Utils.Extensions
 {
     public static class SplitsExtension
-    {       
+    {
         public static SplitsArchived ToArchived(this Splits obj)
         {
             return new SplitsArchived
@@ -25,6 +20,6 @@ namespace GARCA.Utils.Extensions
                 Tagid = obj.Tagid,
                 Tag = null
             };
-        }      
+        }
     }
 }

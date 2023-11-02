@@ -1,5 +1,4 @@
-﻿using static GARCA.Data.IOC.DependencyConfig;
-using GARCA.Data.Services;
+﻿using GARCA.Data.Services;
 using GARCA.View.Views.Common;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
@@ -9,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.WebReport
 {

@@ -1,5 +1,5 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 
 
 namespace GARCA.Data.Services
@@ -20,7 +20,7 @@ namespace GARCA.Data.Services
 
         public Tags? GetById(int? id)
         {
-            return (Tags)tagsManager.GetById(id);
+            return tagsManager.GetById(id);
         }
 
         public void Update(Tags tags)

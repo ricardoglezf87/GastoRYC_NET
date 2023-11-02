@@ -1,5 +1,5 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 
 namespace GARCA.Data.Services
 {

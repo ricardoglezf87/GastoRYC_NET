@@ -1,7 +1,7 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
-using static GARCA.Data.IOC.DependencyConfig;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 using GARCA.Utils.Extensions;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
@@ -21,12 +21,12 @@ namespace GARCA.Data.Services
 
         public Persons? GetById(int? id)
         {
-            return (Persons)personsManager.GetById(id);
+            return personsManager.GetById(id);
         }
 
         public Persons? Update(Persons persons)
         {
-            return (Persons)personsManager.Update(persons);
+            return personsManager.Update(persons);
         }
 
         public void Delete(Persons persons)

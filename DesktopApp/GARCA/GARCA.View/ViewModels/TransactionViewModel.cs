@@ -1,9 +1,9 @@
 ﻿using GARCA.Models;
-using static GARCA.Data.IOC.DependencyConfig;
 using Syncfusion.UI.Xaml.Grid;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.ViewModels
 {

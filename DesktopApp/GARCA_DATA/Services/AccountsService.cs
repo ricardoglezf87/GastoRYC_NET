@@ -1,5 +1,5 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
@@ -31,12 +31,12 @@ namespace GARCA.Data.Services
 
         public Accounts? GetById(int? id)
         {
-            return (Accounts)accountsManager.GetById(id);
+            return accountsManager.GetById(id);
         }
 
         public Accounts? GetByCategoryId(int? id)
         {
-            return (Accounts)accountsManager.GetByCategoryId(id);
+            return accountsManager.GetByCategoryId(id);
         }
 
         public void Update(Accounts accounts)

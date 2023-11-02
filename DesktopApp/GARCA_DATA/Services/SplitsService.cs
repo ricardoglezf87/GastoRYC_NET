@@ -1,5 +1,5 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
@@ -27,7 +27,7 @@ namespace GARCA.Data.Services
 
         public Splits? GetById(int? id)
         {
-            return (Splits)splitsManager.GetById(id);
+            return splitsManager.GetById(id);
         }
 
         public void Update(Splits splits)

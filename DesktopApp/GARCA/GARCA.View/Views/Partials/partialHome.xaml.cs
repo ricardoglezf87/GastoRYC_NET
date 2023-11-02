@@ -1,5 +1,4 @@
-﻿using static GARCA.Data.IOC.DependencyConfig;
-using Syncfusion.UI.Xaml.Charts;
+﻿using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.View.Views

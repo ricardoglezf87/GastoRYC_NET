@@ -1,9 +1,9 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
-using static GARCA.Data.IOC.DependencyConfig;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {

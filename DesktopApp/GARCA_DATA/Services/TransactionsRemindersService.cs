@@ -1,5 +1,5 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
@@ -23,13 +23,13 @@ namespace GARCA.Data.Services
 
         public TransactionsReminders? GetById(int? id)
         {
-            return (TransactionsReminders)transactionsRemindersManager.GetById(id);
+            return transactionsRemindersManager.GetById(id);
         }
 
         public TransactionsReminders? Update(TransactionsReminders transactionsReminders)
         {
             iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
-            return (TransactionsReminders)transactionsRemindersManager.Update(transactionsReminders);
+            return transactionsRemindersManager.Update(transactionsReminders);
         }
 
         public void Delete(TransactionsReminders? transactionsReminders)

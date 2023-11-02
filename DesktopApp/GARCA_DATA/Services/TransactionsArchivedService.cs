@@ -1,7 +1,7 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
-using static GARCA.Data.IOC.DependencyConfig;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 using GARCA.Utils.Extensions;
+using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
@@ -28,7 +28,7 @@ namespace GARCA.Data.Services
 
         public TransactionsArchived? GetById(int? id)
         {
-            return (TransactionsArchived)transactionsManager.GetById(id);
+            return transactionsManager.GetById(id);
         }
 
         private HashSet<TransactionsArchived?>? GetByInvestmentProduct(int? id)
@@ -53,7 +53,7 @@ namespace GARCA.Data.Services
 
         public TransactionsArchived? Update(TransactionsArchived transactions)
         {
-            return (TransactionsArchived)transactionsManager.Update(transactions);
+            return transactionsManager.Update(transactions);
         }
 
         public void Delete(TransactionsArchived? transactions)

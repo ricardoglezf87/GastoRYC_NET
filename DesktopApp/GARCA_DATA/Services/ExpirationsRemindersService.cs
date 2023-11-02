@@ -1,7 +1,7 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
-using static GARCA.Data.IOC.DependencyConfig;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 using GARCA.Utils.Extensions;
+using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
@@ -120,7 +120,7 @@ namespace GARCA.Data.Services
                         iSplitsService.SaveChanges(splits);
                     }
 
-                    await  iTransactionsService.RefreshBalanceAllTransactions();
+                    await iTransactionsService.RefreshBalanceAllTransactions();
 
                     return transactions;
                 }
@@ -225,7 +225,7 @@ namespace GARCA.Data.Services
 
         public ExpirationsReminders? GetById(int? id)
         {
-            return (ExpirationsReminders)expirationsRemindersManager.GetById(id);
+            return expirationsRemindersManager.GetById(id);
         }
 
         private HashSet<ExpirationsReminders?>? GetByTransactionReminderid(int? id)

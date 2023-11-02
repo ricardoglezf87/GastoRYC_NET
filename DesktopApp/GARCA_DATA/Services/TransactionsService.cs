@@ -1,8 +1,7 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
-using static GARCA.Data.IOC.DependencyConfig;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 using GARCA.Utils.Extensions;
-using System.Runtime.Intrinsics.X86;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
@@ -32,13 +31,13 @@ namespace GARCA.Data.Services
         }
 
         public IEnumerable<Transactions>? GetAllOpennedOrderByOrderDesc(int startIndex, int nPage)
-        {   
+        {
             return transactionsManager.GetAllOpennedOrderByOrdenDesc(startIndex, nPage);
         }
 
         public Transactions? GetById(int? id)
         {
-            return (Transactions)transactionsManager.GetById(id);
+            return transactionsManager.GetById(id);
         }
 
         private HashSet<Transactions?>? GetByInvestmentProduct(int? id)
@@ -55,7 +54,7 @@ namespace GARCA.Data.Services
         {
             transactions.Date = transactions.Date.RemoveTime();
             transactions.Orden = CreateOrden(transactions);
-            return (Transactions)transactionsManager.Update(transactions);
+            return transactionsManager.Update(transactions);
         }
 
         private void UpdateList(List<Transactions?>? lObj)
@@ -88,7 +87,7 @@ namespace GARCA.Data.Services
         }
 
         public IEnumerable<Transactions>? GetByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
-        {   
+        {
             return transactionsManager.GetByAccountOrderByOrdenDesc(id, startIndex, nPage);
         }
 
@@ -159,7 +158,7 @@ namespace GARCA.Data.Services
 
         public async Task RefreshBalanceAllTransactions()
         {
-            foreach(var acc in await Task.Run(() => iAccountsService.GetAll()))
+            foreach (var acc in await Task.Run(() => iAccountsService.GetAll()))
             {
                 await RefreshBalanceTransactions(acc);
             }

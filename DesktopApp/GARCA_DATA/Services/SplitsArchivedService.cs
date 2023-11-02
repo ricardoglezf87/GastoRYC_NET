@@ -1,5 +1,5 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 
 
 namespace GARCA.Data.Services
@@ -21,7 +21,7 @@ namespace GARCA.Data.Services
 
         public SplitsArchived? GetById(int? id)
         {
-            return (SplitsArchived)splitsManager.GetById(id);
+            return splitsManager.GetById(id);
         }
 
         public void Update(SplitsArchived splits)

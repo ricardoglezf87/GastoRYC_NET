@@ -1,6 +1,6 @@
-﻿using static GARCA.Data.IOC.DependencyConfig;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {

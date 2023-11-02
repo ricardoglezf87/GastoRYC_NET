@@ -1,5 +1,5 @@
-﻿using GARCA.Models;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
+using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
@@ -16,7 +16,7 @@ namespace GARCA.Data.Services
 
         private DateCalendar? GetById(DateTime? id)
         {
-            return (DateCalendar)dateCalendarManager.GetById(id);
+            return dateCalendarManager.GetById(id);
         }
 
         public void FillCalendar()

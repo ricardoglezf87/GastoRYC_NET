@@ -1,11 +1,11 @@
-﻿using GARCA.Models;
-using static GARCA.Data.IOC.DependencyConfig;
-using GARCA.Data.Services;
+﻿using GARCA.Data.Services;
+using GARCA.Models;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
