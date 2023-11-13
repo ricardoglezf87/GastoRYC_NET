@@ -7,9 +7,9 @@ namespace GARCA.Data.Services
 {
     public class VPortfolioService
     {
-        public async Task<HashSet<VPortfolio?>?> GetAllAsync()
+        public async Task<HashSet<VPortfolio>?> GetAllAsync()
         {
-            HashSet<VPortfolio?> listPortFolio = new();
+            HashSet<VPortfolio> listPortFolio = new();
             foreach (var investmentProducts in
                 await iInvestmentProductsService.GetAllOpened())
             {
@@ -28,7 +28,7 @@ namespace GARCA.Data.Services
                 foreach (var sell in lSell)
                 {
                     var shares = sell.NumShares;
-                    if (shares is not null and > 0)
+                    if (shares is > 0)
                     {
                         foreach (var buy in lBuy)
                         {
@@ -64,18 +64,18 @@ namespace GARCA.Data.Services
             return res?.Sum(x => -x.NumShares);
         }
 
-        private async Task<IOrderedEnumerable<Transactions?>?> GetBuyOperations(InvestmentProducts? investmentProducts)
+        private async Task<IOrderedEnumerable<TransactionsArchived>?> GetBuyOperations(InvestmentProducts? investmentProducts)
         {
             var res = await Task.Run(() => iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares < 0).ToHashSet());
             res.AddRange(await Task.Run(() => iTransactionsService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares < 0).ToHashSet()));
-            return (IOrderedEnumerable<Transactions?>?)(res?.OrderBy(x => x.Orden));
+            return res?.OrderBy(x => x.Orden);
         }
 
-        private async Task<IOrderedEnumerable<Transactions?>?> GetSellOperations(InvestmentProducts? investmentProducts)
+        private async Task<IOrderedEnumerable<TransactionsArchived>?> GetSellOperations(InvestmentProducts? investmentProducts)
         {
             var res = await Task.Run(() => iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares > 0).ToHashSet());
             res.AddRange(await Task.Run(() => iTransactionsService.GetByInvestmentProduct(investmentProducts)?.Where(x => x.NumShares > 0).ToHashSet()));
-            return (IOrderedEnumerable<Transactions?>?)(res?.OrderBy(x => x.Orden));
+            return res?.OrderBy(x => x.Orden);
         }
     }
 }

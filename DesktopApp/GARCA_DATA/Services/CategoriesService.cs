@@ -1,14 +1,16 @@
-﻿using GARCA.Data.Managers;
+﻿using Dapper;
+using GARCA.DAO.Repositories;
+using GARCA.Data.Managers;
 using GARCA.Models;
-
+using GARCA_DATA.Services;
+using Microsoft.Data.Sqlite;
+using System.Linq.Expressions;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class CategoriesService
+    public class CategoriesService : IServiceCache<Categories>
     {
-
-        private readonly CategoriesManager categoriesManager;
-
         public enum ESpecialCategories
         {
             Cierre = -2,
@@ -16,39 +18,46 @@ namespace GARCA.Data.Services
             WithoutCategory = 0
         }
 
-        public CategoriesService()
+        protected override IEnumerable<Categories>? GetAllCache()
         {
-            categoriesManager = new CategoriesManager();
+            return iRycContextService.getConnection().Query<Categories, CategoriesTypes, Categories>(
+                @"
+                    select * 
+                    from Categories
+                        inner join CategoriesTypes on CategoriesTypes.Id = Categories.categoriesTypesid
+                "
+                , (a, at) =>
+                {
+                    a.CategoriesTypes = at;
+                    return a;
+                }).AsEnumerable();
+
         }
 
-        public HashSet<Categories?>? GetAll()
+        public HashSet<Categories>? GetAllWithoutSpecialTransfer()
         {
-            return categoriesManager.GetAll()?.ToHashSet();
-        }
-
-        public HashSet<Categories?>? GetAllWithoutSpecialTransfer()
-        {
-            return categoriesManager.GetAllWithoutSpecialTransfer()?.ToHashSet();
-        }
-
-        public Categories? GetById(int? id)
-        {
-            return categoriesManager.GetById(id);
-        }
-
-        public void Update(Categories categories)
-        {
-            categoriesManager.Update(categories);
-        }
-
-        public void Delete(Categories categories)
-        {
-            categoriesManager.Delete(categories);
+            return GetAll().Where(x => !x.CategoriesTypesid.
+                Equals((int)CategoriesTypesService.ECategoriesTypes.Transfers) &&
+                !x.CategoriesTypesid.Equals((int)CategoriesTypesService.ECategoriesTypes.Specials))?.ToHashSet();
         }
 
         public int GetNextId()
         {
-            return categoriesManager.GetNextId();
+            return 1000; //TODO:Poner dengro de CacheService
+            //using (var unitOfWork = new UnitOfWork(new RycContext()))
+            //{
+            //    var cmd = unitOfWork.GetDataBase().
+            //    GetDbConnection().CreateCommand();
+            //    cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';";
+
+            //    unitOfWork.GetDataBase().OpenConnection();
+            //    var result = cmd.ExecuteReader();
+            //    result.Read();
+            //    var id = Convert.ToInt32(result[0]);
+            //    result.Close();
+
+            //    return id;
+            //}
         }
     }
 }

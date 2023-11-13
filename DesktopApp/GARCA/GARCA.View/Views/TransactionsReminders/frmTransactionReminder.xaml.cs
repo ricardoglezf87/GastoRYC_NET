@@ -133,7 +133,7 @@ namespace GARCA.View.Views
 
                 dtpDate.SelectedDate = DateTime.Now;
 
-                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object)null;
+                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object?)null;
 
                 cbPerson.SelectedIndex = -1;
                 cbCategory.SelectedIndex = -1;

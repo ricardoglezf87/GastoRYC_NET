@@ -1,114 +1,122 @@
-﻿using GARCA.Data.Managers;
+﻿using Dapper;
+using GARCA.DAO.Repositories;
+using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
+using GARCA_DATA.Services;
+using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsService
+    public class TransactionsService : IServiceCache<Transactions>
     {
-        #region Propiedades y Contructor
 
-        private readonly TransactionsManager transactionsManager;
-
-        public TransactionsService()
+        protected override IEnumerable<Transactions>? GetAllCache()
         {
-            transactionsManager = new TransactionsManager();
+            return iRycContextService.getConnection().Query<Transactions,Accounts,Categories,TransactionsStatus,Persons,Tags,InvestmentProducts,Transactions>(
+                @"
+                    select * 
+                    from Transactions    
+                        inner join Accounts on Accounts.Id = Transactions.Accountid 
+                        inner join Categories on Categories.Id = Transactions.Categoryid 
+                        inner join TransactionsStatus on TransactionsStatus.Id = Transactions.TransactionStatusid                                       
+                        left join Persons on Categories.Id = Transactions.Personid                         
+                        left join Tags on Tags.Id = Transactions.Tagid                         
+                        left join InvestmentProducts on InvestmentProducts.Id = Transactions.InvestmentProductsid
+                "
+                , (transactions, accounts, categories, transactionsStatus, persons, tags, investmentProducts) =>
+                {
+                    transactions.Account = accounts;
+                    transactions.Category = categories;
+                    transactions.Person = persons;
+                    transactions.Tag = tags;
+                    transactions.TransactionStatus = transactionsStatus;
+                    transactions.InvestmentProducts = investmentProducts;
+                    return transactions;
+                }).AsEnumerable();
         }
-
-        #endregion Propiedades y Contructor
 
         #region TransactionsActions
 
-        public HashSet<Transactions?>? GetAll()
+        public HashSet<Transactions>? GetAllOpenned()
         {
-            return transactionsManager.GetAll()?.ToHashSet();
+            return GetAll()?.Where(x => !x.Account.Closed.HasValue 
+                || !x.Account.Closed.Value)?.ToHashSet();
         }
 
-        public HashSet<Transactions?>? GetAllOpenned()
+        private HashSet<Transactions>? GetByInvestmentProduct(int? id)
         {
-            return transactionsManager.GetAllOpenned()?.ToHashSet();
+            return GetAll().Where(x => id.Equals(x.InvestmentProductsid))?.ToHashSet();
         }
 
-        public IEnumerable<Transactions>? GetAllOpennedOrderByOrderDesc(int startIndex, int nPage)
-        {
-            return transactionsManager.GetAllOpennedOrderByOrdenDesc(startIndex, nPage);
-        }
-
-        public Transactions? GetById(int? id)
-        {
-            return transactionsManager.GetById(id);
-        }
-
-        private HashSet<Transactions?>? GetByInvestmentProduct(int? id)
-        {
-            return transactionsManager.GetByInvestmentProduct(id)?.ToHashSet();
-        }
-
-        public HashSet<Transactions?>? GetByInvestmentProduct(InvestmentProducts? investment)
+        public HashSet<Transactions>? GetByInvestmentProduct(InvestmentProducts? investment)
         {
             return GetByInvestmentProduct(investment.Id);
         }
 
-        public Transactions? Update(Transactions transactions)
+        public override Transactions? Update(Transactions transactions)
         {
             transactions.Date = transactions.Date.RemoveTime();
             transactions.Orden = CreateOrden(transactions);
-            return transactionsManager.Update(transactions);
-        }
-
-        private void UpdateList(List<Transactions?>? lObj)
-        {
-            transactionsManager.UpdateList(lObj);
-        }
+            return base.Update(transactions);
+        }         
 
         private void UpdateList(IEnumerable<Transactions?>? lObj)
         {
-            transactionsManager.UpdateList(lObj);
+            foreach (var item in lObj)
+            {
+                if (item != null)
+                {
+                    Update(item);
+                }
+            }
+            SaveChanges();
+        }
+        public IEnumerable<Transactions>? GetAllOpennedOrderByOrdenDesc()
+        {
+            return GetAll()?.OrderByDescending(x => x.Orden);
         }
 
-        public void Delete(Transactions? transactions)
+        public IEnumerable<Transactions>? GetAllOpennedOrderByOrdenDesc(int startIndex, int nPage)
         {
-            transactionsManager.Delete(transactions);
-        }
-        public void Delete(int? id)
-        {
-            transactionsManager.Delete(id);
+            return GetAllOpennedOrderByOrdenDesc()?.Skip(startIndex).Take(nPage);
         }
 
-        public HashSet<Transactions?>? GetByAccount(int? id)
+        private IEnumerable<Transactions>? GetByAccountOrderByOrderDesc(int? id)
         {
-            return transactionsManager.GetByAccount(id)?.ToHashSet();
-        }
-
-        private IEnumerable<Transactions?>? GetByAccountOrderByOrderDesc(int? id)
-        {
-            return transactionsManager.GetByAccountOrderByOrdenDesc(id);
+            return GetAll().Where(x => id.Equals(x.Accountid))
+                    .OrderByDescending(x => x.Orden);
         }
 
         public IEnumerable<Transactions>? GetByAccountOrderByOrderDesc(int? id, int startIndex, int nPage)
         {
-            return transactionsManager.GetByAccountOrderByOrdenDesc(id, startIndex, nPage);
+            return GetByAccountOrderByOrderDesc(id)?.Skip(startIndex).Take(nPage);
         }
 
-        public HashSet<Transactions?>? GetByAccount(Accounts? accounts)
+        public HashSet<Transactions>? GetByAccount(int? id)
+        {
+            return GetAll().Where(x => id.Equals(x.Accountid))?.ToHashSet();
+        }
+
+        public HashSet<Transactions>? GetByAccount(Accounts? accounts)
         {
             return GetByAccount(accounts?.Id);
         }
 
-        public HashSet<Transactions?>? GetByPerson(int? id)
+        public HashSet<Transactions>? GetByPerson(int? id)
         {
-            return transactionsManager.GetByPerson(id)?.ToHashSet();
+            return GetAll().Where(x => id.Equals(x.Personid))?.ToHashSet();
         }
 
-        public HashSet<Transactions?>? GetByPerson(Persons? person)
+        public HashSet<Transactions>? GetByPerson(Persons? person)
         {
             return GetByPerson(person?.Id);
         }
 
         private int GetNextId()
         {
-            return transactionsManager.GetNextId();
+            return 999999;
         }
 
         private double CreateOrden(Transactions transactions)
@@ -127,14 +135,14 @@ namespace GARCA.Data.Services
 
             transactions.AmountOut ??= 0;
 
-            UpdateTranfer(transactions);
+            await UpdateTranfer(transactions);
             UpdateTranferFromSplit(transactions);
             transactions = Update(transactions);
             await Task.Run(() => iPersonsService.SetCategoryDefault(transactions.Personid));
             return transactions;
         }
 
-        public async Task RefreshBalanceTransactions(Accounts acc)
+        public async Task RefreshBalanceTransactions(Accounts? acc)
         {
             decimal? balanceTotal = 0;
             var tList = await Task.Run(() => GetByAccountOrderByOrderDesc(acc.Id));
@@ -164,7 +172,7 @@ namespace GARCA.Data.Services
             }
         }
 
-        private void UpdateTranfer(Transactions transactions)
+        private async Task UpdateTranfer(Transactions transactions)
         {
             if (transactions.Tranferid != null &&
                 transactions.Category.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
@@ -215,7 +223,7 @@ namespace GARCA.Data.Services
                     tContraria.AmountOut = transactions.AmountIn;
                     tContraria.TransactionStatusid = transactions.TransactionStatusid;
                     Update(tContraria);
-                    RefreshBalanceAllTransactions();
+                    await RefreshBalanceAllTransactions();
                 }
             }
         }
@@ -263,8 +271,7 @@ namespace GARCA.Data.Services
                 transactions.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
                 transactions.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
-            else if (transactions.Categoryid is not null
-                and (int)CategoriesService.ESpecialCategories.Split)
+            else if (transactions.Categoryid is (int)CategoriesService.ESpecialCategories.Split)
             {
                 transactions.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
                 transactions.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
@@ -273,6 +280,9 @@ namespace GARCA.Data.Services
             if (transactions.Id == 0)
             {
                 Update(transactions);
+                
+                if (lSplits == null) return;
+
                 foreach (var splits in lSplits)
                 {
                     splits.Transactionid = transactions.Id;

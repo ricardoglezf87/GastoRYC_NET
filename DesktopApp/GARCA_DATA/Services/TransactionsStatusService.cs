@@ -20,7 +20,7 @@ namespace GARCA.Data.Services
             Reconciled = 3
         }
 
-        public HashSet<TransactionsStatus?>? GetAll()
+        public HashSet<TransactionsStatus>? GetAll()
         {
             return transactionsStatusManager.GetAll()?.ToHashSet();
         }

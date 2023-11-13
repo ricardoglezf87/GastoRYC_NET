@@ -1,5 +1,6 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
+using GARCA_UTIL.Exceptions;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using System.Globalization;
@@ -34,7 +35,7 @@ namespace GARCA.Data.Services
         public async Task getPricesOnlineAsync(InvestmentProducts? investmentProducts)
         {
             //Get prices from buy and sell ins transactions
-            foreach (var transactions in iTransactionsService.GetByInvestmentProduct(investmentProducts)?
+            foreach (var transactions in (iTransactionsService.GetByInvestmentProduct(investmentProducts) ?? Enumerable.Empty<Transactions>())
                          .GroupBy(g => g.Date).Select(x => new { date = x.Key, price = x.Average(y => y.PricesShares) }))
             {
                 if (!Exists(investmentProducts.Id, transactions.date))
@@ -112,12 +113,12 @@ namespace GARCA.Data.Services
                     }
                     else
                     {
-                        throw new Exception("No se pudo obtener los datos de Yahoo Finance.");
+                        throw new DonwloadPricesException("No se pudo obtener los datos de Yahoo Finance.");
                     }
                 }
                 else
                 {
-                    throw new Exception("No se pudo obtener los datos de Yahoo Finance.");
+                    throw new DonwloadPricesException("No se pudo obtener los datos de Yahoo Finance.");
                 }
             }
             return lproductsPrices;

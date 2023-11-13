@@ -11,7 +11,7 @@ namespace GARCA.Data.Services
         public DateCalendarService()
         {
             dateCalendarManager = new DateCalendarManager();
-            initDate = new DateTime(2001, 01, 01);
+            initDate = new DateTime(2001, 01, 01, 0, 0, 0, DateTimeKind.Utc); ;
         }
 
         private DateCalendar? GetById(DateTime? id)

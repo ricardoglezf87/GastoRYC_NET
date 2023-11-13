@@ -20,7 +20,7 @@
                                AllowDeleting="True"
                                MouseDoubleClick="gvTransactions_MouseDoubleClick"
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
-                               ShowRowHeader="True" SelectionMode="Extended"
+                               ShowRowHeader="True" SelectionMode="Extended" EnableDataVirtualization="True"
                                 ItemsSource="{Binding IncrementalItemsSource}">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="Orden" SortDirection="Descending"/>

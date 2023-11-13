@@ -15,12 +15,12 @@ namespace GARCA.Data.Services
             expirationsRemindersManager = new ExpirationsRemindersManager();
         }
 
-        private HashSet<ExpirationsReminders?>? GetAll()
+        private HashSet<ExpirationsReminders>? GetAll()
         {
             return expirationsRemindersManager.GetAll()?.ToHashSet();
         }
 
-        private HashSet<ExpirationsReminders?>? GetAllWithGeneration()
+        private HashSet<ExpirationsReminders>? GetAllWithGeneration()
         {
             GenerationAllExpirations();
             return GetAll();
@@ -31,12 +31,12 @@ namespace GARCA.Data.Services
             return expirationsRemindersManager.ExistsExpiration(transactionsReminder, date);
         }
 
-        private HashSet<ExpirationsReminders?>? GetAllPendingWithGeneration()
+        private HashSet<ExpirationsReminders>? GetAllPendingWithGeneration()
         {
-            return GetAllWithGeneration()?.Where(x => x.Done is null or not true).ToHashSet();
+            return GetAllWithGeneration()?.Where(x => x.Done is not true).ToHashSet();
         }
 
-        public HashSet<ExpirationsReminders?>? GetAllPendingWithoutFutureWithGeneration()
+        public HashSet<ExpirationsReminders>? GetAllPendingWithoutFutureWithGeneration()
         {
             return GetAllWithGeneration()?
                 .Where(x => (x.Done == null || x.Done != true) && x.GroupDate != "Futuro").ToHashSet();
@@ -52,7 +52,7 @@ namespace GARCA.Data.Services
 
         public async Task GenerateAutoregister()
         {
-            foreach (var exp in GetAllPendingWithGeneration()?
+            foreach (var exp in (GetAllPendingWithGeneration() ?? Enumerable.Empty<ExpirationsReminders>())
                 .Where(x => x.Date <= DateTime.Now && //x.transactionsReminders != null &&
                     x.TransactionsReminders.AutoRegister.HasValue && x.TransactionsReminders.AutoRegister.Value))
             {
@@ -228,7 +228,7 @@ namespace GARCA.Data.Services
             return expirationsRemindersManager.GetById(id);
         }
 
-        private HashSet<ExpirationsReminders?>? GetByTransactionReminderid(int? id)
+        private HashSet<ExpirationsReminders>? GetByTransactionReminderid(int? id)
         {
             return expirationsRemindersManager.GetByTransactionReminderid(id)?.ToHashSet();
         }

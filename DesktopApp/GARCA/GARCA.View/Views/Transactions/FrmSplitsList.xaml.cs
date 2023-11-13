@@ -34,7 +34,7 @@ namespace GARCA.View.Views
         {
             gvSplits.ItemsSource = transactions != null && transactions.Id > 0
                 ? iSplitsService.GetbyTransactionid(transactions.Id)
-                : (object)iSplitsService.GetbyTransactionidNull();
+                : (object?)iSplitsService.GetbyTransactionidNull();
         }
 
         private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)

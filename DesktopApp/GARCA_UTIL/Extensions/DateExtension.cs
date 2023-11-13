@@ -4,7 +4,14 @@
     {
         public static string ToShortDateString(this DateTime? date)
         {
-            return date != null ? date?.Day.ToString("00") + "/" + date?.Month.ToString("00") + "/" + date?.Year : "";
+            if (date.HasValue)
+            {
+                return date.Value.ToString("dd/MM/yyyy");
+            }
+            else
+            {
+                return "";
+            }
         }
 
         public static DateTime? AddDay(this DateTime? date)
@@ -39,7 +46,7 @@
 
         public static DateTime? RemoveTime(this DateTime? date)
         {
-            return date != null ? new DateTime(date.Value.Year, date.Value.Month, date.Value.Day) : null;
+            return date.HasValue ? DateTime.SpecifyKind(date.Value.Date, DateTimeKind.Utc) : null;
         }
 
     }

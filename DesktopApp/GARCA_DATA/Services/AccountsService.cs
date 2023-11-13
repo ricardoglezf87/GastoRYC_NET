@@ -1,52 +1,41 @@
-﻿using GARCA.Data.Managers;
+﻿using Dapper;
+using GARCA.Data.Managers;
 using GARCA.Models;
+using GARCA_DATA.Services;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
 {
-    public class AccountsService
+    public class AccountsService : IServiceCache<Accounts>
     {
-        protected readonly AccountsManager accountsManager;
-
-        public AccountsService()
+        protected override IEnumerable<Accounts>? GetAllCache()
         {
-            accountsManager = new AccountsManager();
+            return iRycContextService.getConnection().Query<Accounts,AccountsTypes,Accounts>(
+                @"
+                    select * 
+                    from Accounts
+                        inner join AccountsTypes on AccountsTypes.Id = Accounts.accountsTypesid
+                "
+                ,(a, at) =>
+            {
+                a.AccountsTypes = at;
+                return a;
+            }).AsEnumerable();
+
         }
 
-        public HashSet<Accounts?>? GetAll()
+        public HashSet<Accounts>? GetAllOpened()
         {
-            return accountsManager.GetAll()?.ToHashSet();
-        }
-
-        public HashSet<Accounts?>? GetAllOpened()
-        {
-            return accountsManager.GetAllOpened()?.ToHashSet();
-        }
-
-        public async Task<HashSet<Accounts?>?> GetAllOpenedAync()
-        {
-            return await Task.Run(() => GetAllOpened());
-        }
-
-        public Accounts? GetById(int? id)
-        {
-            return accountsManager.GetById(id);
+            return GetAll()?.Where(x=> x.Closed is null || x.Closed is false).ToHashSet();
         }
 
         public Accounts? GetByCategoryId(int? id)
         {
-            return accountsManager.GetByCategoryId(id);
-        }
-
-        public void Update(Accounts accounts)
-        {
-            accountsManager.Update(accounts);
-        }
-
-        public void Delete(Accounts accounts)
-        {
-            accountsManager.Delete(accounts);
+            return GetAll()?.First(x => x.Categoryid == id);
         }
 
         public Decimal GetBalanceByAccount(int? id)

@@ -13,7 +13,7 @@ namespace GARCA.Data.Services
             investementProductsTypesManager = new InvestmentProductsTypesManager();
         }
 
-        public HashSet<InvestmentProductsTypes?>? GetAll()
+        public HashSet<InvestmentProductsTypes>? GetAll()
         {
             return investementProductsTypesManager.GetAll()?.ToHashSet();
         }

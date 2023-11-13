@@ -13,12 +13,12 @@ namespace GARCA.Data.Services
             splitsRemindersManager = new SplitsRemindersManager();
         }
 
-        public HashSet<SplitsReminders?>? GetbyTransactionidNull()
+        public HashSet<SplitsReminders>? GetbyTransactionidNull()
         {
             return splitsRemindersManager.GetbyTransactionidNull()?.ToHashSet();
         }
 
-        public HashSet<SplitsReminders?>? GetbyTransactionid(int transactionid)
+        public HashSet<SplitsReminders>? GetbyTransactionid(int transactionid)
         {
             return splitsRemindersManager.GetbyTransactionid(transactionid)?.ToHashSet();
         }

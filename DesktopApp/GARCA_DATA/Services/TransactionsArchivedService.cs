@@ -21,7 +21,7 @@ namespace GARCA.Data.Services
 
         #region TransactionsArchivedActions
 
-        public HashSet<TransactionsArchived?>? GetAll()
+        public HashSet<TransactionsArchived>? GetAll()
         {
             return transactionsManager.GetAll()?.ToHashSet();
         }
@@ -31,27 +31,27 @@ namespace GARCA.Data.Services
             return transactionsManager.GetById(id);
         }
 
-        private HashSet<TransactionsArchived?>? GetByInvestmentProduct(int? id)
+        private HashSet<TransactionsArchived>? GetByInvestmentProduct(int? id)
         {
             return transactionsManager.GetByInvestmentProduct(id)?.ToHashSet();
         }
 
-        public HashSet<TransactionsArchived?>? GetByPerson(int? id)
+        public HashSet<TransactionsArchived>? GetByPerson(int? id)
         {
             return transactionsManager.GetByPerson(id)?.ToHashSet();
         }
 
-        public HashSet<TransactionsArchived?>? GetByPerson(Persons? person)
+        public HashSet<TransactionsArchived>? GetByPerson(Persons? person)
         {
             return GetByPerson(person?.Id);
         }
 
-        public HashSet<TransactionsArchived?>? GetByInvestmentProduct(InvestmentProducts? investment)
+        public HashSet<TransactionsArchived>? GetByInvestmentProduct(InvestmentProducts? investment)
         {
             return GetByInvestmentProduct(investment.Id);
         }
 
-        public TransactionsArchived? Update(TransactionsArchived transactions)
+        public TransactionsArchived? Update(TransactionsArchived? transactions)
         {
             return transactionsManager.Update(transactions);
         }
@@ -61,17 +61,12 @@ namespace GARCA.Data.Services
             transactionsManager.Delete(transactions);
         }
 
-        public HashSet<TransactionsArchived?>? GetByAccount(int? id)
+        public HashSet<TransactionsArchived>? GetByAccount(int? id)
         {
             return transactionsManager.GetByAccount(id)?.ToHashSet();
         }
 
-        private IEnumerable<TransactionsArchived?>? GetByAccountOrderByOrderDesc(int? id)
-        {
-            return transactionsManager.GetByAccountOrderByOrdenDesc(id);
-        }
-
-        public HashSet<TransactionsArchived?>? GetByAccount(Accounts? accounts)
+        public HashSet<TransactionsArchived>? GetByAccount(Accounts? accounts)
         {
             return GetByAccount(accounts?.Id);
         }
@@ -88,12 +83,12 @@ namespace GARCA.Data.Services
                     {
                         TransactionsArchived? tArchived;
                         tArchived = await Task.Run(() => Update(trans.ToArchived()));
-                        HashSet<Splits?>? lSplits = await Task.Run(() => iSplitsService.GetbyTransactionid(trans.Id));
+                        HashSet<Splits>? lSplits = await Task.Run(() => iSplitsService.GetbyTransactionid(trans.Id));
                         if (lSplits != null)
                         {
                             foreach (var splits in lSplits)
                             {
-                                SplitsArchived sArchived = splits.ToArchived();
+                                SplitsArchived? sArchived = splits?.ToArchived();
                                 sArchived.Transactionid = tArchived.Id;
                                 sArchived.Transaction = tArchived;
                                 await Task.Run(() => iSplitsArchivedService.Update(sArchived));
@@ -104,7 +99,7 @@ namespace GARCA.Data.Services
                     }
                 }
 
-                HashSet<Accounts?>? lAcc = await Task.Run(() => iAccountsService.GetAllOpened());
+                HashSet<Accounts>? lAcc = await Task.Run(() => iAccountsService.GetAllOpened());
 
                 if (lAcc != null)
                 {
@@ -128,13 +123,15 @@ namespace GARCA.Data.Services
 
                             t = iTransactionsService.Update(t);
 
-                            TransactionsArchived? at = t.ToArchived();
-                            at.AmountIn = (total < 0 ? -total : 0);
-                            at.AmountOut = (total > 0 ? total : 0);
-                            at.Balance = 0;
+                            TransactionsArchived? at = t?.ToArchived();
+                            if (at != null)
+                            {
+                                at.AmountIn = (total < 0 ? -total : 0);
+                                at.AmountOut = (total > 0 ? total : 0);
+                                at.Balance = 0;
 
-                            iTransactionsArchivedService.Update(at);
-
+                                iTransactionsArchivedService.Update(at);
+                            }
                         }
 
                     }

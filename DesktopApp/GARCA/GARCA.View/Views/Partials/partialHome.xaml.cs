@@ -156,34 +156,37 @@ namespace GARCA.View.Views
 
             chForecast.Series.Clear();
 
-            foreach (var accounts in (await iAccountsService.GetAllOpenedAync())?
-                .Where(x => iAccountsTypesService.AccountExpensives(x.AccountsTypesid)))
+            var lAccounts = iAccountsService.GetAllOpened();
+            
+            if(lAccounts != null) 
             {
-
-                LineSeries series = new()
+                foreach (var accounts in lAccounts.Where(x => iAccountsTypesService.AccountExpensives(x.AccountsTypesid)))
                 {
-                    ItemsSource = (await Task.Run(() => iForecastsChartService.GetMonthForecast())).Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
-                    Label = accounts.Description,
-                    XBindingPath = "Date",
-                    YBindingPath = "Amount",
-                    ShowTooltip = true,
-                    TooltipTemplate = tooltip,
-                    EnableAnimation = true,
-                    AnimationDuration = new TimeSpan(0, 0, 3),
-                    AdornmentsInfo = new ChartAdornmentInfo
+
+                    LineSeries series = new()
                     {
-                        ShowMarker = true,
-                        SymbolStroke = new SolidColorBrush(Colors.Blue),
-                        SymbolInterior = new SolidColorBrush(Colors.DarkBlue),
-                        SymbolHeight = 10,
-                        SymbolWidth = 10,
-                        Symbol = ChartSymbol.Ellipse
-                    }
-                };
+                        ItemsSource = (await Task.Run(() => iForecastsChartService.GetMonthForecast())).Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
+                        Label = accounts.Description,
+                        XBindingPath = "Date",
+                        YBindingPath = "Amount",
+                        ShowTooltip = true,
+                        TooltipTemplate = tooltip,
+                        EnableAnimation = true,
+                        AnimationDuration = new TimeSpan(0, 0, 3),
+                        AdornmentsInfo = new ChartAdornmentInfo
+                        {
+                            ShowMarker = true,
+                            SymbolStroke = new SolidColorBrush(Colors.Blue),
+                            SymbolInterior = new SolidColorBrush(Colors.DarkBlue),
+                            SymbolHeight = 10,
+                            SymbolWidth = 10,
+                            Symbol = ChartSymbol.Ellipse
+                        }
+                    };
 
-
-                ChartTooltip.SetShowDuration(series, 5000);
-                chForecast.Series.Add(series);
+                    ChartTooltip.SetShowDuration(series, 5000);
+                    chForecast.Series.Add(series);
+                }
             }
         }
 

@@ -14,7 +14,7 @@ namespace GARCA.Data.Services
             personsManager = new PersonsManager();
         }
 
-        public HashSet<Persons?>? GetAll()
+        public HashSet<Persons>? GetAll()
         {
             return personsManager.GetAll()?.ToHashSet();
         }
@@ -60,7 +60,7 @@ namespace GARCA.Data.Services
                                  where c.count == maxCount
                                  select c.categoryid).FirstOrDefault();
 
-                Persons persons = iPersonsService.GetById(id);
+                Persons? persons = iPersonsService.GetById(id);
                 persons.Categoryid = maxCounts;
                 Update(persons);
             }

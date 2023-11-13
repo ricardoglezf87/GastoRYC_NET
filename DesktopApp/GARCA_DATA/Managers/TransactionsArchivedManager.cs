@@ -75,26 +75,7 @@ namespace GARCA.Data.Managers
                     }
                 }
             }
-        }
-
-        private IEnumerable<TransactionsArchived>? GetAllOpennedOrderByOrdenDesc()
-        {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<TransactionsArchived>();
-                var query = GetEntyWithInclude(repository)?
-                    .Where(x => !x.Account.Closed.HasValue || !x.Account.Closed.Value)
-                    .OrderByDescending(x => x.Orden);
-
-                if (query != null)
-                {
-                    foreach (var item in query)
-                    {
-                        yield return item;
-                    }
-                }
-            }
-        }
+        }        
 
         public IEnumerable<TransactionsArchived>? GetByInvestmentProduct(int? id)
         {

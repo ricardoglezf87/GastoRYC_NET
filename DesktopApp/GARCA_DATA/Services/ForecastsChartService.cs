@@ -15,10 +15,10 @@ namespace GARCA.Data.Services
 
             var now = DateTime.Now;
 
-            foreach (var g in iAccountsService.GetAllOpened()?.Where(x => (x.Closed == false || x.Closed == null)
-                                                            && (x.AccountsTypesid == (int)EAccountsTypes.Cash ||
+            foreach (var g in (iAccountsService.GetAllOpened() ?? Enumerable.Empty<Accounts>())?.Where(x => 
+                                                            x.AccountsTypesid == (int)EAccountsTypes.Cash ||
                                                             x.AccountsTypesid == (int)EAccountsTypes.Banks ||
-                                                            x.AccountsTypesid == (int)EAccountsTypes.Cards)))
+                                                            x.AccountsTypesid == (int)EAccountsTypes.Cards))
             {
                 saldos.Add(g.Id, 0);
             }

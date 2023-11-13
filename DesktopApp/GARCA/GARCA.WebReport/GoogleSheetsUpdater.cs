@@ -63,7 +63,7 @@ namespace GARCA.WebReport
 
             var accountsTypes = iAccountsTypesService.GetAll();
             var transactions = await Task.Run(() => iTransactionsService.GetAll());
-            loadDialog.setMax(transactions.Count);
+            loadDialog.setMax(transactions.Count());
 
             foreach (var trans in transactions)
             {
@@ -269,7 +269,7 @@ namespace GARCA.WebReport
                     pre.Add(
                         new[] {
                         investmentProducts.Description ?? "Sin Descripción",
-                        investmentProducts.InvestmentProductsTypesid?.ToString(),
+                        investmentProducts.InvestmentProductsTypesid?.ToString() ?? "-1",
                         investmentProducts.InvestmentProductsTypes?.Description ?? "Sin Tipo",
                         investmentProducts.Symbol ?? "Sin Simbolo",
                         DateToStringJs(i.Date),
@@ -333,7 +333,7 @@ namespace GARCA.WebReport
                     pre.Add(
                         new[] {
                         investmentProducts.Description ?? "Sin Descripción",
-                        investmentProducts.InvestmentProductsTypesid?.ToString(),
+                        investmentProducts.InvestmentProductsTypesid?.ToString() ?? "-1",
                         investmentProducts.InvestmentProductsTypes?.Description ?? "Sin Tipo",
                         investmentProducts.Symbol ?? "Sin Simbolo",
                         DateToStringJs(i.Date),

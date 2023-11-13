@@ -209,7 +209,7 @@ namespace GARCA.View.Views
             if (!String.IsNullOrWhiteSpace(importe))
             {
                 var aux = Double.Parse(importe.Replace(".", ",")) / txtNumShares.Value;
-                txtPriceShares.Value = (decimal)aux;
+                txtPriceShares.Value = (decimal?)aux;
             }
         }
 
@@ -219,7 +219,7 @@ namespace GARCA.View.Views
             if (!String.IsNullOrWhiteSpace(importe))
             {
                 var aux = Decimal.Parse(importe.Replace(".", ",")) / txtPriceShares.Value;
-                txtNumShares.Value = (double)aux;
+                txtNumShares.Value = (double?)aux;
             }
         }
 
@@ -283,7 +283,7 @@ namespace GARCA.View.Views
                 transaction = new Transactions();
                 dtpDate.SelectedDate = DateTime.Now;
 
-                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object)null;
+                cbAccount.SelectedValue = accountidDefault != null ? accountidDefault : (object?)null;
 
                 cbPerson.SelectedIndex = -1;
                 cbPerson.Text = String.Empty;
@@ -318,7 +318,7 @@ namespace GARCA.View.Views
             }
 
             transaction.Memo = txtMemo.Text;
-            if (cbCategory.SelectedValue == null && cbAccount?.SelectedItem != null &&
+            if (cbCategory.SelectedValue == null && cbAccount.SelectedItem != null &&
                 ((Accounts)cbAccount.SelectedItem).AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Invests)
             {
                 cbCategory.SelectedValue = 0;

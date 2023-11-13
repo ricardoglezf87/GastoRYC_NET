@@ -15,16 +15,16 @@ namespace GARCA.View.Views
 
         public PartialPortfolio()
         {
-            InitializeComponent();;
+            InitializeComponent();
         }
 
         #endregion
 
         #region Events
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadPortfolio();
+            await LoadPortfolio();
         }
 
         #endregion

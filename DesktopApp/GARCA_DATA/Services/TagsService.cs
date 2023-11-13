@@ -13,7 +13,7 @@ namespace GARCA.Data.Services
             tagsManager = new TagsManager();
         }
 
-        public HashSet<Tags?>? GetAll()
+        public HashSet<Tags>? GetAll()
         {
             return tagsManager.GetAll()?.ToHashSet();
         }

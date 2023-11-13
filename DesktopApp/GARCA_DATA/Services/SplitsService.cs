@@ -15,12 +15,12 @@ namespace GARCA.Data.Services
             splitsManager = new SplitsManager();
         }
 
-        public HashSet<Splits?>? GetbyTransactionidNull()
+        public HashSet<Splits>? GetbyTransactionidNull()
         {
             return splitsManager.GetbyTransactionidNull()?.ToHashSet();
         }
 
-        public HashSet<Splits?>? GetbyTransactionid(int transactionid)
+        public HashSet<Splits>? GetbyTransactionid(int transactionid)
         {
             return splitsManager.GetbyTransactionid(transactionid)?.ToHashSet();
         }
@@ -35,7 +35,7 @@ namespace GARCA.Data.Services
             splitsManager.Update(splits);
         }
 
-        public void Delete(Splits splits)
+        public void Delete(Splits? splits)
         {
             splitsManager.Delete(splits);
         }

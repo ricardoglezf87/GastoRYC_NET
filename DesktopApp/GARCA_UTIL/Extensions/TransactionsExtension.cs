@@ -4,7 +4,7 @@ namespace GARCA.Utils.Extensions
 {
     public static class TransactionsExtension
     {
-        public static TransactionsArchived? ToArchived(this Transactions obj)
+        public static TransactionsArchived ToArchived(this Transactions obj)
         {
             return new TransactionsArchived
             {
@@ -35,7 +35,7 @@ namespace GARCA.Utils.Extensions
             };
         }
 
-        public static void AddRange(this HashSet<Transactions?>? source, HashSet<Transactions?>? elements)
+        public static void AddRange(this HashSet<Transactions>? source, HashSet<Transactions>? elements)
         {
             if (elements != null)
             {

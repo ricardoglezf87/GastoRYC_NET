@@ -13,7 +13,7 @@ namespace GARCA.Data.Services
             investmentProductsManager = new InvestmentProductsManager();
         }
 
-        public HashSet<InvestmentProducts?>? GetAll()
+        public HashSet<InvestmentProducts>? GetAll()
         {
             return investmentProductsManager.GetAll()?.ToHashSet();
         }
@@ -33,7 +33,7 @@ namespace GARCA.Data.Services
             investmentProductsManager.Delete(investmentProducts);
         }
 
-        public async Task<HashSet<InvestmentProducts?>?> GetAllOpened()
+        public async Task<HashSet<InvestmentProducts>?> GetAllOpened()
         {
             return await Task.Run(() => investmentProductsManager.GetAllOpened()?.ToHashSet());
         }

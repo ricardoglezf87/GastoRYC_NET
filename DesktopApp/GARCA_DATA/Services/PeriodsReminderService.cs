@@ -6,7 +6,7 @@ namespace GARCA.Data.Services
 {
     public class PeriodsRemindersService
     {
-        private PeriodsRemindersManager periodsRemindersManager;
+        private readonly PeriodsRemindersManager periodsRemindersManager;
 
         public enum EPeriodsReminders
         {
@@ -24,7 +24,7 @@ namespace GARCA.Data.Services
             periodsRemindersManager = new PeriodsRemindersManager();
         }
 
-        public HashSet<PeriodsReminders?>? GetAll()
+        public HashSet<PeriodsReminders>? GetAll()
         {
             return periodsRemindersManager.GetAll()?.ToHashSet();
         }

@@ -16,7 +16,7 @@ namespace GARCA.Data.Services
 
         #region TransactionsRemindersActions
 
-        public HashSet<TransactionsReminders?>? GetAll()
+        public HashSet<TransactionsReminders>? GetAll()
         {
             return transactionsRemindersManager.GetAll()?.ToHashSet();
         }
@@ -72,8 +72,7 @@ namespace GARCA.Data.Services
                 transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
                 transactionsReminders.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
-            else if (transactionsReminders.Categoryid is not null
-                and ((int)CategoriesService.ESpecialCategories.Split))
+            else if (transactionsReminders.Categoryid is ((int)CategoriesService.ESpecialCategories.Split))
             {
                 transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
                 transactionsReminders.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
@@ -82,6 +81,9 @@ namespace GARCA.Data.Services
             if (transactionsReminders.Id == 0)
             {
                 Update(transactionsReminders);
+                
+                if (lSplitsReminders == null) return;
+
                 foreach (var splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.Transactionid = transactionsReminders.Id;

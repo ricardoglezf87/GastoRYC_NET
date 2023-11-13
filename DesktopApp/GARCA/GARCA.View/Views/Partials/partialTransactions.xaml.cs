@@ -55,10 +55,10 @@ namespace GARCA.View.Views
             iTransactionsService.UpdateTransactionAfterSplits(transactions);
             await iTransactionsService.RefreshBalanceAllTransactions();
             LoadTransactions();
-            parentForm.LoadAccounts();
+            await parentForm.LoadAccounts();
         }
 
-        private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Transactions transactions in e.Items)
             {
@@ -66,7 +66,7 @@ namespace GARCA.View.Views
             }
 
             LoadTransactions();
-            parentForm.LoadAccounts();
+            await parentForm.LoadAccounts();
         }
 
         private void btnCopy_Click(object sender, RoutedEventArgs e)
@@ -141,18 +141,18 @@ namespace GARCA.View.Views
             MessageBox.Show("Funcionalidad no implementada");
         }
 
-        private void gvTransactions_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void gvTransactions_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (gvTransactions.CurrentItem != null)
             {
                 FrmTransaction frm = new((Transactions)gvTransactions.CurrentItem);
                 frm.ShowDialog();
                 LoadTransactions();
-                parentForm.LoadAccounts();
+                await parentForm.LoadAccounts();
             }
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
@@ -161,7 +161,7 @@ namespace GARCA.View.Views
                     RemoveTransaction(transactions);
                 }
                 LoadTransactions();
-                parentForm.LoadAccounts();
+                await parentForm.LoadAccounts();
             }
             else
             {
@@ -169,7 +169,7 @@ namespace GARCA.View.Views
             }
         }
 
-        private void btnPending_Click(object sender, RoutedEventArgs e)
+        private async void btnPending_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
@@ -179,7 +179,7 @@ namespace GARCA.View.Views
                     transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid);
                     iTransactionsService.Update(transactions);
                 }
-                parentForm.LoadAccounts();
+                await parentForm.LoadAccounts();
                 LoadTransactions();
             }
             else
@@ -188,7 +188,7 @@ namespace GARCA.View.Views
             }
         }
 
-        private void btnProvisional_Click(object sender, RoutedEventArgs e)
+        private async void btnProvisional_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
@@ -198,7 +198,7 @@ namespace GARCA.View.Views
                     transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid);
                     iTransactionsService.Update(transactions);
                 }
-                parentForm.LoadAccounts();
+                await parentForm.LoadAccounts();
                 LoadTransactions();
             }
             else
@@ -207,7 +207,7 @@ namespace GARCA.View.Views
             }
         }
 
-        private void btnReconciled_Click(object sender, RoutedEventArgs e)
+        private async void btnReconciled_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
@@ -217,7 +217,7 @@ namespace GARCA.View.Views
                     transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid);
                     iTransactionsService.Update(transactions);
                 }
-                parentForm.LoadAccounts();
+                await parentForm.LoadAccounts();
                 LoadTransactions();
             }
             else

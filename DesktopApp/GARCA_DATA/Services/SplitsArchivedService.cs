@@ -14,7 +14,7 @@ namespace GARCA.Data.Services
             splitsManager = new SplitsArchivedManager();
         }
 
-        public HashSet<SplitsArchived?>? GetbyTransactionid(int transactionid)
+        public HashSet<SplitsArchived>? GetbyTransactionid(int transactionid)
         {
             return splitsManager.GetbyTransactionid(transactionid)?.ToHashSet();
         }
