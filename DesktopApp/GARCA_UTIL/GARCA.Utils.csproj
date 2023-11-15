@@ -23,6 +23,6 @@
     <PackageReference Include="SimpleInjector" Version="5.4.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GARCA_MODEL\GARCA_MODEL.csproj" />
+    <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
   </ItemGroup>
 </Project>

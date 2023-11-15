@@ -54,7 +54,7 @@ namespace GARCA.View.Views
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "investmentProductsTypesid":
-                        investmentProducts.InvestmentProductsTypes = iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
+                        investmentProducts.InvestmentProductsTypes = iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid ?? -99);
                         break;
                 }
             }
@@ -66,7 +66,7 @@ namespace GARCA.View.Views
 
             if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesid != null)
             {
-                investmentProducts.InvestmentProductsTypes = iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid);
+                investmentProducts.InvestmentProductsTypes = iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid ?? -99);
             }
 
             iInvestmentProductsService.Update(investmentProducts);

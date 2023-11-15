@@ -1,20 +1,10 @@
-﻿using GARCA.DAO.Repositories;
+﻿
 using GARCA.Models;
 
 namespace GARCA.Data.Managers
 {
-    public class DateCalendarManager
+    public class DateCalendarManager : ManagerBase<DateCalendar,DateTime>
     {
-
-        public DateCalendar? GetById(DateTime? id)
-        {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryGeneral<DateCalendar>();
-                return repository.GetById(id);
-            }
-        }
-
         public void Add(DateCalendar? dateCalendar)
         {
             if (dateCalendar != null)

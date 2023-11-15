@@ -69,7 +69,7 @@ namespace GARCA.Data.Services
             foreach (var key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    iAccountsService.GetById(key.Item2)?.Description,
+                    iAccountsService.GetById(key.Item2 ?? -99)?.Description,
                     key.Item2, dChart[key]));
             }
             return lChart;

@@ -1,10 +1,10 @@
-﻿using GARCA.DAO.Repositories;
+﻿
 using GARCA.Models;
 using System.Linq.Expressions;
 
 namespace GARCA.Data.Managers
 {
-    public class SplitsArchivedManager : ManagerBase<SplitsArchived>
+    public class SplitsArchivedManager : ManagerBase<SplitsArchived, Int32>
     {
 #pragma warning disable CS8603
         protected override Expression<Func<SplitsArchived, object>>[] GetIncludes()

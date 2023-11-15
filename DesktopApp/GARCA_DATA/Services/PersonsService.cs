@@ -1,37 +1,16 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
+using GARCA_DATA.Managers;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class PersonsService
+    public class PersonsService : ServiceBase<PersonsManager, Persons, Int32>
     {
-        private readonly PersonsManager personsManager;
-
-        public PersonsService()
-        {
-            personsManager = new PersonsManager();
-        }
-
-        public HashSet<Persons>? GetAll()
-        {
-            return personsManager.GetAll()?.ToHashSet();
-        }
-
-        public Persons? GetById(int? id)
-        {
-            return personsManager.GetById(id);
-        }
-
         public Persons? Update(Persons persons)
         {
-            return personsManager.Update(persons);
-        }
-
-        public void Delete(Persons persons)
-        {
-            personsManager.Delete(persons);
+            return manager.Update(persons);
         }
 
         public void SetCategoryDefault(int? id)
@@ -60,7 +39,7 @@ namespace GARCA.Data.Services
                                  where c.count == maxCount
                                  select c.categoryid).FirstOrDefault();
 
-                Persons? persons = iPersonsService.GetById(id);
+                Persons? persons = iPersonsService.GetById(id ?? -99);
                 persons.Categoryid = maxCounts;
                 Update(persons);
             }

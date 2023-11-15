@@ -38,7 +38,7 @@ namespace GARCA.View.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.AccountsTypes = iAccountsTypesService.GetById(accounts.AccountsTypesid);
+                        accounts.AccountsTypes = iAccountsTypesService.GetById(accounts.AccountsTypesid ?? -99);
                         break;
                 }
             }
@@ -68,7 +68,7 @@ namespace GARCA.View.Views
 
             if (accounts.Categoryid != null)
             {
-                categories = iCategoriesService.GetById(accounts.Categoryid);
+                categories = iCategoriesService.GetById(accounts.Categoryid ?? -99);
                 if (categories != null)
                 {
                     categories.Description = "[" + accounts.Description + "]";
@@ -96,7 +96,7 @@ namespace GARCA.View.Views
 
             if (accounts.AccountsTypes == null && accounts.AccountsTypesid != null)
             {
-                accounts.AccountsTypes = iAccountsTypesService.GetById(accounts.AccountsTypesid);
+                accounts.AccountsTypes = iAccountsTypesService.GetById(accounts.AccountsTypesid ?? -99);
             }
 
             UpdateCategory(accounts);
@@ -108,7 +108,7 @@ namespace GARCA.View.Views
         {
             foreach (Accounts accounts in e.Items)
             {
-                var categories = iCategoriesService.GetById(accounts.Categoryid);
+                var categories = iCategoriesService.GetById(accounts.Categoryid ?? -99);
                 if (categories != null)
                 {
                     iCategoriesService.Delete(categories);

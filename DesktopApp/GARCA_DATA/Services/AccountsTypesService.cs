@@ -1,13 +1,14 @@
 ﻿using Dapper;
 using GARCA.Data.Managers;
 using GARCA.Models;
-using GARCA_DATA.Services;
+using GARCA.Data.Services;
 using static GARCA.Data.IOC.DependencyConfig;
 using Microsoft.Data.Sqlite;
+using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {
-    public class AccountsTypesService : IServiceCache<AccountsTypes>
+    public class AccountsTypesService : ServiceBase<AccountsTypesManager, AccountsTypes, Int32>
     {
         public enum EAccountsTypes
         {
@@ -18,16 +19,6 @@ namespace GARCA.Data.Services
             Loans = 5,
             Bounds = 6,
             Savings = 7
-        }
-
-        protected override IEnumerable<AccountsTypes>? GetAllCache()
-        {
-            return iRycContextService.getConnection().Query<AccountsTypes>(
-                @"
-                    select * 
-                    from AccountsTypes
-                ").AsEnumerable();
-
         }
 
         public bool AccountExpensives(int? types)

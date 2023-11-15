@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace GARCA.Data.Managers
 {
-    public class PersonsManager : ManagerBase<Persons>
+    public class PersonsManager : ManagerBase<Persons, Int32>
     {
 #pragma warning disable CS8603
         protected override Expression<Func<Persons, object>>[] GetIncludes()

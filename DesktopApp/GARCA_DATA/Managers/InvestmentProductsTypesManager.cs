@@ -2,7 +2,7 @@
 
 namespace GARCA.Data.Managers
 {
-    public class InvestmentProductsTypesManager : ManagerBase<InvestmentProductsTypes>
+    public class InvestmentProductsTypesManager : ManagerBase<InvestmentProductsTypes, Int32>
     {
     }
 }

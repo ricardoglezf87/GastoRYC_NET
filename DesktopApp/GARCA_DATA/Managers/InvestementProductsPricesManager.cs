@@ -1,10 +1,10 @@
-﻿using GARCA.DAO.Repositories;
+﻿
 using GARCA.Models;
 using System.Linq.Expressions;
 
 namespace GARCA.Data.Managers
 {
-    public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPrices>
+    public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPrices, Int32>
     {
 #pragma warning disable CS8603
         protected override Expression<Func<InvestmentProductsPrices, object>>[] GetIncludes()

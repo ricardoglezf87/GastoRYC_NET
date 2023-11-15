@@ -3,7 +3,7 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class DateCalendarService
+    public class DateCalendarService : ServiceBase<DateCalendarManager, DateCalendar,DateTime>
     {
         private readonly DateCalendarManager dateCalendarManager;
         private readonly DateTime initDate;
@@ -12,11 +12,6 @@ namespace GARCA.Data.Services
         {
             dateCalendarManager = new DateCalendarManager();
             initDate = new DateTime(2001, 01, 01, 0, 0, 0, DateTimeKind.Utc); ;
-        }
-
-        private DateCalendar? GetById(DateTime? id)
-        {
-            return dateCalendarManager.GetById(id);
         }
 
         public void FillCalendar()
@@ -28,7 +23,7 @@ namespace GARCA.Data.Services
                 {
                     DateCalendar date = new()
                     {
-                        Date = ini,
+                        Id = ini,
                         Day = ini.Day,
                         Month = ini.Month,
                         Year = ini.Year

@@ -1,5 +1,6 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
+using GARCA_DATA.Managers;
 using GARCA_UTIL.Exceptions;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
@@ -8,28 +9,21 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class InvestmentProductsPricesService
+    public class InvestmentProductsPricesService : ServiceBase<InvestmentProductsPricesManager, InvestmentProductsPrices, Int32>
     {
-        private readonly InvestmentProductsPricesManager investmentProductsPricesManager;
-
-        public InvestmentProductsPricesService()
-        {
-            investmentProductsPricesManager = new InvestmentProductsPricesManager();
-        }
-
         private bool Exists(int? investmentProductId, DateTime? date)
         {
-            return investmentProductsPricesManager.Exists(investmentProductId, date);
+            return manager.Exists(investmentProductId, date);
         }
 
         public Decimal? GetActualPrice(InvestmentProducts investmentProducts)
         {
-            return investmentProductsPricesManager.GetActualPrice(investmentProducts);
+            return manager.GetActualPrice(investmentProducts);
         }
 
         public DateTime? GetLastValueDate(InvestmentProducts investmentProducts)
         {
-            return investmentProductsPricesManager.GetLastValueDate(investmentProducts);
+            return manager.GetLastValueDate(investmentProducts);
         }
 
         public async Task getPricesOnlineAsync(InvestmentProducts? investmentProducts)
@@ -44,7 +38,7 @@ namespace GARCA.Data.Services
                     productsPrices.Date = transactions.date;
                     productsPrices.InvestmentProductsid = investmentProducts.Id;
                     productsPrices.Prices = transactions.price;
-                    investmentProductsPricesManager.Update(productsPrices);
+                    manager.Update(productsPrices);
                 }
             }
 
@@ -71,11 +65,11 @@ namespace GARCA.Data.Services
             {
                 if (!Exists(productsPrices.InvestmentProductsid, productsPrices.Date))
                 {
-                    investmentProductsPricesManager.Update(productsPrices);
+                    manager.Update(productsPrices);
                 }
             }
 
-            investmentProductsPricesManager.SaveChanges();
+            manager.SaveChanges();
         }
 
         private async Task<HashSet<InvestmentProductsPrices>> getPricesOnlineYahoo(InvestmentProducts investmentProducts)

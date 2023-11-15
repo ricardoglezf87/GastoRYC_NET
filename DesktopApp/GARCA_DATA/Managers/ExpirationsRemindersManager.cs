@@ -1,10 +1,12 @@
-﻿using GARCA.DAO.Repositories;
+﻿
+using Dapper.Contrib.Extensions;
 using GARCA.Models;
 using System.Linq.Expressions;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
-    public class ExpirationsRemindersManager : ManagerBase<ExpirationsReminders>
+    public class ExpirationsRemindersManager : ManagerBase<ExpirationsReminders, Int32>
     {
 #pragma warning disable CS8603
         protected override Expression<Func<ExpirationsReminders, object>>[] GetIncludes()
@@ -32,6 +34,9 @@ namespace GARCA.Data.Managers
 
         public IEnumerable<ExpirationsReminders>? GetByTransactionReminderid(int? id)
         {
+
+            return iRycContextService.getConnection().Get<ExpirationsReminders>();
+
             using (var unitOfWork = new UnitOfWork(new RycContext()))
             {
                 var repository = unitOfWork.GetRepositoryModelBase<ExpirationsReminders>();

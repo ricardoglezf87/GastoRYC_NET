@@ -155,20 +155,23 @@ namespace GARCA.WebReport
 
             var accountsTypes = iAccountsTypesService.GetAll();
             var transactions = await Task.Run(() => iTransactionsArchivedService.GetAll());
-            loadDialog.setMax(transactions.Count);
-
-            foreach (var trans in transactions)
+            
+            if (transactions != null)
             {
-                var splits = await Task.Run(() => iSplitsArchivedService.GetbyTransactionid(trans.Id));
+                loadDialog.setMax(transactions.Count());
 
-                if (splits != null && splits.Count > 0)
+                foreach (var trans in transactions)
                 {
-                    Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
-                    foreach (var spl in splits)
+                    var splits = await Task.Run(() => iSplitsArchivedService.GetbyTransactionid(trans.Id));
+
+                    if (splits != null && splits.Count > 0)
                     {
-                        balance += spl.Amount ?? 0;
-                        filasDeDatos.Add(
-                           new[] {
+                        Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
+                        foreach (var spl in splits)
+                        {
+                            balance += spl.Amount ?? 0;
+                            filasDeDatos.Add(
+                               new[] {
                                         trans.IdOriginal.ToString() ?? "0",
                                         DateToStringJs(trans.Date),
                                         trans.Account?.Description ?? "Sin Cuenta",
@@ -185,13 +188,13 @@ namespace GARCA.WebReport
                                         (trans.Account.AccountsTypesid ?? -99).ToString(),
                                         accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
                                         trans.Account.Closed.ToString() ?? "False"
-                           });
+                               });
+                        }
                     }
-                }
-                else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Loans)
-                {
-                    filasDeDatos.Add(
-                        new[] {
+                    else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Loans)
+                    {
+                        filasDeDatos.Add(
+                            new[] {
                                 trans.Id.ToString(),
                                 DateToStringJs(trans.Date),
                                 trans.Account?.Description ?? "Sin Cuenta",
@@ -208,12 +211,12 @@ namespace GARCA.WebReport
                                 (trans.Account.AccountsTypesid ?? -99).ToString(),
                                 accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
                                 trans.Account.Closed.ToString() ?? "False"
-                        });
-                }
-                else
-                {
-                    filasDeDatos.Add(
-                        new[] {
+                            });
+                    }
+                    else
+                    {
+                        filasDeDatos.Add(
+                            new[] {
                                 trans.Id.ToString(),
                                 DateToStringJs(trans.Date),
                                 trans.Account?.Description ?? "Sin Cuenta",
@@ -230,11 +233,11 @@ namespace GARCA.WebReport
                                 (trans.Account.AccountsTypesid ?? -99).ToString(),
                                 accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
                                 trans.Account.Closed.ToString() ?? "False"
-                        });
+                            });
+                    }
+                    loadDialog.PerformeStep();
                 }
-                loadDialog.PerformeStep();
             }
-
             await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "PYG");
         }
 

@@ -1,35 +1,20 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
+using GARCA_DATA.Managers;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsRemindersService
+    public class TransactionsRemindersService : ServiceBase<TransactionsRemindersManager, TransactionsReminders, Int32>
     {
-        private readonly TransactionsRemindersManager transactionsRemindersManager;
 
-        public TransactionsRemindersService()
-        {
-            transactionsRemindersManager = new();
-        }
-
-        #region TransactionsRemindersActions
-
-        public HashSet<TransactionsReminders>? GetAll()
-        {
-            return transactionsRemindersManager.GetAll()?.ToHashSet();
-        }
-
-        public TransactionsReminders? GetById(int? id)
-        {
-            return transactionsRemindersManager.GetById(id);
-        }
+        #region TransactionsRemindersActions        
 
         public TransactionsReminders? Update(TransactionsReminders transactionsReminders)
         {
             iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
-            return transactionsRemindersManager.Update(transactionsReminders);
+            return manager.Update(transactionsReminders);
         }
 
         public void Delete(TransactionsReminders? transactionsReminders)
@@ -37,7 +22,7 @@ namespace GARCA.Data.Services
             if (transactionsReminders != null)
             {
                 iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
-                transactionsRemindersManager.Delete(transactionsReminders);
+                manager.Delete(transactionsReminders);
             }
         }
 

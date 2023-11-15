@@ -1,12 +1,12 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
+using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {
-    public class PeriodsRemindersService
+    public class PeriodsRemindersService : ServiceBase<PeriodsRemindersManager, PeriodsReminders, Int32>
     {
-        private readonly PeriodsRemindersManager periodsRemindersManager;
 
         public enum EPeriodsReminders
         {
@@ -17,21 +17,6 @@ namespace GARCA.Data.Services
             Quarterly = 5,
             Bianual = 6,
             Annual = 7
-        }
-
-        public PeriodsRemindersService()
-        {
-            periodsRemindersManager = new PeriodsRemindersManager();
-        }
-
-        public HashSet<PeriodsReminders>? GetAll()
-        {
-            return periodsRemindersManager.GetAll()?.ToHashSet();
-        }
-
-        public PeriodsReminders? GetById(int? id)
-        {
-            return periodsRemindersManager.GetById(id);
         }
 
         public EPeriodsReminders? ToEnum(PeriodsReminders? periodsReminders)

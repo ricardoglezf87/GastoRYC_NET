@@ -4,35 +4,16 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class SplitsArchivedService
+    public class SplitsArchivedService : ServiceBase<SplitsArchivedManager, SplitsArchived, Int32>
     {
-
-        private readonly SplitsArchivedManager splitsManager;
-
-        public SplitsArchivedService()
-        {
-            splitsManager = new SplitsArchivedManager();
-        }
-
         public HashSet<SplitsArchived>? GetbyTransactionid(int transactionid)
         {
-            return splitsManager.GetbyTransactionid(transactionid)?.ToHashSet();
-        }
-
-        public SplitsArchived? GetById(int? id)
-        {
-            return splitsManager.GetById(id);
+            return manager.GetbyTransactionid(transactionid)?.ToHashSet();
         }
 
         public void Update(SplitsArchived splits)
         {
-            splitsManager.Update(splits);
+            manager.Update(splits);
         }
-
-        public void Delete(SplitsArchived splits)
-        {
-            splitsManager.Delete(splits);
-        }
-
     }
 }

@@ -2,7 +2,7 @@
 
 namespace GARCA.Data.Managers
 {
-    public class TagsManager : ManagerBase<Tags>
+    public class TagsManager : ManagerBase<Tags, Int32>
     {
     }
 }

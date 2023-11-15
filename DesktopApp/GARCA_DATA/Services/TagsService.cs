@@ -4,33 +4,11 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class TagsService
+    public class TagsService : ServiceBase<TagsManager, Tags, Int32>
     {
-        private readonly TagsManager tagsManager;
-
-        public TagsService()
-        {
-            tagsManager = new TagsManager();
-        }
-
-        public HashSet<Tags>? GetAll()
-        {
-            return tagsManager.GetAll()?.ToHashSet();
-        }
-
-        public Tags? GetById(int? id)
-        {
-            return tagsManager.GetById(id);
-        }
-
         public void Update(Tags tags)
         {
-            tagsManager.Update(tags);
-        }
-
-        public void Delete(Tags tags)
-        {
-            tagsManager.Delete(tags);
+            manager.Update(tags);
         }
     }
 }

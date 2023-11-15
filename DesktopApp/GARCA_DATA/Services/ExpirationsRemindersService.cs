@@ -1,26 +1,15 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
+using GARCA_DATA.Managers;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
 {
-    public class ExpirationsRemindersService
+    public class ExpirationsRemindersService : ServiceBase<ExpirationsRemindersManager, ExpirationsReminders, Int32>
     {
-        private readonly ExpirationsRemindersManager expirationsRemindersManager;
-
-        public ExpirationsRemindersService()
-        {
-            expirationsRemindersManager = new ExpirationsRemindersManager();
-        }
-
-        private HashSet<ExpirationsReminders>? GetAll()
-        {
-            return expirationsRemindersManager.GetAll()?.ToHashSet();
-        }
-
-        private HashSet<ExpirationsReminders>? GetAllWithGeneration()
+        private IEnumerable<ExpirationsReminders>? GetAllWithGeneration()
         {
             GenerationAllExpirations();
             return GetAll();
@@ -28,7 +17,7 @@ namespace GARCA.Data.Services
 
         private bool ExistsExpiration(TransactionsReminders? transactionsReminder, DateTime? date)
         {
-            return expirationsRemindersManager.ExistsExpiration(transactionsReminder, date);
+            return manager.ExistsExpiration(transactionsReminder, date);
         }
 
         private HashSet<ExpirationsReminders>? GetAllPendingWithGeneration()
@@ -89,7 +78,7 @@ namespace GARCA.Data.Services
         {
             if (id != null)
             {
-                var expirationsReminders = GetById(id);
+                var expirationsReminders = GetById(id ?? -99);
                 if (expirationsReminders != null && expirationsReminders.TransactionsReminders != null)
                 {
                     Transactions? transactions = new();
@@ -192,7 +181,7 @@ namespace GARCA.Data.Services
                 Personid = transactions.Personid,
                 Person = transactions.Person,
                 Categoryid = transactions.Account.Categoryid,
-                Category = iCategoriesService.GetById(transactions.Account.Categoryid),
+                Category = iCategoriesService.GetById(transactions.Account.Categoryid ?? -99),
                 Memo = splits.Memo,
                 Tagid = transactions.Tagid,
                 AmountIn = splits.AmountOut,
@@ -213,7 +202,7 @@ namespace GARCA.Data.Services
                 Personid = transactions.Personid,
                 Person = transactions.Person,
                 Categoryid = transactions.Account?.Categoryid,
-                Category = iCategoriesService.GetById(transactions.Account?.Categoryid),
+                Category = iCategoriesService.GetById(transactions.Account?.Categoryid ?? -99),
                 Memo = transactions.Memo,
                 Tagid = transactions.Tagid,
                 Tag = transactions.Tag,
@@ -223,24 +212,15 @@ namespace GARCA.Data.Services
             return tContraria;
         }
 
-        public ExpirationsReminders? GetById(int? id)
-        {
-            return expirationsRemindersManager.GetById(id);
-        }
 
         private HashSet<ExpirationsReminders>? GetByTransactionReminderid(int? id)
         {
-            return expirationsRemindersManager.GetByTransactionReminderid(id)?.ToHashSet();
+            return manager.GetByTransactionReminderid(id)?.ToHashSet();
         }
 
         public void Update(ExpirationsReminders expirationsReminders)
         {
-            expirationsRemindersManager.Update(expirationsReminders);
-        }
-
-        private void Delete(ExpirationsReminders? expirationsReminders)
-        {
-            expirationsRemindersManager.Delete(expirationsReminders);
+            manager.Update(expirationsReminders);
         }
 
         public void DeleteByTransactionReminderid(int id)

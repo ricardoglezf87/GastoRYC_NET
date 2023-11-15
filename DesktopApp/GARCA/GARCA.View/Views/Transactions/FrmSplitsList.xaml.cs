@@ -45,7 +45,7 @@ namespace GARCA.View.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.Category = iCategoriesService.GetById(splits.Categoryid);
+                        splits.Category = iCategoriesService.GetById(splits.Categoryid ?? -99);
                         break;
                 }
             }
@@ -89,7 +89,7 @@ namespace GARCA.View.Views
             {
                 if (splits.Tranferid != null)
                 {
-                    iTransactionsService.Delete(iTransactionsService.GetById(splits.Tranferid));
+                    iTransactionsService.Delete(iTransactionsService.GetById(splits.Tranferid ?? -99));
                 }
                 iSplitsService.Delete(splits);
             }

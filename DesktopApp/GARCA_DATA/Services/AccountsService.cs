@@ -1,33 +1,17 @@
 ﻿using Dapper;
 using GARCA.Data.Managers;
 using GARCA.Models;
-using GARCA_DATA.Services;
+using GARCA.Data.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
-
+using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {
-    public class AccountsService : IServiceCache<Accounts>
+    public class AccountsService : ServiceBase<AccountsManager,Accounts, Int32>
     {
-        protected override IEnumerable<Accounts>? GetAllCache()
-        {
-            return iRycContextService.getConnection().Query<Accounts,AccountsTypes,Accounts>(
-                @"
-                    select * 
-                    from Accounts
-                        inner join AccountsTypes on AccountsTypes.Id = Accounts.accountsTypesid
-                "
-                ,(a, at) =>
-            {
-                a.AccountsTypes = at;
-                return a;
-            }).AsEnumerable();
-
-        }
-
         public HashSet<Accounts>? GetAllOpened()
         {
             return GetAll()?.Where(x=> x.Closed is null || x.Closed is false).ToHashSet();

@@ -35,7 +35,7 @@ namespace GARCA.View.Views
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
                 {
                     case "categoriesTypesid":
-                        categories.CategoriesTypes = iCategoriesTypesService.GetById(categories.CategoriesTypesid);
+                        categories.CategoriesTypes = iCategoriesTypesService.GetById(categories.CategoriesTypesid ?? -99);
                         break;
                 }
             }
@@ -65,7 +65,7 @@ namespace GARCA.View.Views
 
             if (categories.CategoriesTypes == null && categories.CategoriesTypesid != null)
             {
-                categories.CategoriesTypes = iCategoriesTypesService.GetById(categories.CategoriesTypesid);
+                categories.CategoriesTypes = iCategoriesTypesService.GetById(categories.CategoriesTypesid ?? -99);
             }
 
             iCategoriesService.Update(categories);

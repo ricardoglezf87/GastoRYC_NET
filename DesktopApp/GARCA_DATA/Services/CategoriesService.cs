@@ -1,37 +1,22 @@
 ﻿using Dapper;
-using GARCA.DAO.Repositories;
+
 using GARCA.Data.Managers;
 using GARCA.Models;
-using GARCA_DATA.Services;
+using GARCA.Data.Services;
 using Microsoft.Data.Sqlite;
 using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
+using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {
-    public class CategoriesService : IServiceCache<Categories>
+    public class CategoriesService : ServiceBase<CategoriesManager, Categories, Int32>
     {
         public enum ESpecialCategories
         {
             Cierre = -2,
             Split = -1,
             WithoutCategory = 0
-        }
-
-        protected override IEnumerable<Categories>? GetAllCache()
-        {
-            return iRycContextService.getConnection().Query<Categories, CategoriesTypes, Categories>(
-                @"
-                    select * 
-                    from Categories
-                        inner join CategoriesTypes on CategoriesTypes.Id = Categories.categoriesTypesid
-                "
-                , (a, at) =>
-                {
-                    a.CategoriesTypes = at;
-                    return a;
-                }).AsEnumerable();
-
         }
 
         public HashSet<Categories>? GetAllWithoutSpecialTransfer()

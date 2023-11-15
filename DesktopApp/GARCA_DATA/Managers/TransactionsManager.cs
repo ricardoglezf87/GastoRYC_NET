@@ -1,27 +1,44 @@
-﻿using GARCA.DAO.Repositories;
+﻿using Dapper;
+
 using GARCA.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
-    public class TransactionsManager : ManagerBase<Transactions>
+    public class TransactionsManager : ManagerBase<Transactions, Int32>
     {
 
-#pragma warning disable CS8603
-        protected override Expression<Func<Transactions, object>>[] GetIncludes()
+        protected override string GetGeneralQuery()
         {
-            return new Expression<Func<Transactions, object>>[]
-            {
-                a => a.Account,
-                a => a.Person,
-                a => a.Category,
-                a => a.Tag,
-                a => a.InvestmentProducts,
-                a => a.TransactionStatus
-            };
+            return @"
+                    select * 
+                    from Transactions    
+                        inner join Accounts on Accounts.Id = Transactions.Accountid 
+                        inner join Categories on Categories.Id = Transactions.Categoryid 
+                        inner join TransactionsStatus on TransactionsStatus.Id = Transactions.TransactionStatusid                                       
+                        left join Persons on Categories.Id = Transactions.Personid                         
+                        left join Tags on Tags.Id = Transactions.Tagid                         
+                        left join InvestmentProducts on InvestmentProducts.Id = Transactions.InvestmentProductsid
+                    ";
         }
-#pragma warning restore CS8603
+
+        public async override Task<IEnumerable<Transactions>?> GetAll()
+        {
+            return await iRycContextService.getConnection().QueryAsync<Transactions, Accounts, Categories, TransactionsStatus, Persons, Tags, InvestmentProducts, Transactions>(
+                GetGeneralQuery()
+                , (transactions, accounts, categories, transactionsStatus, persons, tags, investmentProducts) =>
+                {
+                    transactions.Account = accounts;
+                    transactions.Category = categories;
+                    transactions.Person = persons;
+                    transactions.Tag = tags;
+                    transactions.TransactionStatus = transactionsStatus;
+                    transactions.InvestmentProducts = investmentProducts;
+                    return transactions;
+                });
+        }
 
         public int GetNextId()
         {

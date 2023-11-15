@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using GARCA.DAO.Repositories;
+
 using GARCA.Data.Managers;
 using GARCA.Models;
 using Microsoft.Data.Sqlite;
@@ -13,9 +13,9 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GARCA_DATA.Services
+namespace GARCA.Data.Services
 {   
-    public class IServiceCache<TEntity> where TEntity : ModelBase
+    public class IServiceCache<TEntity> where TEntity : ModelBase<Int32>
     {
         protected ObjectCache oCache = MemoryCache.Default;
         private readonly DbContext context;
@@ -46,17 +46,18 @@ namespace GARCA_DATA.Services
 
         public virtual TEntity Update(TEntity entity)
         {
+            return null;
             return Entities.Update(entity).Entity;
         }
 
         public virtual void Delete(TEntity entity)
         {
-            Entities.Remove(entity);
+          //  Entities.Remove(entity);
         }
 
         public void SaveChanges()
         {
-            context.SaveChangesAsync();
+            //context.SaveChangesAsync();
         }
 
         protected void FillCache()

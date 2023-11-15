@@ -44,7 +44,7 @@ namespace GARCA.View.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.Category = iCategoriesService.GetById(splitsReminders.Categoryid);
+                        splitsReminders.Category = iCategoriesService.GetById(splitsReminders.Categoryid ?? -99);
                         break;
                 }
             }
@@ -84,7 +84,7 @@ namespace GARCA.View.Views
         {
             if (splitsReminders.Category == null && splitsReminders.Categoryid != null)
             {
-                splitsReminders.Category = iCategoriesService.GetById(splitsReminders.Categoryid);
+                splitsReminders.Category = iCategoriesService.GetById(splitsReminders.Categoryid ?? -99);
             }
 
             splitsReminders.AmountIn ??= 0;
@@ -99,7 +99,7 @@ namespace GARCA.View.Views
             {
                 if (splitsReminders.Tranferid != null)
                 {
-                    iTransactionsRemindersService.Delete(iTransactionsRemindersService.GetById(splitsReminders.Tranferid));
+                    iTransactionsRemindersService.Delete(iTransactionsRemindersService.GetById(splitsReminders.Tranferid ?? -99));
                 }
                 iSplitsRemindersService.Delete(splitsReminders);
             }

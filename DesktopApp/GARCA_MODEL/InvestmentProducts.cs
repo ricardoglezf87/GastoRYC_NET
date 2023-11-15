@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.Models
 {
     [Table("InvestmentProducts")]
-    public class InvestmentProducts : ModelBase
+    public class InvestmentProducts : ModelBase<Int32>
     {
         [Column("description")]
         public virtual String? Description { set; get; }

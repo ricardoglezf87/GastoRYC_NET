@@ -4,25 +4,7 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class InvestmentProductsTypesService
+    public class InvestmentProductsTypesService : ServiceBase<InvestmentProductsTypesManager, InvestmentProductsTypes, Int32>
     {
-        private readonly InvestmentProductsTypesManager investementProductsTypesManager;
-
-        public InvestmentProductsTypesService()
-        {
-            investementProductsTypesManager = new InvestmentProductsTypesManager();
-        }
-
-        public HashSet<InvestmentProductsTypes>? GetAll()
-        {
-            return investementProductsTypesManager.GetAll()?.ToHashSet();
-        }
-
-        public InvestmentProductsTypes? GetById(int? id)
-        {
-            return investementProductsTypesManager.GetById(id);
-        }
-
-
     }
 }

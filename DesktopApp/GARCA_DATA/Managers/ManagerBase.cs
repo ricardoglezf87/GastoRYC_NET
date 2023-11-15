@@ -1,136 +1,69 @@
-﻿using GARCA.DAO.Repositories;
+﻿using Dapper;
+using Dommel;
 using GARCA.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
-    public class ManagerBase<T> where T : ModelBase
+    public class ManagerBase<T,Q> 
+        where T : ModelBase<Q>, new()        
     {
-#pragma warning disable CS8603
-        protected virtual Expression<Func<T, object>>[] GetIncludes()
+        public async virtual Task<IEnumerable<T>?> GetAll()
         {
-            return null;
-        }
-#pragma warning restore CS8603
-
-        protected IQueryable<T>? GetEntyWithInclude(Repository<T> repository)
-        {
-            var query = repository.Entities.AsQueryable();
-
-            foreach (var include in GetIncludes())
-            {
-                query = query?.Include(include);
-            }
-
-            return query;
+            return await iRycContextService.getConnection().GetAllAsync<T>();   
         }
 
-        public IEnumerable<T>? GetAll()
-        {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<T>();
-                var query = repository.GetAllWithInclude(GetIncludes());
-
-                foreach (var item in query)
-                {
-                    yield return item;
-                }
-            }
-        }
-
-        public T? GetById(int? id)
-        {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<T>();
-                return repository.GetWithInclude(id, GetIncludes());
-            }
-        }
-
-        public T? Update(T? obj)
-        {
-            if (obj != null)
-            {
-                using (var unitOfWork = new UnitOfWork(new RycContext()))
-                {
-                    var repository = unitOfWork.GetRepositoryModelBase<T>();
-                    var entity = repository.Update(obj);
-                    repository.SaveChanges();
-                    return entity;
-                }
-            }
-            return null;
-        }
-
-        public void UpdateList(List<T?>? lObj)
-        {
-            if (lObj != null)
-            {
-                using (var unitOfWork = new UnitOfWork(new RycContext()))
-                {
-                    var repository = unitOfWork.GetRepositoryModelBase<T>();
-                    foreach (var item in lObj)
-                    {
-                        if (item != null)
-                        {
-                            repository.Update(item);
-                        }
-                    }
-                    repository.SaveChanges();
-                }
-            }
-        }
-
-        public void UpdateList(IEnumerable<T?>? lObj)
-        {
-            if (lObj != null)
-            {
-                using (var unitOfWork = new UnitOfWork(new RycContext()))
-                {
-                    var repository = unitOfWork.GetRepositoryModelBase<T>();
-                    foreach (var item in lObj)
-                    {
-                        if (item != null)
-                        {
-                            repository.Update(item);
-                        }
-                    }
-                    repository.SaveChanges();
-                }
-            }
-        }
-
-
-        public void Delete(T? obj)
-        {
-            if (obj != null)
-            {
-                using (var unitOfWork = new UnitOfWork(new RycContext()))
-                {
-                    var repository = unitOfWork.GetRepositoryModelBase<T>();
-                    repository.Delete(obj);
-                    repository.SaveChanges();
-                }
-            }
-        }
-
-        public void Delete(int? id)
+        public async virtual Task<T?> GetById(Q id)
         {
             if (id != null)
             {
-                Delete(GetById(id));
+                return await iRycContextService.getConnection().GetAsync<T>(id);
             }
+            return null;
         }
 
-        public void SaveChanges()
+        public async virtual Task<T> Save(T obj)
         {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
+            if(obj.Id != null)
             {
-                var repository = unitOfWork.GetRepositoryModelBase<T>();
-                repository.SaveChanges();
+                await Update(obj);
             }
+            else
+            {
+                obj = await Insert(obj);
+            }
+            return obj;           
+        }
+
+        public async virtual Task<bool> Update(T obj)
+        {
+            return await iRycContextService.getConnection().UpdateAsync(obj);            
+        }
+
+        public async virtual Task<bool> Update(IEnumerable<T> lObj)
+        {
+            return await iRycContextService.getConnection().UpdateAsync(lObj);
+        }
+
+        public async virtual Task<T> Insert(T obj)
+        {
+            return (T) await iRycContextService.getConnection().InsertAsync(obj);
+        }
+
+        public async virtual Task<IEnumerable<T>> Insert(IEnumerable<T> lObj)
+        {
+            return (IEnumerable<T>) await iRycContextService.getConnection().InsertAsync(lObj);
+        }
+
+        public async virtual Task<bool> Delete(T obj)
+        {
+            return await Delete(obj.Id);
+        }
+
+        public async virtual Task<bool> Delete(Q id)
+        {
+            return await iRycContextService.getConnection().DeleteAsync(new T() { Id = id });
         }
     }
 }

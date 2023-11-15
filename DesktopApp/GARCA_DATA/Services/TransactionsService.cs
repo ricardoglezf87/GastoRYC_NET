@@ -1,42 +1,16 @@
 ﻿using Dapper;
-using GARCA.DAO.Repositories;
+
 using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
-using GARCA_DATA.Services;
+using GARCA.Data.Services;
 using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsService : IServiceCache<Transactions>
+    public class TransactionsService : ServiceBase<TransactionsManager,Transactions,Int32>
     {
-
-        protected override IEnumerable<Transactions>? GetAllCache()
-        {
-            return iRycContextService.getConnection().Query<Transactions,Accounts,Categories,TransactionsStatus,Persons,Tags,InvestmentProducts,Transactions>(
-                @"
-                    select * 
-                    from Transactions    
-                        inner join Accounts on Accounts.Id = Transactions.Accountid 
-                        inner join Categories on Categories.Id = Transactions.Categoryid 
-                        inner join TransactionsStatus on TransactionsStatus.Id = Transactions.TransactionStatusid                                       
-                        left join Persons on Categories.Id = Transactions.Personid                         
-                        left join Tags on Tags.Id = Transactions.Tagid                         
-                        left join InvestmentProducts on InvestmentProducts.Id = Transactions.InvestmentProductsid
-                "
-                , (transactions, accounts, categories, transactionsStatus, persons, tags, investmentProducts) =>
-                {
-                    transactions.Account = accounts;
-                    transactions.Category = categories;
-                    transactions.Person = persons;
-                    transactions.Tag = tags;
-                    transactions.TransactionStatus = transactionsStatus;
-                    transactions.InvestmentProducts = investmentProducts;
-                    return transactions;
-                }).AsEnumerable();
-        }
-
         #region TransactionsActions
 
         public HashSet<Transactions>? GetAllOpenned()
@@ -59,20 +33,9 @@ namespace GARCA.Data.Services
         {
             transactions.Date = transactions.Date.RemoveTime();
             transactions.Orden = CreateOrden(transactions);
-            return base.Update(transactions);
+            return manager.Update(transactions);
         }         
-
-        private void UpdateList(IEnumerable<Transactions?>? lObj)
-        {
-            foreach (var item in lObj)
-            {
-                if (item != null)
-                {
-                    Update(item);
-                }
-            }
-            SaveChanges();
-        }
+        
         public IEnumerable<Transactions>? GetAllOpennedOrderByOrdenDesc()
         {
             return GetAll()?.OrderByDescending(x => x.Orden);
@@ -116,7 +79,7 @@ namespace GARCA.Data.Services
 
         private int GetNextId()
         {
-            return 999999;
+            return manager.GetNextId();
         }
 
         private double CreateOrden(Transactions transactions)
@@ -177,7 +140,7 @@ namespace GARCA.Data.Services
             if (transactions.Tranferid != null &&
                 transactions.Category.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = GetById(transactions.Tranferid);
+                var tContraria = GetById(transactions.Tranferid ?? -99);
                 if (tContraria != null)
                 {
                     Delete(tContraria);
@@ -194,7 +157,7 @@ namespace GARCA.Data.Services
                     Date = transactions.Date,
                     Accountid = iAccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
                     Personid = transactions.Personid,
-                    Categoryid = iAccountsService.GetById(transactions.Accountid)?.Categoryid,
+                    Categoryid = iAccountsService.GetById(transactions.Accountid ?? -99)?.Categoryid,
                     Memo = transactions.Memo,
                     Tagid = transactions.Tagid,
                     AmountIn = transactions.AmountOut,
@@ -210,13 +173,13 @@ namespace GARCA.Data.Services
             else if (transactions.Tranferid != null &&
                 transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = GetById(transactions.Tranferid);
+                var tContraria = await GetById(transactions.Tranferid ?? -1);
                 if (tContraria != null)
                 {
                     tContraria.Date = transactions.Date;
                     tContraria.Accountid = iAccountsService.GetByCategoryId(transactions.Categoryid)?.Id;
                     tContraria.Personid = transactions.Personid;
-                    tContraria.Categoryid = iAccountsService.GetById(transactions.Accountid)?.Categoryid;
+                    tContraria.Categoryid = iAccountsService.GetById(transactions.Accountid ?? -99)?.Categoryid;
                     tContraria.Memo = transactions.Memo;
                     tContraria.Tagid = transactions.Tagid;
                     tContraria.AmountIn = transactions.AmountOut;
@@ -237,7 +200,7 @@ namespace GARCA.Data.Services
             if (transactions.TranferSplitid != null &&
                 transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = iSplitsService.GetById(transactions.TranferSplitid);
+                var tContraria = iSplitsService.GetById(transactions.TranferSplitid ?? -99);
                 if (tContraria != null)
                 {
                     tContraria.Transaction.Date = transactions.Date;
@@ -297,12 +260,12 @@ namespace GARCA.Data.Services
 
         public void UpdateTranferSplits(Transactions? transactions, ref Splits splits)
         {
-            Categories? category = iCategoriesService.GetById(splits.Categoryid);
+            Categories? category = iCategoriesService.GetById(splits.Categoryid ?? -99);
 
             if (splits.Tranferid != null &&
                 category?.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = GetById(splits.Tranferid);
+                var tContraria = GetById(splits.Tranferid ?? -99);
                 if (tContraria != null)
                 {
                     Delete(tContraria);
@@ -319,7 +282,7 @@ namespace GARCA.Data.Services
                     Date = transactions.Date,
                     Accountid = iAccountsService.GetByCategoryId(splits.Categoryid)?.Id,
                     Personid = transactions.Personid,
-                    Categoryid = iAccountsService.GetById(transactions.Accountid).Categoryid,
+                    Categoryid = iAccountsService.GetById(transactions.Accountid ?? -99).Categoryid,
                     Memo = splits.Memo,
                     Tagid = transactions.Tagid,
                     AmountIn = splits.AmountOut,
@@ -334,13 +297,13 @@ namespace GARCA.Data.Services
             else if (splits.Tranferid != null &&
                 category?.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
             {
-                var tContraria = GetById(splits.Tranferid);
+                var tContraria = GetById(splits.Tranferid ?? -99);
                 if (tContraria != null)
                 {
                     tContraria.Date = transactions.Date;
                     tContraria.Accountid = iAccountsService.GetByCategoryId(splits.Categoryid)?.Id;
                     tContraria.Personid = transactions.Personid;
-                    tContraria.Categoryid = iAccountsService.GetById(transactions.Accountid).Categoryid;
+                    tContraria.Categoryid = iAccountsService.GetById(transactions.Accountid ?? -99).Categoryid;
                     tContraria.Memo = splits.Memo;
                     tContraria.Tagid = transactions.Tagid;
                     tContraria.AmountIn = splits.AmountOut ?? 0;

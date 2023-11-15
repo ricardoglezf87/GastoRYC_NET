@@ -176,7 +176,7 @@ namespace GARCA.View.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
-                    transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid);
+                    transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
                     iTransactionsService.Update(transactions);
                 }
                 await parentForm.LoadAccounts();
@@ -195,7 +195,7 @@ namespace GARCA.View.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
-                    transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid);
+                    transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
                     iTransactionsService.Update(transactions);
                 }
                 await parentForm.LoadAccounts();
@@ -214,7 +214,7 @@ namespace GARCA.View.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
-                    transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid);
+                    transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
                     iTransactionsService.Update(transactions);
                 }
                 await parentForm.LoadAccounts();
@@ -284,7 +284,7 @@ namespace GARCA.View.Views
                         var splits = lSplits[i];
                         if (splits.Tranferid != null)
                         {
-                            iTransactionsService.Delete(iTransactionsService.GetById(splits.Tranferid));
+                            iTransactionsService.Delete(iTransactionsService.GetById(splits.Tranferid ?? -99));
                         }
 
                         iSplitsService.Delete(splits);
@@ -293,7 +293,7 @@ namespace GARCA.View.Views
 
                 if (transactions.Tranferid != null)
                 {
-                    iTransactionsService.Delete(iTransactionsService.GetById(transactions.Tranferid));
+                    iTransactionsService.Delete(iTransactionsService.GetById(transactions.Tranferid ?? -99));
                 }
 
                 iTransactionsService.Delete(transactions);

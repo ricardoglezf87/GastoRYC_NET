@@ -4,12 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.Models
 {
     [Table("DateCalendar")]
-    public class DateCalendar
-    {
-        [Key]
-        [Column("date")]
-        public virtual DateTime Date { set; get; }
-
+    public class DateCalendar : ModelBase<DateTime>
+    {        
         [Column("day")]
         public virtual int? Day { set; get; }
 
@@ -20,3 +16,5 @@ namespace GARCA.Models
         public virtual int? Year { set; get; }
     }
 }
+
+//TODO: Hay que realizar la migracion del campo date por i

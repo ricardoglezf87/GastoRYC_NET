@@ -1,44 +1,25 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
+using GARCA_DATA.Managers;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsArchivedService
+    public class TransactionsArchivedService : ServiceBase<TransactionsArchivedManager, TransactionsArchived, Int32>
     {
-        #region Propiedades y Contructor
 
-        private readonly TransactionsArchivedManager transactionsManager;
-
-        public TransactionsArchivedService()
-        {
-            transactionsManager = new TransactionsArchivedManager();
-        }
-
-        #endregion Propiedades y Contructor
-
-        #region TransactionsArchivedActions
-
-        public HashSet<TransactionsArchived>? GetAll()
-        {
-            return transactionsManager.GetAll()?.ToHashSet();
-        }
-
-        public TransactionsArchived? GetById(int? id)
-        {
-            return transactionsManager.GetById(id);
-        }
+        #region TransactionsArchivedActions      
 
         private HashSet<TransactionsArchived>? GetByInvestmentProduct(int? id)
         {
-            return transactionsManager.GetByInvestmentProduct(id)?.ToHashSet();
+            return manager.GetByInvestmentProduct(id)?.ToHashSet();
         }
 
         public HashSet<TransactionsArchived>? GetByPerson(int? id)
         {
-            return transactionsManager.GetByPerson(id)?.ToHashSet();
+            return manager.GetByPerson(id)?.ToHashSet();
         }
 
         public HashSet<TransactionsArchived>? GetByPerson(Persons? person)
@@ -53,17 +34,12 @@ namespace GARCA.Data.Services
 
         public TransactionsArchived? Update(TransactionsArchived? transactions)
         {
-            return transactionsManager.Update(transactions);
+            return manager.Update(transactions);
         }
-
-        public void Delete(TransactionsArchived? transactions)
-        {
-            transactionsManager.Delete(transactions);
-        }
-
+       
         public HashSet<TransactionsArchived>? GetByAccount(int? id)
         {
-            return transactionsManager.GetByAccount(id)?.ToHashSet();
+            return manager.GetByAccount(id)?.ToHashSet();
         }
 
         public HashSet<TransactionsArchived>? GetByAccount(Accounts? accounts)

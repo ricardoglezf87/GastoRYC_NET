@@ -5,7 +5,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class SplitsService
+    public class SplitsService : ServiceBase<SplitsManager, Splits, Int32>
     {
 
         private readonly SplitsManager splitsManager;
@@ -25,26 +25,16 @@ namespace GARCA.Data.Services
             return splitsManager.GetbyTransactionid(transactionid)?.ToHashSet();
         }
 
-        public Splits? GetById(int? id)
-        {
-            return splitsManager.GetById(id);
-        }
-
         public void Update(Splits splits)
         {
             splitsManager.Update(splits);
-        }
-
-        public void Delete(Splits? splits)
-        {
-            splitsManager.Delete(splits);
         }
 
         public void SaveChanges(Splits splits)
         {
             if (splits.Category == null && splits.Categoryid != null)
             {
-                splits.Category = iCategoriesService.GetById(splits.Categoryid);
+                splits.Category = iCategoriesService.GetById(splits.Categoryid ?? -99);
             }
 
             splits.AmountIn ??= 0;

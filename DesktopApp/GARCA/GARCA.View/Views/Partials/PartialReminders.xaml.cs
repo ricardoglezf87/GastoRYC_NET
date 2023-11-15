@@ -87,7 +87,8 @@ namespace GARCA.View.Views
 
         private async Task PutDoneReminder(int? id)
         {
-            var expirationsReminders = iExpirationsRemindersService.GetById(id);
+            var expirationsReminders = iExpirationsRemindersService.GetById(id ?? -99);
+            
             if (expirationsReminders != null)
             {
                 expirationsReminders.Done = true;

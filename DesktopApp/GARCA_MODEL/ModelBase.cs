@@ -1,17 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GARCA.Models
 {
-    public class ModelBase : IComparable
+    public class ModelBase<T> : IComparable
     {
         [Key]
-        [Column("id")]
-        public virtual int Id { set; get; }
+        public virtual T Id { set; get; }
 
-        public virtual int CompareTo(object? obj)
+        public virtual int CompareTo(Object? obj)
         {
-            return obj == null ? 0 : Id.CompareTo(((ModelBase)obj).Id);
+            return obj == null ? 0 : Id.ToString().CompareTo(((ModelBase<T>)obj).Id);
         }
 
         public override bool Equals(object? obj)
@@ -24,9 +24,9 @@ namespace GARCA.Models
             if (ReferenceEquals(obj, null) || obj.GetType() != this.GetType())
             {
                 return false;
-            }                        
-            
-            return Id.Equals(((ModelBase)obj).Id) ;
+            }
+
+            return Id.Equals(((ModelBase<T>)obj).Id);
         }
 
         public override int GetHashCode()
@@ -34,7 +34,7 @@ namespace GARCA.Models
             return Id.GetHashCode();
         }
 
-        public static bool operator ==(ModelBase? left, ModelBase? right)
+        public static bool operator ==(ModelBase<T>? left, ModelBase<T>? right)
         {
             if (ReferenceEquals(left, null))
             {
@@ -44,29 +44,30 @@ namespace GARCA.Models
             return left.Equals(right);
         }
 
-        public static bool operator !=(ModelBase? left, ModelBase? right)
+        public static bool operator !=(ModelBase<T>? left, ModelBase<T>? right)
         {
             return !(left == right);
         }
 
-        public static bool operator <(ModelBase? left, ModelBase? right)
+        public static bool operator <(ModelBase<T>? left, ModelBase<T>? right)
         {
             return ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
         }
 
-        public static bool operator <=(ModelBase? left, ModelBase? right)
+        public static bool operator <=(ModelBase<T>? left, ModelBase<T>? right)
         {
             return ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
         }
 
-        public static bool operator >(ModelBase? left, ModelBase? right)
+        public static bool operator >(ModelBase<T>? left, ModelBase<T>? right)
         {
             return !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
         }
 
-        public static bool operator >=(ModelBase? left, ModelBase? right)
+        public static bool operator >=(ModelBase<T>? left, ModelBase<T>? right)
         {
             return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
         }
+
     }
 }
