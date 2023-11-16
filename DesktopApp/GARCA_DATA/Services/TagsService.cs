@@ -4,7 +4,7 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class TagsService : ServiceBase<TagsManager, Tags>
+    public class TagsService : ServiceBase<TagsManager, Tags, Int32>
     {
     }
 }

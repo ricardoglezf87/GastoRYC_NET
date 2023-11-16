@@ -2,7 +2,7 @@
 
 namespace GARCA.Data.Managers
 {
-    public class TransactionsStatusManager : ManagerBase<TransactionsStatus>
+    public class TransactionsStatusManager : ManagerBase<TransactionsStatus, Int32>
     {
     }
 }

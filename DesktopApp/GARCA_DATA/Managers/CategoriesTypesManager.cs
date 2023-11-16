@@ -10,7 +10,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
-    public class CategoriesTypesManager : ManagerBase<CategoriesTypes>
+    public class CategoriesTypesManager : ManagerBase<CategoriesTypes, Int32>
     {
     }
 }

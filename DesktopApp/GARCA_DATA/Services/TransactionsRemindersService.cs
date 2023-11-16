@@ -8,7 +8,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsRemindersService : ServiceBase<TransactionsRemindersManager, TransactionsReminders>
+    public class TransactionsRemindersService : ServiceBase<TransactionsRemindersManager, TransactionsReminders, Int32>
     {
 
         #region TransactionsRemindersActions        

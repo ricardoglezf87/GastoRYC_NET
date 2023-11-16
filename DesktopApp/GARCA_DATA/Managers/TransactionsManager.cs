@@ -7,7 +7,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
-    public class TransactionsManager : ManagerBase<Transactions>
+    public class TransactionsManager : ManagerBase<Transactions, Int32>
     {
         public async override Task<IEnumerable<Transactions>?> GetAll()
         {

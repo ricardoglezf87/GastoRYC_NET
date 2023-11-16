@@ -3,7 +3,7 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class DateCalendarService : ServiceBase<DateCalendarManager, DateCalendar>
+    public class DateCalendarService : ServiceBase<DateCalendarManager, DateCalendar,DateTime>
     {
         private readonly DateCalendarManager dateCalendarManager;
         private readonly DateTime initDate;

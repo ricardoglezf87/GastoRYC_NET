@@ -6,7 +6,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
-    public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPrices>
+    public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPrices, Int32>
     {
 //#pragma warning disable CS8603
 //        protected override Expression<Func<InvestmentProductsPrices, object>>[] GetIncludes()

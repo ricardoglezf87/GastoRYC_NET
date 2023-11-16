@@ -5,7 +5,7 @@ using Dommel;
 
 namespace GARCA.Data.Managers
 {
-    public class TransactionsArchivedManager : ManagerBase<TransactionsArchived>
+    public class TransactionsArchivedManager : ManagerBase<TransactionsArchived, Int32>
     {
 
 //#pragma warning disable CS8603

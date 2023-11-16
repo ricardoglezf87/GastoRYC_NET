@@ -7,7 +7,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class ExpirationsRemindersService : ServiceBase<ExpirationsRemindersManager, ExpirationsReminders>
+    public class ExpirationsRemindersService : ServiceBase<ExpirationsRemindersManager, ExpirationsReminders, Int32>
     {
         private async Task<IEnumerable<ExpirationsReminders>?> GetAllWithGeneration()
         {

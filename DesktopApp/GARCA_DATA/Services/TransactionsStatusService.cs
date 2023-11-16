@@ -4,7 +4,7 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsStatusService : ServiceBase<TransactionsStatusManager, TransactionsStatus>
+    public class TransactionsStatusService : ServiceBase<TransactionsStatusManager, TransactionsStatus, Int32>
     {       
         public enum ETransactionsTypes
         {

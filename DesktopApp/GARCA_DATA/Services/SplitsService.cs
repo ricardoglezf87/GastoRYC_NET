@@ -5,7 +5,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class SplitsService : ServiceBase<SplitsManager, Splits>
+    public class SplitsService : ServiceBase<SplitsManager, Splits, Int32>
     {
 
         private readonly SplitsManager splitsManager;

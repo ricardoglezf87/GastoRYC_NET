@@ -11,7 +11,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
-    public class CategoriesManager : ManagerBase<Categories>
+    public class CategoriesManager : ManagerBase<Categories, Int32>
     {
         public async override Task<IEnumerable<Categories>?> GetAll()
         {

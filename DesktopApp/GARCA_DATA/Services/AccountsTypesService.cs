@@ -8,7 +8,7 @@ using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {
-    public class AccountsTypesService : ServiceBase<AccountsTypesManager, AccountsTypes>
+    public class AccountsTypesService : ServiceBase<AccountsTypesManager, AccountsTypes, Int32>
     {
         public enum EAccountsTypes
         {

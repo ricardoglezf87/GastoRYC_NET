@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace GARCA.Data.Managers
 {
-    public class TransactionsRemindersManager : ManagerBase<TransactionsReminders>
+    public class TransactionsRemindersManager : ManagerBase<TransactionsReminders, Int32>
     {
 //#pragma warning disable CS8603
 //        protected override Expression<Func<TransactionsReminders, object>>[] GetIncludes()

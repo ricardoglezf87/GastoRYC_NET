@@ -9,7 +9,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsService : ServiceBase<TransactionsManager,Transactions>
+    public class TransactionsService : ServiceBase<TransactionsManager,Transactions,Int32>
     {
         #region TransactionsActions
 

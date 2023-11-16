@@ -3,7 +3,7 @@
 namespace GARCA.Models
 {
     [Table("ExpirationsReminders")]
-    public class ExpirationsReminders : ModelBase
+    public class ExpirationsReminders : ModelBase<Int32>
     {
         [Column("date")]
         public virtual DateTime? Date { set; get; }

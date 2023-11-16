@@ -1,6 +1,6 @@
 ﻿namespace GARCA.Models
 {
-    public class VPortfolio : ModelBase
+    public class VPortfolio : ModelBase<Int32>
     {
         public virtual string? Description { set; get; }
         public virtual int? InvestmentProductsTypesid { set; get; }

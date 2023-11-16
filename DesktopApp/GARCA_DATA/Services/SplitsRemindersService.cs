@@ -4,7 +4,7 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class SplitsRemindersService : ServiceBase<SplitsRemindersManager, SplitsReminders>
+    public class SplitsRemindersService : ServiceBase<SplitsRemindersManager, SplitsReminders, Int32>
     {
         public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionidNull()
         {

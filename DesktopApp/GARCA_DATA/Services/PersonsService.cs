@@ -6,7 +6,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class PersonsService : ServiceBase<PersonsManager, Persons>
+    public class PersonsService : ServiceBase<PersonsManager, Persons, Int32>
     {
         public async Task SetCategoryDefault(int id)
         {
