@@ -3,6 +3,7 @@ using GARCA.Models;
 using GARCA.Utils.Extensions;
 using GARCA.View.ViewModels;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -33,7 +34,7 @@ namespace GARCA.View.Views
 
         #region Events
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             LoadTransactions();
         }
@@ -75,7 +76,7 @@ namespace GARCA.View.Views
             MessageBox.Show("Funcionalidad no implementada");
         }
 
-        private void btnAddReminder_Click(object sender, RoutedEventArgs e)
+        private async void btnAddReminder_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
@@ -96,9 +97,9 @@ namespace GARCA.View.Views
                         transactionsReminders.Tagid = transactions.Tagid;
                         transactionsReminders.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
 
-                        transactionsReminders = iTransactionsRemindersService.Update(transactionsReminders);
+                        transactionsReminders = await iTransactionsRemindersService.Save(transactionsReminders);
 
-                        foreach (var splits in iSplitsService.GetbyTransactionid(transactions.Id))
+                        foreach (var splits in await iSplitsService.GetbyTransactionid(transactions.Id))
                         {
                             SplitsReminders splitsReminders = new();
                             splitsReminders.Transactionid = transactionsReminders.Id;
@@ -107,7 +108,7 @@ namespace GARCA.View.Views
                             splitsReminders.AmountIn = splits.AmountIn;
                             splitsReminders.AmountOut = splits.AmountOut;
                             splitsReminders.Tagid = splits.Tagid;
-                            iSplitsRemindersService.Update(splitsReminders);
+                            await iSplitsRemindersService.Update(splitsReminders);
                         }
 
                         FrmTransactionReminders frm = new(transactionsReminders);
@@ -176,12 +177,12 @@ namespace GARCA.View.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
-                    transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
-                    iTransactionsService.Update(transactions);
+                    transactions.TransactionStatus = await iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
+                    await iTransactionsService.Update(transactions);
                 }
                 await parentForm.LoadAccounts();
                 LoadTransactions();
-            }
+            } 
             else
             {
                 MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
@@ -195,8 +196,8 @@ namespace GARCA.View.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
-                    transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
-                    iTransactionsService.Update(transactions);
+                    transactions.TransactionStatus = await iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
+                    await iTransactionsService.Update(transactions);
                 }
                 await parentForm.LoadAccounts();
                 LoadTransactions();
@@ -214,8 +215,8 @@ namespace GARCA.View.Views
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
-                    transactions.TransactionStatus = iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
-                    iTransactionsService.Update(transactions);
+                    transactions.TransactionStatus = await iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
+                    await iTransactionsService.Update(transactions);
                 }
                 await parentForm.LoadAccounts();
                 LoadTransactions();
@@ -267,7 +268,7 @@ namespace GARCA.View.Views
             }
         }
 
-        private void RemoveTransaction(Transactions transactions)
+        private async Task RemoveTransaction(Transactions transactions)
         {
             if (transactions.TranferSplitid != null)
             {
@@ -284,19 +285,19 @@ namespace GARCA.View.Views
                         var splits = lSplits[i];
                         if (splits.Tranferid != null)
                         {
-                            iTransactionsService.Delete(iTransactionsService.GetById(splits.Tranferid ?? -99));
+                            await iTransactionsService.Delete(await iTransactionsService.GetById(splits.Tranferid ?? -99));
                         }
 
-                        iSplitsService.Delete(splits);
+                        await iSplitsService.Delete(splits);
                     }
                 }
 
                 if (transactions.Tranferid != null)
                 {
-                    iTransactionsService.Delete(iTransactionsService.GetById(transactions.Tranferid ?? -99));
+                    await iTransactionsService.Delete(await iTransactionsService.GetById(transactions.Tranferid ?? -99));
                 }
 
-                iTransactionsService.Delete(transactions);
+                await iTransactionsService.Delete(transactions);
             }
         }
 

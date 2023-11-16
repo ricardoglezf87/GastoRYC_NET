@@ -1,5 +1,6 @@
 ﻿using GARCA.Models;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -16,18 +17,18 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategoriesTypes.ItemsSource = iCategoriesTypesService.GetAllWithoutSpecialTransfer();
-            LoadItemSource();
+            cbCategoriesTypes.ItemsSource = await  iCategoriesTypesService.GetAllWithoutSpecialTransfer();
+            await LoadItemSource();
         }
 
-        private void LoadItemSource()
+        private async Task LoadItemSource()
         {
-            gvCategories.ItemsSource = iCategoriesService.GetAllWithoutSpecialTransfer()?.ToList();
+            gvCategories.ItemsSource = await iCategoriesService.GetAllWithoutSpecialTransfer();
         }
 
-        private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var categories = (Categories)gvCategories.SelectedItem;
             if (categories != null)
@@ -35,7 +36,7 @@ namespace GARCA.View.Views
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
                 {
                     case "categoriesTypesid":
-                        categories.CategoriesTypes = iCategoriesTypesService.GetById(categories.CategoriesTypesid ?? -99);
+                        categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesid ?? -99);
                         break;
                 }
             }
@@ -59,26 +60,26 @@ namespace GARCA.View.Views
             }
         }
 
-        private void gvCategories_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvCategories_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var categories = (Categories)e.RowData;
 
             if (categories.CategoriesTypes == null && categories.CategoriesTypesid != null)
             {
-                categories.CategoriesTypes = iCategoriesTypesService.GetById(categories.CategoriesTypesid ?? -99);
+                categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesid ?? -99);
             }
 
-            iCategoriesService.Update(categories);
-            LoadItemSource();
+            await iCategoriesService.Update(categories);
+            await LoadItemSource();
         }
 
-        private void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Categories categories in e.Items)
             {
-                iCategoriesService.Delete(categories);
+                await iCategoriesService.Delete(categories);
             }
-            LoadItemSource();
+            await LoadItemSource();
         }
 
         private void gvCategories_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using GARCA.Models;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -16,13 +17,13 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadItemSource();
+            await LoadItemSource();
         }
-        private void LoadItemSource()
+        private async Task LoadItemSource()
         {
-            gvTags.ItemsSource = iTagsService.GetAll()?.ToList();
+            gvTags.ItemsSource = await iTagsService.GetAll();
         }
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -37,20 +38,20 @@ namespace GARCA.View.Views
 
         }
 
-        private void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var tags = (Tags)e.RowData;
-            iTagsService.Update(tags);
-            LoadItemSource();
+            await iTagsService.Update(tags);
+            await LoadItemSource();
         }
 
-        private void gvTags_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvTags_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Tags tags in e.Items)
             {
-                iTagsService.Delete(tags);
+                await iTagsService.Delete(tags);
             }
-            LoadItemSource();
+            await LoadItemSource();
         }
 
         private void gvTags_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

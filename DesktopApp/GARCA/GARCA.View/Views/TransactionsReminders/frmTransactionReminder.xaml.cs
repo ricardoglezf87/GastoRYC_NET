@@ -115,11 +115,11 @@ namespace GARCA.View.Views
 
         #region Functions
 
-        private void LoadTransaction()
+        private async Task LoadTransaction()
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = iExpirationsRemindersService.GetNextReminder(transaction.Id) ?? transaction.Date;
+                dtpDate.SelectedDate = (await iExpirationsRemindersService.GetNextReminder(transaction.Id)) ?? transaction.Date;
                 cbPeriodTransaction.SelectedValue = transaction.PeriodsRemindersid;
                 cbAccount.SelectedValue = transaction.Accountid;
                 cbPerson.SelectedValue = transaction.Personid;

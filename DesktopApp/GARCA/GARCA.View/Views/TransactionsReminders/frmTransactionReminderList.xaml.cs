@@ -1,5 +1,6 @@
 ﻿using GARCA.Models;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -16,16 +17,16 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadTransactions();
+            await LoadTransactions();
         }
 
-        private void gvTransactionsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvTransactionsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (TransactionsReminders transactionsReminders in e.Items)
             {
-                iTransactionsRemindersService.Delete(transactionsReminders);
+                await iTransactionsRemindersService.Delete(transactionsReminders);
             }
         }
 
@@ -43,26 +44,26 @@ namespace GARCA.View.Views
             gvTransactionsReminders.SearchHelper.Search(txtSearch.Text);
         }
 
-        private void gvTransactionsReminders_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void gvTransactionsReminders_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (gvTransactionsReminders.CurrentItem != null)
             {
                 FrmTransactionReminders frm = new((TransactionsReminders)gvTransactionsReminders.CurrentItem);
                 frm.ShowDialog();
-                LoadTransactions();
+                await LoadTransactions();
             }
         }
 
-        private void LoadTransactions()
+        private async Task LoadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = iTransactionsRemindersService.GetAll()?.ToList();
+            gvTransactionsReminders.ItemsSource = await iTransactionsRemindersService.GetAll();
         }
 
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             FrmTransactionReminders frm = new();
             frm.ShowDialog();
-            LoadTransactions();
+            await LoadTransactions();
         }
     }
 }

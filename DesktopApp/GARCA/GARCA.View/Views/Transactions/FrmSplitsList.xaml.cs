@@ -25,7 +25,7 @@ namespace GARCA.View.Views
             this.transactions = transactions;
         }
 
-        private async Task Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = await iCategoriesService.GetAll();
             loadSplits();
@@ -38,7 +38,7 @@ namespace GARCA.View.Views
                 : (object?)iSplitsService.GetbyTransactionidNull();
         }
 
-        private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var splits = (Splits)gvSplits.SelectedItem;
             if (splits != null)
@@ -46,7 +46,7 @@ namespace GARCA.View.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.Category = iCategoriesService.GetById(splits.Categoryid ?? -99);
+                        splits.Category = await iCategoriesService.GetById(splits.Categoryid ?? -99);
                         break;
                 }
             }
@@ -76,7 +76,7 @@ namespace GARCA.View.Views
             }
         }
 
-        private async Task gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var splits = (Splits)e.RowData;
 
@@ -84,15 +84,15 @@ namespace GARCA.View.Views
             await iSplitsService.SaveChanges(splits);
         }
 
-        private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Splits splits in e.Items)
             {
                 if (splits.Tranferid != null)
                 {
-                    iTransactionsService.Delete(iTransactionsService.GetById(splits.Tranferid ?? -99));
+                    await iTransactionsService.Delete(await iTransactionsService.GetById(splits.Tranferid ?? -99));
                 }
-                iSplitsService.Delete(splits);
+                await iSplitsService.Delete(splits);
             }
 
             loadSplits();

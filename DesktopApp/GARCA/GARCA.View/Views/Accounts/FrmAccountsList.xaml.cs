@@ -3,6 +3,7 @@ using GARCA.Models;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -19,18 +20,18 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = iAccountsTypesService.GetAll();
-            LoadItemSource();
+            cbAccountsTypes.ItemsSource = await iAccountsTypesService.GetAll();
+            await LoadItemSource();
         }
 
-        private void LoadItemSource()
+        private async Task LoadItemSource()
         {
-            gvAccounts.ItemsSource = iAccountsService.GetAll()?.ToList();
+            gvAccounts.ItemsSource = await iAccountsService.GetAll();
         }
 
-        private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var accounts = (Accounts)gvAccounts.SelectedItem;
             if (accounts != null)
@@ -38,7 +39,7 @@ namespace GARCA.View.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.AccountsTypes = iAccountsTypesService.GetById(accounts.AccountsTypesid ?? -99);
+                        accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesid ?? -99);
                         break;
                 }
             }
@@ -62,23 +63,23 @@ namespace GARCA.View.Views
             }
         }
 
-        private void UpdateCategory(Accounts accounts)
+        private async Task UpdateCategory(Accounts accounts)
         {
             Categories? categories;
 
             if (accounts.Categoryid != null)
             {
-                categories = iCategoriesService.GetById(accounts.Categoryid ?? -99);
+                categories = await iCategoriesService.GetById(accounts.Categoryid ?? -99);
                 if (categories != null)
                 {
                     categories.Description = "[" + accounts.Description + "]";
-                    iCategoriesService.Update(categories);
+                    await iCategoriesService.Update(categories);
                 }
             }
             else
             {
                 categories = new Categories();
-                accounts.Categoryid = iCategoriesService.GetNextId();
+                accounts.Categoryid = await iCategoriesService.GetNextId();
                 categories.Description = "[" + accounts.Description + "]";
                 categories.CategoriesTypesid = (int)CategoriesTypesService.ECategoriesTypes.Transfers;
 
@@ -86,37 +87,37 @@ namespace GARCA.View.Views
 
             if (categories != null)
             {
-                iCategoriesService.Update(categories);
+                await iCategoriesService.Update(categories);
             }
         }
 
-        private void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var accounts = (Accounts)e.RowData;
 
             if (accounts.AccountsTypes == null && accounts.AccountsTypesid != null)
             {
-                accounts.AccountsTypes = iAccountsTypesService.GetById(accounts.AccountsTypesid ?? -99);
+                accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesid ?? -99);
             }
 
-            UpdateCategory(accounts);
-            iAccountsService.Update(accounts);
-            LoadItemSource();
+            await UpdateCategory(accounts);
+            await iAccountsService.Update(accounts);
+            await LoadItemSource();
         }
 
-        private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items)
             {
-                var categories = iCategoriesService.GetById(accounts.Categoryid ?? -99);
+                var categories = await iCategoriesService.GetById(accounts.Categoryid ?? -99);
                 if (categories != null)
                 {
-                    iCategoriesService.Delete(categories);
+                    await iCategoriesService.Delete(categories);
                 }
 
-                iAccountsService.Delete(accounts);
+                await iAccountsService.Delete(accounts);
             }
-            LoadItemSource();
+            await LoadItemSource();
         }
 
         private void gvAccounts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

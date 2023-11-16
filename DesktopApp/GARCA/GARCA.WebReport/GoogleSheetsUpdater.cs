@@ -61,7 +61,7 @@ namespace GARCA.WebReport
                     new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo", "Cerrada" }
                 };
 
-            var accountsTypes = iAccountsTypesService.GetAll();
+            var accountsTypes = await iAccountsTypesService.GetAll();
             var transactions = await Task.Run(() => iTransactionsService.GetAll());
             loadDialog.setMax(transactions.Count());
 
@@ -153,7 +153,7 @@ namespace GARCA.WebReport
                     new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo", "Cerrada" }
                 };
 
-            var accountsTypes = iAccountsTypesService.GetAll();
+            var accountsTypes = await iAccountsTypesService.GetAll();
             var transactions = await iTransactionsArchivedService.GetAll();
             
             if (transactions != null)

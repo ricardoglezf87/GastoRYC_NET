@@ -1,5 +1,6 @@
 ﻿using GARCA.Models;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -16,13 +17,13 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadItemSource();
+            await LoadItemSource();
         }
-        private void LoadItemSource()
+        private async Task LoadItemSource()
         {
-            gvPersons.ItemsSource = iPersonsService.GetAll()?.ToList();
+            gvPersons.ItemsSource = await iPersonsService.GetAll();
         }
 
         private void gvPersons_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -37,20 +38,20 @@ namespace GARCA.View.Views
 
         }
 
-        private void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvPersons_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var persons = (Persons)e.RowData;
-            iPersonsService.Update(persons);
-            LoadItemSource();
+            await iPersonsService.Update(persons);
+            await LoadItemSource();
         }
 
-        private void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvPersons_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Persons persons in e.Items)
             {
-                iPersonsService.Delete(persons);
+                await iPersonsService.Delete(persons);
             }
-            LoadItemSource();
+            await LoadItemSource();
         }
 
         private void gvPersons_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

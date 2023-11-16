@@ -451,7 +451,7 @@ namespace GARCA
         {
             try
             {
-                var laccounts = iAccountsService.GetAll();
+                var laccounts = await iAccountsService.GetAll();
 
                 if (laccounts != null)
                 {
@@ -482,11 +482,11 @@ namespace GARCA
         {
             try
             {
-                var lInvestmentProducts = iInvestmentProductsService.GetAll()?.Where(x => !String.IsNullOrWhiteSpace(x.Url) || x.Active == true).ToList();
+                var lInvestmentProducts = (await iInvestmentProductsService.GetAll())?.Where(x => !String.IsNullOrWhiteSpace(x.Url) || x.Active == true);
 
                 if (lInvestmentProducts != null)
                 {
-                    LoadDialog loadDialog = new(lInvestmentProducts.Count);
+                    LoadDialog loadDialog = new(lInvestmentProducts.Count());
                     loadDialog.Show();
 
                     foreach (var investmentProducts in lInvestmentProducts)

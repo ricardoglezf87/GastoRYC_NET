@@ -156,7 +156,7 @@ namespace GARCA.View.Views
 
             chForecast.Series.Clear();
 
-            var lAccounts = iAccountsService.GetAllOpened();
+            var lAccounts = await iAccountsService.GetAllOpened();
             
             if(lAccounts != null) 
             {
@@ -284,7 +284,7 @@ namespace GARCA.View.Views
 
             //Series
 
-            var lExpensesCharts = await iVBalancebyCategoryService.GetExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
+            var lExpensesCharts = await iVBalancebyCategoryService.GetExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new()

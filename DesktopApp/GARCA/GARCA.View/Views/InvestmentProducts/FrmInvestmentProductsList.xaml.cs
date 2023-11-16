@@ -2,6 +2,7 @@
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -18,15 +19,15 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbInvestmentProductsTypes.ItemsSource = iInvestmentProductsTypesService.GetAll();
-            LoadItemSource();
+            cbInvestmentProductsTypes.ItemsSource = await iInvestmentProductsTypesService.GetAll();
+            await LoadItemSource();
         }
 
-        private void LoadItemSource()
+        private async Task LoadItemSource()
         {
-            gvInvestmentProducts.ItemsSource = iInvestmentProductsService.GetAll()?.ToList();
+            gvInvestmentProducts.ItemsSource = await iInvestmentProductsService.GetAll();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -46,7 +47,7 @@ namespace GARCA.View.Views
             }
         }
 
-        private void gvInvestmentProducts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvInvestmentProducts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var investmentProducts = (InvestmentProducts)gvInvestmentProducts.SelectedItem;
             if (investmentProducts != null)
@@ -54,32 +55,32 @@ namespace GARCA.View.Views
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "investmentProductsTypesid":
-                        investmentProducts.InvestmentProductsTypes = iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid ?? -99);
+                        investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid ?? -99);
                         break;
                 }
             }
         }
 
-        private void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var investmentProducts = (InvestmentProducts)e.RowData;
 
             if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesid != null)
             {
-                investmentProducts.InvestmentProductsTypes = iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid ?? -99);
+                investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid ?? -99);
             }
 
-            iInvestmentProductsService.Update(investmentProducts);
-            LoadItemSource();
+            await iInvestmentProductsService.Update(investmentProducts);
+            await LoadItemSource();
         }
 
-        private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (InvestmentProducts investmentProducts in e.Items)
             {
-                iInvestmentProductsService.Delete(investmentProducts);
+                await iInvestmentProductsService.Delete(investmentProducts);
             }
-            LoadItemSource();
+            await LoadItemSource();
         }
 
         private void gvInvestmentProducts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

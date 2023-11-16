@@ -24,20 +24,20 @@ namespace GARCA.View.Views
             this.transactionsReminders = transactionsReminders;
         }
 
-        private async Task Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = await iCategoriesService.GetAll();
-            loadSplits();
+            await loadSplits();
         }
 
-        private void loadSplits()
+        private async Task loadSplits()
         {
             gvSplitsReminders.ItemsSource = transactionsReminders != null && transactionsReminders.Id > 0
-                ? iSplitsRemindersService.GetbyTransactionid(transactionsReminders.Id)
-                : (object?)iSplitsRemindersService.GetbyTransactionidNull();
+                ? await iSplitsRemindersService.GetbyTransactionid(transactionsReminders.Id)
+                : (object?)await iSplitsRemindersService.GetbyTransactionidNull();
         }
 
-        private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var splitsReminders = (SplitsReminders)gvSplitsReminders.SelectedItem;
             if (splitsReminders != null)
@@ -45,7 +45,7 @@ namespace GARCA.View.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.Category = iCategoriesService.GetById(splitsReminders.Categoryid ?? -99);
+                        splitsReminders.Category = await iCategoriesService.GetById(splitsReminders.Categoryid ?? -99);
                         break;
                 }
             }
@@ -81,30 +81,30 @@ namespace GARCA.View.Views
             SaveChanges(splitsReminders);
         }
 
-        private void SaveChanges(SplitsReminders splitsReminders)
+        private async void SaveChanges(SplitsReminders splitsReminders)
         {
             if (splitsReminders.Category == null && splitsReminders.Categoryid != null)
             {
-                splitsReminders.Category = iCategoriesService.GetById(splitsReminders.Categoryid ?? -99);
+                splitsReminders.Category = await iCategoriesService.GetById(splitsReminders.Categoryid ?? -99);
             }
 
             splitsReminders.AmountIn ??= 0;
 
             splitsReminders.AmountOut ??= 0;
 
-            iSplitsRemindersService.Update(splitsReminders);
+            await iSplitsRemindersService.Update(splitsReminders);
         }
-        private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (SplitsReminders splitsReminders in e.Items)
             {
                 if (splitsReminders.Tranferid != null)
                 {
-                    iTransactionsRemindersService.Delete(iTransactionsRemindersService.GetById(splitsReminders.Tranferid ?? -99));
+                    await iTransactionsRemindersService.Delete(await iTransactionsRemindersService.GetById(splitsReminders.Tranferid ?? -99));
                 }
-                iSplitsRemindersService.Delete(splitsReminders);
+                await iSplitsRemindersService.Delete(splitsReminders);
             }
-            loadSplits();
+            await loadSplits();
         }
 
         private void gvSplitsReminders_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
