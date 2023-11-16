@@ -73,7 +73,7 @@ namespace GARCA.View.Views
 
         public async Task LoadReminders()
         {
-            var expirationsReminders = await Task.Run(() => iExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration()?.ToList());
+            var expirationsReminders = (await iExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration())?.ToList();
 
             cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 

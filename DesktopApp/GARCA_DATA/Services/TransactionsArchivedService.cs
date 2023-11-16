@@ -44,7 +44,7 @@ namespace GARCA.Data.Services
 
         public async Task ArchiveTransactions(DateTime date)
         {
-            IEnumerable<Transactions?>? lTrans = (await Task.Run(() => iTransactionsService.GetAll()))?.Where(x => x.Date != null && x.Date <= date);
+            IEnumerable<Transactions?>? lTrans = (await iTransactionsService.GetAll())?.Where(x => x.Date != null && x.Date <= date);
             if (lTrans != null)
             {
 
@@ -62,7 +62,7 @@ namespace GARCA.Data.Services
                                 SplitsArchived? sArchived = splits?.ToArchived();
                                 sArchived.Transactionid = tArchived.Id;
                                 sArchived.Transaction = tArchived;
-                                await Task.Run(() => iSplitsArchivedService.Update(sArchived));
+                                await iSplitsArchivedService.Update(sArchived);
                                 await iSplitsService.Delete(splits);
                             }
                         }

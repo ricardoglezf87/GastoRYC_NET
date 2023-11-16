@@ -26,8 +26,8 @@ namespace GARCA.View.ViewModels
         private async void LoadMoreItems(uint count, int baseIndex)
         {
             var item = AccountsSelected != null
-                ? await Task.Run(() => iTransactionsService.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, MaxItem))
-                : await Task.Run(() => iTransactionsService.GetAllOpennedOrderByOrdenDesc(baseIndex, MaxItem));
+                ? await iTransactionsService.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, MaxItem)
+                : await iTransactionsService.GetAllOpennedOrderByOrdenDesc(baseIndex, MaxItem);
 
             if (item != null)
             {

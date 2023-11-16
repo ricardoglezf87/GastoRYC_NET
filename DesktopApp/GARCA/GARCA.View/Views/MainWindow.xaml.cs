@@ -179,7 +179,7 @@ namespace GARCA
                             break;
                         case PartialReminders reminders:
                             await reminders.LoadReminders();
-                            await Task.Run(() => iExpirationsRemindersService.GenerateAutoregister());
+                            await iExpirationsRemindersService.GenerateAutoregister();
                             await LoadAccounts();
                             break;
                         case PartialPortfolio portfolio:
@@ -194,7 +194,7 @@ namespace GARCA
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
             LoadCalendar();
-            await Task.Run(() => iExpirationsRemindersService.GenerateAutoregister());
+            await iExpirationsRemindersService.GenerateAutoregister();
             await LoadAccounts();
             ToggleViews(EViews.Home);
         }
@@ -315,7 +315,7 @@ namespace GARCA
                 await reminders.LoadReminders();
             }
 
-            await Task.Run(() => iExpirationsRemindersService.GenerateAutoregister());
+            await iExpirationsRemindersService.GenerateAutoregister();
             await LoadAccounts();
         }
 
@@ -330,7 +330,7 @@ namespace GARCA
             {
                 foreach (Accounts accounts in lvAccounts.ItemsSource)
                 {
-                    accounts.Balance = await Task.Run(() => iAccountsService.GetBalanceByAccount(accounts.Id));
+                    accounts.Balance = await iAccountsService.GetBalanceByAccount(accounts.Id);
                 }
 
                 viewAccounts.Refresh();

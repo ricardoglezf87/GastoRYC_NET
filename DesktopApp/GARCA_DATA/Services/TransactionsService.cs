@@ -109,7 +109,7 @@ namespace GARCA.Data.Services
         public async Task RefreshBalanceTransactions(Accounts? acc)
         {
             decimal? balanceTotal = 0;
-            var tList = await Task.Run(() => GetByAccountOrderByOrderDesc(acc.Id));
+            var tList = await GetByAccountOrderByOrderDesc(acc.Id);
 
             if (tList != null)
             {
@@ -130,7 +130,7 @@ namespace GARCA.Data.Services
 
         public async Task RefreshBalanceAllTransactions()
         {
-            foreach (var acc in await Task.Run(() => iAccountsService.GetAll()))
+            foreach (var acc in await iAccountsService.GetAll())
             {
                 await RefreshBalanceTransactions(acc);
             }

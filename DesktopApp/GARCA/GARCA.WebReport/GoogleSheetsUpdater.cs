@@ -67,9 +67,9 @@ namespace GARCA.WebReport
 
             foreach (var trans in transactions)
             {
-                var splits = await Task.Run(() => iSplitsService.GetbyTransactionid(trans.Id));
+                var splits = await iSplitsService.GetbyTransactionid(trans.Id);
 
-                if (splits != null && splits.Count > 0)
+                if (splits != null && splits.Count() > 0)
                 {
                     Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
                     foreach (var spl in splits)
@@ -154,7 +154,7 @@ namespace GARCA.WebReport
                 };
 
             var accountsTypes = iAccountsTypesService.GetAll();
-            var transactions = await Task.Run(() => iTransactionsArchivedService.GetAll());
+            var transactions = await iTransactionsArchivedService.GetAll();
             
             if (transactions != null)
             {
@@ -162,9 +162,9 @@ namespace GARCA.WebReport
 
                 foreach (var trans in transactions)
                 {
-                    var splits = await Task.Run(() => iSplitsArchivedService.GetbyTransactionid(trans.Id));
+                    var splits = await iSplitsArchivedService.GetbyTransactionid(trans.Id);
 
-                    if (splits != null && splits.Count > 0)
+                    if (splits != null && splits.Count() > 0)
                     {
                         Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
                         foreach (var spl in splits)
@@ -250,7 +250,7 @@ namespace GARCA.WebReport
 
             var linvestmentProducts = await iInvestmentProductsService.GetAllOpened();
 
-            loadDialog.setMax(linvestmentProducts.Count);
+            loadDialog.setMax(linvestmentProducts.Count());
 
             foreach (var investmentProducts in linvestmentProducts)
             {
@@ -259,13 +259,13 @@ namespace GARCA.WebReport
                     continue;
                 }
 
-                DateTime? actualDate = iInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
-                Decimal? actualPrices = iInvestmentProductsPricesService.GetActualPrice(investmentProducts);
+                DateTime? actualDate = await iInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
+                Decimal? actualPrices = await iInvestmentProductsPricesService.GetActualPrice(investmentProducts);
 
                 List<string[]> pre = new();
                 Decimal? shares = 0;
 
-                foreach (var i in await Task.Run(() => iTransactionsService.GetByInvestmentProduct(investmentProducts)))
+                foreach (var i in await iTransactionsService.GetByInvestmentProduct(investmentProducts))
                 {
                     Decimal? cost = i.PricesShares * -i.NumShares;
                     Decimal? market = actualPrices * -i.NumShares;
@@ -314,7 +314,7 @@ namespace GARCA.WebReport
 
             var linvestmentProducts = await iInvestmentProductsService.GetAllOpened();
 
-            loadDialog.setMax(linvestmentProducts.Count);
+            loadDialog.setMax(linvestmentProducts.Count());
 
             foreach (var investmentProducts in linvestmentProducts)
             {
@@ -323,13 +323,13 @@ namespace GARCA.WebReport
                     continue;
                 }
 
-                DateTime? actualDate = iInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
-                Decimal? actualPrices = iInvestmentProductsPricesService.GetActualPrice(investmentProducts);
+                DateTime? actualDate = await iInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
+                Decimal? actualPrices = await iInvestmentProductsPricesService.GetActualPrice(investmentProducts);
 
                 List<string[]> pre = new();
                 Decimal? shares = 0;
 
-                foreach (var i in await Task.Run(() => iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts)))
+                foreach (var i in await iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts))
                 {
                     Decimal? cost = i.PricesShares * -i.NumShares;
                     Decimal? market = actualPrices * -i.NumShares;

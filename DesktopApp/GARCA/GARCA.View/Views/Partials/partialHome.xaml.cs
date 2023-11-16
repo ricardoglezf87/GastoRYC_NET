@@ -165,7 +165,7 @@ namespace GARCA.View.Views
 
                     LineSeries series = new()
                     {
-                        ItemsSource = (await Task.Run(() => iForecastsChartService.GetMonthForecast())).Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
+                        ItemsSource = (await iForecastsChartService.GetMonthForecast()).Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
                         Label = accounts.Description,
                         XBindingPath = "Date",
                         YBindingPath = "Amount",
