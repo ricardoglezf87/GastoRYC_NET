@@ -32,8 +32,9 @@ namespace GARCA.Data.Managers
             }
             else
             {
-                obj = await Insert(obj);
+                await Insert(obj);
             }
+            //TODO: Revisar esta salida
             return obj;           
         }
 
@@ -47,14 +48,14 @@ namespace GARCA.Data.Managers
             return await iRycContextService.getConnection().UpdateAsync(lObj);
         }
 
-        public async virtual Task<Q> Insert(Q obj)
+        public async virtual Task<long> Insert(Q obj)
         {
-            return (Q) await iRycContextService.getConnection().InsertAsync(obj);
+            return (long) await iRycContextService.getConnection().InsertAsync<Q>(obj);
         }
 
-        public async virtual Task<IEnumerable<Q>> Insert(IEnumerable<Q> lObj)
+        public async virtual Task<long> Insert(IEnumerable<Q> lObj)
         {
-            return (IEnumerable<Q>) await iRycContextService.getConnection().InsertAsync(lObj);
+            return (long) await iRycContextService.getConnection().InsertAsync(lObj);
         }
 
         public async virtual Task<bool> Delete(Q obj)

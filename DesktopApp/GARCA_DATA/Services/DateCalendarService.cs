@@ -1,6 +1,8 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 
+using static GARCA.Data.IOC.DependencyConfig;
+
 namespace GARCA.Data.Services
 {
     public class DateCalendarService : ServiceBase<DateCalendarManager, DateCalendar>
@@ -14,12 +16,17 @@ namespace GARCA.Data.Services
             initDate = new DateTime(2001, 01, 01, 0, 0, 0, DateTimeKind.Utc); ;
         }
 
+        public async Task<DateCalendar?> GetByDate(DateTime date)
+        {
+            return await manager.GetByDate(date);
+        }
+
         public async Task FillCalendar()
         {
             var ini = initDate;
             while (ini < DateTime.Now.AddYears(1))
             {
-                if (await GetById(ini) == null)
+                if (await GetByDate(ini) == null)
                 {
                     DateCalendar date = new()
                     {
