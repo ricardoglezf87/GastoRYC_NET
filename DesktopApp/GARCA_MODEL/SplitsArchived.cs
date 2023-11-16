@@ -3,7 +3,7 @@
 namespace GARCA.Models
 {
     [Table("SplitsArchived")]
-    public class SplitsArchived : ModelBase<Int32>
+    public class SplitsArchived : ModelBase
     {
         [Column("idOriginal")]
         public virtual int? IdOriginal { get; set; }

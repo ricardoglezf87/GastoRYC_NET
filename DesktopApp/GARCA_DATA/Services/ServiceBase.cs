@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace GARCA.Data.Services
 {
-    public class ServiceBase <T,Q,Z> 
-        where T : ManagerBase<Q,Z>, new()
-        where Q : ModelBase<Z>
+    public class ServiceBase <T,Q>
+        where Q : ModelBase, new()
+        where T : ManagerBase<Q>, new()
     {
         protected T manager;
 
@@ -26,7 +26,12 @@ namespace GARCA.Data.Services
             return await manager.GetAll();
         }
 
-        public async virtual Task<Q?> GetById(Z id)
+        public async virtual Task<Q?> GetById(int id)
+        {
+            return await manager.GetById(id);
+        }
+
+        public async virtual Task<Q?> GetById(DateTime id)
         {
             return await manager.GetById(id);
         }
@@ -36,7 +41,7 @@ namespace GARCA.Data.Services
             return await manager.Delete(obj);
         }
 
-        public async virtual Task<bool> Delete(Z i)
+        public async virtual Task<bool> Delete(int i)
         {
             return await manager.Delete(i);
         }

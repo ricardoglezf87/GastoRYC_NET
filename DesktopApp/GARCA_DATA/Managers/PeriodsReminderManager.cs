@@ -2,7 +2,7 @@
 
 namespace GARCA.Data.Managers
 {
-    public class PeriodsRemindersManager : ManagerBase<PeriodsReminders, Int32>
+    public class PeriodsRemindersManager : ManagerBase<PeriodsReminders>
     {
     }
 }

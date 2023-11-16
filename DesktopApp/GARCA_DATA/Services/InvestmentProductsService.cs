@@ -4,7 +4,7 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class InvestmentProductsService : ServiceBase<InvestmentProductsManager, InvestmentProducts, Int32>
+    public class InvestmentProductsService : ServiceBase<InvestmentProductsManager, InvestmentProducts>
     {
         public async Task<IEnumerable<InvestmentProducts>?> GetAllOpened()
         {

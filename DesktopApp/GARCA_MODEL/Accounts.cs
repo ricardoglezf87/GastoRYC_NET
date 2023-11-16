@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.Models
 {
     [Table("Accounts")] //TODO: Eliminacion en cascada
-    public class Accounts : ModelBase<Int32>
+    public class Accounts : ModelBase
     {
         [Column("description")]
         public virtual String? Description { set; get; }

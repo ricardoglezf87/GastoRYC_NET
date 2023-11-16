@@ -13,7 +13,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA_DATA.Managers
 {
-    public class AccountsManager : ManagerBase<Accounts, Int32>
+    public class AccountsManager : ManagerBase<Accounts>
     {
         public async override Task<IEnumerable<Accounts>?> GetAll()
         {

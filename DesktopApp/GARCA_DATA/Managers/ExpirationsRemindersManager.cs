@@ -6,7 +6,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
-    public class ExpirationsRemindersManager : ManagerBase<ExpirationsReminders, Int32>
+    public class ExpirationsRemindersManager : ManagerBase<ExpirationsReminders>
     {
 //#pragma warning disable CS8603
 //        protected override Expression<Func<ExpirationsReminders, object>>[] GetIncludes()

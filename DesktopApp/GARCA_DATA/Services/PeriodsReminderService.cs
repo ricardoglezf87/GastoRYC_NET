@@ -5,7 +5,7 @@ using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {
-    public class PeriodsRemindersService : ServiceBase<PeriodsRemindersManager, PeriodsReminders, Int32>
+    public class PeriodsRemindersService : ServiceBase<PeriodsRemindersManager, PeriodsReminders>
     {
 
         public enum EPeriodsReminders
