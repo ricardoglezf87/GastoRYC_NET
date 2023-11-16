@@ -23,7 +23,7 @@ namespace GARCA.Data.Services
                 {
                     DateCalendar date = new()
                     {
-                        Id = ini,
+                        Date = ini,
                         Day = ini.Day,
                         Month = ini.Month,
                         Year = ini.Year

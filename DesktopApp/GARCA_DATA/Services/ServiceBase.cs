@@ -12,7 +12,7 @@ namespace GARCA.Data.Services
 {
     public class ServiceBase <T,Q,Z> 
         where T : ManagerBase<Q,Z>, new()
-        where Q : ModelBase<Z>
+        where Q : ModelBase<Z>, new()
     {
         protected T manager;
 

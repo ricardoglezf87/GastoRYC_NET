@@ -29,6 +29,7 @@ namespace GARCA.Data.IOC
         public static TransactionsStatusService iTransactionsStatusService => Container.GetInstance<TransactionsStatusService>();
         public static VBalancebyCategoryService iVBalancebyCategoryService => Container.GetInstance<VBalancebyCategoryService>();
         public static VPortfolioService iVPortfolioService => Container.GetInstance<VPortfolioService>();
+        public static MigrationService iMigrationService => Container.GetInstance<MigrationService>();
 
         static DependencyConfig()
         {
@@ -61,6 +62,7 @@ namespace GARCA.Data.IOC
             Container.Register<TransactionsStatusService>(Lifestyle.Singleton);
             Container.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
             Container.Register<VPortfolioService>(Lifestyle.Singleton);
+            Container.Register<MigrationService>(Lifestyle.Singleton);
         }
     }
 }

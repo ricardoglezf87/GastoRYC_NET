@@ -8,19 +8,24 @@ namespace GARCA.Data.Managers
 {
     public class ExpirationsRemindersManager : ManagerBase<ExpirationsReminders, Int32>
     {
-//#pragma warning disable CS8603
-//        protected override Expression<Func<ExpirationsReminders, object>>[] GetIncludes()
-//        {
-//            return new Expression<Func<ExpirationsReminders, object>>[]
-//            {
-//                a => a.TransactionsReminders,
-//                a => a.TransactionsReminders.Person,
-//                a => a.TransactionsReminders.Account,
-//                a => a.TransactionsReminders.Category,
-//                a => a.TransactionsReminders.Category.CategoriesTypes
-//            };
-//        }
-//#pragma warning restore CS8603
+        //#pragma warning disable CS8603
+        //        protected override Expression<Func<ExpirationsReminders, object>>[] GetIncludes()
+        //        {
+        //            return new Expression<Func<ExpirationsReminders, object>>[]
+        //            {
+        //                a => a.TransactionsReminders,
+        //                a => a.TransactionsReminders.Person,
+        //                a => a.TransactionsReminders.Account,
+        //                a => a.TransactionsReminders.Category,
+        //                a => a.TransactionsReminders.Category.CategoriesTypes
+        //            };
+        //        }
+        //#pragma warning restore CS8603
+
+        public override async Task<IEnumerable<ExpirationsReminders>?> GetAll()
+        {
+            return await iRycContextService.getConnection().GetAllAsync<ExpirationsReminders,TransactionsReminders,ExpirationsReminders>();
+        }
 
         public async Task<bool> ExistsExpiration(TransactionsReminders transactionsReminder, DateTime date)
         {

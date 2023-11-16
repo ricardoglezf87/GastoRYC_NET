@@ -5,7 +5,10 @@ namespace GARCA.Models
 {
     [Table("DateCalendar")]
     public class DateCalendar : ModelBase<DateTime>
-    {        
+    {
+        [Column("date")]
+        public virtual DateTime? Date { set; get; }
+
         [Column("day")]
         public virtual int? Day { set; get; }
 
