@@ -1,6 +1,8 @@
 ﻿using GARCA.Data.Services;
 using GARCA.Models;
 using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -146,28 +148,28 @@ namespace GARCA.View.Views
             }
         }
 
-        private void UpdateTransaction()
+        private async Task UpdateTransaction()
         {
             transaction ??= new TransactionsReminders();
 
             transaction.Date = dtpDate.SelectedDate;
 
             transaction.PeriodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
-            transaction.PeriodsReminders = iPeriodsReminderService.GetById(transaction.PeriodsRemindersid ?? -99);
+            transaction.PeriodsReminders = await iPeriodsReminderService.GetById(transaction.PeriodsRemindersid ?? -99);
 
             transaction.Accountid = (int)cbAccount.SelectedValue;
-            transaction.Account = iAccountsService.GetById(transaction.Accountid ?? -99);
+            transaction.Account = await iAccountsService.GetById(transaction.Accountid ?? -99);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.Personid = (int)cbPerson.SelectedValue;
-                transaction.Person = iPersonsService.GetById(transaction.Personid ?? -99);
+                transaction.Person = await iPersonsService.GetById(transaction.Personid ?? -99);
             }
 
             transaction.Memo = txtMemo.Text;
 
             transaction.Categoryid = (int)cbCategory.SelectedValue;
-            transaction.Category = iCategoriesService.GetById(transaction.Categoryid ?? -99);
+            transaction.Category = await iCategoriesService.GetById(transaction.Categoryid ?? -99);
 
             if (txtAmount.Value > 0)
             {
@@ -183,24 +185,24 @@ namespace GARCA.View.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.Tagid = (int)cbTag.SelectedValue;
-                transaction.Tag = iTagsService.GetById(transaction.Tagid ?? -99);
+                transaction.Tag = await iTagsService.GetById(transaction.Tagid ?? -99);
             }
 
             transaction.TransactionStatusid = (int)cbTransactionStatus.SelectedValue;
 
             transaction.AutoRegister = chkAutoregister.IsChecked ?? false;
 
-            transaction.TransactionStatus = iTransactionsStatusService.GetById(transaction.TransactionStatusid ?? -99);
+            transaction.TransactionStatus = await iTransactionsStatusService.GetById(transaction.TransactionStatusid ?? -99);
         }
 
-        private void LoadComboBox()
+        private async Task LoadComboBox()
         {
-            cbAccount.ItemsSource = iAccountsService.GetAll();
-            cbPerson.ItemsSource = iPersonsService.GetAll();
-            cbCategory.ItemsSource = iCategoriesService.GetAll();
-            cbTag.ItemsSource = iTagsService.GetAll();
-            cbTransactionStatus.ItemsSource = iTransactionsStatusService.GetAll();
-            cbPeriodTransaction.ItemsSource = iPeriodsReminderService.GetAll();
+            cbAccount.ItemsSource = await iAccountsService.GetAll();
+            cbPerson.ItemsSource = await iPersonsService.GetAll();
+            cbCategory.ItemsSource = await iCategoriesService.GetAll();
+            cbTag.ItemsSource = await iTagsService.GetAll();
+            cbTransactionStatus.ItemsSource = await iTransactionsStatusService.GetAll();
+            cbPeriodTransaction.ItemsSource = await iPeriodsReminderService.GetAll();
         }
 
         private bool SaveTransaction()

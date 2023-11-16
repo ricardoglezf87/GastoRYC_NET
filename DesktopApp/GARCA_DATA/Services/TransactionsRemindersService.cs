@@ -1,6 +1,8 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA_DATA.Managers;
+using System.Configuration;
+using System.Runtime.CompilerServices;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
@@ -11,39 +13,40 @@ namespace GARCA.Data.Services
 
         #region TransactionsRemindersActions        
 
-        public TransactionsReminders? Update(TransactionsReminders transactionsReminders)
+        public async override Task<TransactionsReminders?> Save(TransactionsReminders transactionsReminders)
         {
-            iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
-            return manager.Update(transactionsReminders);
+            await iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
+            return await base.Save(transactionsReminders);
         }
 
-        public void Delete(TransactionsReminders? transactionsReminders)
+        public override async Task<bool> Delete(TransactionsReminders transactionsReminders)
         {
             if (transactionsReminders != null)
             {
-                iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
-                manager.Delete(transactionsReminders);
+                await iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
+                return await manager.Delete(transactionsReminders);
             }
+            return false;
         }
 
-        public void SaveChanges(TransactionsReminders transactionsReminders)
+        public async Task SaveChanges(TransactionsReminders transactionsReminders)
         {
             transactionsReminders.AmountIn ??= 0;
 
             transactionsReminders.AmountOut ??= 0;
 
-            Update(transactionsReminders);
+            await Save(transactionsReminders);
         }
 
         #endregion
 
         #region SplitsRemindersActions
 
-        public void UpdateSplitsReminders(TransactionsReminders? transactionsReminders)
+        public async Task UpdateSplitsReminders(TransactionsReminders? transactionsReminders)
         {
-            var lSplitsReminders = iSplitsRemindersService.GetbyTransactionid(transactionsReminders.Id);
+            var lSplitsReminders = await iSplitsRemindersService.GetbyTransactionid(transactionsReminders.Id);
 
-            if (lSplitsReminders != null && lSplitsReminders.Count != 0)
+            if (lSplitsReminders != null && lSplitsReminders.Count() != 0)
             {
                 transactionsReminders.AmountIn = 0;
                 transactionsReminders.AmountOut = 0;
@@ -55,29 +58,29 @@ namespace GARCA.Data.Services
                 }
 
                 transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
-                transactionsReminders.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
+                transactionsReminders.Category = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
             else if (transactionsReminders.Categoryid is ((int)CategoriesService.ESpecialCategories.Split))
             {
                 transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
-                transactionsReminders.Category = iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
+                transactionsReminders.Category = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.Id == 0)
             {
-                Update(transactionsReminders);
+                await Update(transactionsReminders);
                 
                 if (lSplitsReminders == null) return;
 
                 foreach (var splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.Transactionid = transactionsReminders.Id;
-                    iSplitsRemindersService.Update(splitsReminders);
+                    await iSplitsRemindersService.Update(splitsReminders);
                 }
             }
             else
             {
-                Update(transactionsReminders);
+                await Update(transactionsReminders);
             }
         }
 

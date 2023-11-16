@@ -9,31 +9,31 @@ namespace GARCA.Data.Services
 {
     public class ExpirationsRemindersService : ServiceBase<ExpirationsRemindersManager, ExpirationsReminders, Int32>
     {
-        private IEnumerable<ExpirationsReminders>? GetAllWithGeneration()
+        private async Task<IEnumerable<ExpirationsReminders>?> GetAllWithGeneration()
         {
             GenerationAllExpirations();
-            return GetAll();
+            return await GetAll();
         }
 
-        private bool ExistsExpiration(TransactionsReminders? transactionsReminder, DateTime? date)
+        private async Task<bool> ExistsExpiration(TransactionsReminders transactionsReminder, DateTime date)
         {
-            return manager.ExistsExpiration(transactionsReminder, date);
+            return await manager.ExistsExpiration(transactionsReminder, date);
         }
 
-        private HashSet<ExpirationsReminders>? GetAllPendingWithGeneration()
+        private async Task<IEnumerable<ExpirationsReminders>?> GetAllPendingWithGeneration()
         {
-            return GetAllWithGeneration()?.Where(x => x.Done is not true).ToHashSet();
+            return (await GetAllWithGeneration())?.Where(x => x.Done is not true);
         }
 
-        public HashSet<ExpirationsReminders>? GetAllPendingWithoutFutureWithGeneration()
+        public async Task<IEnumerable<ExpirationsReminders>?> GetAllPendingWithoutFutureWithGeneration()
         {
-            return GetAllWithGeneration()?
-                .Where(x => (x.Done == null || x.Done != true) && x.GroupDate != "Futuro").ToHashSet();
+            return (await GetAllWithGeneration())?
+                .Where(x => (x.Done == null || x.Done != true) && x.GroupDate != "Futuro");
         }
 
-        private void GenerationAllExpirations()
+        private async Task GenerationAllExpirations()
         {
-            foreach (var transactionsReminders in iTransactionsRemindersService.GetAll())
+            foreach (var transactionsReminders in await iTransactionsRemindersService.GetAll())
             {
                 GenerationExpirations(transactionsReminders);
             }
@@ -41,7 +41,7 @@ namespace GARCA.Data.Services
 
         public async Task GenerateAutoregister()
         {
-            foreach (var exp in (GetAllPendingWithGeneration() ?? Enumerable.Empty<ExpirationsReminders>())
+            foreach (var exp in (await GetAllPendingWithGeneration() ?? Enumerable.Empty<ExpirationsReminders>())
                 .Where(x => x.Date <= DateTime.Now && //x.transactionsReminders != null &&
                     x.TransactionsReminders.AutoRegister.HasValue && x.TransactionsReminders.AutoRegister.Value))
             {
@@ -51,7 +51,7 @@ namespace GARCA.Data.Services
             }
         }
 
-        private void GenerationExpirations(TransactionsReminders? transactionsReminders)
+        private async Task GenerationExpirations(TransactionsReminders transactionsReminders)
         {
             if (transactionsReminders != null)
             {
@@ -59,7 +59,7 @@ namespace GARCA.Data.Services
 
                 while (date <= DateTime.Now.AddYears(1))
                 {
-                    if (!ExistsExpiration(transactionsReminders, date))
+                    if (!await ExistsExpiration(transactionsReminders, date ?? DateTime.MinValue))
                     {
                         ExpirationsReminders expirationsReminders = new();
                         expirationsReminders.TransactionsRemindersid = transactionsReminders.Id;
@@ -78,7 +78,7 @@ namespace GARCA.Data.Services
         {
             if (id != null)
             {
-                var expirationsReminders = GetById(id ?? -99);
+                var expirationsReminders = await GetById(id ?? -99);
                 if (expirationsReminders != null && expirationsReminders.TransactionsReminders != null)
                 {
                     Transactions? transactions = new();
@@ -95,7 +95,7 @@ namespace GARCA.Data.Services
                     transactions = await iTransactionsService.SaveChanges(transactions);
 
                     foreach (var splitsReminders in
-                        iSplitsRemindersService.GetbyTransactionid(expirationsReminders.TransactionsReminders.Id))
+                        await iSplitsRemindersService.GetbyTransactionid(expirationsReminders.TransactionsReminders.Id))
                     {
                         Splits splits = new();
                         splits.Transactionid = transactions.Id;
@@ -104,9 +104,9 @@ namespace GARCA.Data.Services
                         splits.AmountIn = splitsReminders.AmountIn;
                         splits.AmountOut = splitsReminders.AmountOut;
                         splits.Tagid = splitsReminders.Tagid;
-
-                        iTransactionsService.UpdateTranferSplits(transactions, ref splits);
-                        iSplitsService.SaveChanges(splits);
+                        
+                        splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
+                        await iSplitsService.SaveChanges(splits);
                     }
 
                     await iTransactionsService.RefreshBalanceAllTransactions();
@@ -118,7 +118,7 @@ namespace GARCA.Data.Services
             return null;
         }
 
-        public HashSet<Transactions> RegisterTransactionfromReminderSimulation(ExpirationsReminders exp)
+        public async Task<IEnumerable<Transactions>> RegisterTransactionfromReminderSimulation(ExpirationsReminders exp)
         {
             HashSet<Transactions> lTransactions = new();
             var expirationsReminders = exp;
@@ -142,7 +142,7 @@ namespace GARCA.Data.Services
 
                 if (transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
                 {
-                    lTransactions.Add(UpdateTranferSimulation(transactions));
+                    lTransactions.Add(await UpdateTranferSimulation(transactions));
                 }
 
                 if (expirationsReminders.TransactionsReminders.Splits != null)
@@ -162,7 +162,7 @@ namespace GARCA.Data.Services
                         };
                         if (splits.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
                         {
-                            lTransactions.Add(UpdateTranferSplitsSimulation(transactions, splits));
+                            lTransactions.Add(await UpdateTranferSplitsSimulation(transactions, splits));
                         }
                     }
                 }
@@ -171,17 +171,17 @@ namespace GARCA.Data.Services
             return lTransactions;
         }
 
-        private Transactions UpdateTranferSplitsSimulation(Transactions? transactions, Splits splits)
+        private async Task<Transactions> UpdateTranferSplitsSimulation(Transactions? transactions, Splits splits)
         {
             Transactions tContraria = new()
             {
                 Date = transactions.Date,
-                Accountid = iAccountsService.GetByCategoryId(splits.Categoryid)?.Id,
-                Account = iAccountsService.GetByCategoryId(splits.Categoryid),
+                Accountid = (await iAccountsService.GetByCategoryId(splits.Categoryid ?? -99))?.Id,
+                Account = await iAccountsService.GetByCategoryId(splits.Categoryid ?? -99),
                 Personid = transactions.Personid,
                 Person = transactions.Person,
                 Categoryid = transactions.Account.Categoryid,
-                Category = iCategoriesService.GetById(transactions.Account.Categoryid ?? -99),
+                Category = await iCategoriesService.GetById(transactions.Account.Categoryid ?? -99),
                 Memo = splits.Memo,
                 Tagid = transactions.Tagid,
                 AmountIn = splits.AmountOut,
@@ -192,17 +192,17 @@ namespace GARCA.Data.Services
         }
 
 
-        private Transactions UpdateTranferSimulation(Transactions transactions)
+        private async Task<Transactions> UpdateTranferSimulation(Transactions transactions)
         {
             Transactions tContraria = new()
             {
                 Date = transactions.Date.RemoveTime(),
-                Accountid = iAccountsService.GetByCategoryId(transactions.Categoryid)?.Id,
-                Account = iAccountsService.GetByCategoryId(transactions.Categoryid),
+                Accountid = (await iAccountsService.GetByCategoryId(transactions.Categoryid ?? -99))?.Id,
+                Account = await iAccountsService.GetByCategoryId(transactions.Categoryid ?? -99),
                 Personid = transactions.Personid,
                 Person = transactions.Person,
                 Categoryid = transactions.Account?.Categoryid,
-                Category = iCategoriesService.GetById(transactions.Account?.Categoryid ?? -99),
+                Category = await iCategoriesService.GetById(transactions.Account?.Categoryid ?? -99),
                 Memo = transactions.Memo,
                 Tagid = transactions.Tagid,
                 Tag = transactions.Tag,
@@ -213,27 +213,22 @@ namespace GARCA.Data.Services
         }
 
 
-        private HashSet<ExpirationsReminders>? GetByTransactionReminderid(int? id)
+        private async Task<IEnumerable<ExpirationsReminders>?> GetByTransactionReminderid(int id)
         {
-            return manager.GetByTransactionReminderid(id)?.ToHashSet();
+            return await manager.GetByTransactionReminderid(id);
         }
 
-        public void Update(ExpirationsReminders expirationsReminders)
+        public async Task DeleteByTransactionReminderid(int id)
         {
-            manager.Update(expirationsReminders);
-        }
-
-        public void DeleteByTransactionReminderid(int id)
-        {
-            foreach (var expirationsReminder in GetByTransactionReminderid(id))
+            foreach (var expirationsReminder in await GetByTransactionReminderid(id))
             {
-                Delete(expirationsReminder);
+                await Delete(expirationsReminder);
             }
         }
 
-        public DateTime? GetNextReminder(int id)
+        public async Task<DateTime?> GetNextReminder(int id)
         {
-            return GetByTransactionReminderid(id)?.Where(x => !x.Done.HasValue || !x.Done.Value).Min(y => y.Date);
+            return (await GetByTransactionReminderid(id))?.Where(x => !x.Done.HasValue || !x.Done.Value).Min(y => y.Date);
         }
     }
 }

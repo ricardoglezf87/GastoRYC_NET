@@ -8,20 +8,15 @@ namespace GARCA.Data.Services
 {
     public class PersonsService : ServiceBase<PersonsManager, Persons, Int32>
     {
-        public Persons? Update(Persons persons)
-        {
-            return manager.Update(persons);
-        }
-
-        public void SetCategoryDefault(int? id)
+        public async Task SetCategoryDefault(int id)
         {
             if (id == null)
             {
                 return;
             }
 
-            var trans = iTransactionsArchivedService.GetByPerson(id);
-            trans.AddRange(iTransactionsService.GetByPerson(id));
+            var trans = (await iTransactionsArchivedService.GetByPerson(id))?.ToList();
+            trans.AddRange((await iTransactionsService.GetByPerson(id))?.ToList());
 
 
             var result = (from x in trans
@@ -39,9 +34,9 @@ namespace GARCA.Data.Services
                                  where c.count == maxCount
                                  select c.categoryid).FirstOrDefault();
 
-                Persons? persons = iPersonsService.GetById(id ?? -99);
+                Persons? persons = await iPersonsService.GetById(id);
                 persons.Categoryid = maxCounts;
-                Update(persons);
+                await Update(persons);
             }
         }
     }

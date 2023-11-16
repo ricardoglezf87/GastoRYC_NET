@@ -34,20 +34,5 @@ namespace GARCA.Utils.Extensions
                 Orden = obj.Orden
             };
         }
-
-        public static void AddRange(this HashSet<Transactions>? source, HashSet<Transactions>? elements)
-        {
-            if (elements != null)
-            {
-                foreach (var obj in elements)
-                {
-                    if (obj != null)
-                    {
-                        source.Add(obj);
-                    }
-                }
-            }
-        }
-
     }
 }

@@ -14,7 +14,7 @@ namespace GARCA.Data.Services
             initDate = new DateTime(2001, 01, 01, 0, 0, 0, DateTimeKind.Utc); ;
         }
 
-        public void FillCalendar()
+        public async Task FillCalendar()
         {
             var ini = initDate;
             while (ini < DateTime.Now.AddYears(1))
@@ -29,13 +29,11 @@ namespace GARCA.Data.Services
                         Year = ini.Year
                     };
 
-                    dateCalendarManager.Add(date);
+                    await dateCalendarManager.Insert(date);
                 }
 
                 ini = ini.AddDays(1);
             }
-
-            dateCalendarManager.SaveChanges();
         }
     }
 }

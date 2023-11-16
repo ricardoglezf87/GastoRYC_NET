@@ -13,19 +13,14 @@ namespace GARCA.Data.Services
             vBalancebyCategoryManager = new VBalancebyCategoryManager();
         }
 
-        private HashSet<VBalancebyCategory>? GetAll()
+        private async Task<IEnumerable<VBalancebyCategory>?> GetAll()
         {
-            return vBalancebyCategoryManager.GetAll()?.ToHashSet();
+            return await vBalancebyCategoryManager.GetAll();
         }
 
-        private HashSet<VBalancebyCategory>? GetExpensesbyYearMonth(int month, int year)
+        private async Task<IEnumerable<VBalancebyCategory>?> GetExpensesbyYearMonth(int month, int year)
         {
-            return GetAll()?.Where(x => x.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Expenses && x.Year == year && x.Month == month).ToHashSet();
-        }
-
-        public async Task<HashSet<VBalancebyCategory>?> GetExpensesbyYearMonthAsync(int month, int year)
-        {
-            return await Task.Run(() => GetExpensesbyYearMonth(month, year));
+            return (await GetAll())?.Where(x => x.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Expenses && x.Year == year && x.Month == month).ToHashSet();
         }
     }
 }

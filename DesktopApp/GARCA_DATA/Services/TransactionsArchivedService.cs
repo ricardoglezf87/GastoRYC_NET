@@ -12,44 +12,39 @@ namespace GARCA.Data.Services
 
         #region TransactionsArchivedActions      
 
-        private HashSet<TransactionsArchived>? GetByInvestmentProduct(int? id)
+        private async Task<IEnumerable<TransactionsArchived>?> GetByInvestmentProduct(int id)
         {
-            return manager.GetByInvestmentProduct(id)?.ToHashSet();
+            return await manager.GetByInvestmentProduct(id);
         }
 
-        public HashSet<TransactionsArchived>? GetByPerson(int? id)
+        public async Task<IEnumerable<TransactionsArchived>?> GetByPerson(int id)
         {
-            return manager.GetByPerson(id)?.ToHashSet();
+            return await manager.GetByPerson(id);
         }
 
-        public HashSet<TransactionsArchived>? GetByPerson(Persons? person)
+        public async Task<IEnumerable<TransactionsArchived>?> GetByPerson(Persons? person)
         {
-            return GetByPerson(person?.Id);
+            return await GetByPerson(person?.Id ?? -99);
         }
 
-        public HashSet<TransactionsArchived>? GetByInvestmentProduct(InvestmentProducts? investment)
+        public async Task<IEnumerable<TransactionsArchived>?> GetByInvestmentProduct(InvestmentProducts? investment)
         {
-            return GetByInvestmentProduct(investment.Id);
+            return await GetByInvestmentProduct(investment.Id);
+        }
+               
+        public async Task<IEnumerable<TransactionsArchived>?> GetByAccount(int id)
+        {
+            return await manager.GetByAccount(id);
         }
 
-        public TransactionsArchived? Update(TransactionsArchived? transactions)
+        public async Task<IEnumerable<TransactionsArchived>?> GetByAccount(Accounts? accounts)
         {
-            return manager.Update(transactions);
-        }
-       
-        public HashSet<TransactionsArchived>? GetByAccount(int? id)
-        {
-            return manager.GetByAccount(id)?.ToHashSet();
+            return await GetByAccount(accounts?.Id ?? -99);
         }
 
-        public HashSet<TransactionsArchived>? GetByAccount(Accounts? accounts)
+        public async Task ArchiveTransactions(DateTime date)
         {
-            return GetByAccount(accounts?.Id);
-        }
-
-        public virtual async Task ArchiveTransactions(DateTime date)
-        {
-            IEnumerable<Transactions?>? lTrans = await Task.Run(() => iTransactionsService.GetAll()?.Where(x => x.Date != null && x.Date <= date));
+            IEnumerable<Transactions?>? lTrans = (await Task.Run(() => iTransactionsService.GetAll()))?.Where(x => x.Date != null && x.Date <= date);
             if (lTrans != null)
             {
 
@@ -58,8 +53,8 @@ namespace GARCA.Data.Services
                     if (trans != null)
                     {
                         TransactionsArchived? tArchived;
-                        tArchived = await Task.Run(() => Update(trans.ToArchived()));
-                        HashSet<Splits>? lSplits = await Task.Run(() => iSplitsService.GetbyTransactionid(trans.Id));
+                        tArchived = await Save(trans.ToArchived());
+                        var lSplits = await iSplitsService.GetbyTransactionid(trans.Id);
                         if (lSplits != null)
                         {
                             foreach (var splits in lSplits)
@@ -68,21 +63,21 @@ namespace GARCA.Data.Services
                                 sArchived.Transactionid = tArchived.Id;
                                 sArchived.Transaction = tArchived;
                                 await Task.Run(() => iSplitsArchivedService.Update(sArchived));
-                                iSplitsService.Delete(splits);
+                                await iSplitsService.Delete(splits);
                             }
                         }
-                        iTransactionsService.Delete(trans);
+                        await iTransactionsService.Delete(trans);
                     }
                 }
 
-                HashSet<Accounts>? lAcc = await Task.Run(() => iAccountsService.GetAllOpened());
+                var lAcc = await iAccountsService.GetAllOpened();
 
                 if (lAcc != null)
                 {
                     foreach (var acc in lAcc)
                     {
-                        Decimal? total = await Task.Run(() => iTransactionsArchivedService.GetAll()?
-                            .Where(x => x.Date != null && x.Date <= date && x.Accountid == acc.Id).Sum(x => x.Amount));
+                        Decimal? total = (await iTransactionsArchivedService.GetAll())?
+                            .Where(x => x.Date != null && x.Date <= date && x.Accountid == acc.Id).Sum(x => x.Amount);
 
                         if (total is not null and not 0)
                         {
@@ -97,7 +92,7 @@ namespace GARCA.Data.Services
                                 TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Reconciled
                             };
 
-                            t = iTransactionsService.Update(t);
+                            t = await iTransactionsService.Save(t);
 
                             TransactionsArchived? at = t?.ToArchived();
                             if (at != null)

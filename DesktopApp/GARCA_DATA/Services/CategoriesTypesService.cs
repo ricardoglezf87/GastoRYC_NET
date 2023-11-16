@@ -18,10 +18,10 @@ namespace GARCA.Data.Services
             Specials = 4
         }
 
-        public HashSet<CategoriesTypes>? GetAllWithoutSpecialTransfer()
+        public async Task<IEnumerable<CategoriesTypes>?> GetAllWithoutSpecialTransfer()
         {
-            return GetAll()?.Where(x => x.Id is not (int)ECategoriesTypes.Specials and
-                    not (int)ECategoriesTypes.Transfers).ToHashSet();
+            return (await GetAll())?.Where(x => x.Id is not (int)ECategoriesTypes.Specials and
+                    not (int)ECategoriesTypes.Transfers);
         }
     }
 }

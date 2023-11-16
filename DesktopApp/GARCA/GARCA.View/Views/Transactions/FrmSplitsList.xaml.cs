@@ -1,5 +1,6 @@
 ﻿using GARCA.Data.Services;
 using GARCA.Models;
+using System.Threading.Tasks;
 using System.Windows;
 using static GARCA.Data.IOC.DependencyConfig;
 
@@ -24,9 +25,9 @@ namespace GARCA.View.Views
             this.transactions = transactions;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async Task Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = iCategoriesService.GetAll();
+            cbCategories.ItemsSource = await iCategoriesService.GetAll();
             loadSplits();
         }
 
@@ -75,12 +76,12 @@ namespace GARCA.View.Views
             }
         }
 
-        private void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async Task gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var splits = (Splits)e.RowData;
 
-            iTransactionsService.UpdateTranferSplits(transactions, ref splits);
-            iSplitsService.SaveChanges(splits);
+            splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
+            await iSplitsService.SaveChanges(splits);
         }
 
         private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)

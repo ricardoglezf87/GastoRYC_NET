@@ -15,33 +15,28 @@ namespace GARCA.Data.Services
             splitsManager = new SplitsManager();
         }
 
-        public HashSet<Splits>? GetbyTransactionidNull()
+        public async Task<IEnumerable<Splits>?> GetbyTransactionidNull()
         {
-            return splitsManager.GetbyTransactionidNull()?.ToHashSet();
+            return await splitsManager.GetbyTransactionidNull();
         }
 
-        public HashSet<Splits>? GetbyTransactionid(int transactionid)
+        public async Task<IEnumerable<Splits>?> GetbyTransactionid(int transactionid)
         {
-            return splitsManager.GetbyTransactionid(transactionid)?.ToHashSet();
+            return await splitsManager.GetbyTransactionid(transactionid);
         }
 
-        public void Update(Splits splits)
-        {
-            splitsManager.Update(splits);
-        }
-
-        public void SaveChanges(Splits splits)
+        public async Task SaveChanges(Splits splits)
         {
             if (splits.Category == null && splits.Categoryid != null)
             {
-                splits.Category = iCategoriesService.GetById(splits.Categoryid ?? -99);
+                splits.Category = await iCategoriesService.GetById(splits.Categoryid ?? -99);
             }
 
             splits.AmountIn ??= 0;
 
             splits.AmountOut ??= 0;
 
-            Update(splits);
+            await Update(splits);
         }
 
     }

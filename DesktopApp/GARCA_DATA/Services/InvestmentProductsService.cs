@@ -6,14 +6,9 @@ namespace GARCA.Data.Services
 {
     public class InvestmentProductsService : ServiceBase<InvestmentProductsManager, InvestmentProducts, Int32>
     {
-        public void Update(InvestmentProducts investmentProducts)
+        public async Task<IEnumerable<InvestmentProducts>?> GetAllOpened()
         {
-            manager.Update(investmentProducts);
-        }
-
-        public async Task<HashSet<InvestmentProducts>?> GetAllOpened()
-        {
-            return await Task.Run(() => manager.GetAllOpened()?.ToHashSet());
+            return await manager.GetAllOpened();
         }
     }
 }

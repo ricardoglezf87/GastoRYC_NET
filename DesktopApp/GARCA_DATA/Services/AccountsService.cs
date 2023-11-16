@@ -12,19 +12,19 @@ namespace GARCA.Data.Services
 {
     public class AccountsService : ServiceBase<AccountsManager,Accounts, Int32>
     {
-        public HashSet<Accounts>? GetAllOpened()
+        public async Task<IEnumerable<Accounts>?> GetAllOpened()
         {
-            return GetAll()?.Where(x=> x.Closed is null || x.Closed is false).ToHashSet();
+            return (await GetAll())?.Where(x=> x.Closed is null || x.Closed is false).ToHashSet();
         }
 
-        public Accounts? GetByCategoryId(int? id)
+        public async Task<Accounts?> GetByCategoryId(int id)
         {
-            return GetAll()?.First(x => x.Categoryid == id);
+            return (await GetAll())?.First(x => x.Categoryid == id);
         }
 
-        public Decimal GetBalanceByAccount(int? id)
+        public async Task<Decimal> GetBalanceByAccount(int? id)
         {
-            return iTransactionsService.GetByAccount(id)?.Sum(x => x.Amount) ?? 0;
+            return (await iTransactionsService.GetByAccount(id))?.Sum(x => x.Amount) ?? 0;
         }
     }
 }

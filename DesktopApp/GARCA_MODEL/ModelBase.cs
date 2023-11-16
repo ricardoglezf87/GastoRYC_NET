@@ -9,6 +9,11 @@ namespace GARCA.Models
         [Key]
         public virtual T Id { set; get; }
 
+        public ModelBase()
+        {
+
+        }
+
         public virtual int CompareTo(Object? obj)
         {
             return obj == null ? 0 : Id.ToString().CompareTo(((ModelBase<T>)obj).Id);

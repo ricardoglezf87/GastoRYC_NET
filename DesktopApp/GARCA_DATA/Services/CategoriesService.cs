@@ -19,30 +19,16 @@ namespace GARCA.Data.Services
             WithoutCategory = 0
         }
 
-        public HashSet<Categories>? GetAllWithoutSpecialTransfer()
+        public async Task<IEnumerable<Categories>?> GetAllWithoutSpecialTransfer()
         {
-            return GetAll().Where(x => !x.CategoriesTypesid.
+            return (await GetAll())?.Where(x => !x.CategoriesTypesid.
                 Equals((int)CategoriesTypesService.ECategoriesTypes.Transfers) &&
-                !x.CategoriesTypesid.Equals((int)CategoriesTypesService.ECategoriesTypes.Specials))?.ToHashSet();
+                !x.CategoriesTypesid.Equals((int)CategoriesTypesService.ECategoriesTypes.Specials));
         }
 
-        public int GetNextId()
+        public async Task<int> GetNextId()
         {
-            return 1000; //TODO:Poner dengro de CacheService
-            //using (var unitOfWork = new UnitOfWork(new RycContext()))
-            //{
-            //    var cmd = unitOfWork.GetDataBase().
-            //    GetDbConnection().CreateCommand();
-            //    cmd.CommandText = "SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';";
-
-            //    unitOfWork.GetDataBase().OpenConnection();
-            //    var result = cmd.ExecuteReader();
-            //    result.Read();
-            //    var id = Convert.ToInt32(result[0]);
-            //    result.Close();
-
-            //    return id;
-            //}
+            return await manager.GetNextId();
         }
     }
 }

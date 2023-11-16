@@ -6,19 +6,19 @@ namespace GARCA.Data.Services
 {
     public class SplitsRemindersService : ServiceBase<SplitsRemindersManager, SplitsReminders, Int32>
     {
-        public HashSet<SplitsReminders>? GetbyTransactionidNull()
+        public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionidNull()
         {
-            return manager.GetbyTransactionidNull()?.ToHashSet();
+            return await manager.GetbyTransactionidNull();
         }
 
-        public HashSet<SplitsReminders>? GetbyTransactionid(int transactionid)
+        public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionid(int transactionid)
         {
-            return manager.GetbyTransactionid(transactionid)?.ToHashSet();
+            return await manager.GetbyTransactionid(transactionid);
         }
 
-        public void Update(SplitsReminders splitsReminders)
+        public async Task Update(SplitsReminders splitsReminders)
         {
-            manager.Update(splitsReminders);
+            await manager.Update(splitsReminders);
         }
     }
 }

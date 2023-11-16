@@ -1,55 +1,32 @@
-﻿
+﻿using static GARCA.Data.IOC.DependencyConfig;
 using GARCA.Models;
 using System.Linq.Expressions;
+using Dommel;
 
 namespace GARCA.Data.Managers
 {
     public class SplitsRemindersManager : ManagerBase<SplitsReminders, Int32>
     {
-#pragma warning disable CS8603
-        protected override Expression<Func<SplitsReminders, object>>[] GetIncludes()
-        {
-            return new Expression<Func<SplitsReminders, object>>[]
-            {
-                a => a.Transaction,
-                a => a.Category,
-                a => a.Tag
-            };
-        }
-#pragma warning restore CS8603
+//#pragma warning disable CS8603
+//        protected override Expression<Func<SplitsReminders, object>>[] GetIncludes()
+//        {
+//            return new Expression<Func<SplitsReminders, object>>[]
+//            {
+//                a => a.Transaction,
+//                a => a.Category,
+//                a => a.Tag
+//            };
+//        }
+//#pragma warning restore CS8603
 
-        public IEnumerable<SplitsReminders>? GetbyTransactionidNull()
+        public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionidNull()
         {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<SplitsReminders>();
-                var query = GetEntyWithInclude(repository)?.Where(x => x.Transactionid == null);
-
-                if (query != null)
-                {
-                    foreach (var item in query)
-                    {
-                        yield return item;
-                    }
-                }
-            }
+            return await iRycContextService.getConnection().SelectAsync<SplitsReminders>(x => x.Transactionid == null);
         }
 
-        public IEnumerable<SplitsReminders>? GetbyTransactionid(int transactionid)
+        public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionid(int transactionid)
         {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<SplitsReminders>();
-                var query = GetEntyWithInclude(repository)?.Where(x => x.Transactionid == transactionid);
-
-                if (query != null)
-                {
-                    foreach (var item in query)
-                    {
-                        yield return item;
-                    }
-                }
-            }
+                return await iRycContextService.getConnection().SelectAsync<SplitsReminders>(x => x.Transactionid == transactionid);          
         }
     }
 }

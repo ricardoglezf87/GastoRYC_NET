@@ -9,6 +9,11 @@ namespace GARCA.Data.Managers
     public class ManagerBase<T,Q> 
         where T : ModelBase<Q>, new()        
     {
+        public ManagerBase()
+        {
+
+        }
+
         public async virtual Task<IEnumerable<T>?> GetAll()
         {
             return await iRycContextService.getConnection().GetAllAsync<T>();   

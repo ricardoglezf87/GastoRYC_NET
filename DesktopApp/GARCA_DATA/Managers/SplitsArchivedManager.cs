@@ -1,38 +1,29 @@
 ﻿
+using static GARCA.Data.IOC.DependencyConfig;
 using GARCA.Models;
 using System.Linq.Expressions;
+using Dommel;
 
 namespace GARCA.Data.Managers
 {
     public class SplitsArchivedManager : ManagerBase<SplitsArchived, Int32>
     {
-#pragma warning disable CS8603
-        protected override Expression<Func<SplitsArchived, object>>[] GetIncludes()
-        {
-            return new Expression<Func<SplitsArchived, object>>[]
-            {
-                a => a.Transaction,
-                a => a.Category,
-                a => a.Tag
-            };
-        }
-#pragma warning restore CS8603
+//#pragma warning disable CS8603
+//        protected override Expression<Func<SplitsArchived, object>>[] GetIncludes()
+//        {
+//            return new Expression<Func<SplitsArchived, object>>[]
+//            {
+//                a => a.Transaction,
+//                a => a.Category,
+//                a => a.Tag
+//            };
+//        }
+//#pragma warning restore CS8603
 
-        public IEnumerable<SplitsArchived>? GetbyTransactionid(int transactionid)
+        public async Task<IEnumerable<SplitsArchived>?> GetbyTransactionid(int transactionid)
         {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryModelBase<SplitsArchived>();
-                var query = GetEntyWithInclude(repository)?.Where(x => x.Transactionid == transactionid);
-
-                if (query != null)
-                {
-                    foreach (var item in query)
-                    {
-                        yield return item;
-                    }
-                }
-            }
+            return await iRycContextService.getConnection().
+                SelectAsync<SplitsArchived>(x => x.Transactionid == transactionid);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Dommel;
 using GARCA.Data.Services;
 using GARCA.Models;
 using System;
@@ -12,25 +13,14 @@ namespace GARCA.Data.Managers
 {
     public class CategoriesManager : ManagerBase<Categories, Int32>
     {
-        protected override string GetGeneralQuery()
-        {
-            return @"
-                    select * 
-                    from Categories
-                        inner join CategoriesTypes on CategoriesTypes.Id = Categories.categoriesTypesid
-                    ";
-        }
-
         public async override Task<IEnumerable<Categories>?> GetAll()
         {
-            return await iRycContextService.getConnection().QueryAsync<Categories, CategoriesTypes, Categories>(
-                GetGeneralQuery()
-                , (a, at) =>
-                {
-                    a.CategoriesTypes = at;
-                    return a;
-                });
+            return await iRycContextService.getConnection().GetAllAsync<Categories, CategoriesTypes, Categories>();
+        }
 
+        public async Task<int> GetNextId()
+        {
+            return await iRycContextService.getConnection().ExecuteScalarAsync<int>("SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';");
         }
     }
 }

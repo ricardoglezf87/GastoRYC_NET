@@ -1,5 +1,6 @@
 ﻿using GARCA.Data.Services;
 using GARCA.Models;
+using System.Threading.Tasks;
 using System.Windows;
 using static GARCA.Data.IOC.DependencyConfig;
 
@@ -23,9 +24,9 @@ namespace GARCA.View.Views
             this.transactionsReminders = transactionsReminders;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async Task Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = iCategoriesService.GetAll();
+            cbCategories.ItemsSource = await iCategoriesService.GetAll();
             loadSplits();
         }
 

@@ -11,28 +11,28 @@ namespace GARCA.Data.Services
 {
     public class InvestmentProductsPricesService : ServiceBase<InvestmentProductsPricesManager, InvestmentProductsPrices, Int32>
     {
-        private bool Exists(int? investmentProductId, DateTime? date)
+        private async Task<bool> Exists(int investmentProductId, DateTime date)
         {
-            return manager.Exists(investmentProductId, date);
+            return await manager.Exists(investmentProductId, date);
         }
 
-        public Decimal? GetActualPrice(InvestmentProducts investmentProducts)
+        public async Task<Decimal?> GetActualPrice(InvestmentProducts investmentProducts)
         {
-            return manager.GetActualPrice(investmentProducts);
+            return await manager.GetActualPrice(investmentProducts);
         }
 
-        public DateTime? GetLastValueDate(InvestmentProducts investmentProducts)
+        public async Task<DateTime?> GetLastValueDate(InvestmentProducts investmentProducts)
         {
-            return manager.GetLastValueDate(investmentProducts);
+            return await manager.GetLastValueDate(investmentProducts);
         }
 
-        public async Task getPricesOnlineAsync(InvestmentProducts? investmentProducts)
+        public async Task getPricesOnlineAsync(InvestmentProducts investmentProducts)
         {
             //Get prices from buy and sell ins transactions
-            foreach (var transactions in (iTransactionsService.GetByInvestmentProduct(investmentProducts) ?? Enumerable.Empty<Transactions>())
+            foreach (var transactions in (await iTransactionsService.GetByInvestmentProduct(investmentProducts) ?? Enumerable.Empty<Transactions>())
                          .GroupBy(g => g.Date).Select(x => new { date = x.Key, price = x.Average(y => y.PricesShares) }))
             {
-                if (!Exists(investmentProducts.Id, transactions.date))
+                if (!await Exists(investmentProducts.Id, transactions.date ?? DateTime.MinValue))
                 {
                     InvestmentProductsPrices productsPrices = new();
                     productsPrices.Date = transactions.date;
@@ -63,13 +63,11 @@ namespace GARCA.Data.Services
 
             foreach (var productsPrices in lproductsPrices)
             {
-                if (!Exists(productsPrices.InvestmentProductsid, productsPrices.Date))
+                if (!await Exists(productsPrices.InvestmentProductsid ?? -99, productsPrices.Date ?? DateTime.MinValue))
                 {
-                    manager.Update(productsPrices);
+                    await manager.Update(productsPrices);
                 }
             }
-
-            manager.SaveChanges();
         }
 
         private async Task<HashSet<InvestmentProductsPrices>> getPricesOnlineYahoo(InvestmentProducts investmentProducts)

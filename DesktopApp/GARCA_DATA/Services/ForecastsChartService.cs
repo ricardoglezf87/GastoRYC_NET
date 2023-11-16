@@ -8,14 +8,14 @@ namespace GARCA.Data.Services
     {
         #region Functions
 
-        public HashSet<ForecastsChart> GetMonthForecast()
+        public async Task<IEnumerable<ForecastsChart>> GetMonthForecast()
         {
             Dictionary<Tuple<DateTime, int?>, Decimal> dChart = new();
             Dictionary<int, Decimal> saldos = new();
 
             var now = DateTime.Now;
 
-            foreach (var g in (iAccountsService.GetAllOpened() ?? Enumerable.Empty<Accounts>())?.Where(x => 
+            foreach (var g in (await iAccountsService.GetAllOpened() ?? Enumerable.Empty<Accounts>())?.Where(x => 
                                                             x.AccountsTypesid == (int)EAccountsTypes.Cash ||
                                                             x.AccountsTypesid == (int)EAccountsTypes.Banks ||
                                                             x.AccountsTypesid == (int)EAccountsTypes.Cards))
@@ -25,15 +25,15 @@ namespace GARCA.Data.Services
 
             List<Transactions> remTransactions = new();
 
-            foreach (var exp in iExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration())
+            foreach (var exp in await iExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration())
             {
                 if (exp != null)
                 {
-                    remTransactions.AddRange(iExpirationsRemindersService.RegisterTransactionfromReminderSimulation(exp));
+                    remTransactions.AddRange(await iExpirationsRemindersService.RegisterTransactionfromReminderSimulation(exp));
                 }
             }
 
-            var transactions = iTransactionsService.GetAll()?.ToList();
+            var transactions = (await iTransactionsService.GetAll())?.ToList();
 
             if (transactions != null)
             {
@@ -69,7 +69,7 @@ namespace GARCA.Data.Services
             foreach (var key in dChart.Keys)
             {
                 lChart.Add(new ForecastsChart(key.Item1,
-                    iAccountsService.GetById(key.Item2 ?? -99)?.Description,
+                    (await iAccountsService.GetById(key.Item2 ?? -99))?.Description,
                     key.Item2, dChart[key]));
             }
             return lChart;

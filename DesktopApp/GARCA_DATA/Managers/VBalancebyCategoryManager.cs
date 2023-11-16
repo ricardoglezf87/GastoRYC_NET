@@ -1,22 +1,16 @@
 ﻿
+using static GARCA.Data.IOC.DependencyConfig;
+using GARCA.Data.Services;
 using GARCA.Models;
+using Dommel;
 
 namespace GARCA.Data.Managers
 {
     public class VBalancebyCategoryManager
     {
-        public IEnumerable<VBalancebyCategory>? GetAll()
+        public async Task<IEnumerable<VBalancebyCategory>?> GetAll()
         {
-            using (var unitOfWork = new UnitOfWork(new RycContext()))
-            {
-                var repository = unitOfWork.GetRepositoryGeneral<VBalancebyCategory>();
-                var query = repository.GetAll();
-
-                foreach (var item in query)
-                {
-                    yield return item;
-                }
-            }
+            return await iRycContextService.getConnection().GetAllAsync<VBalancebyCategory>();
         }
     }
 }

@@ -303,18 +303,18 @@ namespace GARCA.View.Views
             }
         }
 
-        private void UpdateTransaction()
+        private async Task UpdateTransaction()
         {
             transaction ??= new Transactions();
 
             transaction.Date = dtpDate.SelectedDate;
             transaction.Accountid = (int)cbAccount.SelectedValue;
-            transaction.Account = iAccountsService.GetById(transaction.Accountid ?? -99);
+            transaction.Account = await iAccountsService.GetById(transaction.Accountid ?? -99);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.Personid = (int)cbPerson.SelectedValue;
-                transaction.Person = iPersonsService.GetById(transaction.Personid ?? -99);
+                transaction.Person = await iPersonsService.GetById(transaction.Personid ?? -99);
             }
 
             transaction.Memo = txtMemo.Text;
@@ -327,13 +327,13 @@ namespace GARCA.View.Views
             if (cbCategory.SelectedValue != null)
             {
                 transaction.Categoryid = (int)cbCategory.SelectedValue;
-                transaction.Category = iCategoriesService.GetById(transaction.Categoryid ?? -99);
+                transaction.Category = await iCategoriesService.GetById(transaction.Categoryid ?? -99);
             }
 
             if (cbInvestmentProduct.SelectedValue != null)
             {
                 transaction.InvestmentProductsid = (int)cbInvestmentProduct.SelectedValue;
-                transaction.InvestmentProducts = iInvestmentProductsService.GetById(transaction.InvestmentProductsid ?? -99);
+                transaction.InvestmentProducts = await iInvestmentProductsService.GetById(transaction.InvestmentProductsid ?? -99);
             }
 
             transaction.NumShares = (decimal)Convert.ToDouble(txtNumShares.Value);
@@ -353,21 +353,21 @@ namespace GARCA.View.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.Tagid = (int)cbTag.SelectedValue;
-                transaction.Tag = iTagsService.GetById(transaction.Tagid ?? -99);
+                transaction.Tag = await iTagsService.GetById(transaction.Tagid ?? -99);
             }
 
             transaction.TransactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.TransactionStatus = iTransactionsStatusService.GetById(transaction.TransactionStatusid ?? -99);
+            transaction.TransactionStatus = await iTransactionsStatusService.GetById(transaction.TransactionStatusid ?? -99);
         }
 
-        private void LoadComboBox()
+        private async Task LoadComboBox()
         {
-            cbAccount.ItemsSource = iAccountsService.GetAll();
-            cbPerson.ItemsSource = iPersonsService.GetAll();
-            cbCategory.ItemsSource = iCategoriesService.GetAll();
-            cbInvestmentProduct.ItemsSource = iInvestmentProductsService.GetAll();
-            cbTag.ItemsSource = iTagsService.GetAll();
-            cbTransactionStatus.ItemsSource = iTransactionsStatusService.GetAll();
+            cbAccount.ItemsSource = await iAccountsService.GetAll();
+            cbPerson.ItemsSource = await iPersonsService.GetAll();
+            cbCategory.ItemsSource = await iCategoriesService.GetAll();
+            cbInvestmentProduct.ItemsSource = await iInvestmentProductsService.GetAll();
+            cbTag.ItemsSource = await iTagsService.GetAll();
+            cbTransactionStatus.ItemsSource = await iTransactionsStatusService.GetAll();
         }
 
         private bool IsTransactionValid()
