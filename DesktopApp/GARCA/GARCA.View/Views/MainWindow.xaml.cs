@@ -45,8 +45,8 @@ namespace GARCA
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
             SfSkinManager.ApplyStylesOnApplication = true;
 
-            iRycContextService.MakeBackup();
-            iRycContextService.MigrateDataBase();
+            //iRycContextService.MakeBackup();
+            //iRycContextService.MigrateDataBase();
         }
 
         #endregion
@@ -193,7 +193,7 @@ namespace GARCA
 
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadCalendar();
+            await LoadCalendar();
             await iExpirationsRemindersService.GenerateAutoregister();
             await LoadAccounts();
             ToggleViews(EViews.Home);
@@ -356,9 +356,9 @@ namespace GARCA
             }
         }
 
-        private void LoadCalendar()
+        private async Task LoadCalendar()
         {
-            iDateCalendarService.FillCalendar();
+            await iDateCalendarService.FillCalendar();
         }
 
         private void ToggleViews(EViews views)

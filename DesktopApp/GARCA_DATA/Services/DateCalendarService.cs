@@ -19,7 +19,7 @@ namespace GARCA.Data.Services
             var ini = initDate;
             while (ini < DateTime.Now.AddYears(1))
             {
-                if (GetById(ini) == null)
+                if (await GetById(ini) == null)
                 {
                     DateCalendar date = new()
                     {
