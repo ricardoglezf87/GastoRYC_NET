@@ -7,7 +7,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsArchivedService : ServiceBase<TransactionsArchivedManager, TransactionsArchived, Int32>
+    public class TransactionsArchivedService : ServiceBase<TransactionsArchivedManager, TransactionsArchived>
     {
 
         #region TransactionsArchivedActions      

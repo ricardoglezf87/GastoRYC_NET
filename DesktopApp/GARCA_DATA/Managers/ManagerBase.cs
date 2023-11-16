@@ -6,31 +6,27 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
-    public class ManagerBase<T,Q> 
-        where T : ModelBase<Q>, new()        
+    public class ManagerBase<Q> 
+        where Q : ModelBase, new()        
     {
-        public ManagerBase()
+        public async virtual Task<IEnumerable<Q>?> GetAll()
         {
-
+            return await iRycContextService.getConnection().GetAllAsync<Q>();   
         }
 
-        public async virtual Task<IEnumerable<T>?> GetAll()
-        {
-            return await iRycContextService.getConnection().GetAllAsync<T>();   
+        public async virtual Task<Q?> GetById(int id)
+        { 
+            return await iRycContextService.getConnection().GetAsync<Q>(id);
         }
 
-        public async virtual Task<T?> GetById(Q id)
+        public async virtual Task<Q?> GetById(DateTime id)
         {
-            if (id != null)
-            {
-                return await iRycContextService.getConnection().GetAsync<T>(id);
-            }
-            return null;
+            return await iRycContextService.getConnection().GetAsync<Q>(id);
         }
 
-        public async virtual Task<T> Save(T obj)
+        public async virtual Task<Q> Save(Q obj)
         {
-            if(obj.Id != null)
+            if(obj?.Id != null)
             {
                 await Update(obj);
             }
@@ -41,34 +37,34 @@ namespace GARCA.Data.Managers
             return obj;           
         }
 
-        public async virtual Task<bool> Update(T obj)
+        public async virtual Task<bool> Update(Q obj)
         {
             return await iRycContextService.getConnection().UpdateAsync(obj);            
         }
 
-        public async virtual Task<bool> Update(IEnumerable<T> lObj)
+        public async virtual Task<bool> Update(IEnumerable<Q> lObj)
         {
             return await iRycContextService.getConnection().UpdateAsync(lObj);
         }
 
-        public async virtual Task<T> Insert(T obj)
+        public async virtual Task<Q> Insert(Q obj)
         {
-            return (T) await iRycContextService.getConnection().InsertAsync(obj);
+            return (Q) await iRycContextService.getConnection().InsertAsync(obj);
         }
 
-        public async virtual Task<IEnumerable<T>> Insert(IEnumerable<T> lObj)
+        public async virtual Task<IEnumerable<Q>> Insert(IEnumerable<Q> lObj)
         {
-            return (IEnumerable<T>) await iRycContextService.getConnection().InsertAsync(lObj);
+            return (IEnumerable<Q>) await iRycContextService.getConnection().InsertAsync(lObj);
         }
 
-        public async virtual Task<bool> Delete(T obj)
+        public async virtual Task<bool> Delete(Q obj)
         {
             return await Delete(obj.Id);
         }
 
-        public async virtual Task<bool> Delete(Q id)
+        public async virtual Task<bool> Delete(int id)
         {
-            return await iRycContextService.getConnection().DeleteAsync(new T() { Id = id });
+            return await iRycContextService.getConnection().DeleteAsync(new Q() { Id = id });
         }
     }
 }

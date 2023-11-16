@@ -10,7 +10,7 @@ using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {
-    public class AccountsService : ServiceBase<AccountsManager,Accounts, Int32>
+    public class AccountsService : ServiceBase<AccountsManager,Accounts>
     {
         public async Task<IEnumerable<Accounts>?> GetAllOpened()
         {

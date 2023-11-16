@@ -5,7 +5,7 @@ using Dommel;
 
 namespace GARCA.Data.Managers
 {
-    public class SplitsRemindersManager : ManagerBase<SplitsReminders, Int32>
+    public class SplitsRemindersManager : ManagerBase<SplitsReminders>
     {
 //#pragma warning disable CS8603
 //        protected override Expression<Func<SplitsReminders, object>>[] GetIncludes()

@@ -6,7 +6,7 @@ using Dommel;
 
 namespace GARCA.Data.Managers
 {
-    public class SplitsArchivedManager : ManagerBase<SplitsArchived, Int32>
+    public class SplitsArchivedManager : ManagerBase<SplitsArchived>
     {
 //#pragma warning disable CS8603
 //        protected override Expression<Func<SplitsArchived, object>>[] GetIncludes()

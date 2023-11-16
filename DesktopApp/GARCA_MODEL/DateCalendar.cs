@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace GARCA.Models
 {
     [Table("DateCalendar")]
-    public class DateCalendar : ModelBase<DateTime>
+    public class DateCalendar : ModelBase
     {
         [Column("date")]
         public virtual DateTime? Date { set; get; }

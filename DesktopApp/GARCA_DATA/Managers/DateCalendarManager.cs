@@ -3,7 +3,7 @@ using GARCA.Models;
 
 namespace GARCA.Data.Managers
 {
-    public class DateCalendarManager : ManagerBase<DateCalendar,DateTime>
+    public class DateCalendarManager : ManagerBase<DateCalendar>
     {
     }
 }

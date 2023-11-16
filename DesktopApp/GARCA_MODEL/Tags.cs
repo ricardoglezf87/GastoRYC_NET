@@ -3,7 +3,7 @@
 namespace GARCA.Models
 {
     [Table("Tags")]
-    public class Tags : ModelBase<Int32>
+    public class Tags : ModelBase
     {
         [Column("description")]
         public virtual String? Description { set; get; }

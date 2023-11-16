@@ -9,7 +9,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class InvestmentProductsPricesService : ServiceBase<InvestmentProductsPricesManager, InvestmentProductsPrices, Int32>
+    public class InvestmentProductsPricesService : ServiceBase<InvestmentProductsPricesManager, InvestmentProductsPrices>
     {
         private async Task<bool> Exists(int investmentProductId, DateTime date)
         {

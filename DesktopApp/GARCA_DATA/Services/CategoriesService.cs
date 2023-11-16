@@ -10,7 +10,7 @@ using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {
-    public class CategoriesService : ServiceBase<CategoriesManager, Categories, Int32>
+    public class CategoriesService : ServiceBase<CategoriesManager, Categories>
     {
         public enum ESpecialCategories
         {
