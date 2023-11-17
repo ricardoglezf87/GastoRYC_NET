@@ -34,7 +34,7 @@ namespace GARCA.View.Views
 
         #region Events
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             LoadTransactions();
         }
@@ -53,7 +53,7 @@ namespace GARCA.View.Views
             var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
-            iTransactionsService.UpdateTransactionAfterSplits(transactions);
+            await iTransactionsService.UpdateTransactionAfterSplits(transactions);
             await iTransactionsService.RefreshBalanceAllTransactions();
             LoadTransactions();
             await parentForm.LoadAccounts();
@@ -63,7 +63,7 @@ namespace GARCA.View.Views
         {
             foreach (Transactions transactions in e.Items)
             {
-                RemoveTransaction(transactions);
+                await RemoveTransaction(transactions);
             }
 
             LoadTransactions();
@@ -159,7 +159,7 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    RemoveTransaction(transactions);
+                    await RemoveTransaction(transactions);
                 }
                 LoadTransactions();
                 await parentForm.LoadAccounts();

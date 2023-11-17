@@ -42,24 +42,24 @@ namespace GARCA.View.Views
 
         #region Events
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadComboBox();
-            LoadTransaction();
+            await LoadComboBox();
+            await LoadTransaction();
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private async void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            if (SaveTransaction())
+            if (await SaveTransaction())
             {
                 WindowsResult = EWindowsResult.Sucess;
                 Close();
             }
         }
 
-        private void btnSplit_Click(object sender, RoutedEventArgs e)
+        private async void btnSplit_Click(object sender, RoutedEventArgs e)
         {
-            if (transaction == null && !SaveTransaction())
+            if (transaction == null && !await SaveTransaction())
             {
                 MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
                 return;
@@ -67,23 +67,23 @@ namespace GARCA.View.Views
 
             FrmSplitsRemindersList frm = new(transaction);
             frm.ShowDialog();
-            iTransactionsRemindersService.UpdateSplitsReminders(transaction);
-            LoadTransaction();
+            await iTransactionsRemindersService.UpdateSplitsReminders(transaction);
+            await LoadTransaction();
         }
 
-        private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
+        private async void Window_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
                 case Key.F1:
-                    if (SaveTransaction())
+                    if (await SaveTransaction())
                     {
                         transaction = null;
-                        LoadTransaction();
+                        await LoadTransaction();
                     }
                     break;
                 case Key.F2:
-                    SaveTransaction();
+                    await SaveTransaction();
                     break;
                 case Key.Escape:
                     Close();
@@ -205,17 +205,17 @@ namespace GARCA.View.Views
             cbPeriodTransaction.ItemsSource = await iPeriodsReminderService.GetAll();
         }
 
-        private bool SaveTransaction()
+        private async Task<bool> SaveTransaction()
         {
             if (IsTransactionValid())
             {
                 if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
                         MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    UpdateTransaction();
+                    await UpdateTransaction();
                     if (transaction != null)
                     {
-                        iTransactionsRemindersService.SaveChanges(transaction);
+                        await iTransactionsRemindersService.SaveChanges(transaction);
                     }
                     return true;
                 }

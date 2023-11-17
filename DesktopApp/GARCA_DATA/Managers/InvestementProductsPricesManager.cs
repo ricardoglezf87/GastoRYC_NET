@@ -8,16 +8,6 @@ namespace GARCA.Data.Managers
 {
     public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPrices>
     {
-//#pragma warning disable CS8603
-//        protected override Expression<Func<InvestmentProductsPrices, object>>[] GetIncludes()
-//        {
-//            return new Expression<Func<InvestmentProductsPrices, object>>[]
-//            {
-//                a => a.InvestmentProducts
-//            };
-//        }
-//#pragma warning restore CS8603
-
         public async Task<bool> Exists(int investmentProductId, DateTime date)
         {
             return await iRycContextService.getConnection().SelectAsync <InvestmentProductsPrices>(

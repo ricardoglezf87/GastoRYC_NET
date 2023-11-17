@@ -22,9 +22,9 @@ namespace GARCA.Data.Managers
             {
                 if (await IsMigrateFeature(clase.Name)) continue;
 
-                object instancia = Activator.CreateInstance(clase);
+                object? instancia = Activator.CreateInstance(clase);
                 
-                MethodInfo metodoDo = clase.GetMethod("Do");
+                MethodInfo? metodoDo = clase.GetMethod("Do");
 
                 if (metodoDo != null)
                 {

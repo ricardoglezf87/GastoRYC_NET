@@ -18,6 +18,7 @@ namespace GARCA.View.Views
 
         private async void Window_ContentRendered(object sender, EventArgs e)
         {
+            //TODO: crear funcion y realizar backup
             await iMigrationService.Migrate();
             new MainWindow().Show();
             Close();

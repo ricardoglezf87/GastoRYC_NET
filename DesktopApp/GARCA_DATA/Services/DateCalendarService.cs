@@ -13,7 +13,7 @@ namespace GARCA.Data.Services
         public DateCalendarService()
         {
             dateCalendarManager = new DateCalendarManager();
-            initDate = new DateTime(2001, 01, 01, 0, 0, 0, DateTimeKind.Utc); ;
+            initDate = new DateTime(2001, 01, 01, 0, 0, 0, DateTimeKind.Utc);
         }
 
         public async Task<DateCalendar?> GetByDate(DateTime date)

@@ -92,7 +92,7 @@ namespace GARCA.View.Views
             if (expirationsReminders != null)
             {
                 expirationsReminders.Done = true;
-                iExpirationsRemindersService.Update(expirationsReminders);
+                await iExpirationsRemindersService.Update(expirationsReminders);
             }
 
             await LoadReminders();

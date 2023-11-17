@@ -250,7 +250,7 @@ namespace GARCA.Data.Services
                 foreach (var splits in lSplits)
                 {
                     splits.Transactionid = transactions.Id;
-                    iSplitsService.Update(splits);
+                    await iSplitsService.Update(splits);
                 }
             }
             else

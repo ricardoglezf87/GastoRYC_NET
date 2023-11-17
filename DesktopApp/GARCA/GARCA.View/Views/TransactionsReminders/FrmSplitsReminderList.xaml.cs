@@ -74,14 +74,14 @@ namespace GARCA.View.Views
             }
         }
 
-        private void gvSplitsReminders_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvSplitsReminders_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var splitsReminders = (SplitsReminders)e.RowData;
 
-            SaveChanges(splitsReminders);
+            await SaveChanges(splitsReminders);
         }
 
-        private async void SaveChanges(SplitsReminders splitsReminders)
+        private async Task SaveChanges(SplitsReminders splitsReminders)
         {
             if (splitsReminders.Category == null && splitsReminders.Categoryid != null)
             {

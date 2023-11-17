@@ -8,16 +8,6 @@ namespace GARCA.Data.Managers
 {
     public class InvestmentProductsManager : ManagerBase<InvestmentProducts>
     {
-//#pragma warning disable CS8603
-//        protected override Expression<Func<InvestmentProducts, object>>[] GetIncludes()
-//        {
-//            return new Expression<Func<InvestmentProducts, object>>[]
-//            {
-//                a => a.InvestmentProductsTypes
-//            };
-//        }
-//#pragma warning restore CS8603
-
         public async Task<IEnumerable<InvestmentProducts>?> GetAllOpened()
         {
             return await iRycContextService.getConnection().SelectAsync<InvestmentProducts>(x => x.Active.HasValue && x.Active.Value);

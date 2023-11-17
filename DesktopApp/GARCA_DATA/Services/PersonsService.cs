@@ -10,11 +10,6 @@ namespace GARCA.Data.Services
     {
         public async Task SetCategoryDefault(int id)
         {
-            if (id == null)
-            {
-                return;
-            }
-
             var trans = (await iTransactionsArchivedService.GetByPerson(id))?.ToList();
             trans.AddRange((await iTransactionsService.GetByPerson(id))?.ToList());
 

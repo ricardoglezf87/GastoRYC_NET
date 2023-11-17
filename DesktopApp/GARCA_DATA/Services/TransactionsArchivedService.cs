@@ -101,7 +101,7 @@ namespace GARCA.Data.Services
                                 at.AmountOut = (total > 0 ? total : 0);
                                 at.Balance = 0;
 
-                                iTransactionsArchivedService.Update(at);
+                                await iTransactionsArchivedService.Update(at);
                             }
                         }
 

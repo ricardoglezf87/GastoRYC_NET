@@ -15,10 +15,5 @@ namespace GARCA.Data.Services
         {
             return await manager.GetbyTransactionid(transactionid);
         }
-
-        public async Task Update(SplitsReminders splitsReminders)
-        {
-            await manager.Update(splitsReminders);
-        }
     }
 }

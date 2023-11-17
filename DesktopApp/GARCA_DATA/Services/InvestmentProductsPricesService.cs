@@ -38,7 +38,7 @@ namespace GARCA.Data.Services
                     productsPrices.Date = transactions.date;
                     productsPrices.InvestmentProductsid = investmentProducts.Id;
                     productsPrices.Prices = transactions.price;
-                    manager.Update(productsPrices);
+                    await manager.Update(productsPrices);
                 }
             }
 

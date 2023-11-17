@@ -11,7 +11,7 @@ namespace GARCA.Data.Services
     {
         private async Task<IEnumerable<ExpirationsReminders>?> GetAllWithGeneration()
         {
-            GenerationAllExpirations();
+            await GenerationAllExpirations();
             return await GetAll();
         }
 
@@ -35,7 +35,7 @@ namespace GARCA.Data.Services
         {
             foreach (var transactionsReminders in await iTransactionsRemindersService.GetAll())
             {
-                GenerationExpirations(transactionsReminders);
+                await GenerationExpirations(transactionsReminders);
             }
         }
 
@@ -47,7 +47,7 @@ namespace GARCA.Data.Services
             {
                 await RegisterTransactionfromReminder(exp.Id);
                 exp.Done = true;
-                Update(exp);
+                await Update(exp);
             }
         }
 
@@ -65,7 +65,7 @@ namespace GARCA.Data.Services
                         expirationsReminders.TransactionsRemindersId = transactionsReminders.Id;
                         expirationsReminders.TransactionsReminders = transactionsReminders;
                         expirationsReminders.Date = date;
-                        Update(expirationsReminders);
+                        await Update(expirationsReminders);
                     }
 
                     date = iPeriodsReminderService.GetNextDate(date, iPeriodsReminderService.ToEnum(transactionsReminders.PeriodsReminders));

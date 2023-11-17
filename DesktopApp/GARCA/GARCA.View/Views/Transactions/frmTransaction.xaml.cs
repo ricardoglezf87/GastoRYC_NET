@@ -61,9 +61,9 @@ namespace GARCA.View.Views
             ToggleViews();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadComboBox();
+            await LoadComboBox();
             LoadTransaction();
         }
 
@@ -99,7 +99,7 @@ namespace GARCA.View.Views
 
             FrmSplitsList frm = new(transaction);
             frm.ShowDialog();
-            iTransactionsService.UpdateTransactionAfterSplits(transaction);
+            await iTransactionsService.UpdateTransactionAfterSplits(transaction);
             LoadTransaction();
         }
 
@@ -445,7 +445,7 @@ namespace GARCA.View.Views
                 if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
                         MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    UpdateTransaction();
+                    await UpdateTransaction();
                     if (transaction != null)
                     {
                         transaction = await iTransactionsService.SaveChanges(transaction);

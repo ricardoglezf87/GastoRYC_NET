@@ -43,10 +43,7 @@ namespace GARCA
         {
             InitializeComponent();
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
-            SfSkinManager.ApplyStylesOnApplication = true;
-
-            //iRycContextService.MakeBackup();
-            //iRycContextService.MigrateDataBase();
+            SfSkinManager.ApplyStylesOnApplication = true;      
         }
 
         #endregion
