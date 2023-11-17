@@ -16,9 +16,9 @@ namespace GARCA.Data.Services
             var now = DateTime.Now;
 
             foreach (var g in (await iAccountsService.GetAllOpened() ?? Enumerable.Empty<Accounts>())?.Where(x => 
-                                                            x.AccountsTypesid == (int)EAccountsTypes.Cash ||
-                                                            x.AccountsTypesid == (int)EAccountsTypes.Banks ||
-                                                            x.AccountsTypesid == (int)EAccountsTypes.Cards))
+                                                            x.AccountsTypesId == (int)EAccountsTypes.Cash ||
+                                                            x.AccountsTypesId == (int)EAccountsTypes.Banks ||
+                                                            x.AccountsTypesId == (int)EAccountsTypes.Cards))
             {
                 saldos.Add(g.Id, 0);
             }
@@ -48,9 +48,9 @@ namespace GARCA.Data.Services
                     foreach (var g in transactions
                                     .Where(x => x.Category != null && x.Date <= d
                                        && (x.Account?.Closed == false || x.Account?.Closed == null)
-                                       && (x.Account?.AccountsTypesid == (int)EAccountsTypes.Cash ||
-                                        x.Account?.AccountsTypesid == (int)EAccountsTypes.Banks ||
-                                        x.Account?.AccountsTypesid == (int)EAccountsTypes.Cards))
+                                       && (x.Account?.AccountsTypesId == (int)EAccountsTypes.Cash ||
+                                        x.Account?.AccountsTypesId == (int)EAccountsTypes.Banks ||
+                                        x.Account?.AccountsTypesId == (int)EAccountsTypes.Cards))
                                     .GroupBy(g => g.Accountid))
                     {
                         var saldoAct = g.Sum(x => x.Amount) ?? 0;

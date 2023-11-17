@@ -24,7 +24,7 @@ namespace GARCA.DAO.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("id");
 
-                    b.Property<int?>("AccountsTypesid")
+                    b.Property<int?>("AccountsTypesId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("accountsTypesid");
 
@@ -42,7 +42,7 @@ namespace GARCA.DAO.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountsTypesid");
+                    b.HasIndex("AccountsTypesId");
 
                     b.HasIndex("Categoryid");
 
@@ -141,13 +141,13 @@ namespace GARCA.DAO.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnName("done");
 
-                    b.Property<int?>("TransactionsRemindersid")
+                    b.Property<int?>("TransactionsRemindersId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("transactionsRemindersid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TransactionsRemindersid");
+                    b.HasIndex("TransactionsRemindersId");
 
                     b.ToTable("ExpirationsReminders");
                 });
@@ -733,7 +733,7 @@ namespace GARCA.DAO.Migrations
                 {
                     b.HasOne("GARCA_MODEL.AccountsTypesDao", "AccountsTypes")
                         .WithMany()
-                        .HasForeignKey("AccountsTypesid");
+                        .HasForeignKey("AccountsTypesId");
 
                     b.HasOne("GARCA_MODEL.CategoriesDao", "Category")
                         .WithMany()
@@ -757,7 +757,7 @@ namespace GARCA.DAO.Migrations
                 {
                     b.HasOne("GARCA_MODEL.TransactionsRemindersDao", "TransactionsReminders")
                         .WithMany()
-                        .HasForeignKey("TransactionsRemindersid");
+                        .HasForeignKey("TransactionsRemindersId");
 
                     b.Navigation("TransactionsReminders");
                 });

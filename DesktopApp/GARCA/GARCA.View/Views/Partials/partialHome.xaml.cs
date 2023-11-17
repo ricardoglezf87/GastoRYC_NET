@@ -160,7 +160,7 @@ namespace GARCA.View.Views
             
             if(lAccounts != null) 
             {
-                foreach (var accounts in lAccounts.Where(x => iAccountsTypesService.AccountExpensives(x.AccountsTypesid)))
+                foreach (var accounts in lAccounts.Where(x => iAccountsTypesService.AccountExpensives(x.AccountsTypesId)))
                 {
 
                     LineSeries series = new()

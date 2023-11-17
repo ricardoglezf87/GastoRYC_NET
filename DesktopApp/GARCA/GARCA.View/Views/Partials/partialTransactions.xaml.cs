@@ -246,7 +246,7 @@ namespace GARCA.View.Views
                 {
                     gvTransactions.Columns["Account.Description"].IsHidden = true;
 
-                    if (TransactionViewModel.AccountsSelected.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Invests)
+                    if (TransactionViewModel.AccountsSelected.AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Invests)
                     {
                         gvTransactions.Columns["NumShares"].IsHidden = false;
                         gvTransactions.Columns["PricesShares"].IsHidden = false;

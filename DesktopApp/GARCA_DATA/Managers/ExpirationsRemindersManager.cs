@@ -30,13 +30,13 @@ namespace GARCA.Data.Managers
         public async Task<bool> ExistsExpiration(TransactionsReminders transactionsReminder, DateTime date)
         {
             return await iRycContextService.getConnection().SelectAsync<ExpirationsReminders>(
-                x => x.TransactionsRemindersid == transactionsReminder.Id && x.Date == date) != null;
+                x => x.TransactionsRemindersId == transactionsReminder.Id && x.Date == date) != null;
             
         }
 
         public async Task<IEnumerable<ExpirationsReminders>?> GetByTransactionReminderid(int id)
         {
-            return await iRycContextService.getConnection().SelectAsync<ExpirationsReminders>(x => id.Equals(x.TransactionsRemindersid));           
+            return await iRycContextService.getConnection().SelectAsync<ExpirationsReminders>(x => id.Equals(x.TransactionsRemindersId));           
         }
     }
 }

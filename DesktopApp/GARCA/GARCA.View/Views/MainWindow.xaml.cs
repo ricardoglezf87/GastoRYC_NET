@@ -415,11 +415,11 @@ namespace GARCA
             if (lvAccounts != null)
             {
 
-                var accounts = iAccountsService.GetAllOpened();
+                var accounts = await iAccountsService.GetAllOpened();
                 viewAccounts = CollectionViewSource.GetDefaultView(accounts);
                 lvAccounts.ItemsSource = viewAccounts;
                 viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("AccountsTypesdescription"));
-                viewAccounts.SortDescriptions.Add(new SortDescription("AccountsTypesid", ListSortDirection.Ascending));
+                viewAccounts.SortDescriptions.Add(new SortDescription("AccountsTypesId", ListSortDirection.Ascending));
                 await RefreshBalance();
 
                 if (account != null)

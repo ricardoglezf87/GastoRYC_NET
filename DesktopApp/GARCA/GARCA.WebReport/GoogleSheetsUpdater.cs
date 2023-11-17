@@ -90,13 +90,13 @@ namespace GARCA.WebReport
                                         (trans.Tagid??-99).ToString(),
                                         trans.Memo ?? String.Empty,
                                         DecimalToStringJs(balance),
-                                        (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                        (trans.Account.AccountsTypesId ?? -99).ToString(),
+                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesId)).Description ?? "Sin tipo cuenta",
                                         trans.Account.Closed.ToString() ?? "False"
                            });
                     }
                 }
-                else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Loans)
+                else if (trans.Account != null && trans.Account.AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Loans)
                 {
                     filasDeDatos.Add(
                         new[] {
@@ -113,8 +113,8 @@ namespace GARCA.WebReport
                                 (trans.Tagid??-99).ToString(),
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
-                                (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                (trans.Account.AccountsTypesId ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesId)).Description ?? "Sin tipo cuenta",
                                 trans.Account.Closed.ToString() ?? "False"
                         });
                 }
@@ -135,8 +135,8 @@ namespace GARCA.WebReport
                                 (trans.Tagid??-99).ToString(),
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
-                                (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                (trans.Account.AccountsTypesId ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesId)).Description ?? "Sin tipo cuenta",
                                 trans.Account.Closed.ToString() ?? "False"
                         });
                 }
@@ -185,13 +185,13 @@ namespace GARCA.WebReport
                                         (trans.Tagid??-99).ToString(),
                                         trans.Memo ?? String.Empty,
                                         DecimalToStringJs(balance),
-                                        (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                        (trans.Account.AccountsTypesId ?? -99).ToString(),
+                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesId)).Description ?? "Sin tipo cuenta",
                                         trans.Account.Closed.ToString() ?? "False"
                                });
                         }
                     }
-                    else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Loans)
+                    else if (trans.Account != null && trans.Account.AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Loans)
                     {
                         filasDeDatos.Add(
                             new[] {
@@ -208,8 +208,8 @@ namespace GARCA.WebReport
                                 (trans.Tagid??-99).ToString(),
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
-                                (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                (trans.Account.AccountsTypesId ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesId)).Description ?? "Sin tipo cuenta",
                                 trans.Account.Closed.ToString() ?? "False"
                             });
                     }
@@ -230,8 +230,8 @@ namespace GARCA.WebReport
                                 (trans.Tagid??-99).ToString(),
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
-                                (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
+                                (trans.Account.AccountsTypesId ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesId)).Description ?? "Sin tipo cuenta",
                                 trans.Account.Closed.ToString() ?? "False"
                             });
                     }

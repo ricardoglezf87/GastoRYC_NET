@@ -62,7 +62,7 @@ namespace GARCA.Data.Services
                     if (!await ExistsExpiration(transactionsReminders, date ?? DateTime.MinValue))
                     {
                         ExpirationsReminders expirationsReminders = new();
-                        expirationsReminders.TransactionsRemindersid = transactionsReminders.Id;
+                        expirationsReminders.TransactionsRemindersId = transactionsReminders.Id;
                         expirationsReminders.TransactionsReminders = transactionsReminders;
                         expirationsReminders.Date = date;
                         Update(expirationsReminders);

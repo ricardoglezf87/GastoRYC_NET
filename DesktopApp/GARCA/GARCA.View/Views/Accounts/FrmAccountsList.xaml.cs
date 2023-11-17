@@ -39,7 +39,7 @@ namespace GARCA.View.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesid ?? -99);
+                        accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesId ?? -99);
                         break;
                 }
             }
@@ -56,10 +56,10 @@ namespace GARCA.View.Views
                 e.ErrorMessages.Add("Description", "Tiene que rellenar la descripción");
             }
 
-            if (accounts.AccountsTypesid == null)
+            if (accounts.AccountsTypesId == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("AccountsTypesid", "Tiene que rellenar el tipo de cuenta");
+                e.ErrorMessages.Add("AccountsTypesId", "Tiene que rellenar el tipo de cuenta");
             }
         }
 
@@ -95,9 +95,9 @@ namespace GARCA.View.Views
         {
             var accounts = (Accounts)e.RowData;
 
-            if (accounts.AccountsTypes == null && accounts.AccountsTypesid != null)
+            if (accounts.AccountsTypes == null && accounts.AccountsTypesId != null)
             {
-                accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesid ?? -99);
+                accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesId ?? -99);
             }
 
             await UpdateCategory(accounts);

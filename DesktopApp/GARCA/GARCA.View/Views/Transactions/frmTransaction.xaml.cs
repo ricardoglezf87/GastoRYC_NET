@@ -55,7 +55,7 @@ namespace GARCA.View.Views
         {
             if (cbAccount?.SelectedItem != null && !transaction.InvestmentCategory.HasValue)
             {
-                transaction.InvestmentCategory = ((Accounts)cbAccount.SelectedItem).AccountsTypesid !=
+                transaction.InvestmentCategory = ((Accounts)cbAccount.SelectedItem).AccountsTypesId !=
                     (int)AccountsTypesService.EAccountsTypes.Invests;
             }
             ToggleViews();
@@ -319,7 +319,7 @@ namespace GARCA.View.Views
 
             transaction.Memo = txtMemo.Text;
             if (cbCategory.SelectedValue == null && cbAccount.SelectedItem != null &&
-                ((Accounts)cbAccount.SelectedItem).AccountsTypesid == (int)AccountsTypesService.EAccountsTypes.Invests)
+                ((Accounts)cbAccount.SelectedItem).AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Invests)
             {
                 cbCategory.SelectedValue = 0;
             }
@@ -386,7 +386,7 @@ namespace GARCA.View.Views
                 errorMessage += "- Cuenta\n";
                 valid = false;
             }
-            else if (((Accounts)cbAccount.SelectedItem).AccountsTypesid != (int)AccountsTypesService.EAccountsTypes.Invests &&
+            else if (((Accounts)cbAccount.SelectedItem).AccountsTypesId != (int)AccountsTypesService.EAccountsTypes.Invests &&
                     transaction.InvestmentCategory == false)
             {
                 errorMessage += "- No se puede realizar una transacción de inversión en una cuenta que no sea de inversión\n";

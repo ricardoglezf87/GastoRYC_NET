@@ -9,7 +9,7 @@ namespace GARCA.Models
         public virtual DateTime? Date { set; get; }
 
         [Column("transactionsRemindersid")]
-        public virtual int? TransactionsRemindersid { set; get; }
+        public virtual int? TransactionsRemindersId { set; get; }
 
         [Column("transactionsReminders")]
         public virtual TransactionsReminders? TransactionsReminders { set; get; }

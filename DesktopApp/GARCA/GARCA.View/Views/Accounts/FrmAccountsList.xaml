@@ -34,7 +34,7 @@
                 <syncfusion:GridTextColumn MappingName="Description" HeaderText="Descripción" />
                 <syncfusion:GridComboBoxColumn  HeaderText="Tipo"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbAccountsTypes" MappingName="AccountsTypesid" 
+                    x:Name="cbAccountsTypes" MappingName="AccountsTypesId" 
                                                 DisplayMemberPath="Description" SelectedValuePath="Id"/>
                 <syncfusion:GridCheckBoxColumn MappingName="Closed" HeaderText="Cerrada" />
             </syncfusion:SfDataGrid.Columns>
