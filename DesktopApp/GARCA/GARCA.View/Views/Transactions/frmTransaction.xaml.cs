@@ -267,14 +267,14 @@ namespace GARCA.View.Views
             if (transaction != null)
             {
                 dtpDate.SelectedDate = transaction.Date;
-                cbAccount.SelectedValue = transaction.Accountid;
-                cbPerson.SelectedValue = transaction.Personid;
+                cbAccount.SelectedValue = transaction.AccountsId;
+                cbPerson.SelectedValue = transaction.PersonsId;
                 txtMemo.Text = transaction.Memo;
-                cbCategory.SelectedValue = transaction.Categoryid;
+                cbCategory.SelectedValue = transaction.CategoriesId;
                 txtAmount.Value = transaction.Amount;
-                cbTag.SelectedValue = transaction.Tagid;
-                cbTransactionStatus.SelectedValue = transaction.TransactionStatusid;
-                cbInvestmentProduct.SelectedValue = transaction.InvestmentProductsid;
+                cbTag.SelectedValue = transaction.TagsId;
+                cbTransactionStatus.SelectedValue = transaction.TransactionsStatusId;
+                cbInvestmentProduct.SelectedValue = transaction.InvestmentProductsId;
                 txtNumShares.Value = Convert.ToDouble(transaction.NumShares);
                 txtPriceShares.Value = transaction.PricesShares;
             }
@@ -308,13 +308,13 @@ namespace GARCA.View.Views
             transaction ??= new Transactions();
 
             transaction.Date = dtpDate.SelectedDate;
-            transaction.Accountid = (int)cbAccount.SelectedValue;
-            transaction.Account = await iAccountsService.GetById(transaction.Accountid ?? -99);
+            transaction.AccountsId = (int)cbAccount.SelectedValue;
+            transaction.Accounts = await iAccountsService.GetById(transaction.AccountsId ?? -99);
 
             if (cbPerson.SelectedValue != null)
             {
-                transaction.Personid = (int)cbPerson.SelectedValue;
-                transaction.Person = await iPersonsService.GetById(transaction.Personid ?? -99);
+                transaction.PersonsId = (int)cbPerson.SelectedValue;
+                transaction.Persons = await iPersonsService.GetById(transaction.PersonsId ?? -99);
             }
 
             transaction.Memo = txtMemo.Text;
@@ -326,14 +326,14 @@ namespace GARCA.View.Views
 
             if (cbCategory.SelectedValue != null)
             {
-                transaction.Categoryid = (int)cbCategory.SelectedValue;
-                transaction.Category = await iCategoriesService.GetById(transaction.Categoryid ?? -99);
+                transaction.CategoriesId = (int)cbCategory.SelectedValue;
+                transaction.Categories = await iCategoriesService.GetById(transaction.CategoriesId ?? -99);
             }
 
             if (cbInvestmentProduct.SelectedValue != null)
             {
-                transaction.InvestmentProductsid = (int)cbInvestmentProduct.SelectedValue;
-                transaction.InvestmentProducts = await iInvestmentProductsService.GetById(transaction.InvestmentProductsid ?? -99);
+                transaction.InvestmentProductsId = (int)cbInvestmentProduct.SelectedValue;
+                transaction.InvestmentProducts = await iInvestmentProductsService.GetById(transaction.InvestmentProductsId ?? -99);
             }
 
             transaction.NumShares = (decimal)Convert.ToDouble(txtNumShares.Value);
@@ -352,12 +352,12 @@ namespace GARCA.View.Views
 
             if (cbTag.SelectedValue != null)
             {
-                transaction.Tagid = (int)cbTag.SelectedValue;
-                transaction.Tag = await iTagsService.GetById(transaction.Tagid ?? -99);
+                transaction.TagsId = (int)cbTag.SelectedValue;
+                transaction.Tags = await iTagsService.GetById(transaction.TagsId ?? -99);
             }
 
-            transaction.TransactionStatusid = (int)cbTransactionStatus.SelectedValue;
-            transaction.TransactionStatus = await iTransactionsStatusService.GetById(transaction.TransactionStatusid ?? -99);
+            transaction.TransactionsStatusId = (int)cbTransactionStatus.SelectedValue;
+            transaction.TransactionsStatus = await iTransactionsStatusService.GetById(transaction.TransactionsStatusId ?? -99);
         }
 
         private async Task LoadComboBox()
@@ -423,7 +423,7 @@ namespace GARCA.View.Views
                 valid = false;
             }
 
-            if (transaction?.TranferSplitid != null)
+            if (transaction?.TranferSplitId != null)
             {
                 errorMessage += "- No se puede editar una transferencia proveniente de un split\n";
                 valid = false;

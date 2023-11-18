@@ -46,12 +46,12 @@ namespace GARCA.Data.Services
                 {
                     var d = now.AddDays(i);
                     foreach (var g in transactions
-                                    .Where(x => x.Category != null && x.Date <= d
-                                       && (x.Account?.Closed == false || x.Account?.Closed == null)
-                                       && (x.Account?.AccountsTypesId == (int)EAccountsTypes.Cash ||
-                                        x.Account?.AccountsTypesId == (int)EAccountsTypes.Banks ||
-                                        x.Account?.AccountsTypesId == (int)EAccountsTypes.Cards))
-                                    .GroupBy(g => g.Accountid))
+                                    .Where(x => x.Categories != null && x.Date <= d
+                                       && (x.Accounts?.Closed == false || x.Accounts?.Closed == null)
+                                       && (x.Accounts?.AccountsTypesId == (int)EAccountsTypes.Cash ||
+                                        x.Accounts?.AccountsTypesId == (int)EAccountsTypes.Banks ||
+                                        x.Accounts?.AccountsTypesId == (int)EAccountsTypes.Cards))
+                                    .GroupBy(g => g.AccountsId))
                     {
                         var saldoAct = g.Sum(x => x.Amount) ?? 0;
 

@@ -7,6 +7,7 @@ using Microsoft.Data.Sqlite;
 using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 using GARCA_DATA.Managers;
+using static GARCA.Data.Services.CategoriesTypesService;
 
 namespace GARCA.Data.Services
 {
@@ -17,6 +18,11 @@ namespace GARCA.Data.Services
             Cierre = -2,
             Split = -1,
             WithoutCategory = 0
+        }
+
+        public async Task<bool> IsTranfer(int id)
+        {
+            return await iCategoriesTypesService.IsTranfer((await GetById(id))?.CategoriesTypesid ?? -99);
         }
 
         public async Task<IEnumerable<Categories>?> GetAllWithoutSpecialTransfer()

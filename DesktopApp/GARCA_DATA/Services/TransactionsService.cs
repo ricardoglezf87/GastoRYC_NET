@@ -15,13 +15,13 @@ namespace GARCA.Data.Services
 
         public async Task<IEnumerable<Transactions>?> GetAllOpenned()
         {
-            return (await GetAll())?.Where(x => !x.Account.Closed.HasValue 
-                || !x.Account.Closed.Value);
+            return (await GetAll())?.Where(x => !x.Accounts.Closed.HasValue 
+                || !x.Accounts.Closed.Value);
         }
 
         private async Task<IEnumerable<Transactions>?> GetByInvestmentProduct(int id)
         {
-            return (await GetAll())?.Where(x => id.Equals(x.InvestmentProductsid));
+            return (await GetAll())?.Where(x => id.Equals(x.InvestmentProductsId));
         }
 
         public async Task<IEnumerable<Transactions>?> GetByInvestmentProduct(InvestmentProducts investment)
@@ -48,7 +48,7 @@ namespace GARCA.Data.Services
 
         private async Task<IEnumerable<Transactions>?> GetByAccountOrderByOrderDesc(int? id)
         {
-            return (await GetAll())?.Where(x => id.Equals(x.Accountid))
+            return (await GetAll())?.Where(x => id.Equals(x.AccountsId))
                     .OrderByDescending(x => x.Orden);
         }
 
@@ -59,7 +59,7 @@ namespace GARCA.Data.Services
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(int? id)
         {
-            return  (await GetAll())?.Where(x => id.Equals(x.Accountid));
+            return  (await GetAll())?.Where(x => id.Equals(x.AccountsId));
         }
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(Accounts? accounts)
@@ -69,7 +69,7 @@ namespace GARCA.Data.Services
 
         public async Task<IEnumerable<Transactions>?> GetByPerson(int? id)
         {
-            return (await GetAll())?.Where(x => id.Equals(x.Personid));
+            return (await GetAll())?.Where(x => id.Equals(x.PersonsId));
         }
 
         public async Task<IEnumerable<Transactions>?> GetByPerson(Persons? person)
@@ -138,54 +138,53 @@ namespace GARCA.Data.Services
 
         private async Task UpdateTranfer(Transactions transactions)
         {
-            if (transactions.Tranferid != null &&
-                transactions.Category.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+            if (transactions.TranferId != null &&
+                !await iCategoriesService.IsTranfer(transactions.CategoriesId ?? -99))
             {
-                var tContraria = await GetById(transactions.Tranferid ?? -99);
+                var tContraria = await GetById(transactions.TranferId ?? -99);
                 if (tContraria != null)
                 {
                     await Delete(tContraria);
                 }
-                transactions.Tranferid = null;
+                transactions.TranferId = null;
             }
-            else if (transactions.Tranferid == null &&
-                transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+            else if (transactions.TranferId == null && await iCategoriesService.IsTranfer(transactions.CategoriesId ?? -99))
             {
-                transactions.Tranferid = await GetNextId();
+                transactions.TranferId = await GetNextId();
 
                 Transactions tContraria = new()
                 {
                     Date = transactions.Date,
-                    Accountid = (await iAccountsService.GetByCategoryId(transactions.Categoryid ?? -99))?.Id,
-                    Personid = transactions.Personid,
-                    Categoryid = (await iAccountsService.GetById(transactions.Accountid ?? -99))?.Categoryid,
+                    AccountsId = (await iAccountsService.GetByCategoryId(transactions.CategoriesId ?? -99))?.Id,
+                    PersonsId = transactions.PersonsId,
+                    CategoriesId = (await iAccountsService.GetById(transactions.AccountsId ?? -99))?.Categoryid,
                     Memo = transactions.Memo,
-                    Tagid = transactions.Tagid,
+                    TagsId = transactions.TagsId,
                     AmountIn = transactions.AmountOut,
                     AmountOut = transactions.AmountIn
                 };
 
-                tContraria.Tranferid = transactions.Id != 0 ? transactions.Id : await GetNextId() + 1;
+                tContraria.TranferId = transactions.Id != 0 ? transactions.Id : await GetNextId() + 1;
 
-                tContraria.TransactionStatusid = transactions.TransactionStatusid;
+                tContraria.TransactionsStatusId = transactions.TransactionsStatusId;
 
                 await Update(tContraria);
             }
-            else if (transactions.Tranferid != null &&
-                transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+            else if (transactions.TranferId != null &&
+                await iCategoriesService.IsTranfer(transactions.CategoriesId ?? -99))
             {
-                var tContraria = await GetById(transactions.Tranferid ?? -1);
+                var tContraria = await GetById(transactions.TranferId ?? -1);
                 if (tContraria != null)
                 {
                     tContraria.Date = transactions.Date;
-                    tContraria.Accountid = (await iAccountsService.GetByCategoryId(transactions.Categoryid ?? -99))?.Id;
-                    tContraria.Personid = transactions.Personid;
-                    tContraria.Categoryid = (await iAccountsService.GetById(transactions.Accountid ?? -99))?.Categoryid;
+                    tContraria.AccountsId = (await iAccountsService.GetByCategoryId(transactions.CategoriesId ?? -99))?.Id;
+                    tContraria.PersonsId = transactions.PersonsId;
+                    tContraria.CategoriesId = (await iAccountsService.GetById(transactions.AccountsId ?? -99))?.Categoryid;
                     tContraria.Memo = transactions.Memo;
-                    tContraria.Tagid = transactions.Tagid;
+                    tContraria.TagsId = transactions.TagsId;
                     tContraria.AmountIn = transactions.AmountOut;
                     tContraria.AmountOut = transactions.AmountIn;
-                    tContraria.TransactionStatusid = transactions.TransactionStatusid;
+                    tContraria.TransactionsStatusId = transactions.TransactionsStatusId;
                     await Update(tContraria);
                     await RefreshBalanceAllTransactions();
                 }
@@ -198,20 +197,20 @@ namespace GARCA.Data.Services
 
         private async Task UpdateTranferFromSplit(Transactions transactions)
         {
-            if (transactions.TranferSplitid != null &&
-                transactions.Category.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+            if (transactions.TranferSplitId != null &&
+                await iCategoriesService.IsTranfer(transactions.CategoriesId ?? -99))
             {
-                var tContraria = await iSplitsService.GetById(transactions.TranferSplitid ?? -99);
+                var tContraria = await iSplitsService.GetById(transactions.TranferSplitId ?? -99);
                 if (tContraria != null)
                 {
                     tContraria.Transaction.Date = transactions.Date;
-                    tContraria.Transaction.Personid = transactions.Personid;
-                    tContraria.Categoryid = transactions.Account.Categoryid;
+                    tContraria.Transaction.PersonsId = transactions.PersonsId;
+                    tContraria.Categoryid = transactions.Accounts.Categoryid;
                     tContraria.Memo = transactions.Memo;
-                    tContraria.Tagid = transactions.Tagid;
+                    tContraria.Tagid = transactions.TagsId;
                     tContraria.AmountIn = transactions.AmountOut;
                     tContraria.AmountOut = transactions.AmountIn;
-                    tContraria.Transaction.TransactionStatusid = transactions.TransactionStatusid;
+                    tContraria.Transaction.TransactionsStatusId = transactions.TransactionsStatusId;
                     await iSplitsService.Update(tContraria);
                 }
             }
@@ -232,13 +231,13 @@ namespace GARCA.Data.Services
                     transactions.AmountOut += splits.AmountOut ?? 0;
                 }
 
-                transactions.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
-                transactions.Category = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
+                transactions.CategoriesId = (int)CategoriesService.ESpecialCategories.Split;
+                transactions.Categories = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
-            else if (transactions.Categoryid is (int)CategoriesService.ESpecialCategories.Split)
+            else if (transactions.CategoriesId is (int)CategoriesService.ESpecialCategories.Split)
             {
-                transactions.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
-                transactions.Category = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
+                transactions.CategoriesId = (int)CategoriesService.ESpecialCategories.WithoutCategory;
+                transactions.Categories = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
             }
 
             if (transactions.Id == 0)
@@ -264,7 +263,7 @@ namespace GARCA.Data.Services
             Categories? category = await iCategoriesService.GetById(splits.Categoryid ?? -99);
 
             if (splits.Tranferid != null &&
-                category?.CategoriesTypesid != (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+                !await iCategoriesService.IsTranfer(category?.Id ?? -99))
             {
                 var tContraria = await GetById(splits.Tranferid ?? -99);
                 if (tContraria != null)
@@ -274,42 +273,42 @@ namespace GARCA.Data.Services
                 splits.Tranferid = null;
             }
             else if (splits.Tranferid == null &&
-                category?.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+                await iCategoriesService.IsTranfer(category?.Id ?? -99))
             {
                 splits.Tranferid = await GetNextId();
 
                 Transactions tContraria = new()
                 {
                     Date = transactions.Date,
-                    Accountid = (await iAccountsService.GetByCategoryId(splits.Categoryid ?? -99))?.Id,
-                    Personid = transactions.Personid,
-                    Categoryid = (await iAccountsService.GetById(transactions.Accountid ?? -99)).Categoryid,
+                    AccountsId = (await iAccountsService.GetByCategoryId(splits.Categoryid ?? -99))?.Id,
+                    PersonsId = transactions.PersonsId,
+                    CategoriesId = (await iAccountsService.GetById(transactions.AccountsId ?? -99)).Categoryid,
                     Memo = splits.Memo,
-                    Tagid = transactions.Tagid,
+                    TagsId = transactions.TagsId,
                     AmountIn = splits.AmountOut,
                     AmountOut = splits.AmountIn,
-                    TranferSplitid = splits.Id != 0 ? splits.Id : await GetNextId() + 1,
-                    TransactionStatusid = transactions.TransactionStatusid
+                    TranferSplitId = splits.Id != 0 ? splits.Id : await GetNextId() + 1,
+                    TransactionsStatusId = transactions.TransactionsStatusId
                 };
 
                 await Update(tContraria);
 
             }
             else if (splits.Tranferid != null &&
-                category?.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Transfers)
+                await iCategoriesService.IsTranfer(category?.Id ?? -99))
             {
                 var tContraria = await GetById(splits.Tranferid ?? -99);
                 if (tContraria != null)
                 {
                     tContraria.Date = transactions.Date;
-                    tContraria.Accountid = (await iAccountsService.GetByCategoryId(splits.Categoryid ?? -99))?.Id;
-                    tContraria.Personid = transactions.Personid;
-                    tContraria.Categoryid = (await iAccountsService.GetById(transactions.Accountid ?? -99)).Categoryid;
+                    tContraria.AccountsId = (await iAccountsService.GetByCategoryId(splits.Categoryid ?? -99))?.Id;
+                    tContraria.PersonsId = transactions.PersonsId;
+                    tContraria.CategoriesId = (await iAccountsService.GetById(transactions.AccountsId ?? -99)).Categoryid;
                     tContraria.Memo = splits.Memo;
-                    tContraria.Tagid = transactions.Tagid;
+                    tContraria.TagsId = transactions.TagsId;
                     tContraria.AmountIn = splits.AmountOut ?? 0;
                     tContraria.AmountOut = splits.AmountIn ?? 0;
-                    tContraria.TransactionStatusid = transactions.TransactionStatusid;
+                    tContraria.TransactionsStatusId = transactions.TransactionsStatusId;
                     await Update(tContraria);
                 }
             }

@@ -88,13 +88,13 @@ namespace GARCA.View.Views
                         TransactionsReminders? transactionsReminders = new();
                         transactionsReminders.Date = transactions.Date;
                         transactionsReminders.PeriodsRemindersid = (int)PeriodsRemindersService.EPeriodsReminders.Monthly;
-                        transactionsReminders.Accountid = transactions.Accountid;
-                        transactionsReminders.Personid = transactions.Personid;
-                        transactionsReminders.Categoryid = transactions.Categoryid;
+                        transactionsReminders.Accountid = transactions.AccountsId;
+                        transactionsReminders.Personid = transactions.PersonsId;
+                        transactionsReminders.Categoryid = transactions.CategoriesId;
                         transactionsReminders.Memo = transactions.Memo;
                         transactionsReminders.AmountIn = transactions.AmountIn;
                         transactionsReminders.AmountOut = transactions.AmountOut;
-                        transactionsReminders.Tagid = transactions.Tagid;
+                        transactionsReminders.Tagid = transactions.TagsId;
                         transactionsReminders.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
 
                         transactionsReminders = await iTransactionsRemindersService.Save(transactionsReminders);
@@ -176,8 +176,8 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
-                    transactions.TransactionStatus = await iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
+                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;
+                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
                     await iTransactionsService.Update(transactions);
                 }
                 await parentForm.LoadAccounts();
@@ -195,8 +195,8 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
-                    transactions.TransactionStatus = await iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
+                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
+                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
                     await iTransactionsService.Update(transactions);
                 }
                 await parentForm.LoadAccounts();
@@ -214,8 +214,8 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
-                    transactions.TransactionStatus = await iTransactionsStatusService.GetById(transactions.TransactionStatusid ?? -99);
+                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
+                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
                     await iTransactionsService.Update(transactions);
                 }
                 await parentForm.LoadAccounts();
@@ -270,7 +270,7 @@ namespace GARCA.View.Views
 
         private async Task RemoveTransaction(Transactions transactions)
         {
-            if (transactions.TranferSplitid != null)
+            if (transactions.TranferSplitId != null)
             {
                 MessageBox.Show("El movimiento Id: " + transactions.Id +
                     " de fecha: " + transactions.Date.ToShortDateString() + " viene de una transferencia desde split, para borrar diríjase al split que lo generó.", "Eliminación movimiento");
@@ -292,9 +292,9 @@ namespace GARCA.View.Views
                     }
                 }
 
-                if (transactions.Tranferid != null)
+                if (transactions.TranferId != null)
                 {
-                    await iTransactionsService.Delete(await iTransactionsService.GetById(transactions.Tranferid ?? -99));
+                    await iTransactionsService.Delete(await iTransactionsService.GetById(transactions.TranferId ?? -99));
                 }
 
                 await iTransactionsService.Delete(transactions);

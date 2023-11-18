@@ -83,13 +83,13 @@ namespace GARCA.Data.Services
                         {
                             Transactions? t = new()
                             {
-                                Accountid = acc.Id,
+                                AccountsId = acc.Id,
                                 Date = date,
-                                Categoryid = (int)CategoriesService.ESpecialCategories.Cierre,
+                                CategoriesId = (int)CategoriesService.ESpecialCategories.Cierre,
                                 AmountIn = (total > 0 ? total : 0),
                                 AmountOut = (total < 0 ? -total : 0),
                                 Balance = total,
-                                TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Reconciled
+                                TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Reconciled
                             };
 
                             t = await iTransactionsService.Save(t);
