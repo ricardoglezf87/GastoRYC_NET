@@ -32,7 +32,7 @@ namespace GARCA.View.Views
 
         private void gvTransactionsReminders_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if (MessageBox.Show("Esta seguro de querer eliminar este tag?", "Eliminación tag", MessageBoxButton.YesNo,
+            if (MessageBox.Show("Esta seguro de querer eliminar este recordatorio?", "Eliminación recordatorio", MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;

@@ -10,29 +10,29 @@ namespace GARCA.Data.Services
     {
         public async Task SetCategoryDefault(int id)
         {
-            var trans = (await iTransactionsArchivedService.GetByPerson(id))?.ToList();
-            trans.AddRange((await iTransactionsService.GetByPerson(id))?.ToList());
+            //TODO: Reahacer esto
+            //var trans = (await iTransactionsArchivedService.GetByPerson(id))?.ToList();
+            //trans.AddRange((await iTransactionsService.GetByPerson(id))?.ToList());
 
 
-            var result = (from x in trans
-                          group x by x.CategoriesId into g
-                          select new
-                          {
-                              categoryid = g.Key,
-                              count = g.Count()
-                          });
+            //var result = (from x in trans
+            //              group x by x.CategoriesId into g
+            //              select new
+            //              {
+            //                  categoryid = g.Key,
+            //                  count = g.Count()
+            //              });
 
-            if (result != null)
-            {
-                var maxCount = result.Max(c => c.count);
-                var maxCounts = (from c in result
-                                 where c.count == maxCount
-                                 select c.categoryid).FirstOrDefault();
+            //if (result != null)
+            //{
+            //    var maxCount = result.Max(c => c.count);
+            //    var maxCounts = (from c in result
+            //                     where c.count == maxCount
+            //                     select c.categoryid).FirstOrDefault();
 
-                Persons? persons = await iPersonsService.GetById(id);
-                persons.Categoryid = maxCounts;
-                await Update(persons);
-            }
+            //    Persons? persons = await iPersonsService.GetById(id);
+            //    persons.Categoryid = maxCounts;
+            //    await Save(persons);            
         }
     }
 }

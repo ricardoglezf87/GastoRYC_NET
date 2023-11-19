@@ -54,7 +54,7 @@ namespace GARCA.View.Views
             {
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
-                    case "investmentProductsTypesid":
+                    case "investmentProductsTypesId":
                         investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesId ?? -99);
                         break;
                 }
@@ -85,7 +85,7 @@ namespace GARCA.View.Views
 
         private void gvInvestmentProducts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if (MessageBox.Show("Esta seguro de querer eliminar este tag?", "Eliminación tag", MessageBoxButton.YesNo,
+            if (MessageBox.Show("Esta seguro de querer eliminar este producto de inversión?", "Eliminación producto de inversión", MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;

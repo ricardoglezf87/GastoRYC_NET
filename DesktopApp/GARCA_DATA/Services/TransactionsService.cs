@@ -29,13 +29,13 @@ namespace GARCA.Data.Services
             return await GetByInvestmentProduct(investment.Id);
         }
 
-        public override async Task<bool> Update(Transactions transactions)
+        public override async Task<Transactions> Save(Transactions obj)
         {
-            transactions.Date = transactions.Date.RemoveTime();
-            transactions.Orden = CreateOrden(transactions);
-            return await base.Update(transactions);
-        }         
-        
+            obj.Date = obj.Date.RemoveTime();
+            obj.Orden = CreateOrden(obj);
+            return await base.Save(obj);
+        }
+
         public async Task<IEnumerable<Transactions>?> GetAllOpennedOrderByOrdenDesc()
         {
             return (await GetAll())?.OrderByDescending(x => x.Orden);
@@ -95,14 +95,12 @@ namespace GARCA.Data.Services
         public async Task<Transactions?> SaveChanges(Transactions? transactions)
         {
             transactions.AmountIn ??= 0;
-
             transactions.AmountOut ??= 0;
 
             await UpdateTranfer(transactions);
-            await UpdateTranferFromSplit(transactions);
-            //TODO: Revisar este caso
-            //transactions = await Update(transactions);
-            //await iPersonsService.SetCategoryDefault(transactions.Personid ?? -11);
+            await UpdateTranferFromSplit(transactions);            
+            transactions = await Save(transactions);
+            await iPersonsService.SetCategoryDefault(transactions.PersonsId ?? -11);
             return transactions;
         }
 
@@ -123,8 +121,9 @@ namespace GARCA.Data.Services
                         balanceTotal -= t.Amount;
                     }
                     t.Orden = CreateOrden(t);
-                }
-                await Update(tList);
+                    await Update(t);
+                    //TODO: Revisar como hacer esto masivamente.
+                }                
             }
         }
 
