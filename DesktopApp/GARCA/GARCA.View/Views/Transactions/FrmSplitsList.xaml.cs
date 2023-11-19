@@ -45,7 +45,7 @@ namespace GARCA.View.Views
             {
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
-                    case "categoryid":
+                    case "categoriesId":
                         splits.Categories = await iCategoriesService.GetById(splits.CategoriesId ?? -99);
                         break;
                 }
@@ -60,12 +60,12 @@ namespace GARCA.View.Views
             if (splits.CategoriesId == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("Categoryid", "Tiene que rellenar el tipo de categoría");
+                e.ErrorMessages.Add("CategoriesId", "Tiene que rellenar el tipo de categoría");
             }
             else if (splits.CategoriesId == (int)CategoriesService.ESpecialCategories.Split)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("Categoryid", "No se puede utilizar esta categoría en un split");
+                e.ErrorMessages.Add("CategoriesId", "No se puede utilizar esta categoría en un split");
             }
 
             if (splits.AmountIn == null && splits.AmountOut == null)

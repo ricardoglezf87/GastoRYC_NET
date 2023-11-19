@@ -70,7 +70,7 @@ namespace GARCA.View.Views
                 investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesId ?? -99);
             }
 
-            await iInvestmentProductsService.Update(investmentProducts);
+            await iInvestmentProductsService.Save(investmentProducts);
             await LoadItemSource();
         }
 

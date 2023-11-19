@@ -56,7 +56,7 @@ namespace GARCA.View.Views
             if (categories.CategoriesTypesId == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("CategoriesTypesid", "Tiene que rellenar el tipo de categoría");
+                e.ErrorMessages.Add("CategoriesTypesId", "Tiene que rellenar el tipo de categoría");
             }
         }
 
@@ -69,7 +69,7 @@ namespace GARCA.View.Views
                 categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesId ?? -99);
             }
 
-            await iCategoriesService.Update(categories);
+            await iCategoriesService.Save(categories);
             await LoadItemSource();
         }
 

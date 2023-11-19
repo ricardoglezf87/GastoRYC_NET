@@ -26,15 +26,14 @@ namespace GARCA.Data.Managers
 
         public async virtual Task<Q> Save(Q obj)
         {
-            if(obj?.Id != null)
+            if(obj.Id != 0)
             {
                 await Update(obj);
             }
-            else
+            else  
             {
-                await Insert(obj);
-            }
-            //TODO: Revisar esta salida
+               obj.Id = Convert.ToInt32(await Insert(obj));
+            }            
             return obj;           
         }
 

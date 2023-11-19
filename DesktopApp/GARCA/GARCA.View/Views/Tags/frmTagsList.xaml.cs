@@ -41,7 +41,7 @@ namespace GARCA.View.Views
         private async void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var tags = (Tags)e.RowData;
-            await iTagsService.Update(tags);
+            await iTagsService.Save(tags);
             await LoadItemSource();
         }
 

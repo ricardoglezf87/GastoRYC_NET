@@ -108,7 +108,7 @@ namespace GARCA.View.Views
                             splitsReminders.AmountIn = splits.AmountIn;
                             splitsReminders.AmountOut = splits.AmountOut;
                             splitsReminders.TagsId = splits.TagsId;
-                            await iSplitsRemindersService.Update(splitsReminders);
+                            await iSplitsRemindersService.Save(splitsReminders);
                         }
 
                         FrmTransactionReminders frm = new(transactionsReminders);
@@ -178,7 +178,7 @@ namespace GARCA.View.Views
                 {
                     transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;
                     transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
-                    await iTransactionsService.Update(transactions);
+                    await iTransactionsService.Save(transactions);
                 }
                 await parentForm.LoadAccounts();
                 LoadTransactions();
@@ -197,7 +197,7 @@ namespace GARCA.View.Views
                 {
                     transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
                     transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
-                    await iTransactionsService.Update(transactions);
+                    await iTransactionsService.Save(transactions);
                 }
                 await parentForm.LoadAccounts();
                 LoadTransactions();
@@ -216,7 +216,7 @@ namespace GARCA.View.Views
                 {
                     transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
                     transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
-                    await iTransactionsService.Update(transactions);
+                    await iTransactionsService.Save(transactions);
                 }
                 await parentForm.LoadAccounts();
                 LoadTransactions();

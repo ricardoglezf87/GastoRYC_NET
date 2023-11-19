@@ -44,7 +44,7 @@ namespace GARCA.View.Views
             {
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
-                    case "categoryid":
+                    case "CategoriesId":
                         splitsReminders.Categories = await iCategoriesService.GetById(splitsReminders.CategoriesId ?? -99);
                         break;
                 }
@@ -58,12 +58,12 @@ namespace GARCA.View.Views
             if (splitsReminders.CategoriesId == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("Categoryid", "Tiene que rellenar el tipo de categoría");
+                e.ErrorMessages.Add("CategoriesId", "Tiene que rellenar el tipo de categoría");
             }
             else if (splitsReminders.CategoriesId == (int)CategoriesService.ESpecialCategories.Split)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("Categoryid", "No se puede utilizar esta categoría en un split");
+                e.ErrorMessages.Add("CategoriesId", "No se puede utilizar esta categoría en un split");
             }
 
             if (splitsReminders.AmountIn == null && splitsReminders.AmountOut == null)
@@ -92,7 +92,7 @@ namespace GARCA.View.Views
 
             splitsReminders.AmountOut ??= 0;
 
-            await iSplitsRemindersService.Update(splitsReminders);
+            await iSplitsRemindersService.Save(splitsReminders);
         }
         private async void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {

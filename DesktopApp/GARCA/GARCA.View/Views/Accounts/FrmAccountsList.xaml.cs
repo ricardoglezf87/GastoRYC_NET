@@ -73,7 +73,7 @@ namespace GARCA.View.Views
                 if (categories != null)
                 {
                     categories.Description = "[" + accounts.Description + "]";
-                    await iCategoriesService.Update(categories);
+                    await iCategoriesService.Save(categories);
                 }
             }
             else
@@ -87,7 +87,7 @@ namespace GARCA.View.Views
 
             if (categories != null)
             {
-                await iCategoriesService.Update(categories);
+                await iCategoriesService.Save(categories);
             }
         }
 
@@ -101,7 +101,7 @@ namespace GARCA.View.Views
             }
 
             await UpdateCategory(accounts);
-            await iAccountsService.Update(accounts);
+            await iAccountsService.Save(accounts);
             await LoadItemSource();
         }
 
