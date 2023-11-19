@@ -83,14 +83,14 @@ namespace GARCA.Data.Services
                 {
                     Transactions? transactions = new();
                     transactions.Date = expirationsReminders.Date;
-                    transactions.AccountsId = expirationsReminders.TransactionsReminders.Accountid;
-                    transactions.PersonsId = expirationsReminders.TransactionsReminders.Personid;
-                    transactions.CategoriesId = expirationsReminders.TransactionsReminders.Categoryid;
-                    transactions.Categories = expirationsReminders.TransactionsReminders.Category;
+                    transactions.AccountsId = expirationsReminders.TransactionsReminders.AccountsId;
+                    transactions.PersonsId = expirationsReminders.TransactionsReminders.PersonsId;
+                    transactions.CategoriesId = expirationsReminders.TransactionsReminders.CategoriesId;
+                    transactions.Categories = expirationsReminders.TransactionsReminders.Categories;
                     transactions.Memo = expirationsReminders.TransactionsReminders.Memo;
                     transactions.AmountIn = expirationsReminders.TransactionsReminders.AmountIn;
                     transactions.AmountOut = expirationsReminders.TransactionsReminders.AmountOut;
-                    transactions.TagsId = expirationsReminders.TransactionsReminders.Tagid;
+                    transactions.TagsId = expirationsReminders.TransactionsReminders.TagsId;
                     transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;
                     transactions = await iTransactionsService.SaveChanges(transactions);
 
@@ -98,12 +98,12 @@ namespace GARCA.Data.Services
                         await iSplitsRemindersService.GetbyTransactionid(expirationsReminders.TransactionsReminders.Id))
                     {
                         Splits splits = new();
-                        splits.Transactionid = transactions.Id;
-                        splits.Categoryid = splitsReminders.Categoryid;
+                        splits.TransactionsId = transactions.Id;
+                        splits.CategoriesId = splitsReminders.CategoriesId;
                         splits.Memo = splitsReminders.Memo;
                         splits.AmountIn = splitsReminders.AmountIn;
                         splits.AmountOut = splitsReminders.AmountOut;
-                        splits.Tagid = splitsReminders.Tagid;
+                        splits.TagsId = splitsReminders.TagsId;
                         
                         splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
                         await iSplitsService.SaveChanges(splits);
@@ -127,17 +127,17 @@ namespace GARCA.Data.Services
                 Transactions transactions = new()
                 {
                     Date = expirationsReminders.Date.RemoveTime(),
-                    AccountsId = expirationsReminders.TransactionsReminders.Accountid,
-                    Accounts = expirationsReminders.TransactionsReminders.Account,
-                    PersonsId = expirationsReminders.TransactionsReminders.Personid,
-                    Persons = expirationsReminders.TransactionsReminders.Person,
-                    CategoriesId = expirationsReminders.TransactionsReminders.Categoryid,
-                    Categories = expirationsReminders.TransactionsReminders.Category,
+                    AccountsId = expirationsReminders.TransactionsReminders.AccountsId,
+                    Accounts = expirationsReminders.TransactionsReminders.Accounts,
+                    PersonsId = expirationsReminders.TransactionsReminders.PersonsId,
+                    Persons = expirationsReminders.TransactionsReminders.Persons,
+                    CategoriesId = expirationsReminders.TransactionsReminders.CategoriesId,
+                    Categories = expirationsReminders.TransactionsReminders.Categories,
                     Memo = expirationsReminders.TransactionsReminders.Memo,
                     AmountIn = expirationsReminders.TransactionsReminders.AmountIn ?? 0,
                     AmountOut = expirationsReminders.TransactionsReminders.AmountOut ?? 0,
-                    Tags = expirationsReminders.TransactionsReminders.Tag,
-                    TagsId = expirationsReminders.TransactionsReminders.Tagid
+                    Tags = expirationsReminders.TransactionsReminders.Tags,
+                    TagsId = expirationsReminders.TransactionsReminders.TagsId
                 };
 
                 if (await iCategoriesService.IsTranfer(transactions.CategoriesId ?? -99))
@@ -152,16 +152,16 @@ namespace GARCA.Data.Services
                     {
                         Splits splits = new()
                         {
-                            Transactionid = transactions.Id,
-                            Categoryid = splitsReminders.Categoryid,
-                            Category = splitsReminders.Category,
+                            TransactionsId = transactions.Id,
+                            CategoriesId = splitsReminders.CategoriesId,
+                            Categories = splitsReminders.Categories,
                             Memo = splitsReminders.Memo,
                             AmountIn = splitsReminders.AmountIn ?? 0,
                             AmountOut = splitsReminders.AmountOut ?? 0,
-                            Tagid = splitsReminders.Tagid
+                            TagsId = splitsReminders.TagsId
                         };
 
-                        if (await iCategoriesService.IsTranfer(splits.Categoryid ?? -99))                       
+                        if (await iCategoriesService.IsTranfer(splits.CategoriesId ?? -99))                       
                         {
                             lTransactions.Add(await UpdateTranferSplitsSimulation(transactions, splits));
                         }
@@ -177,8 +177,8 @@ namespace GARCA.Data.Services
             Transactions tContraria = new()
             {
                 Date = transactions.Date,
-                AccountsId = (await iAccountsService.GetByCategoryId(splits.Categoryid ?? -99))?.Id,
-                Accounts = await iAccountsService.GetByCategoryId(splits.Categoryid ?? -99),
+                AccountsId = (await iAccountsService.GetByCategoryId(splits.CategoriesId ?? -99))?.Id,
+                Accounts = await iAccountsService.GetByCategoryId(splits.CategoriesId ?? -99),
                 PersonsId = transactions.PersonsId,
                 Persons = transactions.Persons,
                 CategoriesId = transactions.Accounts.Categoryid,

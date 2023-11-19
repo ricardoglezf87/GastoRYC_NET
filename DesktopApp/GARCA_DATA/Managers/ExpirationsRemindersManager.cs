@@ -10,7 +10,13 @@ namespace GARCA.Data.Managers
     {  
         public override async Task<IEnumerable<ExpirationsReminders>?> GetAll()
         {
-            return await iRycContextService.getConnection().GetAllAsync<ExpirationsReminders,TransactionsReminders,ExpirationsReminders>();
+            return await iRycContextService.getConnection().GetAllAsync<ExpirationsReminders,TransactionsReminders, ExpirationsReminders>(
+                (expirationsReminders, transactionsReminders) => 
+                {
+                    expirationsReminders.TransactionsReminders = transactionsReminders;
+                    expirationsReminders.TransactionsReminders.Categories = iCategoriesService.GetById(transactionsReminders.CategoriesId ?? -99).Result;
+                    return expirationsReminders;
+                });
         }
 
         public async Task<bool> ExistsExpiration(TransactionsReminders transactionsReminder, DateTime date)

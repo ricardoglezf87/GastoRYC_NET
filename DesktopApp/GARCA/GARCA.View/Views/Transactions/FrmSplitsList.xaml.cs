@@ -46,7 +46,7 @@ namespace GARCA.View.Views
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splits.Category = await iCategoriesService.GetById(splits.Categoryid ?? -99);
+                        splits.Categories = await iCategoriesService.GetById(splits.CategoriesId ?? -99);
                         break;
                 }
             }
@@ -57,12 +57,12 @@ namespace GARCA.View.Views
         {
             var splits = (Splits)e.RowData;
 
-            if (splits.Categoryid == null)
+            if (splits.CategoriesId == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("Categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if (splits.Categoryid == (int)CategoriesService.ESpecialCategories.Split)
+            else if (splits.CategoriesId == (int)CategoriesService.ESpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("Categoryid", "No se puede utilizar esta categoría en un split");
@@ -88,9 +88,9 @@ namespace GARCA.View.Views
         {
             foreach (Splits splits in e.Items)
             {
-                if (splits.Tranferid != null)
+                if (splits.TranferId != null)
                 {
-                    await iTransactionsService.Delete(await iTransactionsService.GetById(splits.Tranferid ?? -99));
+                    await iTransactionsService.Delete(await iTransactionsService.GetById(splits.TranferId ?? -99));
                 }
                 await iSplitsService.Delete(splits);
             }
@@ -110,8 +110,8 @@ namespace GARCA.View.Views
         private void gvSplits_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
         {
             var splits = (Splits)e.NewObject;
-            splits.Transactionid = transactions.Id;
-            splits.Transaction = transactions;
+            splits.TransactionsId = transactions.Id;
+            splits.Transactions = transactions;
         }
     }
 }

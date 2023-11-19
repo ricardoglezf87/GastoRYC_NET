@@ -6,7 +6,7 @@ namespace GARCA.Models
     public class TransactionsReminders : ModelBase
     {
         [Column("periodsRemindersid")]
-        public virtual int? PeriodsRemindersid { set; get; }
+        public virtual int? PeriodsRemindersId { set; get; }
 
         [Column("periodsReminders")]
         public virtual PeriodsReminders? PeriodsReminders { set; get; }
@@ -18,28 +18,28 @@ namespace GARCA.Models
         public virtual DateTime? Date { set; get; }
 
         [Column("accountid")]
-        public virtual int? Accountid { set; get; }
+        public virtual int? AccountsId { set; get; }
 
         [Column("account")]
-        public virtual Accounts? Account { set; get; }
+        public virtual Accounts? Accounts { set; get; }
 
         [Column("personid")]
-        public virtual int? Personid { set; get; }
+        public virtual int? PersonsId { set; get; }
 
         [Column("person")]
-        public virtual Persons? Person { set; get; }
+        public virtual Persons? Persons { set; get; }
 
         [Column("tagid")]
-        public virtual int? Tagid { set; get; }
+        public virtual int? TagsId { set; get; }
 
         [Column("tag")]
-        public virtual Tags? Tag { set; get; }
+        public virtual Tags? Tags { set; get; }
 
         [Column("categoryid")]
-        public virtual int? Categoryid { set; get; }
+        public virtual int? CategoriesId { set; get; }
 
         [Column("category")]
-        public virtual Categories? Category { set; get; }
+        public virtual Categories? Categories { set; get; }
 
         [Column("amountIn")]
         public virtual Decimal? AmountIn { set; get; }
@@ -54,10 +54,10 @@ namespace GARCA.Models
         public virtual HashSet<SplitsReminders>? Splits { set; get; }
 
         [Column("transactionStatusid")]
-        public virtual int? TransactionStatusid { set; get; }
+        public virtual int? TransactionsStatusId { set; get; }
 
         [Column("transactionStatus")]
-        public virtual TransactionsStatus? TransactionStatus { set; get; }
+        public virtual TransactionsStatus? TransactionsStatus { set; get; }
 
         [NotMapped]
         public virtual decimal? Amount => AmountIn - AmountOut;

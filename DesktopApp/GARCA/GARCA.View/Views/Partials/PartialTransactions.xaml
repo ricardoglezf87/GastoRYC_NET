@@ -42,12 +42,12 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
                 <syncfusion:GridDateTimeColumn MappingName="Date" HeaderText="Fecha"/>
-                <syncfusion:GridTextColumn MappingName="Account.Description" HeaderText="Cuenta"/>
+                <syncfusion:GridTextColumn MappingName="Accounts.Description" HeaderText="Cuenta"/>
                 <syncfusion:GridTextColumn MappingName="PersonDescripGrid" HeaderText="Persona"/>
                 <syncfusion:GridTextColumn MappingName="Memo" HeaderText="Memo"/>
                 <syncfusion:GridTextColumn MappingName="CategoryDescripGrid" HeaderText="Categoría"/>
-                <syncfusion:GridTextColumn MappingName="TransactionStatus.Description" HeaderText="Estado"/>
-                <syncfusion:GridTextColumn MappingName="Tag.Description" HeaderText="Tag"/>
+                <syncfusion:GridTextColumn MappingName="TransactionsStatus.Description" HeaderText="Estado"/>
+                <syncfusion:GridTextColumn MappingName="Tags.Description" HeaderText="Tag"/>
                 <syncfusion:GridTextColumn MappingName="NumShares" HeaderText="Num. Participaciones" IsHidden="True" />
                 <syncfusion:GridTextColumn MappingName="PricesShares" HeaderText="Precio Part." IsHidden="True" />
                 <syncfusion:GridCurrencyColumn MappingName="AmountIn" HeaderText="Entrada"/>

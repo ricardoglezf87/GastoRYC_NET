@@ -22,14 +22,14 @@ namespace GARCA.Data.Services
 
         public async Task<bool> IsTranfer(int id)
         {
-            return await iCategoriesTypesService.IsTranfer((await GetById(id))?.CategoriesTypesid ?? -99);
+            return await iCategoriesTypesService.IsTranfer((await GetById(id))?.CategoriesTypesId ?? -99);
         }
 
         public async Task<IEnumerable<Categories>?> GetAllWithoutSpecialTransfer()
         {
-            return (await GetAll())?.Where(x => !x.CategoriesTypesid.
+            return (await GetAll())?.Where(x => !x.CategoriesTypesId.
                 Equals((int)CategoriesTypesService.ECategoriesTypes.Transfers) &&
-                !x.CategoriesTypesid.Equals((int)CategoriesTypesService.ECategoriesTypes.Specials));
+                !x.CategoriesTypesId.Equals((int)CategoriesTypesService.ECategoriesTypes.Specials));
         }
 
         public async Task<int> GetNextId()

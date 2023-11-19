@@ -45,7 +45,7 @@ namespace GARCA.View.Views
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "categoryid":
-                        splitsReminders.Category = await iCategoriesService.GetById(splitsReminders.Categoryid ?? -99);
+                        splitsReminders.Categories = await iCategoriesService.GetById(splitsReminders.CategoriesId ?? -99);
                         break;
                 }
             }
@@ -55,12 +55,12 @@ namespace GARCA.View.Views
         {
             var splitsReminders = (SplitsReminders)e.RowData;
 
-            if (splitsReminders.Categoryid == null)
+            if (splitsReminders.CategoriesId == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("Categoryid", "Tiene que rellenar el tipo de categoría");
             }
-            else if (splitsReminders.Categoryid == (int)CategoriesService.ESpecialCategories.Split)
+            else if (splitsReminders.CategoriesId == (int)CategoriesService.ESpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("Categoryid", "No se puede utilizar esta categoría en un split");
@@ -83,9 +83,9 @@ namespace GARCA.View.Views
 
         private async Task SaveChanges(SplitsReminders splitsReminders)
         {
-            if (splitsReminders.Category == null && splitsReminders.Categoryid != null)
+            if (splitsReminders.Categories == null && splitsReminders.CategoriesId != null)
             {
-                splitsReminders.Category = await iCategoriesService.GetById(splitsReminders.Categoryid ?? -99);
+                splitsReminders.Categories = await iCategoriesService.GetById(splitsReminders.CategoriesId ?? -99);
             }
 
             splitsReminders.AmountIn ??= 0;
@@ -98,9 +98,9 @@ namespace GARCA.View.Views
         {
             foreach (SplitsReminders splitsReminders in e.Items)
             {
-                if (splitsReminders.Tranferid != null)
+                if (splitsReminders.TranferId != null)
                 {
-                    await iTransactionsRemindersService.Delete(await iTransactionsRemindersService.GetById(splitsReminders.Tranferid ?? -99));
+                    await iTransactionsRemindersService.Delete(await iTransactionsRemindersService.GetById(splitsReminders.TranferId ?? -99));
                 }
                 await iSplitsRemindersService.Delete(splitsReminders);
             }
@@ -119,8 +119,8 @@ namespace GARCA.View.Views
         private void gvSplitsReminders_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
         {
             var splitsReminders = (SplitsReminders)e.NewObject;
-            splitsReminders.Transactionid = transactionsReminders.Id;
-            splitsReminders.Transaction = transactionsReminders;
+            splitsReminders.TransactionsId = transactionsReminders.Id;
+            splitsReminders.Transactions = transactionsReminders;
         }
     }
 }

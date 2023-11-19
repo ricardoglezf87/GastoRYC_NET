@@ -36,7 +36,7 @@ namespace GARCA.View.Views
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
                 {
                     case "categoriesTypesid":
-                        categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesid ?? -99);
+                        categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesId ?? -99);
                         break;
                 }
             }
@@ -53,7 +53,7 @@ namespace GARCA.View.Views
                 e.ErrorMessages.Add("Description", "Tiene que rellenar la descripción");
             }
 
-            if (categories.CategoriesTypesid == null)
+            if (categories.CategoriesTypesId == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("CategoriesTypesid", "Tiene que rellenar el tipo de categoría");
@@ -64,9 +64,9 @@ namespace GARCA.View.Views
         {
             var categories = (Categories)e.RowData;
 
-            if (categories.CategoriesTypes == null && categories.CategoriesTypesid != null)
+            if (categories.CategoriesTypes == null && categories.CategoriesTypesId != null)
             {
-                categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesid ?? -99);
+                categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesId ?? -99);
             }
 
             await iCategoriesService.Update(categories);

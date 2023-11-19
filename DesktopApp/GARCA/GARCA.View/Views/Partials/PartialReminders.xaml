@@ -42,7 +42,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Categoría:" />
                                     <TextBlock Grid.Column="1"
-                                    Text="{Binding TransactionsReminders.Category.Description}" />
+                                    Text="{Binding TransactionsReminders.Categories.Description}" />
                                 </Grid>
                             </ListBoxItem>
 
@@ -74,6 +74,5 @@
                 </DataTemplate>
             </syncfusion:CardView.ItemTemplate>
         </syncfusion:CardView>
-
     </Grid>
 </Page>

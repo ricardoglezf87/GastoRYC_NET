@@ -87,27 +87,27 @@ namespace GARCA.View.Views
                     {
                         TransactionsReminders? transactionsReminders = new();
                         transactionsReminders.Date = transactions.Date;
-                        transactionsReminders.PeriodsRemindersid = (int)PeriodsRemindersService.EPeriodsReminders.Monthly;
-                        transactionsReminders.Accountid = transactions.AccountsId;
-                        transactionsReminders.Personid = transactions.PersonsId;
-                        transactionsReminders.Categoryid = transactions.CategoriesId;
+                        transactionsReminders.PeriodsRemindersId = (int)PeriodsRemindersService.EPeriodsReminders.Monthly;
+                        transactionsReminders.AccountsId = transactions.AccountsId;
+                        transactionsReminders.PersonsId = transactions.PersonsId;
+                        transactionsReminders.CategoriesId = transactions.CategoriesId;
                         transactionsReminders.Memo = transactions.Memo;
                         transactionsReminders.AmountIn = transactions.AmountIn;
                         transactionsReminders.AmountOut = transactions.AmountOut;
-                        transactionsReminders.Tagid = transactions.TagsId;
-                        transactionsReminders.TransactionStatusid = (int)TransactionsStatusService.ETransactionsTypes.Pending;
+                        transactionsReminders.TagsId = transactions.TagsId;
+                        transactionsReminders.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;
 
                         transactionsReminders = await iTransactionsRemindersService.Save(transactionsReminders);
 
                         foreach (var splits in await iSplitsService.GetbyTransactionid(transactions.Id))
                         {
                             SplitsReminders splitsReminders = new();
-                            splitsReminders.Transactionid = transactionsReminders.Id;
-                            splitsReminders.Categoryid = splits.Categoryid;
+                            splitsReminders.TransactionsId = transactionsReminders.Id;
+                            splitsReminders.CategoriesId = splits.CategoriesId;
                             splitsReminders.Memo = splits.Memo;
                             splitsReminders.AmountIn = splits.AmountIn;
                             splitsReminders.AmountOut = splits.AmountOut;
-                            splitsReminders.Tagid = splits.Tagid;
+                            splitsReminders.TagsId = splits.TagsId;
                             await iSplitsRemindersService.Update(splitsReminders);
                         }
 
@@ -244,7 +244,7 @@ namespace GARCA.View.Views
             {
                 if (accountSelected != null)
                 {
-                    gvTransactions.Columns["Account.Description"].IsHidden = true;
+                    gvTransactions.Columns["Accounts.Description"].IsHidden = true;
 
                     if (TransactionViewModel.AccountsSelected.AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Invests)
                     {
@@ -283,9 +283,9 @@ namespace GARCA.View.Views
                     for (var i = 0; i < lSplits.Count; i++)
                     {
                         var splits = lSplits[i];
-                        if (splits.Tranferid != null)
+                        if (splits.TranferId != null)
                         {
-                            await iTransactionsService.Delete(await iTransactionsService.GetById(splits.Tranferid ?? -99));
+                            await iTransactionsService.Delete(await iTransactionsService.GetById(splits.TranferId ?? -99));
                         }
 
                         await iSplitsService.Delete(splits);

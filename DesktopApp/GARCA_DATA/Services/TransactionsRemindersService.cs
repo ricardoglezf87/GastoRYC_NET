@@ -57,13 +57,13 @@ namespace GARCA.Data.Services
                     transactionsReminders.AmountOut += splitsReminders.AmountOut ?? 0;
                 }
 
-                transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.Split;
-                transactionsReminders.Category = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
+                transactionsReminders.CategoriesId = (int)CategoriesService.ESpecialCategories.Split;
+                transactionsReminders.Categories = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
-            else if (transactionsReminders.Categoryid is ((int)CategoriesService.ESpecialCategories.Split))
+            else if (transactionsReminders.CategoriesId is ((int)CategoriesService.ESpecialCategories.Split))
             {
-                transactionsReminders.Categoryid = (int)CategoriesService.ESpecialCategories.WithoutCategory;
-                transactionsReminders.Category = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
+                transactionsReminders.CategoriesId = (int)CategoriesService.ESpecialCategories.WithoutCategory;
+                transactionsReminders.Categories = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.Id == 0)
@@ -74,7 +74,7 @@ namespace GARCA.Data.Services
 
                 foreach (var splitsReminders in lSplitsReminders)
                 {
-                    splitsReminders.Transactionid = transactionsReminders.Id;
+                    splitsReminders.TransactionsId = transactionsReminders.Id;
                     await iSplitsRemindersService.Update(splitsReminders);
                 }
             }

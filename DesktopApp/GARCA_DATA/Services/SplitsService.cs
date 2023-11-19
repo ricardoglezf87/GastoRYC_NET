@@ -27,9 +27,9 @@ namespace GARCA.Data.Services
 
         public async Task SaveChanges(Splits splits)
         {
-            if (splits.Category == null && splits.Categoryid != null)
+            if (splits.Categories == null && splits.CategoriesId != null)
             {
-                splits.Category = await iCategoriesService.GetById(splits.Categoryid ?? -99);
+                splits.Categories = await iCategoriesService.GetById(splits.CategoriesId ?? -99);
             }
 
             splits.AmountIn ??= 0;
