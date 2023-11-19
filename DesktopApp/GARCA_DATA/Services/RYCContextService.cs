@@ -1,12 +1,14 @@
 ﻿using GARCA.Data.Managers;
 using Microsoft.Data.Sqlite;
+using SQLitePCL;
 
 namespace GARCA.Data.Services
 {
     public class RycContextService
-    {      
+    {     
         public SqliteConnection getConnection()
         {
+            Batteries.Init();
             return new SqliteConnection("Data Source=Data\\rycBBDD_PRE.db");
         }
 

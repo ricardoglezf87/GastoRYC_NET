@@ -13,6 +13,7 @@
     <PackageReference Include="Dapper" Version="2.1.21" />
     <PackageReference Include="Dommel" Version="3.2.0" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
