@@ -10,7 +10,7 @@ namespace GARCA.Models
         public virtual String? Description { set; get; }
 
         [Column("investmentProductsTypesid")]
-        public virtual int? InvestmentProductsTypesid { set; get; }
+        public virtual int? InvestmentProductsTypesId { set; get; }
 
         [Column("investmentProductsTypes")]
         public virtual InvestmentProductsTypes? InvestmentProductsTypes { set; get; }

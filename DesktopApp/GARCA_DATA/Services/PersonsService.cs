@@ -15,7 +15,7 @@ namespace GARCA.Data.Services
 
 
             var result = (from x in trans
-                          group x by x.Categoryid into g
+                          group x by x.CategoriesId into g
                           select new
                           {
                               categoryid = g.Key,

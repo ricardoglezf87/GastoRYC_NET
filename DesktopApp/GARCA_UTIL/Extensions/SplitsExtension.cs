@@ -9,16 +9,16 @@ namespace GARCA.Utils.Extensions
             return new SplitsArchived
             {
                 IdOriginal = obj.Id,
-                Transactionid = obj.TransactionsId,
-                Transaction = null,
-                Categoryid = obj.CategoriesId,
-                Category = null,
+                TransactionsId = obj.TransactionsId,
+                Transactions = null,
+                CategoriesId = obj.CategoriesId,
+                Categories = null,
                 AmountOut = obj.AmountOut,
                 AmountIn = obj.AmountIn,
                 Memo = obj.Memo,
-                Tranferid = obj.TranferId,
-                Tagid = obj.TagsId,
-                Tag = null
+                TranferId = obj.TranferId,
+                TagsId = obj.TagsId,
+                Tags = null
             };
         }
     }

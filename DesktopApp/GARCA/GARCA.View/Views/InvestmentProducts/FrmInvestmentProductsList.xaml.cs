@@ -40,7 +40,7 @@ namespace GARCA.View.Views
                 e.ErrorMessages.Add("Descrìption", "Tiene que rellenar la descripción");
             }
 
-            if (investmentProducts.InvestmentProductsTypesid == null)
+            if (investmentProducts.InvestmentProductsTypesId == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("InvestmentProductsTypesid", "Tiene que rellenar el tipo del producto financiero");
@@ -55,7 +55,7 @@ namespace GARCA.View.Views
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "investmentProductsTypesid":
-                        investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid ?? -99);
+                        investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesId ?? -99);
                         break;
                 }
             }
@@ -65,9 +65,9 @@ namespace GARCA.View.Views
         {
             var investmentProducts = (InvestmentProducts)e.RowData;
 
-            if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesid != null)
+            if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesId != null)
             {
-                investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesid ?? -99);
+                investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesId ?? -99);
             }
 
             await iInvestmentProductsService.Update(investmentProducts);

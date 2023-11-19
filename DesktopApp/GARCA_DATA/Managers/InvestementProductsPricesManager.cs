@@ -16,14 +16,14 @@ namespace GARCA.Data.Managers
 
         public async Task<Decimal?> GetActualPrice(InvestmentProducts investmentProducts)
         {
-            var query = await iRycContextService.getConnection().SelectAsync<InvestmentProductsPrices>(x => x.InvestmentProductsid.Equals(investmentProducts.Id));
+            var query = await iRycContextService.getConnection().SelectAsync<InvestmentProductsPrices>(x => x.InvestmentProductsid == investmentProducts.Id);
             return query?.Where(x => x.InvestmentProductsid.Equals(investmentProducts.Id)
                     && x.Date.Equals(query.Max(y => y.Date))).Select(z => z.Prices).FirstOrDefault();
         }
 
         public async Task<DateTime?> GetLastValueDate(InvestmentProducts investmentProducts)
         {
-            var query = await iRycContextService.getConnection().SelectAsync<InvestmentProductsPrices>(x => x.InvestmentProductsid.Equals(investmentProducts.Id));
+            var query = await iRycContextService.getConnection().SelectAsync<InvestmentProductsPrices>(x => x.InvestmentProductsid == investmentProducts.Id);
             return query.Max(x => x.Date);
         }
     }

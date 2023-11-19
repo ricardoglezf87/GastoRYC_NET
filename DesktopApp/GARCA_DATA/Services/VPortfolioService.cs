@@ -17,7 +17,7 @@ namespace GARCA.Data.Services
                 VPortfolio portfolio = new();
                 portfolio.Id = investmentProducts.Id;
                 portfolio.Description = investmentProducts.Description;
-                portfolio.InvestmentProductsTypesid = investmentProducts.InvestmentProductsTypesid;
+                portfolio.InvestmentProductsTypesid = investmentProducts.InvestmentProductsTypesId;
                 portfolio.InvestmentProductsTypes = investmentProducts.InvestmentProductsTypes;
                 portfolio.Symbol = investmentProducts.Symbol;
                 portfolio.NumShares = await GetNumShares(investmentProducts);

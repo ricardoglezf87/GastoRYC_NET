@@ -9,25 +9,25 @@ namespace GARCA.Data.Managers
     {
         public async Task<IEnumerable<TransactionsArchived>?> GetByAccount(int id)
         {
-            return await iRycContextService.getConnection().SelectAsync<TransactionsArchived>(x => id.Equals(x.Accountid));
+            return await iRycContextService.getConnection().SelectAsync<TransactionsArchived>(x => id.Equals(x.AccountsId));
         }
 
         public async Task<IEnumerable<TransactionsArchived>?> GetByPerson(int id)
         {
-            return await iRycContextService.getConnection().SelectAsync<TransactionsArchived>(x => id.Equals(x.Personid));
+            return await iRycContextService.getConnection().SelectAsync<TransactionsArchived>(x => id.Equals(x.PersonsId));
         }
 
         public async Task<IEnumerable<TransactionsArchived>?> GetByAccountOrderByOrdenDesc(int id)
         {
             return (await iRycContextService.getConnection()
-                .SelectAsync<TransactionsArchived>(x => id.Equals(x.Accountid)))?
+                .SelectAsync<TransactionsArchived>(x => id.Equals(x.AccountsId)))?
                 .OrderByDescending(x => x.Orden);
         }        
         
         public async Task<IEnumerable<TransactionsArchived>?> GetByInvestmentProduct(int id)
         {
             return await iRycContextService.getConnection()
-                .SelectAsync<TransactionsArchived>(x => id.Equals(x.InvestmentProductsid));
+                .SelectAsync<TransactionsArchived,InvestmentProducts,TransactionsArchived>(x => x.InvestmentProductsId == id);
         }
     }
 }

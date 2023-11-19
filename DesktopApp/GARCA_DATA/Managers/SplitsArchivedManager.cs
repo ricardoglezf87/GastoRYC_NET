@@ -11,7 +11,7 @@ namespace GARCA.Data.Managers
         public async Task<IEnumerable<SplitsArchived>?> GetbyTransactionid(int transactionid)
         {
             return await iRycContextService.getConnection().
-                SelectAsync<SplitsArchived>(x => x.Transactionid == transactionid);
+                SelectAsync<SplitsArchived>(x => x.TransactionsId == transactionid);
         }
     }
 }

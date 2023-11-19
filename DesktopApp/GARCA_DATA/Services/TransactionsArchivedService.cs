@@ -60,8 +60,8 @@ namespace GARCA.Data.Services
                             foreach (var splits in lSplits)
                             {
                                 SplitsArchived? sArchived = splits?.ToArchived();
-                                sArchived.Transactionid = tArchived.Id;
-                                sArchived.Transaction = tArchived;
+                                sArchived.TransactionsId = tArchived.Id;
+                                sArchived.Transactions = tArchived;
                                 await iSplitsArchivedService.Update(sArchived);
                                 await iSplitsService.Delete(splits);
                             }
@@ -77,7 +77,7 @@ namespace GARCA.Data.Services
                     foreach (var acc in lAcc)
                     {
                         Decimal? total = (await iTransactionsArchivedService.GetAll())?
-                            .Where(x => x.Date != null && x.Date <= date && x.Accountid == acc.Id).Sum(x => x.Amount);
+                            .Where(x => x.Date != null && x.Date <= date && x.AccountsId == acc.Id).Sum(x => x.Amount);
 
                         if (total is not null and not 0)
                         {

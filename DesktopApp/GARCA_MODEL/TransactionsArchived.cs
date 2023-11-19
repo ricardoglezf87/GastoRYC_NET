@@ -12,28 +12,28 @@ namespace GARCA.Models
         public virtual DateTime? Date { set; get; }
 
         [Column("accountid")]
-        public virtual int? Accountid { set; get; }
+        public virtual int? AccountsId { set; get; }
 
         [Column("account")]
-        public virtual Accounts? Account { set; get; }
+        public virtual Accounts? Accounts { set; get; }
 
         [Column("personid")]
-        public virtual int? Personid { set; get; }
+        public virtual int? PersonsId { set; get; }
 
         [Column("person")]
-        public virtual Persons? Person { set; get; }
+        public virtual Persons? Persons { set; get; }
 
         [Column("tagid")]
-        public virtual int? Tagid { set; get; }
+        public virtual int? TagsId { set; get; }
 
         [Column("tag")]
-        public virtual Tags? Tag { set; get; }
+        public virtual Tags? Tags { set; get; }
 
         [Column("categoryid")]
-        public virtual int? Categoryid { set; get; }
+        public virtual int? CategoriesId { set; get; }
 
         [Column("category")]
-        public virtual Categories? Category { set; get; }
+        public virtual Categories? Categories { set; get; }
 
         [Column("amountIn")]
         public virtual Decimal? AmountIn { set; get; }
@@ -42,22 +42,22 @@ namespace GARCA.Models
         public virtual Decimal? AmountOut { set; get; }
 
         [Column("tranferid")]
-        public virtual int? Tranferid { set; get; }
+        public virtual int? TranferId { set; get; }
 
         [Column("tranferSplitid")]
-        public virtual int? TranferSplitid { set; get; }
+        public virtual int? TranferSplitId { set; get; }
 
         [Column("memo")]
         public virtual String? Memo { set; get; }
 
         [Column("transactionStatusid")]
-        public virtual int? TransactionStatusid { set; get; }
+        public virtual int? TransactionsStatusId { set; get; }
 
         [Column("transactionStatus")]
-        public virtual TransactionsStatus? TransactionStatus { set; get; }
+        public virtual TransactionsStatus? TransactionsStatus { set; get; }
 
         [Column("investmentProductsid")]
-        public virtual int? InvestmentProductsid { set; get; }
+        public virtual int? InvestmentProductsId { set; get; }
 
         [Column("investmentProducts")]
         public virtual InvestmentProducts? InvestmentProducts { set; get; }
@@ -82,11 +82,11 @@ namespace GARCA.Models
 
         [NotMapped]
         public virtual string CategoryDescripGrid => InvestmentCategory.HasValue && !InvestmentCategory.Value ?
-         NumShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra" : Category?.Description ?? string.Empty;
+         NumShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra" : Categories?.Description ?? string.Empty;
 
         [NotMapped]
         public virtual string PersonDescripGrid => InvestmentCategory.HasValue && !InvestmentCategory.Value ?
-            InvestmentProducts?.Description ?? string.Empty : Person?.Name ?? string.Empty;
+            InvestmentProducts?.Description ?? string.Empty : Persons?.Name ?? string.Empty;
 
         [NotMapped]
         public virtual decimal? Amount => InvestmentCategory.HasValue && !InvestmentCategory.Value ? Math.Round((NumShares ?? 0) * (PricesShares ?? 0), 2) : AmountIn - AmountOut;

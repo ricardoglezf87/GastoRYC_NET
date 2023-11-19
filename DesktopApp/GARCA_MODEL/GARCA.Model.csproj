@@ -1,10 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>GARCA.Models</AssemblyName>
+    <AssemblyVersion>3.2.0.33</AssemblyVersion>
+    <FileVersion>3.2.0.0</FileVersion>
+    <InformationalVersion>3.2.0-V4-0-SepararProyectos.33+Branch.feature-V4.0-SepararProyectos.Sha.cad8f99a8943dbabb85cd32b639665080b780844</InformationalVersion>
+    <Version>3.2.0-v4-0-separarproy0033</Version>
   </PropertyGroup>
-
 </Project>
