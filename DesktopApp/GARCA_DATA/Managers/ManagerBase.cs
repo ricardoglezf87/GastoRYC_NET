@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Dommel;
 using GARCA.Models;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
@@ -44,17 +43,16 @@ namespace GARCA.Data.Managers
 
         public async virtual Task<bool> Update(IEnumerable<Q> lObj)
         {
-            return await iRycContextService.getConnection().UpdateAsync(lObj);
+            foreach (var obj in lObj)
+            {
+                await iRycContextService.getConnection().UpdateAsync(obj);
+            }
+            return true;
         }
 
         public async virtual Task<long> Insert(Q obj)
         {
             return (long) await iRycContextService.getConnection().InsertAsync<Q>(obj);
-        }
-
-        public async virtual Task<long> Insert(IEnumerable<Q> lObj)
-        {
-            return (long) await iRycContextService.getConnection().InsertAsync(lObj);
         }
 
         public async virtual Task<bool> Delete(Q obj)

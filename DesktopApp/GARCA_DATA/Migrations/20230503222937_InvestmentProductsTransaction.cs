@@ -1,55 +1,55 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿//using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
+//#nullable disable
 
-namespace GARCA.DAO.Migrations
-{
-    /// <inheritdoc />
-    public partial class InvestmentProductsTransaction : Migration
-    {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+//namespace GARCA.DAO.Migrations
+//{
+//    /// <inheritdoc />
+//    public partial class InvestmentProductsTransaction : Migration
+//    {
+//        /// <inheritdoc />
+//        protected override void Up(MigrationBuilder migrationBuilder)
+//        {
 
-            migrationBuilder.Sql(@"
+//            migrationBuilder.Sql(@"
 
-                drop view vBalancebyCategory;
+//                drop view vBalancebyCategory;
 
-            ");
+//            ");
 
-            migrationBuilder.AddColumn<int>(
-                name: "investmentProductsid",
-                table: "transactions",
-                type: "INTEGER",
-                nullable: true);
+//            migrationBuilder.AddColumn<int>(
+//                name: "investmentProductsid",
+//                table: "transactions",
+//                type: "INTEGER",
+//                nullable: true);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_transactions_investmentProductsid",
-                table: "transactions",
-                column: "investmentProductsid");
+//            migrationBuilder.CreateIndex(
+//                name: "IX_transactions_investmentProductsid",
+//                table: "transactions",
+//                column: "investmentProductsid");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_transactions_investmentProducts_investmentProductsid",
-                table: "transactions",
-                column: "investmentProductsid",
-                principalTable: "investmentProducts",
-                principalColumn: "id");
-        }
+//            migrationBuilder.AddForeignKey(
+//                name: "FK_transactions_investmentProducts_investmentProductsid",
+//                table: "transactions",
+//                column: "investmentProductsid",
+//                principalTable: "investmentProducts",
+//                principalColumn: "id");
+//        }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropForeignKey(
-                name: "FK_transactions_investmentProducts_investmentProductsid",
-                table: "transactions");
+//        /// <inheritdoc />
+//        protected override void Down(MigrationBuilder migrationBuilder)
+//        {
+//            migrationBuilder.DropForeignKey(
+//                name: "FK_transactions_investmentProducts_investmentProductsid",
+//                table: "transactions");
 
-            migrationBuilder.DropIndex(
-                name: "IX_transactions_investmentProductsid",
-                table: "transactions");
+//            migrationBuilder.DropIndex(
+//                name: "IX_transactions_investmentProductsid",
+//                table: "transactions");
 
-            migrationBuilder.DropColumn(
-                name: "investmentProductsid",
-                table: "transactions");
-        }
-    }
-}
+//            migrationBuilder.DropColumn(
+//                name: "investmentProductsid",
+//                table: "transactions");
+//        }
+//    }
+//}

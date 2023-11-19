@@ -19,5 +19,3 @@ namespace GARCA.Models
         public virtual int? Year { set; get; }
     }
 }
-
-//TODO: Hay que realizar la migracion del campo date por i

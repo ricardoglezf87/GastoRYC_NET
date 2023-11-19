@@ -2,7 +2,6 @@
 using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Data.Services;
-using Microsoft.Data.Sqlite;
 using static GARCA.Data.IOC.DependencyConfig;
 using GARCA_DATA.Managers;
 

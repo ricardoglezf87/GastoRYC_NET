@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Dommel;
 using GARCA.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 

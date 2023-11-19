@@ -122,7 +122,6 @@ namespace GARCA.Data.Services
                     }
                     t.Orden = CreateOrden(t);
                     await Update(t);
-                    //TODO: Revisar como hacer esto masivamente.
                 }                
             }
         }

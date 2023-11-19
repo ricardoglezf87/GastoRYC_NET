@@ -2,8 +2,6 @@
 using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Data.Services;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 using GARCA_DATA.Managers;

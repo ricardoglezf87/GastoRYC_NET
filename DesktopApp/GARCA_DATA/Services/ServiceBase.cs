@@ -61,11 +61,6 @@ namespace GARCA.Data.Services
             return await manager.Insert(obj);
         }
 
-        public async virtual Task<long> Insert(IEnumerable<Q> lObj)
-        {
-            return await manager.Insert(lObj);
-        }
-
         public async virtual Task<Q> Save(Q obj)
         {
             return await manager.Save(obj);
