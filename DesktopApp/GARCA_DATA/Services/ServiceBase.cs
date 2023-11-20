@@ -46,21 +46,6 @@ namespace GARCA.Data.Services
             return await manager.Delete(i);
         }
 
-        public async virtual Task<bool> Update(Q obj)
-        {
-           return await manager.Update(obj);
-        }
-
-        public async virtual Task<bool> Update(IEnumerable<Q> lObj)
-        {
-            return await manager.Update(lObj);
-        }
-
-        public async virtual Task<long> Insert(Q obj)
-        {
-            return await manager.Insert(obj);
-        }
-
         public async virtual Task<Q> Save(Q obj)
         {
             return await manager.Save(obj);

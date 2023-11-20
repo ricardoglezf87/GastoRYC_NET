@@ -121,7 +121,7 @@ namespace GARCA.Data.Services
                         balanceTotal -= t.Amount;
                     }
                     t.Orden = CreateOrden(t);
-                    await Update(t);
+                    await Save(t);
                 }                
             }
         }
@@ -166,7 +166,7 @@ namespace GARCA.Data.Services
 
                 tContraria.TransactionsStatusId = transactions.TransactionsStatusId;
 
-                await Update(tContraria);
+                await Save(tContraria);
             }
             else if (transactions.TranferId != null &&
                 await iCategoriesService.IsTranfer(transactions.CategoriesId ?? -99))
@@ -183,7 +183,7 @@ namespace GARCA.Data.Services
                     tContraria.AmountIn = transactions.AmountOut;
                     tContraria.AmountOut = transactions.AmountIn;
                     tContraria.TransactionsStatusId = transactions.TransactionsStatusId;
-                    await Update(tContraria);
+                    await Save(tContraria);
                     await RefreshBalanceAllTransactions();
                 }
             }
@@ -209,7 +209,7 @@ namespace GARCA.Data.Services
                     tContraria.AmountIn = transactions.AmountOut;
                     tContraria.AmountOut = transactions.AmountIn;
                     tContraria.Transactions.TransactionsStatusId = transactions.TransactionsStatusId;
-                    await iSplitsService.Update(tContraria);
+                    await iSplitsService.Save(tContraria);
                 }
             }
         }
@@ -240,24 +240,25 @@ namespace GARCA.Data.Services
 
             if (transactions.Id == 0)
             {
-                await Update(transactions);
+                await Save(transactions);
                 
                 if (lSplits == null) return;
 
                 foreach (var splits in lSplits)
                 {
                     splits.TransactionsId = transactions.Id;
-                    await iSplitsService.Update(splits);
+                    await iSplitsService.Save(splits);
                 }
             }
             else
             {
-                await Update(transactions);
+                await Save(transactions);
             }
         }
         
         public async Task<Splits> UpdateTranferSplits(Transactions? transactions, Splits splits)
         {
+            //TODO:Ver si sobra esta asignacion y no coger directamente de la variable
             Categories? category = await iCategoriesService.GetById(splits.CategoriesId ?? -99);
 
             if (splits.TranferId != null &&
@@ -289,7 +290,7 @@ namespace GARCA.Data.Services
                     TransactionsStatusId = transactions.TransactionsStatusId
                 };
 
-                await Update(tContraria);
+                await Save(tContraria);
 
             }
             else if (splits.TranferId != null &&
@@ -307,7 +308,7 @@ namespace GARCA.Data.Services
                     tContraria.AmountIn = splits.AmountOut ?? 0;
                     tContraria.AmountOut = splits.AmountIn ?? 0;
                     tContraria.TransactionsStatusId = transactions.TransactionsStatusId;
-                    await Update(tContraria);
+                    await Save(tContraria);
                 }
             }
 

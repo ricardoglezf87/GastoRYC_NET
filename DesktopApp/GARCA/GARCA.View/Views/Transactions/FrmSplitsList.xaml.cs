@@ -28,14 +28,14 @@ namespace GARCA.View.Views
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             cbCategories.ItemsSource = await iCategoriesService.GetAll();
-            loadSplits();
+            await loadSplits();
         }
 
-        private void loadSplits()
+        private async Task loadSplits()
         {
             gvSplits.ItemsSource = transactions != null && transactions.Id > 0
-                ? iSplitsService.GetbyTransactionid(transactions.Id)
-                : (object?)iSplitsService.GetbyTransactionidNull();
+                ? await iSplitsService.GetbyTransactionid(transactions.Id)
+                : await iSplitsService.GetbyTransactionidNull();
         }
 
         private async void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
@@ -95,7 +95,7 @@ namespace GARCA.View.Views
                 await iSplitsService.Delete(splits);
             }
 
-            loadSplits();
+            await loadSplits();
         }
 
         private void gvSplits_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

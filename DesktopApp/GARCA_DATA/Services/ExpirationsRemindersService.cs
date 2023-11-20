@@ -47,7 +47,7 @@ namespace GARCA.Data.Services
             {
                 await RegisterTransactionfromReminder(exp.Id);
                 exp.Done = true;
-                await Update(exp);
+                await Save(exp);
             }
         }
 
@@ -65,7 +65,7 @@ namespace GARCA.Data.Services
                         expirationsReminders.TransactionsRemindersId = transactionsReminders.Id;
                         expirationsReminders.TransactionsReminders = transactionsReminders;
                         expirationsReminders.Date = date;
-                        await Update(expirationsReminders);
+                        await Save(expirationsReminders);
                     }
 
                     date = iPeriodsReminderService.GetNextDate(date, iPeriodsReminderService.ToEnum(transactionsReminders.PeriodsReminders));

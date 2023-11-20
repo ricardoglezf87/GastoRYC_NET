@@ -68,19 +68,19 @@ namespace GARCA.Data.Services
 
             if (transactionsReminders.Id == 0)
             {
-                await Update(transactionsReminders);
+                await Save(transactionsReminders);
                 
                 if (lSplitsReminders == null) return;
 
                 foreach (var splitsReminders in lSplitsReminders)
                 {
                     splitsReminders.TransactionsId = transactionsReminders.Id;
-                    await iSplitsRemindersService.Update(splitsReminders);
+                    await iSplitsRemindersService.Save(splitsReminders);
                 }
             }
             else
             {
-                await Update(transactionsReminders);
+                await Save(transactionsReminders);
             }
         }
 

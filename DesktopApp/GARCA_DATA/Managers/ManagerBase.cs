@@ -41,15 +41,6 @@ namespace GARCA.Data.Managers
             return await iRycContextService.getConnection().UpdateAsync(obj);            
         }
 
-        public async virtual Task<bool> Update(IEnumerable<Q> lObj)
-        {
-            foreach (var obj in lObj)
-            {
-                await iRycContextService.getConnection().UpdateAsync(obj);
-            }
-            return true;
-        }
-
         public async virtual Task<long> Insert(Q obj)
         {
             return (long) await iRycContextService.getConnection().InsertAsync<Q>(obj);

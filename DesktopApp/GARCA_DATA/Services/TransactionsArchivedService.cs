@@ -62,7 +62,7 @@ namespace GARCA.Data.Services
                                 SplitsArchived? sArchived = splits?.ToArchived();
                                 sArchived.TransactionsId = tArchived.Id;
                                 sArchived.Transactions = tArchived;
-                                await iSplitsArchivedService.Update(sArchived);
+                                await iSplitsArchivedService.Save(sArchived);
                                 await iSplitsService.Delete(splits);
                             }
                         }
@@ -101,7 +101,7 @@ namespace GARCA.Data.Services
                                 at.AmountOut = (total > 0 ? total : 0);
                                 at.Balance = 0;
 
-                                await iTransactionsArchivedService.Update(at);
+                                await iTransactionsArchivedService.Save(at);
                             }
                         }
 

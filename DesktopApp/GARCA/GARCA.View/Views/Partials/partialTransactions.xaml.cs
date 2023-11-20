@@ -233,6 +233,7 @@ namespace GARCA.View.Views
 
         public void LoadTransactions()
         {
+            gvTransactions.View.Refresh();
             SetColumnVisibility(TransactionViewModel.AccountsSelected);
         }
 

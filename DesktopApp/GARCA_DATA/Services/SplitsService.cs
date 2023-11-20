@@ -29,6 +29,7 @@ namespace GARCA.Data.Services
         {
             if (splits.Categories == null && splits.CategoriesId != null)
             {
+                //TODO:Ver si esta asignaciones necesaria
                 splits.Categories = await iCategoriesService.GetById(splits.CategoriesId ?? -99);
             }
 
@@ -36,7 +37,7 @@ namespace GARCA.Data.Services
 
             splits.AmountOut ??= 0;
 
-            await Update(splits);
+            await Save(splits);
         }
 
     }
