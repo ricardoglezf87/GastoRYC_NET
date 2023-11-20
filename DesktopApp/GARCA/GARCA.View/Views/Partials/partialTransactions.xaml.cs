@@ -2,6 +2,7 @@
 using GARCA.Models;
 using GARCA.Utils.Extensions;
 using GARCA.View.ViewModels;
+using Syncfusion.UI.Xaml.Grid;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,6 +20,7 @@ namespace GARCA.View.Views
         #region Variables
 
         private readonly MainWindow parentForm;
+        public Accounts? AccountSelected {  get; set; }
 
         #endregion
 
@@ -229,25 +231,46 @@ namespace GARCA.View.Views
 
         #endregion
 
-        #region Functions        
+        #region Functions   
+
+        public bool FilterRecords(object o)
+        {
+            if (AccountSelected == null)
+            {
+                return true;
+            }
+
+            var item = o as Transactions;
+
+            if (item != null)
+            {
+                if (item.AccountsId.Equals(AccountSelected.Id))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public void LoadTransactions()
         {
-            gvTransactions.View.Refresh();
-            SetColumnVisibility(TransactionViewModel.AccountsSelected);
-        }
-
-        public void SetColumnVisibility(Accounts? accountSelected = null)
-        {
-            TransactionViewModel.AccountsSelected = accountSelected;
-
             if (gvTransactions.View != null)
             {
-                if (accountSelected != null)
+                gvTransactions.View.Filter = FilterRecords;
+                gvTransactions.View.RefreshFilter();
+            }
+            SetColumnVisibility();
+        }
+
+        public void SetColumnVisibility()
+        {            
+            if (gvTransactions.View != null)
+            {
+                if (AccountSelected != null)
                 {
                     gvTransactions.Columns["Accounts.Description"].IsHidden = true;
 
-                    if (TransactionViewModel.AccountsSelected.AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Invests)
+                    if (AccountSelected.AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Invests)
                     {
                         gvTransactions.Columns["NumShares"].IsHidden = false;
                         gvTransactions.Columns["PricesShares"].IsHidden = false;
@@ -264,7 +287,7 @@ namespace GARCA.View.Views
                 }
                 else
                 {
-                    gvTransactions.Columns["Account.Description"].IsHidden = false;
+                    gvTransactions.Columns["Accounts.Description"].IsHidden = false;
                 }
             }
         }

@@ -46,7 +46,7 @@ namespace GARCA.Data.Services
             return (await GetAllOpennedOrderByOrdenDesc())?.Skip(startIndex).Take(nPage);
         }
 
-        private async Task<IEnumerable<Transactions>?> GetByAccountOrderByOrderDesc(int? id)
+        public async Task<IEnumerable<Transactions>?> GetByAccountOrderByOrderDesc(int? id)
         {
             return (await GetAll())?.Where(x => id.Equals(x.AccountsId))
                     .OrderByDescending(x => x.Orden);

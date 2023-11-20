@@ -9,30 +9,15 @@ namespace GARCA.View.ViewModels
 {
     public class TransactionViewModel
     {
-        public IncrementalList<Transactions>? IncrementalItemsSource { get; set; }
-        public static Accounts? AccountsSelected { get; set; }
-        public static int MaxItem { get; set; } = 200;
+        public GridVirtualizingCollectionView GridVirtualizingItemsSource { get; set; }
 
         public TransactionViewModel()
         {
-            IncrementalItemsSource = new IncrementalList<Transactions>(LoadMoreItems) { MaxItemCount = MaxItem };
-        }
-
-        /// <summary>
-        /// Method to load items which assigned to the action of IncrementalList
-        /// </summary>
-        /// <param name="count"></param>
-        /// <param name="baseIndex"></param>
-        private async void LoadMoreItems(uint count, int baseIndex)
-        {
-            var item = AccountsSelected != null
-                ? await iTransactionsService.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, MaxItem)
-                : await iTransactionsService.GetAllOpennedOrderByOrdenDesc(baseIndex, MaxItem);
+            var item = iTransactionsService.GetAllOpennedOrderByOrdenDesc().Result;
 
             if (item != null)
             {
-                var transactions = new ObservableCollection<Transactions>(item);
-                IncrementalItemsSource.LoadItems(transactions.AsEnumerable());
+                GridVirtualizingItemsSource = new GridVirtualizingCollectionView(item);
             }
         }
     }

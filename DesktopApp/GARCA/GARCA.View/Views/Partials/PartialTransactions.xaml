@@ -17,11 +17,11 @@
                                AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
                                CanMaintainScrollPosition="True" 
                                AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
-                               AllowDeleting="True"
+                               AllowDeleting="True" IsReadOnly="True"
                                MouseDoubleClick="gvTransactions_MouseDoubleClick"
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
                                ShowRowHeader="True" SelectionMode="Extended" EnableDataVirtualization="True"
-                                ItemsSource="{Binding IncrementalItemsSource}">
+                                ItemsSource="{Binding GridVirtualizingItemsSource}">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="Orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

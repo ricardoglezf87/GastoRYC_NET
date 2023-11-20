@@ -156,12 +156,13 @@ namespace GARCA
                     var maxItem = Microsoft.VisualBasic.Interaction.InputBox("Inserte un numero elementos a cargar:", "Transacción");
                     if (!String.IsNullOrWhiteSpace(maxItem))
                     {
-                        TransactionViewModel.MaxItem = Int32.Parse(maxItem);
-                        if (actualPrincipalContent is PartialTransactions transactions)
-                        {
-                            await LoadAccounts();
-                            transactions.LoadTransactions();
-                        }
+                        //TODO: Esto no se va a usar
+                        //TransactionViewModel.MaxItem = Int32.Parse(maxItem);
+                        //if (actualPrincipalContent is PartialTransactions transactions)
+                        //{
+                        //    await LoadAccounts();
+                        //    transactions.LoadTransactions();
+                        //}
                     }
                     break;
                 case Key.F5:
@@ -208,7 +209,8 @@ namespace GARCA
                         await reminders.LoadReminders();
                         break;
                     case PartialTransactions transactions:
-                        transactions.SetColumnVisibility((Accounts)lvAccounts.SelectedValue);
+                        transactions.AccountSelected = (Accounts)lvAccounts.SelectedValue;
+                        transactions.LoadTransactions();
                         break;
                 }
             }
@@ -222,7 +224,8 @@ namespace GARCA
 
             if (actualPrincipalContent is PartialTransactions transactions)
             {
-                transactions.SetColumnVisibility();
+                transactions.AccountSelected = null;
+                transactions.LoadTransactions();
             }
         }
 
@@ -358,8 +361,27 @@ namespace GARCA
             await iDateCalendarService.FillCalendar();
         }
 
+        private bool isSameView(EViews views)
+        {
+            switch (views)
+            {
+                case EViews.Home:
+                    return actualPrincipalContent is PartialHome;                    
+                case EViews.Transactions:
+                    return actualPrincipalContent is PartialTransactions;
+                case EViews.Reminders:
+                    return actualPrincipalContent is PartialReminders;
+                case EViews.Portfolio:
+                    return actualPrincipalContent is PartialPortfolio;
+            }
+            return false;
+        }
+
         private void ToggleViews(EViews views)
         {
+            if (isSameView(views)) return;
+
+
             Page? win = null;
             principalContent.Content = null;
 
