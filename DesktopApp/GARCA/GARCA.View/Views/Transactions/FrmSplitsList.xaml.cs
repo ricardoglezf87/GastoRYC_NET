@@ -52,7 +52,6 @@ namespace GARCA.View.Views
             }
         }
 
-
         private void gvSplits_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             var splits = (Splits)e.RowData;

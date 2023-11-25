@@ -79,14 +79,21 @@ namespace GARCA.Data.Services
             if (id != null)
             {
                 var expirationsReminders = await GetById(id ?? -99);
-                if (expirationsReminders != null && expirationsReminders.TransactionsReminders != null)
+
+                if (expirationsReminders == null) { 
+                    return null; 
+                }
+
+                expirationsReminders.TransactionsReminders = await iTransactionsRemindersService.
+                    GetById(expirationsReminders.TransactionsRemindersId ?? -99 );
+
+                if (expirationsReminders.TransactionsReminders != null)
                 {
                     Transactions? transactions = new();
                     transactions.Date = expirationsReminders.Date;
                     transactions.AccountsId = expirationsReminders.TransactionsReminders.AccountsId;
                     transactions.PersonsId = expirationsReminders.TransactionsReminders.PersonsId;
-                    transactions.CategoriesId = expirationsReminders.TransactionsReminders.CategoriesId;
-                    transactions.Categories = expirationsReminders.TransactionsReminders.Categories;
+                    transactions.CategoriesId = expirationsReminders.TransactionsReminders.CategoriesId;                    
                     transactions.Memo = expirationsReminders.TransactionsReminders.Memo;
                     transactions.AmountIn = expirationsReminders.TransactionsReminders.AmountIn;
                     transactions.AmountOut = expirationsReminders.TransactionsReminders.AmountOut;

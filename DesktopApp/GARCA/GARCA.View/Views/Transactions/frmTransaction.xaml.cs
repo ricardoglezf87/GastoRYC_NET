@@ -100,6 +100,7 @@ namespace GARCA.View.Views
             FrmSplitsList frm = new(transaction);
             frm.ShowDialog();
             await iTransactionsService.UpdateTransactionAfterSplits(transaction);
+            await iTransactionsService.RefreshBalanceAllTransactions();
             LoadTransaction();
         }
 
