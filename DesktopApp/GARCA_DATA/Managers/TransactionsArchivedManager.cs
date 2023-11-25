@@ -7,6 +7,11 @@ namespace GARCA.Data.Managers
 {
     public class TransactionsArchivedManager : ManagerBase<TransactionsArchived>
     {
+        public async override Task<IEnumerable<TransactionsArchived>?> GetAll()
+        {
+            return await iRycContextService.getConnection().GetAllAsync<TransactionsArchived, Accounts, Categories, TransactionsStatus, Persons, Tags, InvestmentProducts, TransactionsArchived>();
+        }
+
         public async Task<IEnumerable<TransactionsArchived>?> GetByAccount(int id)
         {
             return await iRycContextService.getConnection().SelectAsync<TransactionsArchived>(x => x.AccountsId == id);

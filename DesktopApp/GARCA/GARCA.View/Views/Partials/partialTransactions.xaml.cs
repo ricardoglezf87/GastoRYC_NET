@@ -21,6 +21,7 @@ namespace GARCA.View.Views
 
         private readonly MainWindow parentForm;
         public Accounts? AccountSelected {  get; set; }
+        public TransactionViewModel TransactionsData { get; set; }  
 
         #endregion
 
@@ -38,6 +39,8 @@ namespace GARCA.View.Views
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            TransactionsData = new TransactionViewModel();
+            gvTransactions.ItemsSource = TransactionsData.GetSource();
             LoadTransactions();
         }
 
@@ -57,6 +60,7 @@ namespace GARCA.View.Views
             frm.ShowDialog();
             await iTransactionsService.UpdateTransactionAfterSplits(transactions);
             await iTransactionsService.RefreshBalanceAllTransactions();
+            await RefreshData();
             LoadTransactions();
             await parentForm.LoadAccounts();
         }
@@ -150,9 +154,16 @@ namespace GARCA.View.Views
             {
                 FrmTransaction frm = new((Transactions)gvTransactions.CurrentItem);
                 frm.ShowDialog();
+                await RefreshData();
                 LoadTransactions();
                 await parentForm.LoadAccounts();
             }
+        }
+
+        public async Task RefreshData()
+        {
+            await TransactionsData.LoadData();
+            gvTransactions.ItemsSource = TransactionsData.GetSource();
         }
 
         private async void btnDelete_Click(object sender, RoutedEventArgs e)
@@ -291,7 +302,7 @@ namespace GARCA.View.Views
                 }
             }
         }
-
+        
         private async Task RemoveTransaction(Transactions transactions)
         {
             if (transactions.TranferSplitId != null)

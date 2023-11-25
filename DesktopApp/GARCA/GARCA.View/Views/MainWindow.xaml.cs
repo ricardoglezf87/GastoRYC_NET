@@ -60,19 +60,21 @@ namespace GARCA
             else
             {
                 DateTime date;
-                date = DateTime.ParseExact(strDate,"dd/MM/yy", CultureInfo.InvariantCulture);
+                if (strDate.Length == 8)
+                {
+                    date = DateTime.ParseExact(strDate, "dd/MM/yy", CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    date = DateTime.ParseExact(strDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                }
 
                 Mouse.OverrideCursor = Cursors.Wait;
 
                 iRycContextService.MakeBackup();
 
                 await iTransactionsArchivedService.ArchiveTransactions(date);
-
-                if (actualPrincipalContent is PartialTransactions transactions)
-                {
-                    transactions.LoadTransactions();
-                    await LoadAccounts();
-                }
+                await RefreshBalance();
 
                 Mouse.OverrideCursor = null;
 
@@ -83,12 +85,7 @@ namespace GARCA
         private async void btnUpdateBalances_Click(object sender, RoutedEventArgs e)
         {
             await UpdateBalances();
-
-            if (actualPrincipalContent is PartialTransactions transactions)
-            {
-                transactions.LoadTransactions();
-                await LoadAccounts();
-            }
+            await RefreshBalance();
         }
 
         private async void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
@@ -151,20 +148,7 @@ namespace GARCA
             {
                 case Key.F1:
                     await OpenNewTransaction();
-                    break;
-                case Key.F4:
-                    var maxItem = Microsoft.VisualBasic.Interaction.InputBox("Inserte un numero elementos a cargar:", "Transacción");
-                    if (!String.IsNullOrWhiteSpace(maxItem))
-                    {
-                        //TODO: Esto no se va a usar
-                        //TransactionViewModel.MaxItem = Int32.Parse(maxItem);
-                        //if (actualPrincipalContent is PartialTransactions transactions)
-                        //{
-                        //    await LoadAccounts();
-                        //    transactions.LoadTransactions();
-                        //}
-                    }
-                    break;
+                    break;                
                 case Key.F5:
                     switch (actualPrincipalContent)
                     {
@@ -172,8 +156,7 @@ namespace GARCA
                             await home.LoadCharts();
                             break;
                         case PartialTransactions transactions:
-                            await LoadAccounts();
-                            transactions.LoadTransactions();
+                            await RefreshBalance();
                             break;
                         case PartialReminders reminders:
                             await reminders.LoadReminders();
@@ -324,7 +307,7 @@ namespace GARCA
 
         #region Functions
 
-        private async Task RefreshBalance()
+        private async Task RefreshBalanceAccount()
         {
             try
             {
@@ -348,10 +331,16 @@ namespace GARCA
         {
             var frm = lvAccounts.SelectedItem == null ? new FrmTransaction() : new FrmTransaction(((Accounts)lvAccounts.SelectedItem).Id);
             frm.ShowDialog();
+            await RefreshBalance();
+        }
+
+        private async Task RefreshBalance()
+        {
             await LoadAccounts();
 
             if (actualPrincipalContent is PartialTransactions transactions)
             {
+                await transactions.RefreshData();
                 transactions.LoadTransactions();
             }
         }
@@ -439,7 +428,7 @@ namespace GARCA
                 lvAccounts.ItemsSource = viewAccounts;
                 viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("AccountsTypesdescription"));
                 viewAccounts.SortDescriptions.Add(new SortDescription("AccountsTypesId", ListSortDirection.Ascending));
-                await RefreshBalance();
+                await RefreshBalanceAccount();
 
                 if (account != null)
                 {
@@ -483,7 +472,8 @@ namespace GARCA
                         loadDialog.PerformeStep();
                     }
 
-                    loadDialog.Close();
+                    await RefreshBalance();
+                    loadDialog.Close();                    
                     MessageBox.Show("Actualizado con exito!", "Actualización de saldos");
                 }
                 else

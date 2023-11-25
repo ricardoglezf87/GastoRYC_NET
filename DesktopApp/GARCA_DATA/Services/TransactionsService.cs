@@ -32,7 +32,7 @@ namespace GARCA.Data.Services
         public override async Task<Transactions> Save(Transactions obj)
         {
             obj.Date = obj.Date.RemoveTime();
-            obj.Orden = CreateOrden(obj);
+            obj.Orden = await CreateOrden(obj);
             return await base.Save(obj);
         }
 
@@ -82,13 +82,15 @@ namespace GARCA.Data.Services
             return await manager.GetNextId();
         }
 
-        private double CreateOrden(Transactions transactions)
+        private async Task<double> CreateOrden(Transactions transactions)
         {
+            int id = (transactions.Id == 0 ? await GetNextId() : transactions.Id);
+
             return Convert.ToDouble(
                     transactions.Date?.Year.ToString("0000")
                     + transactions.Date?.Month.ToString("00")
                     + transactions.Date?.Day.ToString("00")
-                    + transactions.Id.ToString("000000")
+                    + id.ToString("000000")
                     + (transactions.AmountIn != 0 ? "1" : "0"));
         }
 
@@ -106,24 +108,7 @@ namespace GARCA.Data.Services
 
         public async Task RefreshBalanceTransactions(Accounts? acc)
         {
-            decimal? balanceTotal = 0;
-            var tList = await GetByAccountOrderByOrderDesc(acc.Id);
-
-            if (tList != null)
-            {
-                balanceTotal = tList.Sum(x => x.Amount);
-
-                foreach (var t in tList)
-                {
-                    if (t.Amount != null)
-                    {
-                        t.Balance = balanceTotal;
-                        balanceTotal -= t.Amount;
-                    }
-                    t.Orden = CreateOrden(t);
-                    await Save(t);
-                }                
-            }
+            await manager.UpdateBalance(acc.Id);
         }
 
         public async Task RefreshBalanceAllTransactions()

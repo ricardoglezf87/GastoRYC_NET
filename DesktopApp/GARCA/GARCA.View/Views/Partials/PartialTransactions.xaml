@@ -4,13 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" xmlns:local1="clr-namespace:GARCA.View.ViewModels"
+        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" 
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
         Title="partialTransactions" Loaded="Page_Loaded">
-    <Page.DataContext>
-        <local1:TransactionViewModel/>
-    </Page.DataContext>
     <Grid>
 
         <syncfusion:SfDataGrid  x:Name="gvTransactions"
@@ -20,8 +17,7 @@
                                AllowDeleting="True" IsReadOnly="True"
                                MouseDoubleClick="gvTransactions_MouseDoubleClick"
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
-                               ShowRowHeader="True" SelectionMode="Extended" EnableDataVirtualization="True"
-                                ItemsSource="{Binding GridVirtualizingItemsSource}">
+                               ShowRowHeader="True" SelectionMode="Extended" EnableDataVirtualization="True">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="Orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>

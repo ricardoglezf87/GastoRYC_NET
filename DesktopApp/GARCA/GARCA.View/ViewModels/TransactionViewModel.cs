@@ -3,22 +3,38 @@ using Syncfusion.UI.Xaml.Grid;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.ViewModels
 {
     public class TransactionViewModel
     {
-        public GridVirtualizingCollectionView GridVirtualizingItemsSource { get; set; }
+        private GridVirtualizingCollectionView source ;
 
         public TransactionViewModel()
         {
-            var item = iTransactionsService.GetAllOpennedOrderByOrdenDesc().Result;
+            LoadData();
+        }
+
+        public GridVirtualizingCollectionView GetSource()
+        {
+            return source;
+        }
+
+        public async Task LoadData()
+        {
+            var item = await iTransactionsService.GetAllOpennedOrderByOrdenDesc();
 
             if (item != null)
             {
-                GridVirtualizingItemsSource = new GridVirtualizingCollectionView(item);
+                source = new GridVirtualizingCollectionView(item);
             }
+        }
+
+        public void Refresh()
+        {
+            source.Refresh();  
         }
     }
 }

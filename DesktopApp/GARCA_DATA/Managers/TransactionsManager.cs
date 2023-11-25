@@ -17,5 +17,18 @@ namespace GARCA.Data.Managers
         {
             return await iRycContextService.getConnection().ExecuteScalarAsync<int>("SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'transactions';");
         }
+
+        public async Task UpdateBalance(int id)
+        {
+            await iRycContextService.getConnection().ExecuteAsync(@$"
+                update transactions
+                set
+	                balance =(select round(sum(t2.amountIn-t2.amountOut),2)
+			                from transactions t2
+			                where t2.accountid = transactions.accountid
+				                and t2.orden<=transactions.orden) 
+                where accountid = {id}
+            ");
+        }
     }
 }
