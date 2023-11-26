@@ -66,15 +66,15 @@ namespace GARCA.Data.Services
 
         private async Task<IOrderedEnumerable<TransactionsArchived>?> GetBuyOperations(InvestmentProducts investmentProducts)
         {
-            var res = (await iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares < 0)?.ToList();
-            res.AddRange((await iTransactionsService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares < 0)?.ToList());
+            var res = (await iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares < 0).ToList();
+            res.AddRange((await iTransactionsService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares < 0).ToList());
             return res?.OrderBy(x => x.Orden);
         }
 
         private async Task<IOrderedEnumerable<TransactionsArchived>?> GetSellOperations(InvestmentProducts investmentProducts)
         {
-            var res = (await iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares > 0)?.ToList();
-            res.AddRange((await iTransactionsService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares > 0)?.ToList());
+            var res = (await iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares > 0).ToList();
+            res.AddRange((await iTransactionsService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares > 0).ToList());
             return res?.OrderBy(x => x.Orden);
         }
     }

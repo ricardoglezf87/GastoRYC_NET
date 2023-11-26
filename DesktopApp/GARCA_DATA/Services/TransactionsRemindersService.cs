@@ -10,13 +10,13 @@ namespace GARCA.Data.Services
 
         #region TransactionsRemindersActions        
 
-        public override async Task<TransactionsReminders?> Save(TransactionsReminders transactionsReminders)
+        public override async Task<TransactionsReminders> Save(TransactionsReminders transactionsReminders)
         {
             await iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
             return await base.Save(transactionsReminders);
         }
 
-        public override async Task<bool> Delete(TransactionsReminders transactionsReminders)
+        public override async Task<bool> Delete(TransactionsReminders? transactionsReminders)
         {
             if (transactionsReminders != null)
             {

@@ -58,7 +58,7 @@ namespace GARCA.Data.Services
 
                 while (date <= DateTime.Now.AddYears(1))
                 {
-                    if (!await ExistsExpiration(transactionsReminders, date ?? DateTime.MinValue))
+                    if (!await ExistsExpiration(transactionsReminders, date.Value))
                     {
                         ExpirationsReminders expirationsReminders = new();
                         expirationsReminders.TransactionsRemindersId = transactionsReminders.Id;
@@ -77,7 +77,7 @@ namespace GARCA.Data.Services
         {
             if (id != null)
             {
-                var expirationsReminders = await GetById(id ?? -99);
+                var expirationsReminders = await GetById(id.Value);
 
                 if (expirationsReminders == null)
                 {
