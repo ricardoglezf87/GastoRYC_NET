@@ -3,10 +3,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>3.2.0.33</AssemblyVersion>
-    <FileVersion>3.2.0.0</FileVersion>
-    <InformationalVersion>3.2.0-V4-0-SepararProyectos.33+Branch.feature-V4.0-SepararProyectos.Sha.cad8f99a8943dbabb85cd32b639665080b780844</InformationalVersion>
-    <Version>3.2.0-v4-0-separarproy0033</Version>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <FileVersion>4.0.0.0</FileVersion>
+    <InformationalVersion>4.0.0-beta.0+Branch.release-V4.0.Sha.29dd517ab1630b893320111ae66ea4e1bdbf58d4</InformationalVersion>
+    <Version>4.0.0-beta0000</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Google.Apis.Auth" Version="1.62.1" />
