@@ -43,7 +43,7 @@ namespace GARCA.Data.Services
         {
             var lSplitsReminders = await iSplitsRemindersService.GetbyTransactionid(transactionsReminders.Id);
 
-            if (lSplitsReminders != null && lSplitsReminders.Count() != 0)
+            if (lSplitsReminders != null && lSplitsReminders.Any())
             {
                 transactionsReminders.AmountIn = 0;
                 transactionsReminders.AmountOut = 0;

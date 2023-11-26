@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using GARCA_UTIL.Exceptions;
 using System.Reflection;
 
 using static GARCA.Data.IOC.DependencyConfig;
@@ -30,7 +31,7 @@ namespace GARCA.Data.Managers
                 }
                 else
                 {
-                    throw new Exception($"No se cuentra el metodo Do en la clase {clase.Name}");
+                    throw new MigrationException($"No se cuentra el metodo Do en la clase {clase.Name}");
                 }
             }
         }

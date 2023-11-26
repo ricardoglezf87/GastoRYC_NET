@@ -1,6 +1,5 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
-using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.Data.Services
@@ -27,14 +26,7 @@ namespace GARCA.Data.Services
 
         public async Task SaveChanges(Splits splits)
         {
-            if (splits.Categories == null && splits.CategoriesId != null)
-            {
-                //TODO:Ver si esta asignaciones necesaria
-                splits.Categories = await iCategoriesService.GetById(splits.CategoriesId ?? -99);
-            }
-
             splits.AmountIn ??= 0;
-
             splits.AmountOut ??= 0;
 
             await Save(splits);

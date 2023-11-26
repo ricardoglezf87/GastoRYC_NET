@@ -199,7 +199,7 @@ namespace GARCA.Data.Services
         {
             var lSplits = transactions.Splits ?? await iSplitsService.GetbyTransactionid(transactions.Id);
 
-            if (lSplits != null && lSplits.Count() != 0)
+            if (lSplits != null && lSplits.Any())
             {
                 transactions.AmountIn = 0;
                 transactions.AmountOut = 0;
@@ -242,11 +242,8 @@ namespace GARCA.Data.Services
 
         public async Task<Splits> UpdateTranferSplits(Transactions? transactions, Splits splits)
         {
-            //TODO:Ver si sobra esta asignacion y no coger directamente de la variable
-            Categories? category = await iCategoriesService.GetById(splits.CategoriesId ?? -99);
-
             if (splits.TranferId != null &&
-                !await iCategoriesService.IsTranfer(category?.Id ?? -99))
+                !await iCategoriesService.IsTranfer(splits.CategoriesId ?? -99))
             {
                 var tContraria = await GetById(splits.TranferId ?? -99);
                 if (tContraria != null)
@@ -256,7 +253,7 @@ namespace GARCA.Data.Services
                 splits.TranferId = null;
             }
             else if (splits.TranferId == null &&
-                await iCategoriesService.IsTranfer(category?.Id ?? -99))
+                await iCategoriesService.IsTranfer(splits.CategoriesId ?? -99))
             {
                 splits.TranferId = await GetNextId();
 
@@ -278,7 +275,7 @@ namespace GARCA.Data.Services
 
             }
             else if (splits.TranferId != null &&
-                await iCategoriesService.IsTranfer(category?.Id ?? -99))
+                await iCategoriesService.IsTranfer(splits.CategoriesId ?? -99))
             {
                 var tContraria = await GetById(splits.TranferId ?? -99);
                 if (tContraria != null)

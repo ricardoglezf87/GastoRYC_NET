@@ -28,6 +28,7 @@ namespace GARCA.View.Views
 
         public PartialTransactions(MainWindow parentForm)
         {
+            TransactionsData = new TransactionViewModel();
             InitializeComponent();
             this.parentForm = parentForm;
         }
@@ -36,10 +37,9 @@ namespace GARCA.View.Views
 
         #region Events
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            TransactionsData = new TransactionViewModel();
-            gvTransactions.ItemsSource = TransactionsData.GetSource();
+            gvTransactions.ItemsSource = await TransactionsData.GetSource();
             LoadTransactions();
         }
 
@@ -150,7 +150,7 @@ namespace GARCA.View.Views
         public async Task RefreshData()
         {
             await TransactionsData.LoadData();
-            gvTransactions.ItemsSource = TransactionsData.GetSource();
+            gvTransactions.ItemsSource = await TransactionsData.GetSource();
             LoadTransactions();
         }
 
@@ -263,14 +263,7 @@ namespace GARCA.View.Views
 
             var item = o as Transactions;
 
-            if (item != null)
-            {
-                if (item.AccountsId.Equals(AccountSelected.Id))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return item != null && item.AccountsId.Equals(AccountSelected.Id);
         }
 
         public void LoadTransactions()

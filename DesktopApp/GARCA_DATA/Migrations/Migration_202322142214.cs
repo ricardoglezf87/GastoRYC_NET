@@ -3,7 +3,7 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Migrations
 {
-    public class Migration_202322142214
+    public class Migration202322142214
     {
         public async Task Do()
         {

@@ -63,13 +63,19 @@ namespace GARCA.WebReport
 
             var accountsTypes = await iAccountsTypesService.GetAll();
             var transactions = await Task.Run(() => iTransactionsService.GetAll());
+
+            if (transactions == null)
+            {
+                return;
+            }
+
             loadDialog.setMax(transactions.Count());
 
             foreach (var trans in transactions)
             {
                 var splits = await iSplitsService.GetbyTransactionid(trans.Id);
 
-                if (splits != null && splits.Count() > 0)
+                if (splits != null && splits.Any())
                 {
                     Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
                     foreach (var spl in splits)
@@ -164,7 +170,7 @@ namespace GARCA.WebReport
                 {
                     var splits = await iSplitsArchivedService.GetbyTransactionid(trans.Id);
 
-                    if (splits != null && splits.Count() > 0)
+                    if (splits != null && splits.Any())
                     {
                         Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
                         foreach (var spl in splits)
@@ -250,6 +256,11 @@ namespace GARCA.WebReport
 
             var linvestmentProducts = await iInvestmentProductsService.GetAllOpened();
 
+            if (linvestmentProducts == null)
+            {
+                return;
+            }
+
             loadDialog.setMax(linvestmentProducts.Count());
 
             foreach (var investmentProducts in linvestmentProducts)
@@ -313,6 +324,11 @@ namespace GARCA.WebReport
                 };
 
             var linvestmentProducts = await iInvestmentProductsService.GetAllOpened();
+
+            if (linvestmentProducts == null)
+            {
+                return;
+            }
 
             loadDialog.setMax(linvestmentProducts.Count());
 

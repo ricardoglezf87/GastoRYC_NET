@@ -147,7 +147,7 @@ namespace GARCA
                         case PartialHome home:
                             await home.LoadCharts();
                             break;
-                        case PartialTransactions transactions:
+                        case PartialTransactions:
                             await RefreshBalance();
                             break;
                         case PartialReminders reminders:

@@ -6,15 +6,20 @@ namespace GARCA.View.ViewModels
 {
     public class TransactionViewModel
     {
-        private GridVirtualizingCollectionView source;
+        private GridVirtualizingCollectionView? source;
 
         public TransactionViewModel()
         {
-            LoadData();
+            source = null;
         }
 
-        public GridVirtualizingCollectionView GetSource()
+        public async Task<GridVirtualizingCollectionView?> GetSource()
         {
+            if (source == null)
+            {
+                await LoadData();
+            }
+
             return source;
         }
 

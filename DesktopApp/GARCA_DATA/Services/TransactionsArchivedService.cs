@@ -58,7 +58,7 @@ namespace GARCA.Data.Services
                         {
                             foreach (var splits in lSplits)
                             {
-                                SplitsArchived? sArchived = splits?.ToArchived();
+                                SplitsArchived sArchived = splits.ToArchived();
                                 sArchived.TransactionsId = tArchived.Id;
                                 sArchived.Transactions = tArchived;
                                 await iSplitsArchivedService.Save(sArchived);
