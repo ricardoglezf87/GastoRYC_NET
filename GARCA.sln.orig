@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA", "GARCA\GARCA.csproj", "{5F5878E5-C8B5-4F58-8437-BBFD40871BD6}"
+EndProject
+<<<<<<< HEAD
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA_API", "GARCA_API\GARCA_API.csproj", "{2CEFC790-9F03-4D73-B464-30C6694C64A1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA_WEB", "GARCA_WEB\GARCA_WEB.csproj", "{F1AB7448-D2A0-4A1F-B792-6B06ED11FF96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GARCA_DLL", "GARCA_DLL\GARCA_DLL.csproj", "{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA_TEST", "GARCA_TEST\GARCA_TEST.csproj", "{33DE45CC-4A67-43E2-9615-1058F4010949}"
+EndProject
+=======
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GARCA_DLL", "GARCA_DLL\GARCA_DLL.csproj", "{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}"
+EndProject
+>>>>>>> develop
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F5878E5-C8B5-4F58-8437-BBFD40871BD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F5878E5-C8B5-4F58-8437-BBFD40871BD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F5878E5-C8B5-4F58-8437-BBFD40871BD6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5F5878E5-C8B5-4F58-8437-BBFD40871BD6}.Debug|x64.Build.0 = Debug|Any CPU
+		{5F5878E5-C8B5-4F58-8437-BBFD40871BD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F5878E5-C8B5-4F58-8437-BBFD40871BD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F5878E5-C8B5-4F58-8437-BBFD40871BD6}.Release|x64.ActiveCfg = Release|Any CPU
+		{5F5878E5-C8B5-4F58-8437-BBFD40871BD6}.Release|x64.Build.0 = Release|Any CPU
+<<<<<<< HEAD
+		{2CEFC790-9F03-4D73-B464-30C6694C64A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CEFC790-9F03-4D73-B464-30C6694C64A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CEFC790-9F03-4D73-B464-30C6694C64A1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2CEFC790-9F03-4D73-B464-30C6694C64A1}.Debug|x64.Build.0 = Debug|Any CPU
+		{2CEFC790-9F03-4D73-B464-30C6694C64A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CEFC790-9F03-4D73-B464-30C6694C64A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CEFC790-9F03-4D73-B464-30C6694C64A1}.Release|x64.ActiveCfg = Release|Any CPU
+		{2CEFC790-9F03-4D73-B464-30C6694C64A1}.Release|x64.Build.0 = Release|Any CPU
+		{F1AB7448-D2A0-4A1F-B792-6B06ED11FF96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1AB7448-D2A0-4A1F-B792-6B06ED11FF96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1AB7448-D2A0-4A1F-B792-6B06ED11FF96}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F1AB7448-D2A0-4A1F-B792-6B06ED11FF96}.Debug|x64.Build.0 = Debug|Any CPU
+		{F1AB7448-D2A0-4A1F-B792-6B06ED11FF96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1AB7448-D2A0-4A1F-B792-6B06ED11FF96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1AB7448-D2A0-4A1F-B792-6B06ED11FF96}.Release|x64.ActiveCfg = Release|Any CPU
+		{F1AB7448-D2A0-4A1F-B792-6B06ED11FF96}.Release|x64.Build.0 = Release|Any CPU
+=======
+>>>>>>> develop
+		{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}.Debug|x64.Build.0 = Debug|Any CPU
+		{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}.Release|x64.ActiveCfg = Release|Any CPU
+		{F57B92C4-3A3C-4D0F-8C53-47DC0F2F3000}.Release|x64.Build.0 = Release|Any CPU
+<<<<<<< HEAD
+		{33DE45CC-4A67-43E2-9615-1058F4010949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33DE45CC-4A67-43E2-9615-1058F4010949}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33DE45CC-4A67-43E2-9615-1058F4010949}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{33DE45CC-4A67-43E2-9615-1058F4010949}.Debug|x64.Build.0 = Debug|Any CPU
+		{33DE45CC-4A67-43E2-9615-1058F4010949}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33DE45CC-4A67-43E2-9615-1058F4010949}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33DE45CC-4A67-43E2-9615-1058F4010949}.Release|x64.ActiveCfg = Release|Any CPU
+		{33DE45CC-4A67-43E2-9615-1058F4010949}.Release|x64.Build.0 = Release|Any CPU
+=======
+>>>>>>> develop
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FED0E935-BB1F-4A61-89F9-24F23D7172BD}
+	EndGlobalSection
+EndGlobal

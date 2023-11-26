@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>GARCA.Data</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <FileVersion>4.0.0.0</FileVersion>
+    <InformationalVersion>4.0.0-beta.0+Branch.release-V4.0.Sha.29dd517ab1630b893320111ae66ea4e1bdbf58d4</InformationalVersion>
+    <Version>4.0.0-beta0000</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.21" />
+    <PackageReference Include="Dommel" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
+    <ProjectReference Include="..\GARCA_UTIL\GARCA.Utils.csproj" />
+  </ItemGroup>
+</Project>
