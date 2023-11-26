@@ -46,8 +46,8 @@ namespace GARCA.View.Views
 
         private void gvTransactions_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimiento", MessageBoxButton.YesNo,
-                MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
+            if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimientos", MessageBoxButton.YesNo,
+                MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
             }
@@ -61,20 +61,10 @@ namespace GARCA.View.Views
             await iTransactionsService.UpdateTransactionAfterSplits(transactions);
             await iTransactionsService.RefreshBalanceAllTransactions();
             await RefreshData();
-            LoadTransactions();
             await parentForm.LoadAccounts();
         }
 
-        private async void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
-        {
-            foreach (Transactions transactions in e.Items)
-            {
-                await RemoveTransaction(transactions);
-            }
-
-            LoadTransactions();
-            await parentForm.LoadAccounts();
-        }
+        
 
         private void btnCopy_Click(object sender, RoutedEventArgs e)
         {
@@ -154,9 +144,7 @@ namespace GARCA.View.Views
             {
                 FrmTransaction frm = new((Transactions)gvTransactions.CurrentItem);
                 frm.ShowDialog();
-                await RefreshData();
-                LoadTransactions();
-                await parentForm.LoadAccounts();
+                await parentForm.RefreshBalance();
             }
         }
 
@@ -164,22 +152,45 @@ namespace GARCA.View.Views
         {
             await TransactionsData.LoadData();
             gvTransactions.ItemsSource = TransactionsData.GetSource();
+            LoadTransactions();
         }
+
+        private async void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        {
+            if (e.Items != null && e.Items.Count > 0)
+            {
+                foreach (Transactions transactions in e.Items)
+                {
+                    await RemoveTransaction(transactions);
+                }
+
+                await iTransactionsService.RefreshBalanceAllTransactions();
+                await parentForm.RefreshBalance();
+            }
+            else
+            {
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
+            }
+}
 
         private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
+                if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimientos", MessageBoxButton.YesNo,
+                    MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No) return;
+
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
                     await RemoveTransaction(transactions);
                 }
-                LoadTransactions();
-                await parentForm.LoadAccounts();
+
+                await iTransactionsService.RefreshBalanceAllTransactions();
+                await parentForm.RefreshBalance();
             }
             else
             {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
             }
         }
 
@@ -193,12 +204,11 @@ namespace GARCA.View.Views
                     transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
                     await iTransactionsService.Save(transactions);
                 }
-                await parentForm.LoadAccounts();
-                LoadTransactions();
+                await RefreshData();
             } 
             else
             {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
             }
         }
 
@@ -212,8 +222,7 @@ namespace GARCA.View.Views
                     transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
                     await iTransactionsService.Save(transactions);
                 }
-                await parentForm.LoadAccounts();
-                LoadTransactions();
+                await RefreshData();
             }
             else
             {
@@ -231,8 +240,7 @@ namespace GARCA.View.Views
                     transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
                     await iTransactionsService.Save(transactions);
                 }
-                await parentForm.LoadAccounts();
-                LoadTransactions();
+                await RefreshData();
             }
             else
             {
@@ -312,18 +320,19 @@ namespace GARCA.View.Views
             }
             else
             {
-                if (transactions.Splits != null)
+                var splits = await iSplitsService.GetbyTransactionid(transactions.Id);
+                if (splits != null)
                 {
-                    var lSplits = transactions.Splits.ToList();
+                    var lSplits = splits.ToList();
                     for (var i = 0; i < lSplits.Count; i++)
                     {
-                        var splits = lSplits[i];
-                        if (splits.TranferId != null)
+                        var split = lSplits[i];
+                        if (split.TranferId != null)
                         {
-                            await iTransactionsService.Delete(await iTransactionsService.GetById(splits.TranferId ?? -99));
+                            await iTransactionsService.Delete(await iTransactionsService.GetById(split.TranferId ?? -99));
                         }
 
-                        await iSplitsService.Delete(splits);
+                        await iSplitsService.Delete(split);
                     }
                 }
 
@@ -332,7 +341,7 @@ namespace GARCA.View.Views
                     await iTransactionsService.Delete(await iTransactionsService.GetById(transactions.TranferId ?? -99));
                 }
 
-                await iTransactionsService.Delete(transactions);
+                await iTransactionsService.Delete(transactions);                
             }
         }
 

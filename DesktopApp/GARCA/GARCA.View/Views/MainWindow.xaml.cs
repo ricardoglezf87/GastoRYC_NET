@@ -334,14 +334,13 @@ namespace GARCA
             await RefreshBalance();
         }
 
-        private async Task RefreshBalance()
+        public async Task RefreshBalance()
         {
             await LoadAccounts();
 
             if (actualPrincipalContent is PartialTransactions transactions)
             {
                 await transactions.RefreshData();
-                transactions.LoadTransactions();
             }
         }
 
