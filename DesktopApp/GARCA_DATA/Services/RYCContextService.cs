@@ -7,8 +7,16 @@ namespace GARCA.Data.Services
     {
         public SqliteConnection getConnection()
         {
+            var nameDdbb = string.Empty;
+
+#if DEBUG
+            nameDdbb = "rycBBDD_PRE.db";
+#else
+            nameDdbb = "rycBBDD.db";
+#endif
+
             Batteries.Init();
-            return new SqliteConnection("Data Source=Data\\rycBBDD_PRE.db");
+            return new SqliteConnection($"Data Source=Data\\{nameDdbb}");
         }
 
         public void MakeBackup()

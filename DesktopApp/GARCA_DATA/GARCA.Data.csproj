@@ -6,8 +6,8 @@
     <AssemblyName>GARCA.Data</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
     <FileVersion>4.0.0.0</FileVersion>
-    <InformationalVersion>4.0.0-beta.0+Branch.release-V4.0.Sha.29dd517ab1630b893320111ae66ea4e1bdbf58d4</InformationalVersion>
-    <Version>4.0.0-beta0000</Version>
+    <InformationalVersion>4.0.0+Branch.hotfix-GARCA-INC-nombre-BBDD.Sha.459600fc5b9e49bf06b6c3760f52c9e868fbc18b</InformationalVersion>
+    <Version>4.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.21" />
