@@ -33,10 +33,10 @@
                 <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
                 <syncfusion:GridDateTimeColumn MappingName="Date" HeaderText="Fecha"/>
                 <syncfusion:GridTextColumn  HeaderText="Periodicidad" MappingName="PeriodsReminders.Description"/>
-                <syncfusion:GridTextColumn  HeaderText="Cuenta" MappingName="Account.Description"/>
-                <syncfusion:GridTextColumn  HeaderText="Persona" MappingName="Person.Name"/>
+                <syncfusion:GridTextColumn  HeaderText="Cuenta" MappingName="Accounts.Description"/>
+                <syncfusion:GridTextColumn  HeaderText="Persona" MappingName="Persons.Name"/>
                 <syncfusion:GridTextColumn MappingName="Memo" HeaderText="Memo"/>
-                <syncfusion:GridTextColumn  HeaderText="Categoria" MappingName="Category.Description"/>
+                <syncfusion:GridTextColumn  HeaderText="Categoria" MappingName="Categories.Description"/>
                 <syncfusion:GridCurrencyColumn MappingName="Amount" HeaderText="Importe"/>
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>

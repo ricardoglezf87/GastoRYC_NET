@@ -1,12 +1,12 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using GARCA.Utlis.Extensions;
-using GARCA.View.Services;
+﻿using GARCA.Data.Services;
+using GARCA.Models;
+using GARCA.Utils.Extensions;
 using GARCA.View.ViewModels;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using static GARCA.Utlis.Extensions.WindowsExtension;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
@@ -19,6 +19,8 @@ namespace GARCA.View.Views
         #region Variables
 
         private readonly MainWindow parentForm;
+        public Accounts? AccountSelected { get; set; }
+        public TransactionViewModel TransactionsData { get; set; }
 
         #endregion
 
@@ -26,6 +28,7 @@ namespace GARCA.View.Views
 
         public PartialTransactions(MainWindow parentForm)
         {
+            TransactionsData = new TransactionViewModel();
             InitializeComponent();
             this.parentForm = parentForm;
         }
@@ -34,15 +37,16 @@ namespace GARCA.View.Views
 
         #region Events
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            gvTransactions.ItemsSource = await TransactionsData.GetSource();
             LoadTransactions();
         }
 
         private void gvTransactions_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimiento", MessageBoxButton.YesNo,
-                MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
+            if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimientos", MessageBoxButton.YesNo,
+                MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
             }
@@ -53,22 +57,13 @@ namespace GARCA.View.Views
             var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
-            DependencyConfigView.TransactionsServiceView.UpdateTransactionAfterSplits(transactions);
-            await DependencyConfigView.TransactionsServiceView.RefreshBalanceAllTransactions();
-            LoadTransactions();
-            parentForm.LoadAccounts();
+            await iTransactionsService.UpdateTransactionAfterSplits(transactions);
+            await iTransactionsService.RefreshBalanceAllTransactions();
+            await RefreshData();
+            await parentForm.LoadAccounts();
         }
 
-        private void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
-        {
-            foreach (Transactions transactions in e.Items)
-            {
-                RemoveTransaction(transactions);
-            }
 
-            LoadTransactions();
-            parentForm.LoadAccounts();
-        }
 
         private void btnCopy_Click(object sender, RoutedEventArgs e)
         {
@@ -76,7 +71,7 @@ namespace GARCA.View.Views
             MessageBox.Show("Funcionalidad no implementada");
         }
 
-        private void btnAddReminder_Click(object sender, RoutedEventArgs e)
+        private async void btnAddReminder_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
@@ -87,33 +82,33 @@ namespace GARCA.View.Views
                     {
                         TransactionsReminders? transactionsReminders = new();
                         transactionsReminders.Date = transactions.Date;
-                        transactionsReminders.PeriodsRemindersid = (int)PeriodsRemindersServiceView.EPeriodsReminders.Monthly;
-                        transactionsReminders.Accountid = transactions.Accountid;
-                        transactionsReminders.Personid = transactions.Personid;
-                        transactionsReminders.Categoryid = transactions.Categoryid;
+                        transactionsReminders.PeriodsRemindersId = (int)PeriodsRemindersService.EPeriodsReminders.Monthly;
+                        transactionsReminders.AccountsId = transactions.AccountsId;
+                        transactionsReminders.PersonsId = transactions.PersonsId;
+                        transactionsReminders.CategoriesId = transactions.CategoriesId;
                         transactionsReminders.Memo = transactions.Memo;
                         transactionsReminders.AmountIn = transactions.AmountIn;
                         transactionsReminders.AmountOut = transactions.AmountOut;
-                        transactionsReminders.Tagid = transactions.Tagid;
-                        transactionsReminders.TransactionStatusid = (int)TransactionsStatusServiceView.ETransactionsTypes.Pending;
+                        transactionsReminders.TagsId = transactions.TagsId;
+                        transactionsReminders.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;
 
-                        transactionsReminders = DependencyConfigView.TransactionsRemindersServiceView.Update(transactionsReminders);
+                        transactionsReminders = await iTransactionsRemindersService.Save(transactionsReminders);
 
-                        foreach (var splits in DependencyConfigView.SplitsServiceView.GetbyTransactionid(transactions.Id))
+                        foreach (var splits in await iSplitsService.GetbyTransactionid(transactions.Id))
                         {
                             SplitsReminders splitsReminders = new();
-                            splitsReminders.Transactionid = transactionsReminders.Id;
-                            splitsReminders.Categoryid = splits.Categoryid;
+                            splitsReminders.TransactionsId = transactionsReminders.Id;
+                            splitsReminders.CategoriesId = splits.CategoriesId;
                             splitsReminders.Memo = splits.Memo;
                             splitsReminders.AmountIn = splits.AmountIn;
                             splitsReminders.AmountOut = splits.AmountOut;
-                            splitsReminders.Tagid = splits.Tagid;
-                            DependencyConfigView.SplitsRemindersServiceView.Update(splitsReminders);
+                            splitsReminders.TagsId = splits.TagsId;
+                            await iSplitsRemindersService.Save(splitsReminders);
                         }
 
                         FrmTransactionReminders frm = new(transactionsReminders);
                         frm.ShowDialog();
-                        if (frm.WindowsResult == EWindowsResult.Sucess)
+                        if (frm.WindowsResult == WindowsExtension.EWindowsResult.Sucess)
                         {
                             MessageBox.Show("Recordatorio creado.", "Crear Recordatorio");
                         }
@@ -142,27 +137,94 @@ namespace GARCA.View.Views
             MessageBox.Show("Funcionalidad no implementada");
         }
 
-        private void gvTransactions_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void gvTransactions_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (gvTransactions.CurrentItem != null)
             {
                 FrmTransaction frm = new((Transactions)gvTransactions.CurrentItem);
                 frm.ShowDialog();
-                LoadTransactions();
-                parentForm.LoadAccounts();
+                await parentForm.RefreshBalance();
             }
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        public async Task RefreshData()
+        {
+            await TransactionsData.LoadData();
+            gvTransactions.ItemsSource = await TransactionsData.GetSource();
+            LoadTransactions();
+        }
+
+        private async void gvTransactions_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        {
+            if (e.Items != null && e.Items.Count > 0)
+            {
+                foreach (Transactions transactions in e.Items)
+                {
+                    await RemoveTransaction(transactions);
+                }
+
+                await iTransactionsService.RefreshBalanceAllTransactions();
+                await parentForm.RefreshBalance();
+            }
+            else
+            {
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
+            }
+        }
+
+        private async void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
+            {
+                if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimientos", MessageBoxButton.YesNo,
+                    MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
+                {
+                    return;
+                }
+
+                foreach (Transactions transactions in gvTransactions.SelectedItems)
+                {
+                    await RemoveTransaction(transactions);
+                }
+
+                await iTransactionsService.RefreshBalanceAllTransactions();
+                await parentForm.RefreshBalance();
+            }
+            else
+            {
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
+            }
+        }
+
+        private async void btnPending_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    RemoveTransaction(transactions);
+                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;
+                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
+                    await iTransactionsService.Save(transactions);
                 }
-                LoadTransactions();
-                parentForm.LoadAccounts();
+                await RefreshData();
+            }
+            else
+            {
+                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
+            }
+        }
+
+        private async void btnProvisional_Click(object sender, RoutedEventArgs e)
+        {
+            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
+            {
+                foreach (Transactions transactions in gvTransactions.SelectedItems)
+                {
+                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
+                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
+                    await iTransactionsService.Save(transactions);
+                }
+                await RefreshData();
             }
             else
             {
@@ -170,56 +232,17 @@ namespace GARCA.View.Views
             }
         }
 
-        private void btnPending_Click(object sender, RoutedEventArgs e)
+        private async void btnReconciled_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.TransactionStatusid = (int)TransactionsStatusServiceView.ETransactionsTypes.Pending;
-                    transactions.TransactionStatus = DependencyConfigView.TransactionsStatusServiceView.GetById(transactions.TransactionStatusid);
-                    DependencyConfigView.TransactionsServiceView.Update(transactions);
+                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
+                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
+                    await iTransactionsService.Save(transactions);
                 }
-                parentForm.LoadAccounts();
-                LoadTransactions();
-            }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
-            }
-        }
-
-        private void btnProvisional_Click(object sender, RoutedEventArgs e)
-        {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    transactions.TransactionStatusid = (int)TransactionsStatusServiceView.ETransactionsTypes.Provisional;
-                    transactions.TransactionStatus = DependencyConfigView.TransactionsStatusServiceView.GetById(transactions.TransactionStatusid);
-                    DependencyConfigView.TransactionsServiceView.Update(transactions);
-                }
-                parentForm.LoadAccounts();
-                LoadTransactions();
-            }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
-            }
-        }
-
-        private void btnReconciled_Click(object sender, RoutedEventArgs e)
-        {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    transactions.TransactionStatusid = (int)TransactionsStatusServiceView.ETransactionsTypes.Reconciled;
-                    transactions.TransactionStatus = DependencyConfigView.TransactionsStatusServiceView.GetById(transactions.TransactionStatusid);
-                    DependencyConfigView.TransactionsServiceView.Update(transactions);
-                }
-                parentForm.LoadAccounts();
-                LoadTransactions();
+                await RefreshData();
             }
             else
             {
@@ -229,24 +252,39 @@ namespace GARCA.View.Views
 
         #endregion
 
-        #region Functions        
+        #region Functions   
+
+        public bool FilterRecords(object o)
+        {
+            if (AccountSelected == null)
+            {
+                return true;
+            }
+
+            var item = o as Transactions;
+
+            return item != null && item.AccountsId.Equals(AccountSelected.Id);
+        }
 
         public void LoadTransactions()
         {
-            SetColumnVisibility(TransactionViewModel.AccountsSelected);
-        }
-
-        public void SetColumnVisibility(AccountsView? accountSelected = null)
-        {
-            TransactionViewModel.AccountsSelected = accountSelected;
-
             if (gvTransactions.View != null)
             {
-                if (accountSelected != null)
-                {
-                    gvTransactions.Columns["Account.Description"].IsHidden = true;
+                gvTransactions.View.Filter = FilterRecords;
+                gvTransactions.View.RefreshFilter();
+            }
+            SetColumnVisibility();
+        }
 
-                    if (TransactionViewModel.AccountsSelected.AccountsTypesid == (int)AccountsTypesServiceView.EAccountsTypes.Invests)
+        public void SetColumnVisibility()
+        {
+            if (gvTransactions.View != null)
+            {
+                if (AccountSelected != null)
+                {
+                    gvTransactions.Columns["Accounts.Description"].IsHidden = true;
+
+                    if (AccountSelected.AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Invests)
                     {
                         gvTransactions.Columns["NumShares"].IsHidden = false;
                         gvTransactions.Columns["PricesShares"].IsHidden = false;
@@ -263,41 +301,42 @@ namespace GARCA.View.Views
                 }
                 else
                 {
-                    gvTransactions.Columns["Account.Description"].IsHidden = false;
+                    gvTransactions.Columns["Accounts.Description"].IsHidden = false;
                 }
             }
         }
 
-        private void RemoveTransaction(Transactions transactions)
+        private async Task RemoveTransaction(Transactions transactions)
         {
-            if (transactions.TranferSplitid != null)
+            if (transactions.TranferSplitId != null)
             {
                 MessageBox.Show("El movimiento Id: " + transactions.Id +
                     " de fecha: " + transactions.Date.ToShortDateString() + " viene de una transferencia desde split, para borrar diríjase al split que lo generó.", "Eliminación movimiento");
             }
             else
             {
-                if (transactions.Splits != null)
+                var splits = await iSplitsService.GetbyTransactionid(transactions.Id);
+                if (splits != null)
                 {
-                    var lSplits = transactions.Splits.ToList();
+                    var lSplits = splits.ToList();
                     for (var i = 0; i < lSplits.Count; i++)
                     {
-                        var splits = lSplits[i];
-                        if (splits.Tranferid != null)
+                        var split = lSplits[i];
+                        if (split.TranferId != null)
                         {
-                            DependencyConfigView.TransactionsServiceView.Delete(DependencyConfigView.TransactionsServiceView.GetById(splits.Tranferid));
+                            await iTransactionsService.Delete(await iTransactionsService.GetById(split.TranferId ?? -99));
                         }
 
-                        DependencyConfigView.SplitsServiceView.Delete(splits);
+                        await iSplitsService.Delete(split);
                     }
                 }
 
-                if (transactions.Tranferid != null)
+                if (transactions.TranferId != null)
                 {
-                    DependencyConfigView.TransactionsServiceView.Delete(DependencyConfigView.TransactionsServiceView.GetById(transactions.Tranferid));
+                    await iTransactionsService.Delete(await iTransactionsService.GetById(transactions.TranferId ?? -99));
                 }
 
-                DependencyConfigView.TransactionsServiceView.Delete(transactions);
+                await iTransactionsService.Delete(transactions);
             }
         }
 

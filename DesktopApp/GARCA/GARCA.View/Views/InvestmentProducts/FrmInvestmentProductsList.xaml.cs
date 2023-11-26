@@ -1,10 +1,10 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
+﻿using GARCA.Models;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
@@ -18,15 +18,15 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbInvestmentProductsTypes.ItemsSource = DependencyConfigView.InvestmentProductsTypesServiceView.GetAll();
-            LoadItemSource();
+            cbInvestmentProductsTypes.ItemsSource = await iInvestmentProductsTypesService.GetAll();
+            await LoadItemSource();
         }
 
-        private void LoadItemSource()
+        private async Task LoadItemSource()
         {
-            gvInvestmentProducts.ItemsSource = DependencyConfigView.InvestmentProductsServiceView.GetAll()?.ToList();
+            gvInvestmentProducts.ItemsSource = await iInvestmentProductsService.GetAll();
         }
 
         private void gvInvestmentProducts_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -39,52 +39,52 @@ namespace GARCA.View.Views
                 e.ErrorMessages.Add("Descrìption", "Tiene que rellenar la descripción");
             }
 
-            if (investmentProducts.InvestmentProductsTypesid == null)
+            if (investmentProducts.InvestmentProductsTypesId == null)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("InvestmentProductsTypesid", "Tiene que rellenar el tipo del producto financiero");
             }
         }
 
-        private void gvInvestmentProducts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvInvestmentProducts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var investmentProducts = (InvestmentProducts)gvInvestmentProducts.SelectedItem;
             if (investmentProducts != null)
             {
                 switch (gvInvestmentProducts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
-                    case "investmentProductsTypesid":
-                        investmentProducts.InvestmentProductsTypes = DependencyConfigView.InvestmentProductsTypesServiceView.GetById(investmentProducts.InvestmentProductsTypesid);
+                    case "investmentProductsTypesId":
+                        investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesId ?? -99);
                         break;
                 }
             }
         }
 
-        private void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var investmentProducts = (InvestmentProducts)e.RowData;
 
-            if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesid != null)
+            if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesId != null)
             {
-                investmentProducts.InvestmentProductsTypes = DependencyConfigView.InvestmentProductsTypesServiceView.GetById(investmentProducts.InvestmentProductsTypesid);
+                investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesId ?? -99);
             }
 
-            DependencyConfigView.InvestmentProductsServiceView.Update(investmentProducts);
-            LoadItemSource();
+            await iInvestmentProductsService.Save(investmentProducts);
+            await LoadItemSource();
         }
 
-        private void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (InvestmentProducts investmentProducts in e.Items)
             {
-                DependencyConfigView.InvestmentProductsServiceView.Delete(investmentProducts);
+                await iInvestmentProductsService.Delete(investmentProducts);
             }
-            LoadItemSource();
+            await LoadItemSource();
         }
 
         private void gvInvestmentProducts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if (MessageBox.Show("Esta seguro de querer eliminar este tag?", "Eliminación tag", MessageBoxButton.YesNo,
+            if (MessageBox.Show("Esta seguro de querer eliminar este producto de inversión?", "Eliminación producto de inversión", MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;

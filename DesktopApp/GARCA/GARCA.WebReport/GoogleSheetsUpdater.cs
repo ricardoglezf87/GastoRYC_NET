@@ -1,5 +1,4 @@
-﻿using GARCA.Utils.IOC;
-using GARCA.View.Services;
+﻿using GARCA.Data.Services;
 using GARCA.View.Views.Common;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
@@ -9,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.WebReport
 {
@@ -61,15 +61,21 @@ namespace GARCA.WebReport
                     new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo", "Cerrada" }
                 };
 
-            var accountsTypes = DependencyConfigView.AccountsTypesServiceView.GetAll();
-            var transactions = await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetAll());
-            loadDialog.setMax(transactions.Count);
+            var accountsTypes = await iAccountsTypesService.GetAll();
+            var transactions = await Task.Run(() => iTransactionsService.GetAll());
+
+            if (transactions == null)
+            {
+                return;
+            }
+
+            loadDialog.setMax(transactions.Count());
 
             foreach (var trans in transactions)
             {
-                var splits = await Task.Run(() => DependencyConfigView.SplitsServiceView.GetbyTransactionid(trans.Id));
+                var splits = await iSplitsService.GetbyTransactionid(trans.Id);
 
-                if (splits != null && splits.Count > 0)
+                if (splits != null && splits.Any())
                 {
                     Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
                     foreach (var spl in splits)
@@ -79,43 +85,43 @@ namespace GARCA.WebReport
                            new[] {
                                         trans.Id.ToString(),
                                         DateToStringJs(trans.Date),
-                                        trans.Account?.Description ?? "Sin Cuenta",
-                                        (trans.Accountid ?? -99).ToString(),
+                                        trans.Accounts?.Description ?? "Sin Cuenta",
+                                        (trans.AccountsId ?? -99).ToString(),
                                         trans.PersonDescripGrid ?? "Sin Persona",
-                                        (trans.Personid ?? -99).ToString(),
-                                        spl.Category?.Description ?? "Sin Categoria",
-                                        (spl.Categoryid??-99).ToString(),
+                                        (trans.PersonsId ?? -99).ToString(),
+                                        spl.Categories?.Description ?? "Sin Categoria",
+                                        (spl.CategoriesId??-99).ToString(),
                                         DecimalToStringJs(spl.Amount),
-                                        trans.Tag?.Description ?? "Sin Tag",
-                                        (trans.Tagid??-99).ToString(),
+                                        trans.Tags?.Description ?? "Sin Tag",
+                                        (trans.TagsId??-99).ToString(),
                                         trans.Memo ?? String.Empty,
                                         DecimalToStringJs(balance),
-                                        (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
-                                        trans.Account.Closed.ToString() ?? "False"
+                                        (trans.Accounts.AccountsTypesId ?? -99).ToString(),
+                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Accounts.AccountsTypesId)).Description ?? "Sin tipo cuenta",
+                                        trans.Accounts.Closed.ToString() ?? "False"
                            });
                     }
                 }
-                else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesServiceView.EAccountsTypes.Loans)
+                else if (trans.Accounts != null && trans.Accounts.AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Loans)
                 {
                     filasDeDatos.Add(
                         new[] {
                                 trans.Id.ToString(),
                                 DateToStringJs(trans.Date),
-                                trans.Account?.Description ?? "Sin Cuenta",
-                                (trans.Accountid ?? -99).ToString(),
+                                trans.Accounts?.Description ?? "Sin Cuenta",
+                                (trans.AccountsId ?? -99).ToString(),
                                 trans.PersonDescripGrid ?? "Sin Persona",
-                                (trans.Personid ?? -99).ToString(),
+                                (trans.PersonsId ?? -99).ToString(),
                                 "Prestamos:Amortización",
-                                (trans.Categoryid??-99).ToString(),
+                                (trans.CategoriesId??-99).ToString(),
                                 DecimalToStringJs(-trans.Amount),
-                                trans.Tag?.Description ?? "Sin Tag",
-                                (trans.Tagid??-99).ToString(),
+                                trans.Tags?.Description ?? "Sin Tag",
+                                (trans.TagsId??-99).ToString(),
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
-                                (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
-                                trans.Account.Closed.ToString() ?? "False"
+                                (trans.Accounts.AccountsTypesId ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Accounts.AccountsTypesId)).Description ?? "Sin tipo cuenta",
+                                trans.Accounts.Closed.ToString() ?? "False"
                         });
                 }
                 else
@@ -124,20 +130,20 @@ namespace GARCA.WebReport
                         new[] {
                                 trans.Id.ToString(),
                                 DateToStringJs(trans.Date),
-                                trans.Account?.Description ?? "Sin Cuenta",
-                                (trans.Accountid ?? -99).ToString(),
+                                trans.Accounts?.Description ?? "Sin Cuenta",
+                                (trans.AccountsId ?? -99).ToString(),
                                 trans.PersonDescripGrid ?? "Sin Persona",
-                                (trans.Personid ?? -99).ToString(),
+                                (trans.PersonsId ?? -99).ToString(),
                                 trans.CategoryDescripGrid ?? "Sin Categoria",
-                                (trans.Categoryid??-99).ToString(),
+                                (trans.CategoriesId??-99).ToString(),
                                 DecimalToStringJs(trans.Amount),
-                                trans.Tag?.Description ?? "Sin Tag",
-                                (trans.Tagid??-99).ToString(),
+                                trans.Tags?.Description ?? "Sin Tag",
+                                (trans.TagsId??-99).ToString(),
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
-                                (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
-                                trans.Account.Closed.ToString() ?? "False"
+                                (trans.Accounts.AccountsTypesId ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Accounts.AccountsTypesId)).Description ?? "Sin tipo cuenta",
+                                trans.Accounts.Closed.ToString() ?? "False"
                         });
                 }
                 loadDialog.PerformeStep();
@@ -153,88 +159,91 @@ namespace GARCA.WebReport
                     new[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo","Tipoid", "Tipo", "Cerrada" }
                 };
 
-            var accountsTypes = DependencyConfigView.AccountsTypesServiceView.GetAll();
-            var transactions = await Task.Run(() => DependencyConfigView.TransactionsArchivedServiceView.GetAll());
-            loadDialog.setMax(transactions.Count);
+            var accountsTypes = await iAccountsTypesService.GetAll();
+            var transactions = await iTransactionsArchivedService.GetAll();
 
-            foreach (var trans in transactions)
+            if (transactions != null)
             {
-                var splits = await Task.Run(() => DependencyConfigView.SplitsArchivedServiceView.GetbyTransactionid(trans.Id));
+                loadDialog.setMax(transactions.Count());
 
-                if (splits != null && splits.Count > 0)
+                foreach (var trans in transactions)
                 {
-                    Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
-                    foreach (var spl in splits)
+                    var splits = await iSplitsArchivedService.GetbyTransactionid(trans.Id);
+
+                    if (splits != null && splits.Any())
                     {
-                        balance += spl.Amount ?? 0;
-                        filasDeDatos.Add(
-                           new[] {
+                        Decimal? balance = trans.Balance ?? 0 - trans.Amount ?? 0;
+                        foreach (var spl in splits)
+                        {
+                            balance += spl.Amount ?? 0;
+                            filasDeDatos.Add(
+                               new[] {
                                         trans.IdOriginal.ToString() ?? "0",
                                         DateToStringJs(trans.Date),
-                                        trans.Account?.Description ?? "Sin Cuenta",
-                                        (trans.Accountid ?? -99).ToString(),
+                                        trans.Accounts?.Description ?? "Sin Cuenta",
+                                        (trans.AccountsId ?? -99).ToString(),
                                         trans.PersonDescripGrid ?? "Sin Persona",
-                                        (trans.Personid ?? -99).ToString(),
-                                        spl.Category?.Description ?? "Sin Categoria",
-                                        (spl.Categoryid??-99).ToString(),
+                                        (trans.PersonsId ?? -99).ToString(),
+                                        spl.Categories?.Description ?? "Sin Categoria",
+                                        (spl.CategoriesId??-99).ToString(),
                                         DecimalToStringJs(spl.Amount),
-                                        trans.Tag?.Description ?? "Sin Tag",
-                                        (trans.Tagid??-99).ToString(),
+                                        trans.Tags?.Description ?? "Sin Tag",
+                                        (trans.TagsId??-99).ToString(),
                                         trans.Memo ?? String.Empty,
                                         DecimalToStringJs(balance),
-                                        (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
-                                        trans.Account.Closed.ToString() ?? "False"
-                           });
+                                        (trans.Accounts.AccountsTypesId ?? -99).ToString(),
+                                        accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Accounts.AccountsTypesId)).Description ?? "Sin tipo cuenta",
+                                        trans.Accounts.Closed.ToString() ?? "False"
+                               });
+                        }
                     }
-                }
-                else if (trans.Account != null && trans.Account.AccountsTypesid == (int)AccountsTypesServiceView.EAccountsTypes.Loans)
-                {
-                    filasDeDatos.Add(
-                        new[] {
+                    else if (trans.Accounts != null && trans.Accounts.AccountsTypesId == (int)AccountsTypesService.EAccountsTypes.Loans)
+                    {
+                        filasDeDatos.Add(
+                            new[] {
                                 trans.Id.ToString(),
                                 DateToStringJs(trans.Date),
-                                trans.Account?.Description ?? "Sin Cuenta",
-                                (trans.Accountid ?? -99).ToString(),
+                                trans.Accounts?.Description ?? "Sin Cuenta",
+                                (trans.AccountsId ?? -99).ToString(),
                                 trans.PersonDescripGrid ?? "Sin Persona",
-                                (trans.Personid ?? -99).ToString(),
+                                (trans.PersonsId ?? -99).ToString(),
                                 "Prestamos:Amortización",
-                                (trans.Categoryid??-99).ToString(),
+                                (trans.CategoriesId??-99).ToString(),
                                 DecimalToStringJs(-trans.Amount),
-                                trans.Tag?.Description ?? "Sin Tag",
-                                (trans.Tagid??-99).ToString(),
+                                trans.Tags?.Description ?? "Sin Tag",
+                                (trans.TagsId??-99).ToString(),
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
-                                (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
-                                trans.Account.Closed.ToString() ?? "False"
-                        });
-                }
-                else
-                {
-                    filasDeDatos.Add(
-                        new[] {
+                                (trans.Accounts.AccountsTypesId ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Accounts.AccountsTypesId)).Description ?? "Sin tipo cuenta",
+                                trans.Accounts.Closed.ToString() ?? "False"
+                            });
+                    }
+                    else
+                    {
+                        filasDeDatos.Add(
+                            new[] {
                                 trans.Id.ToString(),
                                 DateToStringJs(trans.Date),
-                                trans.Account?.Description ?? "Sin Cuenta",
-                                (trans.Accountid ?? -99).ToString(),
+                                trans.Accounts?.Description ?? "Sin Cuenta",
+                                (trans.AccountsId ?? -99).ToString(),
                                 trans.PersonDescripGrid ?? "Sin Persona",
-                                (trans.Personid ?? -99).ToString(),
+                                (trans.PersonsId ?? -99).ToString(),
                                 trans.CategoryDescripGrid ?? "Sin Categoria",
-                                (trans.Categoryid??-99).ToString(),
+                                (trans.CategoriesId??-99).ToString(),
                                 DecimalToStringJs(trans.Amount),
-                                trans.Tag?.Description ?? "Sin Tag",
-                                (trans.Tagid??-99).ToString(),
+                                trans.Tags?.Description ?? "Sin Tag",
+                                (trans.TagsId??-99).ToString(),
                                 trans.Memo ?? String.Empty,
                                 DecimalToStringJs(trans.Balance),
-                                (trans.Account.AccountsTypesid ?? -99).ToString(),
-                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Account.AccountsTypesid)).Description ?? "Sin tipo cuenta",
-                                trans.Account.Closed.ToString() ?? "False"
-                        });
+                                (trans.Accounts.AccountsTypesId ?? -99).ToString(),
+                                accountsTypes?.FirstOrDefault(x => x.Id.Equals(trans.Accounts.AccountsTypesId)).Description ?? "Sin tipo cuenta",
+                                trans.Accounts.Closed.ToString() ?? "False"
+                            });
+                    }
+                    loadDialog.PerformeStep();
                 }
-                loadDialog.PerformeStep();
             }
-
             await WriteSheet(service, filasDeDatos, "16w9MH6qYkYJdhN5ELtb3C9PaO3ifA6VghXT40O9HzgI", "PYG");
         }
 
@@ -245,9 +254,14 @@ namespace GARCA.WebReport
                     new[] { "Description", "InvestmentProductsTypesid", "InvestmentProductsTypes", "Symbol", "Date", "Prices", "NumShares", "CostShares","DateActualValue","ActualPrice", "MarketValue", "Profit", "ProfitPorcent" }
                 };
 
-            var linvestmentProducts = await DependencyConfigView.InvestmentProductsServiceView.GetAllOpened();
+            var linvestmentProducts = await iInvestmentProductsService.GetAllOpened();
 
-            loadDialog.setMax(linvestmentProducts.Count);
+            if (linvestmentProducts == null)
+            {
+                return;
+            }
+
+            loadDialog.setMax(linvestmentProducts.Count());
 
             foreach (var investmentProducts in linvestmentProducts)
             {
@@ -256,20 +270,20 @@ namespace GARCA.WebReport
                     continue;
                 }
 
-                DateTime? actualDate = DependencyConfigView.InvestmentProductsPricesServiceView.GetLastValueDate(investmentProducts);
-                Decimal? actualPrices = DependencyConfigView.InvestmentProductsPricesServiceView.GetActualPrice(investmentProducts);
+                DateTime? actualDate = await iInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
+                Decimal? actualPrices = await iInvestmentProductsPricesService.GetActualPrice(investmentProducts);
 
                 List<string[]> pre = new();
                 Decimal? shares = 0;
 
-                foreach (var i in await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetByInvestmentProduct(investmentProducts)))
+                foreach (var i in await iTransactionsService.GetByInvestmentProduct(investmentProducts))
                 {
                     Decimal? cost = i.PricesShares * -i.NumShares;
                     Decimal? market = actualPrices * -i.NumShares;
                     pre.Add(
                         new[] {
                         investmentProducts.Description ?? "Sin Descripción",
-                        investmentProducts.InvestmentProductsTypesid?.ToString(),
+                        investmentProducts.InvestmentProductsTypesId?.ToString() ?? "-1",
                         investmentProducts.InvestmentProductsTypes?.Description ?? "Sin Tipo",
                         investmentProducts.Symbol ?? "Sin Simbolo",
                         DateToStringJs(i.Date),
@@ -309,9 +323,14 @@ namespace GARCA.WebReport
                     new[] { "Description", "InvestmentProductsTypesid", "InvestmentProductsTypes", "Symbol", "Date", "Prices", "NumShares", "CostShares","DateActualValue","ActualPrice", "MarketValue", "Profit", "ProfitPorcent" }
                 };
 
-            var linvestmentProducts = await DependencyConfigView.InvestmentProductsServiceView.GetAllOpened();
+            var linvestmentProducts = await iInvestmentProductsService.GetAllOpened();
 
-            loadDialog.setMax(linvestmentProducts.Count);
+            if (linvestmentProducts == null)
+            {
+                return;
+            }
+
+            loadDialog.setMax(linvestmentProducts.Count());
 
             foreach (var investmentProducts in linvestmentProducts)
             {
@@ -320,20 +339,20 @@ namespace GARCA.WebReport
                     continue;
                 }
 
-                DateTime? actualDate = DependencyConfigView.InvestmentProductsPricesServiceView.GetLastValueDate(investmentProducts);
-                Decimal? actualPrices = DependencyConfigView.InvestmentProductsPricesServiceView.GetActualPrice(investmentProducts);
+                DateTime? actualDate = await iInvestmentProductsPricesService.GetLastValueDate(investmentProducts);
+                Decimal? actualPrices = await iInvestmentProductsPricesService.GetActualPrice(investmentProducts);
 
                 List<string[]> pre = new();
                 Decimal? shares = 0;
 
-                foreach (var i in await Task.Run(() => DependencyConfigView.TransactionsArchivedServiceView.GetByInvestmentProduct(investmentProducts)))
+                foreach (var i in await iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts))
                 {
                     Decimal? cost = i.PricesShares * -i.NumShares;
                     Decimal? market = actualPrices * -i.NumShares;
                     pre.Add(
                         new[] {
                         investmentProducts.Description ?? "Sin Descripción",
-                        investmentProducts.InvestmentProductsTypesid?.ToString(),
+                        investmentProducts.InvestmentProductsTypesId?.ToString() ?? "-1",
                         investmentProducts.InvestmentProductsTypes?.Description ?? "Sin Tipo",
                         investmentProducts.Symbol ?? "Sin Simbolo",
                         DateToStringJs(i.Date),
@@ -369,7 +388,7 @@ namespace GARCA.WebReport
         private async Task UploadForecast(SheetsService service)
         {
             await Task.Run(() => new Exception("Funcion no implementada"));
-            //var transactions = await Task.Run(() => DependencyConfigView.iTransactionsServiceView.getAllOpenned());
+            //var transactions = await Task.Run(() => iiTransactionsService.getAllOpenned());
             //List<string[]> filasDeDatos = new()
             //    {
             //        new string[] { "Id","Fecha","Cuenta","Cuentaid","Persona","Personaid", "Categoria", "Categoriaid", "Cantidad","Tag","Tagid", "Memo", "Saldo" }
@@ -379,14 +398,14 @@ namespace GARCA.WebReport
             //{
             //    Transactions? trans = transactions[i];
 
-            //    List<Splits?>? splits = await Task.Run(() => DependencyConfigView.iSplitsServiceView.getbyTransactionid(trans.id));
+            //    List<Splits?>? splits = await Task.Run(() => iiSplitsService.getbyTransactionid(trans.id));
 
             //    if (splits != null && splits.Count > 0)
             //    {
             //        Decimal? balance = trans.balance ?? 0 - trans.amount ?? 0;
             //        foreach (var spl in splits)
             //        {
-            //            if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesServiceView.eCategoriesTypes.Transfers)
+            //            if (spl.category == null || spl.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             //            {
             //                balance += spl.amount ?? 0;
             //                filasDeDatos.Add(
@@ -408,7 +427,7 @@ namespace GARCA.WebReport
             //            }
             //        }
             //    }
-            //    else if (trans.category == null || trans.category?.categoriesTypesid != (int)CategoriesTypesServiceView.eCategoriesTypes.Transfers)
+            //    else if (trans.category == null || trans.category?.categoriesTypesid != (int)CategoriesTypesService.eCategoriesTypes.Transfers)
             //    {
             //        filasDeDatos.Add(
             //            new string[] {

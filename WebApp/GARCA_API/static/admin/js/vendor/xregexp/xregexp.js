@@ -10,7 +10,7 @@ module.exports = function(XRegExp) {
     'use strict';
 
     var REGEX_DATA = 'xregexp';
-    var subParts = /(\()(?!\?)|\\([1-9]\d*)|\\[\s\S]|\[(?:[^\\\]]|\\[\s\S])*\]/g;
+    var subParts = /(\()(?!\)|\\([1-9]\d*)|\\[\s\S]|\[(?:[^\\\]]|\\[\s\S])*\]/g;
     var parts = XRegExp.union([/\({{([\w$]+)}}\)|{{([\w$]+)}}/, subParts], 'g', {
         conjunction: 'or'
     });
@@ -521,7 +521,7 @@ module.exports = function(XRegExp) {
      */
     XRegExp.addToken(
         // Use `*` instead of `+` to avoid capturing `^` as the token name in `\p{^}`
-        /\\([pP])(?:{(\^?)([^}]*)}|([A-Za-z]))/,
+        /\\([pP])(?:{(\^)([^}]*)}|([A-Za-z]))/,
         function(match, scope, flags) {
             var ERR_DOUBLE_NEG = 'Invalid double negation ';
             var ERR_UNKNOWN_NAME = 'Unknown Unicode token ';
@@ -2774,7 +2774,7 @@ var classScope = 'class';
 // Regexes that match native regex syntax, including octals
 var nativeTokens = {
     // Any native multicharacter token in default scope, or any single character
-    'default': /\\(?:0(?:[0-3][0-7]{0,2}|[4-7][0-7]?)?|[1-9]\d*|x[\dA-Fa-f]{2}|u(?:[\dA-Fa-f]{4}|{[\dA-Fa-f]+})|c[A-Za-z]|[\s\S])|\(\?(?:[:=!]|<[=!])|[?*+]\?|{\d+(?:,\d*)?}\??|[\s\S]/,
+    'default': /\\(?:0(?:[0-3][0-7]{0,2}|[4-7][0-7])?|[1-9]\d*|x[\dA-Fa-f]{2}|u(?:[\dA-Fa-f]{4}|{[\dA-Fa-f]+})|c[A-Za-z]|[\s\S])|\(\?(?:[:=!]|<[=!])|[?*+]\?|{\d+(?:,\d*)?}\??|[\s\S]/,
     // Any native multicharacter token in character class scope, or any single character
     'class': /\\(?:[0-3][0-7]{0,2}|[4-7][0-7]?|x[\dA-Fa-f]{2}|u(?:[\dA-Fa-f]{4}|{[\dA-Fa-f]+})|c[A-Za-z]|[\s\S])|[\s\S]/
 };
@@ -3450,7 +3450,7 @@ XRegExp._pad4 = pad4;
  * // Since `scope` is not specified, it uses 'default' (i.e., transformations apply outside of
  * // character classes only)
  * XRegExp.addToken(
- *   /([?*+]|{\d+(?:,\d*)?})(\??)/,
+ *   /([?*+]|{\d+(?:,\d*)?})(\?)/,
  *   function(match) {return match[1] + (match[2] ? '' : '?');},
  *   {flag: 'U'}
  * );
@@ -4122,7 +4122,7 @@ XRegExp.union = function(patterns, flags, options) {
         throw new TypeError('Must provide a nonempty array of patterns to merge');
     }
 
-    var parts = /(\()(?!\?)|\\([1-9]\d*)|\\[\s\S]|\[(?:[^\\\]]|\\[\s\S])*\]/g;
+    var parts = /(\()(?!\)|\\([1-9]\d*)|\\[\s\S]|\[(?:[^\\\]]|\\[\s\S])*\]/g;
     var output = [];
     var pattern;
     for (var i = 0; i < patterns.length; ++i) {
@@ -4507,7 +4507,7 @@ XRegExp.addToken(
  * character class endings can't be determined.
  */
 XRegExp.addToken(
-    /\[(\^?)\]/,
+    /\[(\^)\]/,
     function(match) {
         // For cross-browser compatibility with ES3, convert [] to \b\B and [^] to [\s\S].
         // (?!) should work like \b\B, but is unreliable in some versions of Firefox
@@ -4632,7 +4632,7 @@ XRegExp.addToken(
  * groups. Also adds explicit capture mode (flag n).
  */
 XRegExp.addToken(
-    /\((?!\?)/,
+    /\((?!\)/,
     function(match, scope, flags) {
         if (flags.indexOf('n') > -1) {
             return '(?:';

@@ -1,11 +1,12 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using GARCA.View.Services;
+﻿using GARCA.Data.Services;
+using GARCA.Models;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
@@ -19,18 +20,18 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbAccountsTypes.ItemsSource = DependencyConfigView.AccountsTypesServiceView.GetAll();
-            LoadItemSource();
+            cbAccountsTypes.ItemsSource = await iAccountsTypesService.GetAll();
+            await LoadItemSource();
         }
 
-        private void LoadItemSource()
+        private async Task LoadItemSource()
         {
-            gvAccounts.ItemsSource = DependencyConfigView.AccountsServiceView.GetAll()?.ToList();
+            gvAccounts.ItemsSource = (await iAccountsService.GetAll())?.ToList();
         }
 
-        private void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvAccounts_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var accounts = (Accounts)gvAccounts.SelectedItem;
             if (accounts != null)
@@ -38,7 +39,7 @@ namespace GARCA.View.Views
                 switch (gvAccounts.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
                     case "accountsTypesid":
-                        accounts.AccountsTypes = DependencyConfigView.AccountsTypesServiceView.GetById(accounts.AccountsTypesid);
+                        accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesId ?? -99);
                         break;
                 }
             }
@@ -55,68 +56,68 @@ namespace GARCA.View.Views
                 e.ErrorMessages.Add("Description", "Tiene que rellenar la descripción");
             }
 
-            if (accounts.AccountsTypesid == null)
+            if (accounts.AccountsTypesId == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("AccountsTypesid", "Tiene que rellenar el tipo de cuenta");
+                e.ErrorMessages.Add("AccountsTypesId", "Tiene que rellenar el tipo de cuenta");
             }
         }
 
-        private void UpdateCategory(Accounts accounts)
+        private async Task UpdateCategory(Accounts accounts)
         {
             Categories? categories;
 
             if (accounts.Categoryid != null)
             {
-                categories = DependencyConfigView.CategoriesServiceView.GetById(accounts.Categoryid);
+                categories = await iCategoriesService.GetById(accounts.Categoryid ?? -99);
                 if (categories != null)
                 {
                     categories.Description = "[" + accounts.Description + "]";
-                    DependencyConfigView.CategoriesServiceView.Update(categories);
+                    await iCategoriesService.Save(categories);
                 }
             }
             else
             {
                 categories = new Categories();
-                accounts.Categoryid = DependencyConfigView.CategoriesServiceView.GetNextId();
+                accounts.Categoryid = await iCategoriesService.GetNextId();
                 categories.Description = "[" + accounts.Description + "]";
-                categories.CategoriesTypesid = (int)CategoriesTypesServiceView.ECategoriesTypes.Transfers;
+                categories.CategoriesTypesId = (int)CategoriesTypesService.ECategoriesTypes.Transfers;
 
             }
 
             if (categories != null)
             {
-                DependencyConfigView.CategoriesServiceView.Update(categories);
+                await iCategoriesService.Save(categories);
             }
         }
 
-        private void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var accounts = (Accounts)e.RowData;
 
-            if (accounts.AccountsTypes == null && accounts.AccountsTypesid != null)
+            if (accounts.AccountsTypes == null && accounts.AccountsTypesId != null)
             {
-                accounts.AccountsTypes = DependencyConfigView.AccountsTypesServiceView.GetById(accounts.AccountsTypesid);
+                accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesId ?? -99);
             }
 
-            UpdateCategory(accounts);
-            DependencyConfigView.AccountsServiceView.Update(accounts);
-            LoadItemSource();
+            await UpdateCategory(accounts);
+            await iAccountsService.Save(accounts);
+            await LoadItemSource();
         }
 
-        private void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Accounts accounts in e.Items)
             {
-                var categories = DependencyConfigView.CategoriesServiceView.GetById(accounts.Categoryid);
+                var categories = await iCategoriesService.GetById(accounts.Categoryid ?? -99);
                 if (categories != null)
                 {
-                    DependencyConfigView.CategoriesServiceView.Delete(categories);
+                    await iCategoriesService.Delete(categories);
                 }
 
-                DependencyConfigView.AccountsServiceView.Delete(accounts);
+                await iAccountsService.Delete(accounts);
             }
-            LoadItemSource();
+            await LoadItemSource();
         }
 
         private void gvAccounts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

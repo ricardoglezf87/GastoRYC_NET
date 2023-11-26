@@ -32,7 +32,7 @@
                 <syncfusion:GridTextColumn MappingName="Memo" HeaderText="Memo"/>
                 <syncfusion:GridComboBoxColumn  HeaderText="Categoria"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbCategories" MappingName="Categoryid" 
+                    x:Name="cbCategories" MappingName="CategoriesId" 
                                                 DisplayMemberPath="Description" SelectedValuePath="Id"/>
                 <syncfusion:GridCurrencyColumn MappingName="AmountIn" HeaderText="Entrada"/>
                 <syncfusion:GridCurrencyColumn MappingName="AmountOut" HeaderText="Salida"/>

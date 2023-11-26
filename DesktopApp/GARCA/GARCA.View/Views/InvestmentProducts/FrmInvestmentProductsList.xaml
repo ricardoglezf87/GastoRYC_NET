@@ -34,7 +34,7 @@
                 <syncfusion:GridTextColumn MappingName="Description" HeaderText="Descripción" Width="300"/>
                 <syncfusion:GridComboBoxColumn  HeaderText="Tipo"
                     AllowFiltering="True" IsEditable="True" IsCaseSensitiveFilterRow="False"
-                    x:Name="cbInvestmentProductsTypes" MappingName="InvestmentProductsTypesid" 
+                    x:Name="cbInvestmentProductsTypes" MappingName="InvestmentProductsTypesId" 
                                                 DisplayMemberPath="Description" SelectedValuePath="Id"/>
                 <syncfusion:GridTextColumn MappingName="Symbol" HeaderText="Simbolo" Width="150" />
                 <syncfusion:GridTextColumn MappingName="Url" HeaderText="Url" />

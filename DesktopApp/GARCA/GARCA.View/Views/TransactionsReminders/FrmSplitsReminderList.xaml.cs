@@ -1,7 +1,8 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using GARCA.View.Services;
+﻿using GARCA.Data.Services;
+using GARCA.Models;
+using System.Threading.Tasks;
 using System.Windows;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
@@ -23,28 +24,28 @@ namespace GARCA.View.Views
             this.transactionsReminders = transactionsReminders;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = DependencyConfigView.CategoriesServiceView.GetAll();
-            loadSplits();
+            cbCategories.ItemsSource = await iCategoriesService.GetAll();
+            await loadSplits();
         }
 
-        private void loadSplits()
+        private async Task loadSplits()
         {
             gvSplitsReminders.ItemsSource = transactionsReminders != null && transactionsReminders.Id > 0
-                ? DependencyConfigView.SplitsRemindersServiceView.GetbyTransactionid(transactionsReminders.Id)
-                : (object?)DependencyConfigView.SplitsRemindersServiceView.GetbyTransactionidNull();
+                ? await iSplitsRemindersService.GetbyTransactionid(transactionsReminders.Id)
+                : (object?)await iSplitsRemindersService.GetbyTransactionidNull();
         }
 
-        private void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvSplitsReminders_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var splitsReminders = (SplitsReminders)gvSplitsReminders.SelectedItem;
             if (splitsReminders != null)
             {
                 switch (gvSplitsReminders.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
-                    case "categoryid":
-                        splitsReminders.Category = DependencyConfigView.CategoriesServiceView.GetById(splitsReminders.Categoryid);
+                    case "CategoriesId":
+                        splitsReminders.Categories = await iCategoriesService.GetById(splitsReminders.CategoriesId ?? -99);
                         break;
                 }
             }
@@ -54,15 +55,15 @@ namespace GARCA.View.Views
         {
             var splitsReminders = (SplitsReminders)e.RowData;
 
-            if (splitsReminders.Categoryid == null)
+            if (splitsReminders.CategoriesId == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("Categoryid", "Tiene que rellenar el tipo de categoría");
+                e.ErrorMessages.Add("CategoriesId", "Tiene que rellenar el tipo de categoría");
             }
-            else if (splitsReminders.Categoryid == (int)CategoriesServiceView.ESpecialCategories.Split)
+            else if (splitsReminders.CategoriesId == (int)CategoriesService.ESpecialCategories.Split)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("Categoryid", "No se puede utilizar esta categoría en un split");
+                e.ErrorMessages.Add("CategoriesId", "No se puede utilizar esta categoría en un split");
             }
 
             if (splitsReminders.AmountIn == null && splitsReminders.AmountOut == null)
@@ -73,37 +74,37 @@ namespace GARCA.View.Views
             }
         }
 
-        private void gvSplitsReminders_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvSplitsReminders_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var splitsReminders = (SplitsReminders)e.RowData;
 
-            SaveChanges(splitsReminders);
+            await SaveChanges(splitsReminders);
         }
 
-        private void SaveChanges(SplitsReminders splitsReminders)
+        private async Task SaveChanges(SplitsReminders splitsReminders)
         {
-            if (splitsReminders.Category == null && splitsReminders.Categoryid != null)
+            if (splitsReminders.Categories == null && splitsReminders.CategoriesId != null)
             {
-                splitsReminders.Category = DependencyConfigView.CategoriesServiceView.GetById(splitsReminders.Categoryid);
+                splitsReminders.Categories = await iCategoriesService.GetById(splitsReminders.CategoriesId ?? -99);
             }
 
             splitsReminders.AmountIn ??= 0;
 
             splitsReminders.AmountOut ??= 0;
 
-            DependencyConfigView.SplitsRemindersServiceView.Update(splitsReminders);
+            await iSplitsRemindersService.Save(splitsReminders);
         }
-        private void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvSplitsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (SplitsReminders splitsReminders in e.Items)
             {
-                if (splitsReminders.Tranferid != null)
+                if (splitsReminders.TranferId != null)
                 {
-                    DependencyConfigView.TransactionsRemindersServiceView.Delete(DependencyConfigView.TransactionsRemindersServiceView.GetById(splitsReminders.Tranferid));
+                    await iTransactionsRemindersService.Delete(await iTransactionsRemindersService.GetById(splitsReminders.TranferId ?? -99));
                 }
-                DependencyConfigView.SplitsRemindersServiceView.Delete(splitsReminders);
+                await iSplitsRemindersService.Delete(splitsReminders);
             }
-            loadSplits();
+            await loadSplits();
         }
 
         private void gvSplitsReminders_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
@@ -118,8 +119,8 @@ namespace GARCA.View.Views
         private void gvSplitsReminders_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
         {
             var splitsReminders = (SplitsReminders)e.NewObject;
-            splitsReminders.Transactionid = transactionsReminders.Id;
-            splitsReminders.Transaction = transactionsReminders;
+            splitsReminders.TransactionsId = transactionsReminders.Id;
+            splitsReminders.Transactions = transactionsReminders;
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using System.Linq;
+﻿using GARCA.Models;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
@@ -16,13 +16,13 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadItemSource();
+            await LoadItemSource();
         }
-        private void LoadItemSource()
+        private async Task LoadItemSource()
         {
-            gvTags.ItemsSource = DependencyConfigView.TagsServiceView.GetAll()?.ToList();
+            gvTags.ItemsSource = await iTagsService.GetAll();
         }
 
         private void gvTags_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
@@ -37,20 +37,20 @@ namespace GARCA.View.Views
 
         }
 
-        private void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvTags_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var tags = (Tags)e.RowData;
-            DependencyConfigView.TagsServiceView.Update(tags);
-            LoadItemSource();
+            await iTagsService.Save(tags);
+            await LoadItemSource();
         }
 
-        private void gvTags_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvTags_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Tags tags in e.Items)
             {
-                DependencyConfigView.TagsServiceView.Delete(tags);
+                await iTagsService.Delete(tags);
             }
-            LoadItemSource();
+            await LoadItemSource();
         }
 
         private void gvTags_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

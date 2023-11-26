@@ -1,8 +1,8 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using System.Linq;
+﻿using GARCA.Models;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
@@ -16,18 +16,18 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategoriesTypes.ItemsSource = DependencyConfigView.CategoriesTypesServiceView.GetAllWithoutSpecialTransfer();
-            LoadItemSource();
+            cbCategoriesTypes.ItemsSource = await iCategoriesTypesService.GetAllWithoutSpecialTransfer();
+            await LoadItemSource();
         }
 
-        private void LoadItemSource()
+        private async Task LoadItemSource()
         {
-            gvCategories.ItemsSource = DependencyConfigView.CategoriesServiceView.GetAllWithoutSpecialTransfer()?.ToList();
+            gvCategories.ItemsSource = await iCategoriesService.GetAllWithoutSpecialTransfer();
         }
 
-        private void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvCategories_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var categories = (Categories)gvCategories.SelectedItem;
             if (categories != null)
@@ -35,7 +35,7 @@ namespace GARCA.View.Views
                 switch (gvCategories.Columns[e.RowColumnIndex.ColumnIndex - 1].MappingName)
                 {
                     case "categoriesTypesid":
-                        categories.CategoriesTypes = DependencyConfigView.CategoriesTypesServiceView.GetById(categories.CategoriesTypesid);
+                        categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesId ?? -99);
                         break;
                 }
             }
@@ -52,33 +52,33 @@ namespace GARCA.View.Views
                 e.ErrorMessages.Add("Description", "Tiene que rellenar la descripción");
             }
 
-            if (categories.CategoriesTypesid == null)
+            if (categories.CategoriesTypesId == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("CategoriesTypesid", "Tiene que rellenar el tipo de categoría");
+                e.ErrorMessages.Add("CategoriesTypesId", "Tiene que rellenar el tipo de categoría");
             }
         }
 
-        private void gvCategories_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvCategories_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var categories = (Categories)e.RowData;
 
-            if (categories.CategoriesTypes == null && categories.CategoriesTypesid != null)
+            if (categories.CategoriesTypes == null && categories.CategoriesTypesId != null)
             {
-                categories.CategoriesTypes = DependencyConfigView.CategoriesTypesServiceView.GetById(categories.CategoriesTypesid);
+                categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesId ?? -99);
             }
 
-            DependencyConfigView.CategoriesServiceView.Update(categories);
-            LoadItemSource();
+            await iCategoriesService.Save(categories);
+            await LoadItemSource();
         }
 
-        private void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Categories categories in e.Items)
             {
-                DependencyConfigView.CategoriesServiceView.Delete(categories);
+                await iCategoriesService.Delete(categories);
             }
-            LoadItemSource();
+            await LoadItemSource();
         }
 
         private void gvCategories_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

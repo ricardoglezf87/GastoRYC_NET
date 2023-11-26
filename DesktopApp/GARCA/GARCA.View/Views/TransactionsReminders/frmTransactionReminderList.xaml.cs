@@ -1,8 +1,8 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using System.Linq;
+﻿using GARCA.Models;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
@@ -16,22 +16,22 @@ namespace GARCA.View.Views
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadTransactions();
+            await LoadTransactions();
         }
 
-        private void gvTransactionsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvTransactionsReminders_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (TransactionsReminders transactionsReminders in e.Items)
             {
-                DependencyConfigView.TransactionsRemindersServiceView.Delete(transactionsReminders);
+                await iTransactionsRemindersService.Delete(transactionsReminders);
             }
         }
 
         private void gvTransactionsReminders_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
         {
-            if (MessageBox.Show("Esta seguro de querer eliminar este tag?", "Eliminación tag", MessageBoxButton.YesNo,
+            if (MessageBox.Show("Esta seguro de querer eliminar este recordatorio?", "Eliminación recordatorio", MessageBoxButton.YesNo,
                 MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.No)
             {
                 e.Cancel = true;
@@ -43,26 +43,26 @@ namespace GARCA.View.Views
             gvTransactionsReminders.SearchHelper.Search(txtSearch.Text);
         }
 
-        private void gvTransactionsReminders_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private async void gvTransactionsReminders_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (gvTransactionsReminders.CurrentItem != null)
             {
                 FrmTransactionReminders frm = new((TransactionsReminders)gvTransactionsReminders.CurrentItem);
                 frm.ShowDialog();
-                LoadTransactions();
+                await LoadTransactions();
             }
         }
 
-        private void LoadTransactions()
+        private async Task LoadTransactions()
         {
-            gvTransactionsReminders.ItemsSource = DependencyConfigView.TransactionsRemindersServiceView.GetAll()?.ToList();
+            gvTransactionsReminders.ItemsSource = await iTransactionsRemindersService.GetAll();
         }
 
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             FrmTransactionReminders frm = new();
             frm.ShowDialog();
-            LoadTransactions();
+            await LoadTransactions();
         }
     }
 }

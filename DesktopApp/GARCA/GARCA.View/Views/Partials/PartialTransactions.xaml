@@ -4,24 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" xmlns:local1="clr-namespace:GARCA.View.ViewModels"
+        xmlns:syncfusionskin ="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF" 
         syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=Windows11Light}"
         mc:Ignorable="d"
         Title="partialTransactions" Loaded="Page_Loaded">
-    <Page.DataContext>
-        <local1:TransactionViewModel/>
-    </Page.DataContext>
     <Grid>
 
         <syncfusion:SfDataGrid  x:Name="gvTransactions"
                                AutoGenerateColumns="False" AllowFiltering="true" AllowSorting="False"                               
                                CanMaintainScrollPosition="True" 
                                AllowResizingColumns="True" ScrollMode="Async" ColumnSizer="Star"                               
-                               AllowDeleting="True"
+                               AllowDeleting="True" IsReadOnly="True"
                                MouseDoubleClick="gvTransactions_MouseDoubleClick"
                                RecordDeleting="gvTransactions_RecordDeleting" RecordDeleted="gvTransactions_RecordDeleted"
-                               ShowRowHeader="True" SelectionMode="Extended"
-                                ItemsSource="{Binding IncrementalItemsSource}">
+                               ShowRowHeader="True" SelectionMode="Extended" EnableDataVirtualization="True">
             <syncfusion:SfDataGrid.SortColumnDescriptions>
                 <syncfusion:SortColumnDescription ColumnName="Orden" SortDirection="Descending"/>
             </syncfusion:SfDataGrid.SortColumnDescriptions>
@@ -42,12 +38,12 @@
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn MappingName="Id" IsHidden="True" />
                 <syncfusion:GridDateTimeColumn MappingName="Date" HeaderText="Fecha"/>
-                <syncfusion:GridTextColumn MappingName="Account.Description" HeaderText="Cuenta"/>
+                <syncfusion:GridTextColumn MappingName="Accounts.Description" HeaderText="Cuenta"/>
                 <syncfusion:GridTextColumn MappingName="PersonDescripGrid" HeaderText="Persona"/>
                 <syncfusion:GridTextColumn MappingName="Memo" HeaderText="Memo"/>
                 <syncfusion:GridTextColumn MappingName="CategoryDescripGrid" HeaderText="Categoría"/>
-                <syncfusion:GridTextColumn MappingName="TransactionStatus.Description" HeaderText="Estado"/>
-                <syncfusion:GridTextColumn MappingName="Tag.Description" HeaderText="Tag"/>
+                <syncfusion:GridTextColumn MappingName="TransactionsStatus.Description" HeaderText="Estado"/>
+                <syncfusion:GridTextColumn MappingName="Tags.Description" HeaderText="Tag"/>
                 <syncfusion:GridTextColumn MappingName="NumShares" HeaderText="Num. Participaciones" IsHidden="True" />
                 <syncfusion:GridTextColumn MappingName="PricesShares" HeaderText="Precio Part." IsHidden="True" />
                 <syncfusion:GridCurrencyColumn MappingName="AmountIn" HeaderText="Entrada"/>

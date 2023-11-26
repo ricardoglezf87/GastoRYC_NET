@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyVersion>3.2.0.33</AssemblyVersion>
+    <FileVersion>3.2.0.0</FileVersion>
+    <InformationalVersion>3.2.0-V4-0-SepararProyectos.33+Branch.feature-V4.0-SepararProyectos.Sha.cad8f99a8943dbabb85cd32b639665080b780844</InformationalVersion>
+    <Version>3.2.0-v4-0-separarproy0033</Version>
+    <AssemblyName>GARCA.Utils</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth" Version="1.64.0" />
+    <PackageReference Include="Google.Apis.Core" Version="1.64.0" />
+    <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.64.0.1869" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.64.0.3148" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
+    <PackageReference Include="SimpleInjector" Version="5.4.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
+  </ItemGroup>
+</Project>

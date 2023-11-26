@@ -1,5 +1,4 @@
-﻿using GARCA.Utils.IOC;
-using Syncfusion.UI.Xaml.Charts;
+﻿using Syncfusion.UI.Xaml.Charts;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
+using static GARCA.Data.IOC.DependencyConfig;
 
 
 namespace GARCA.View.Views
@@ -17,18 +17,11 @@ namespace GARCA.View.Views
     /// </summary>
     public partial class PartialHome : Page
     {
-        #region Variables
-
-        private readonly MainWindow parentForm;
-
-        #endregion
-
         #region Constructor
 
-        public PartialHome(MainWindow parentForm)
+        public PartialHome()
         {
             InitializeComponent();
-            this.parentForm = parentForm;
         }
 
         #endregion
@@ -163,34 +156,37 @@ namespace GARCA.View.Views
 
             chForecast.Series.Clear();
 
-            foreach (var accounts in (await DependencyConfigView.AccountsServiceView.GetAllOpenedAync())?
-                .Where(x => DependencyConfigView.AccountsTypesServiceView.AccountExpensives(x.AccountsTypesid)))
+            var lAccounts = await iAccountsService.GetAllOpened();
+
+            if (lAccounts != null)
             {
-
-                LineSeries series = new()
+                foreach (var accounts in lAccounts.Where(x => iAccountsTypesService.AccountExpensives(x.AccountsTypesId)))
                 {
-                    ItemsSource = (await Task.Run(() => DependencyConfigView.ForecastsChartServiceView.GetMonthForecast())).Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
-                    Label = accounts.Description,
-                    XBindingPath = "Date",
-                    YBindingPath = "Amount",
-                    ShowTooltip = true,
-                    TooltipTemplate = tooltip,
-                    EnableAnimation = true,
-                    AnimationDuration = new TimeSpan(0, 0, 3),
-                    AdornmentsInfo = new ChartAdornmentInfo
+
+                    LineSeries series = new()
                     {
-                        ShowMarker = true,
-                        SymbolStroke = new SolidColorBrush(Colors.Blue),
-                        SymbolInterior = new SolidColorBrush(Colors.DarkBlue),
-                        SymbolHeight = 10,
-                        SymbolWidth = 10,
-                        Symbol = ChartSymbol.Ellipse
-                    }
-                };
+                        ItemsSource = (await iForecastsChartService.GetMonthForecast()).Where(x => x.Accountid == accounts.Id).OrderByDescending(x => x.Date),
+                        Label = accounts.Description,
+                        XBindingPath = "Date",
+                        YBindingPath = "Amount",
+                        ShowTooltip = true,
+                        TooltipTemplate = tooltip,
+                        EnableAnimation = true,
+                        AnimationDuration = new TimeSpan(0, 0, 3),
+                        AdornmentsInfo = new ChartAdornmentInfo
+                        {
+                            ShowMarker = true,
+                            SymbolStroke = new SolidColorBrush(Colors.Blue),
+                            SymbolInterior = new SolidColorBrush(Colors.DarkBlue),
+                            SymbolHeight = 10,
+                            SymbolWidth = 10,
+                            Symbol = ChartSymbol.Ellipse
+                        }
+                    };
 
-
-                ChartTooltip.SetShowDuration(series, 5000);
-                chForecast.Series.Add(series);
+                    ChartTooltip.SetShowDuration(series, 5000);
+                    chForecast.Series.Add(series);
+                }
             }
         }
 
@@ -288,7 +284,7 @@ namespace GARCA.View.Views
 
             //Series
 
-            var lExpensesCharts = await DependencyConfigView.IvBalancebyCategoryServiceView.GetExpensesbyYearMonthAsync(DateTime.Now.Month, DateTime.Now.Year);
+            var lExpensesCharts = await iVBalancebyCategoryService.GetExpensesbyYearMonth(DateTime.Now.Month, DateTime.Now.Year);
             chExpenses.Series.Clear();
 
             ColumnSeries series = new()

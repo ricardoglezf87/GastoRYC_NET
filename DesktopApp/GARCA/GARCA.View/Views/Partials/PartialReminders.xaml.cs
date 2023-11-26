@@ -1,11 +1,11 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
+﻿using GARCA.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
@@ -32,42 +32,38 @@ namespace GARCA.View.Views
 
         #region Events
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadReminders();
+            await LoadReminders();
         }
 
-        private void btnSkip_Click(object sender, RoutedEventArgs e)
+        private async void btnSkip_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Esta seguro de querer saltar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
-                   MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+                   MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes
+                   && ((Button)sender).Tag != null)
             {
-                if (((Button)sender).Tag != null)
-                {
-                    PutDoneReminder((int?)((Button)sender).Tag);
-                }
+                await PutDoneReminder((int)((Button)sender).Tag);
             }
         }
-        private void btnRegister_Click(object sender, RoutedEventArgs e)
+        private async void btnRegister_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Esta seguro de querer registrar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
-               MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes)
+               MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes
+               && ((Button)sender).Tag != null)
             {
-                if (((Button)sender).Tag != null)
-                {
-                    MakeTransactionFromReminder((int?)((Button)sender).Tag);
-                    PutDoneReminder((int?)((Button)sender).Tag);
-                }
+                await MakeTransactionFromReminder((int)((Button)sender).Tag);
+                await PutDoneReminder((int)((Button)sender).Tag);
             }
         }
 
-        private void cvReminders_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private async void cvReminders_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (cvReminders.SelectedItem != null && ((ExpirationsReminders)cvReminders.SelectedItem).TransactionsReminders != null)
             {
                 FrmTransactionReminders frm = new(((ExpirationsReminders)cvReminders.SelectedItem).TransactionsReminders);
                 frm.ShowDialog();
-                LoadReminders();
+                await LoadReminders();
             }
         }
 
@@ -75,9 +71,9 @@ namespace GARCA.View.Views
 
         #region Functions
 
-        public async void LoadReminders()
+        public async Task LoadReminders()
         {
-            var expirationsReminders = await Task.Run(() => DependencyConfigView.ExpirationsRemindersServiceView.GetAllPendingWithoutFutureWithGeneration()?.ToList());
+            var expirationsReminders = (await iExpirationsRemindersService.GetAllPendingWithoutFutureWithGeneration())?.ToList();
 
             cvReminders.ItemsSource = new ListCollectionView(expirationsReminders);
 
@@ -89,28 +85,29 @@ namespace GARCA.View.Views
                 new System.ComponentModel.SortDescription("Date", System.ComponentModel.ListSortDirection.Ascending));
         }
 
-        private void PutDoneReminder(int? id)
+        private async Task PutDoneReminder(int? id)
         {
-            var expirationsReminders = DependencyConfigView.ExpirationsRemindersServiceView.GetById(id);
+            var expirationsReminders = await iExpirationsRemindersService.GetById(id ?? -99);
+
             if (expirationsReminders != null)
             {
                 expirationsReminders.Done = true;
-                DependencyConfigView.ExpirationsRemindersServiceView.Update(expirationsReminders);
+                await iExpirationsRemindersService.Save(expirationsReminders);
             }
 
-            LoadReminders();
+            await LoadReminders();
         }
 
         private async Task MakeTransactionFromReminder(int? id)
         {
-            var transaction = await DependencyConfigView.ExpirationsRemindersServiceView.RegisterTransactionfromReminder(id);
+            var transaction = await iExpirationsRemindersService.RegisterTransactionfromReminder(id);
             if (transaction != null)
             {
                 FrmTransaction frm = new(transaction);
                 frm.ShowDialog();
             }
 
-            parentForm.LoadAccounts();
+            await parentForm.LoadAccounts();
         }
 
         #endregion

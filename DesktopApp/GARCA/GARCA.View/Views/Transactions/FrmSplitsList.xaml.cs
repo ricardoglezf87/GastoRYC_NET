@@ -1,7 +1,8 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using GARCA.View.Services;
+﻿using GARCA.Data.Services;
+using GARCA.Models;
+using System.Threading.Tasks;
 using System.Windows;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.Views
 {
@@ -24,47 +25,46 @@ namespace GARCA.View.Views
             this.transactions = transactions;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategories.ItemsSource = DependencyConfigView.CategoriesServiceView.GetAll();
-            loadSplits();
+            cbCategories.ItemsSource = await iCategoriesService.GetAll();
+            await loadSplits();
         }
 
-        private void loadSplits()
+        private async Task loadSplits()
         {
             gvSplits.ItemsSource = transactions != null && transactions.Id > 0
-                ? DependencyConfigView.SplitsServiceView.GetbyTransactionid(transactions.Id)
-                : (object?)DependencyConfigView.SplitsServiceView.GetbyTransactionidNull();
+                ? await iSplitsService.GetbyTransactionid(transactions.Id)
+                : await iSplitsService.GetbyTransactionidNull();
         }
 
-        private void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
+        private async void gvSplits_CurrentCellDropDownSelectionChanged(object sender, Syncfusion.UI.Xaml.Grid.CurrentCellDropDownSelectionChangedEventArgs e)
         {
             var splits = (Splits)gvSplits.SelectedItem;
             if (splits != null)
             {
                 switch (gvSplits.Columns[e.RowColumnIndex.ColumnIndex].MappingName)
                 {
-                    case "categoryid":
-                        splits.Category = DependencyConfigView.CategoriesServiceView.GetById(splits.Categoryid);
+                    case "categoriesId":
+                        splits.Categories = await iCategoriesService.GetById(splits.CategoriesId ?? -99);
                         break;
                 }
             }
         }
 
-
         private void gvSplits_RowValidating(object sender, Syncfusion.UI.Xaml.Grid.RowValidatingEventArgs e)
         {
             var splits = (Splits)e.RowData;
 
-            if (splits.Categoryid == null)
+            if (splits.CategoriesId == null)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("Categoryid", "Tiene que rellenar el tipo de categoría");
+                e.ErrorMessages.Add("CategoriesId", "Tiene que rellenar el tipo de categoría");
             }
-            else if (splits.Categoryid == (int)CategoriesServiceView.ESpecialCategories.Split)
+            else if (splits.CategoriesId == (int)CategoriesService.ESpecialCategories.Split)
             {
                 e.IsValid = false;
-                e.ErrorMessages.Add("Categoryid", "No se puede utilizar esta categoría en un split");
+                e.ErrorMessages.Add("CategoriesId", "No se puede utilizar esta categoría en un split");
             }
 
             if (splits.AmountIn == null && splits.AmountOut == null)
@@ -75,26 +75,26 @@ namespace GARCA.View.Views
             }
         }
 
-        private void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
+        private async void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var splits = (Splits)e.RowData;
 
-            DependencyConfigView.TransactionsServiceView.UpdateTranferSplits(transactions, ref splits);
-            DependencyConfigView.SplitsServiceView.SaveChanges(splits);
+            splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
+            await iSplitsService.SaveChanges(splits);
         }
 
-        private void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
+        private async void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
             foreach (Splits splits in e.Items)
             {
-                if (splits.Tranferid != null)
+                if (splits.TranferId != null)
                 {
-                    DependencyConfigView.TransactionsServiceView.Delete(DependencyConfigView.TransactionsServiceView.GetById(splits.Tranferid));
+                    await iTransactionsService.Delete(await iTransactionsService.GetById(splits.TranferId ?? -99));
                 }
-                DependencyConfigView.SplitsServiceView.Delete(splits);
+                await iSplitsService.Delete(splits);
             }
 
-            loadSplits();
+            await loadSplits();
         }
 
         private void gvSplits_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
@@ -109,8 +109,8 @@ namespace GARCA.View.Views
         private void gvSplits_AddNewRowInitiating(object sender, Syncfusion.UI.Xaml.Grid.AddNewRowInitiatingEventArgs e)
         {
             var splits = (Splits)e.NewObject;
-            splits.Transactionid = transactions.Id;
-            splits.Transaction = transactions;
+            splits.TransactionsId = transactions.Id;
+            splits.Transactions = transactions;
         }
     }
 }

@@ -1,51 +1,41 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using Syncfusion.UI.Xaml.Grid;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using Syncfusion.UI.Xaml.Grid;
 using System.Threading.Tasks;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.ViewModels
 {
     public class TransactionViewModel
     {
-        public static AccountsView? AccountsSelected;
-        public static int maxItem;
-
-        public IncrementalList<Transactions>? IncrementalItemsSource { get; set; }
+        private GridVirtualizingCollectionView? source;
 
         public TransactionViewModel()
         {
-            if (maxItem == 0)
-            {
-                maxItem = 200;
-            }
-
-            IncrementalItemsSource = new IncrementalList<Transactions>(LoadMoreItems) { MaxItemCount = maxItem };
+            source = null;
         }
 
-        /// <summary>
-        /// Method to load items which assigned to the action of IncrementalList
-        /// </summary>
-        /// <param name="count"></param>
-        /// <param name="baseIndex"></param>
-        private async void LoadMoreItems(uint count, int baseIndex)
+        public async Task<GridVirtualizingCollectionView?> GetSource()
         {
-            if (baseIndex % 50 != 0)
+            if (source == null)
             {
-                return;
+                await LoadData();
             }
 
-            IncrementalItemsSource.Clear();
-            var item = AccountsSelected != null
-                ? await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetByAccountOrderByOrderDesc(AccountsSelected.Id, baseIndex, maxItem))
-                : await Task.Run(() => DependencyConfigView.TransactionsServiceView.GetAllOpennedOrderByOrderDesc(baseIndex, maxItem));
+            return source;
+        }
+
+        public async Task LoadData()
+        {
+            var item = await iTransactionsService.GetAllOpennedOrderByOrdenDesc();
 
             if (item != null)
             {
-                var transactions = new ObservableCollection<Transactions>(item);
-                IncrementalItemsSource.LoadItems(transactions.AsEnumerable());
+                source = new GridVirtualizingCollectionView(item);
             }
+        }
+
+        public void Refresh()
+        {
+            source.Refresh();
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using GARCA.BO.Models;
-using GARCA.Utils.IOC;
-using GARCA.View.Services;
+﻿using GARCA.Data.Services;
+using GARCA.Models;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using static GARCA.Utlis.Extensions.WindowsExtension;
+using static GARCA.Data.IOC.DependencyConfig;
+using static GARCA.Utils.Extensions.WindowsExtension;
 
 namespace GARCA.View.Views
 {
@@ -27,6 +28,7 @@ namespace GARCA.View.Views
         public FrmTransactionReminders()
         {
             InitializeComponent();
+            accountidDefault = null;
         }
 
         public FrmTransactionReminders(TransactionsReminders? transaction) :
@@ -39,24 +41,24 @@ namespace GARCA.View.Views
 
         #region Events
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadComboBox();
-            LoadTransaction();
+            await LoadComboBox();
+            await LoadTransaction();
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private async void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            if (SaveTransaction())
+            if (await SaveTransaction())
             {
                 WindowsResult = EWindowsResult.Sucess;
                 Close();
             }
         }
 
-        private void btnSplit_Click(object sender, RoutedEventArgs e)
+        private async void btnSplit_Click(object sender, RoutedEventArgs e)
         {
-            if (transaction == null && !SaveTransaction())
+            if (transaction == null && !await SaveTransaction())
             {
                 MessageBox.Show("Sin guardar no se puede realizar un split", "inserción movimiento");
                 return;
@@ -64,23 +66,23 @@ namespace GARCA.View.Views
 
             FrmSplitsRemindersList frm = new(transaction);
             frm.ShowDialog();
-            DependencyConfigView.TransactionsRemindersServiceView.UpdateSplitsReminders(transaction);
-            LoadTransaction();
+            await iTransactionsRemindersService.UpdateSplitsReminders(transaction);
+            await LoadTransaction();
         }
 
-        private void Window_PreviewKeyUp(object sender, KeyEventArgs e)
+        private async void Window_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             switch (e.Key)
             {
                 case Key.F1:
-                    if (SaveTransaction())
+                    if (await SaveTransaction())
                     {
                         transaction = null;
-                        LoadTransaction();
+                        await LoadTransaction();
                     }
                     break;
                 case Key.F2:
-                    SaveTransaction();
+                    await SaveTransaction();
                     break;
                 case Key.Escape:
                     Close();
@@ -112,19 +114,19 @@ namespace GARCA.View.Views
 
         #region Functions
 
-        private void LoadTransaction()
+        private async Task LoadTransaction()
         {
             if (transaction != null)
             {
-                dtpDate.SelectedDate = DependencyConfigView.ExpirationsRemindersServiceView.GetNextReminder(transaction.Id) ?? transaction.Date;
-                cbPeriodTransaction.SelectedValue = transaction.PeriodsRemindersid;
-                cbAccount.SelectedValue = transaction.Accountid;
-                cbPerson.SelectedValue = transaction.Personid;
+                dtpDate.SelectedDate = (await iExpirationsRemindersService.GetNextReminder(transaction.Id)) ?? transaction.Date;
+                cbPeriodTransaction.SelectedValue = transaction.PeriodsRemindersId;
+                cbAccount.SelectedValue = transaction.AccountsId;
+                cbPerson.SelectedValue = transaction.PersonsId;
                 txtMemo.Text = transaction.Memo;
-                cbCategory.SelectedValue = transaction.Categoryid;
+                cbCategory.SelectedValue = transaction.CategoriesId;
                 txtAmount.Value = transaction.Amount;
-                cbTag.SelectedValue = transaction.Tagid;
-                cbTransactionStatus.SelectedValue = transaction.TransactionStatusid;
+                cbTag.SelectedValue = transaction.TagsId;
+                cbTransactionStatus.SelectedValue = transaction.TransactionsStatusId;
                 chkAutoregister.IsChecked = transaction.AutoRegister ?? false;
             }
             else
@@ -139,34 +141,34 @@ namespace GARCA.View.Views
                 txtMemo.Text = null;
                 txtAmount.Value = null;
                 cbTag.SelectedIndex = -1;
-                cbTransactionStatus.SelectedValue = (int)TransactionsStatusServiceView.ETransactionsTypes.Pending;
+                cbTransactionStatus.SelectedValue = (int)TransactionsStatusService.ETransactionsTypes.Pending;
 
                 dtpDate.Focus();
             }
         }
 
-        private void UpdateTransaction()
+        private async Task UpdateTransaction()
         {
             transaction ??= new TransactionsReminders();
 
             transaction.Date = dtpDate.SelectedDate;
 
-            transaction.PeriodsRemindersid = (int)cbPeriodTransaction.SelectedValue;
-            transaction.PeriodsReminders = DependencyConfigView.PeriodsReminderServiceView.GetById(transaction.PeriodsRemindersid);
+            transaction.PeriodsRemindersId = (int)cbPeriodTransaction.SelectedValue;
+            transaction.PeriodsReminders = await iPeriodsReminderService.GetById(transaction.PeriodsRemindersId ?? -99);
 
-            transaction.Accountid = (int)cbAccount.SelectedValue;
-            transaction.Account = DependencyConfigView.AccountsServiceView.GetById(transaction.Accountid);
+            transaction.AccountsId = (int)cbAccount.SelectedValue;
+            transaction.Accounts = await iAccountsService.GetById(transaction.AccountsId ?? -99);
 
             if (cbPerson.SelectedValue != null)
             {
-                transaction.Personid = (int)cbPerson.SelectedValue;
-                transaction.Person = DependencyConfigView.PersonsServiceView.GetById(transaction.Personid);
+                transaction.PersonsId = (int)cbPerson.SelectedValue;
+                transaction.Persons = await iPersonsService.GetById(transaction.PersonsId ?? -99);
             }
 
             transaction.Memo = txtMemo.Text;
 
-            transaction.Categoryid = (int)cbCategory.SelectedValue;
-            transaction.Category = DependencyConfigView.CategoriesServiceView.GetById(transaction.Categoryid);
+            transaction.CategoriesId = (int)cbCategory.SelectedValue;
+            transaction.Categories = await iCategoriesService.GetById(transaction.CategoriesId ?? -99);
 
             if (txtAmount.Value > 0)
             {
@@ -181,38 +183,38 @@ namespace GARCA.View.Views
 
             if (cbTag.SelectedValue != null)
             {
-                transaction.Tagid = (int)cbTag.SelectedValue;
-                transaction.Tag = DependencyConfigView.TagsServiceView.GetById(transaction.Tagid);
+                transaction.TagsId = (int)cbTag.SelectedValue;
+                transaction.Tags = await iTagsService.GetById(transaction.TagsId ?? -99);
             }
 
-            transaction.TransactionStatusid = (int)cbTransactionStatus.SelectedValue;
+            transaction.TransactionsStatusId = (int)cbTransactionStatus.SelectedValue;
 
             transaction.AutoRegister = chkAutoregister.IsChecked ?? false;
 
-            transaction.TransactionStatus = DependencyConfigView.TransactionsStatusServiceView.GetById(transaction.TransactionStatusid);
+            transaction.TransactionsStatus = await iTransactionsStatusService.GetById(transaction.TransactionsStatusId ?? -99);
         }
 
-        private void LoadComboBox()
+        private async Task LoadComboBox()
         {
-            cbAccount.ItemsSource = DependencyConfigView.AccountsServiceView.GetAll();
-            cbPerson.ItemsSource = DependencyConfigView.PersonsServiceView.GetAll();
-            cbCategory.ItemsSource = DependencyConfigView.CategoriesServiceView.GetAll();
-            cbTag.ItemsSource = DependencyConfigView.TagsServiceView.GetAll();
-            cbTransactionStatus.ItemsSource = DependencyConfigView.TransactionsStatusServiceView.GetAll();
-            cbPeriodTransaction.ItemsSource = DependencyConfigView.PeriodsReminderServiceView.GetAll();
+            cbAccount.ItemsSource = await iAccountsService.GetAll();
+            cbPerson.ItemsSource = await iPersonsService.GetAll();
+            cbCategory.ItemsSource = await iCategoriesService.GetAll();
+            cbTag.ItemsSource = await iTagsService.GetAll();
+            cbTransactionStatus.ItemsSource = await iTransactionsStatusService.GetAll();
+            cbPeriodTransaction.ItemsSource = await iPeriodsReminderService.GetAll();
         }
 
-        private bool SaveTransaction()
+        private async Task<bool> SaveTransaction()
         {
             if (IsTransactionValid())
             {
                 if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
                         MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    UpdateTransaction();
+                    await UpdateTransaction();
                     if (transaction != null)
                     {
-                        DependencyConfigView.TransactionsRemindersServiceView.SaveChanges(transaction);
+                        await iTransactionsRemindersService.SaveChanges(transaction);
                     }
                     return true;
                 }

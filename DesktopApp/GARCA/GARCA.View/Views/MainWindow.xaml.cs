@@ -1,5 +1,4 @@
-﻿using GARCA.Utils.IOC;
-using GARCA.View.ViewModels;
+﻿using GARCA.Models;
 using GARCA.View.Views;
 using GARCA.View.Views.Common;
 using GARCA.WebReport;
@@ -8,12 +7,14 @@ using Syncfusion.Windows.Tools.Controls;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA
 {
@@ -42,9 +43,6 @@ namespace GARCA
             InitializeComponent();
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
             SfSkinManager.ApplyStylesOnApplication = true;
-
-            DependencyConfigView.RycContextServiceView.MakeBackup();
-            DependencyConfigView.RycContextServiceView.MigrateDataBase();
         }
 
         #endregion
@@ -60,20 +58,15 @@ namespace GARCA
             }
             else
             {
-                DateTime date;
-                date = DateTime.Parse(strDate);
-
+                DateTime date = strDate.Length == 8
+                    ? DateTime.ParseExact(strDate, "dd/MM/yy", CultureInfo.InvariantCulture)
+                    : DateTime.ParseExact(strDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 Mouse.OverrideCursor = Cursors.Wait;
 
-                DependencyConfigView.RycContextServiceView.MakeBackup();
+                iRycContextService.MakeBackup();
 
-                await DependencyConfigView.TransactionsArchivedServiceView.ArchiveTransactions(date);
-
-                if (actualPrincipalContent is PartialTransactions transactions)
-                {
-                    transactions.LoadTransactions();
-                    LoadAccounts();
-                }
+                await iTransactionsArchivedService.ArchiveTransactions(date);
+                await RefreshBalance();
 
                 Mouse.OverrideCursor = null;
 
@@ -81,15 +74,10 @@ namespace GARCA
             }
         }
 
-        private void btnUpdateBalances_Click(object sender, RoutedEventArgs e)
+        private async void btnUpdateBalances_Click(object sender, RoutedEventArgs e)
         {
-            UpdateBalances();
-
-            if (actualPrincipalContent is PartialTransactions transactions)
-            {
-                transactions.LoadTransactions();
-                LoadAccounts();
-            }
+            await UpdateBalances();
+            await RefreshBalance();
         }
 
         private async void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
@@ -98,8 +86,8 @@ namespace GARCA
 
             if (actualPrincipalContent is PartialPortfolio portfolio)
             {
-                portfolio.LoadPortfolio();
-                LoadAccounts();
+                await portfolio.LoadPortfolio();
+                await LoadAccounts();
             }
         }
 
@@ -136,14 +124,14 @@ namespace GARCA
             ToggleViews(EViews.Home);
         }
 
-        private void btnNewTransaction_Click(object sender, RoutedEventArgs e)
+        private async void btnNewTransaction_Click(object sender, RoutedEventArgs e)
         {
-            OpenNewTransaction();
+            await OpenNewTransaction();
         }
 
-        private void btnAddTransaction_Click(object sender, RoutedEventArgs e)
+        private async void btnAddTransaction_Click(object sender, RoutedEventArgs e)
         {
-            OpenNewTransaction();
+            await OpenNewTransaction();
         }
 
         private async void frmInicio_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -151,19 +139,7 @@ namespace GARCA
             switch (e.Key)
             {
                 case Key.F1:
-                    OpenNewTransaction();
-                    break;
-                case Key.F4:
-                    var maxItem = Microsoft.VisualBasic.Interaction.InputBox("Inserte un numero elementos a cargar:", "Transacción");
-                    if (!String.IsNullOrWhiteSpace(maxItem))
-                    {
-                        TransactionViewModel.maxItem = Int32.Parse(maxItem);
-                        if (actualPrincipalContent is PartialTransactions transactions)
-                        {
-                            LoadAccounts();
-                            transactions.LoadTransactions();
-                        }
-                    }
+                    await OpenNewTransaction();
                     break;
                 case Key.F5:
                     switch (actualPrincipalContent)
@@ -171,18 +147,17 @@ namespace GARCA
                         case PartialHome home:
                             await home.LoadCharts();
                             break;
-                        case PartialTransactions transactions:
-                            LoadAccounts();
-                            transactions.LoadTransactions();
+                        case PartialTransactions:
+                            await RefreshBalance();
                             break;
                         case PartialReminders reminders:
-                            reminders.LoadReminders();
-                            await Task.Run(() => DependencyConfigView.ExpirationsRemindersServiceView.GenerateAutoregister());
-                            LoadAccounts();
+                            await reminders.LoadReminders();
+                            await iExpirationsRemindersService.GenerateAutoregister();
+                            await LoadAccounts();
                             break;
                         case PartialPortfolio portfolio:
-                            portfolio.LoadPortfolio();
-                            LoadAccounts();
+                            await portfolio.LoadPortfolio();
+                            await LoadAccounts();
                             break;
                     }
                     break;
@@ -191,13 +166,13 @@ namespace GARCA
 
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadCalendar();
-            await Task.Run(() => DependencyConfigView.ExpirationsRemindersServiceView.GenerateAutoregister());
-            LoadAccounts();
+            await LoadCalendar();
+            await iExpirationsRemindersService.GenerateAutoregister();
+            await LoadAccounts();
             ToggleViews(EViews.Home);
         }
 
-        private void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (lvAccounts.SelectedValue != null)
             {
@@ -206,10 +181,11 @@ namespace GARCA
                 switch (actualPrincipalContent)
                 {
                     case PartialReminders reminders:
-                        reminders.LoadReminders();
+                        await reminders.LoadReminders();
                         break;
                     case PartialTransactions transactions:
-                        transactions.SetColumnVisibility((AccountsView?)lvAccounts.SelectedValue);
+                        transactions.AccountSelected = (Accounts)lvAccounts.SelectedValue;
+                        transactions.LoadTransactions();
                         break;
                 }
             }
@@ -223,7 +199,8 @@ namespace GARCA
 
             if (actualPrincipalContent is PartialTransactions transactions)
             {
-                transactions.SetColumnVisibility();
+                transactions.AccountSelected = null;
+                transactions.LoadTransactions();
             }
         }
 
@@ -236,7 +213,7 @@ namespace GARCA
         {
             FrmAccountsList frm = new();
             frm.ShowDialog();
-            LoadAccounts();
+            await LoadAccounts();
 
             switch (actualPrincipalContent)
             {
@@ -260,7 +237,7 @@ namespace GARCA
             }
         }
 
-        private void btnMntInvestmentProducts_Click(object sender, RoutedEventArgs e)
+        private async void btnMntInvestmentProducts_Click(object sender, RoutedEventArgs e)
         {
             FrmInvestmentProductsList frm = new();
             frm.ShowDialog();
@@ -271,7 +248,7 @@ namespace GARCA
                     transactions.LoadTransactions();
                     break;
                 case PartialPortfolio portfolio:
-                    portfolio.LoadPortfolio();
+                    await portfolio.LoadPortfolio();
                     break;
             }
         }
@@ -310,11 +287,11 @@ namespace GARCA
 
             if (actualPrincipalContent is PartialReminders reminders)
             {
-                reminders.LoadReminders();
+                await reminders.LoadReminders();
             }
 
-            await Task.Run(() => DependencyConfigView.ExpirationsRemindersServiceView.GenerateAutoregister());
-            LoadAccounts();
+            await iExpirationsRemindersService.GenerateAutoregister();
+            await LoadAccounts();
         }
 
 
@@ -322,13 +299,13 @@ namespace GARCA
 
         #region Functions
 
-        private async void RefreshBalance()
+        private async Task RefreshBalanceAccount()
         {
             try
             {
-                foreach (AccountsView accounts in lvAccounts.ItemsSource)
+                foreach (Accounts accounts in lvAccounts.ItemsSource)
                 {
-                    accounts.Balance = await Task.Run(() => DependencyConfigView.AccountsServiceView.GetBalanceByAccount(accounts.Id));
+                    accounts.Balance = await iAccountsService.GetBalanceByAccount(accounts.Id);
                 }
 
                 viewAccounts.Refresh();
@@ -342,25 +319,47 @@ namespace GARCA
         }
 
 
-        private void OpenNewTransaction()
+        private async Task OpenNewTransaction()
         {
-            var frm = lvAccounts.SelectedItem == null ? new FrmTransaction() : new FrmTransaction(((AccountsView)lvAccounts.SelectedItem).Id);
+            var frm = lvAccounts.SelectedItem == null ? new FrmTransaction() : new FrmTransaction(((Accounts)lvAccounts.SelectedItem).Id);
             frm.ShowDialog();
-            LoadAccounts();
+            await RefreshBalance();
+        }
+
+        public async Task RefreshBalance()
+        {
+            await LoadAccounts();
 
             if (actualPrincipalContent is PartialTransactions transactions)
             {
-                transactions.LoadTransactions();
+                await transactions.RefreshData();
             }
         }
 
-        private void LoadCalendar()
+        private async Task LoadCalendar()
         {
-            DependencyConfigView.DateCalendarServiceView.FillCalendar();
+            await iDateCalendarService.FillCalendar();
+        }
+
+        private bool isSameView(EViews views)
+        {
+            return views switch
+            {
+                EViews.Home => actualPrincipalContent is PartialHome,
+                EViews.Transactions => actualPrincipalContent is PartialTransactions,
+                EViews.Reminders => actualPrincipalContent is PartialReminders,
+                EViews.Portfolio => actualPrincipalContent is PartialPortfolio,
+                _ => false,
+            };
         }
 
         private void ToggleViews(EViews views)
         {
+            if (isSameView(views))
+            {
+                return;
+            }
+
             Page? win = null;
             principalContent.Content = null;
 
@@ -368,7 +367,7 @@ namespace GARCA
             {
                 case EViews.Home:
                     lvAccounts.SelectedIndex = -1;
-                    win = new PartialHome(this);
+                    win = new PartialHome();
                     break;
                 case EViews.Transactions:
                     win = new PartialTransactions(this);
@@ -379,7 +378,7 @@ namespace GARCA
                     break;
                 case EViews.Portfolio:
                     lvAccounts.SelectedIndex = -1;
-                    win = new PartialPortfolio(this);
+                    win = new PartialPortfolio();
                     break;
             }
 
@@ -402,62 +401,67 @@ namespace GARCA
             }
         }
 
-        public void LoadAccounts()
+        public async Task LoadAccounts()
         {
-            AccountsView? accountsView = null;
+            Accounts? account = null;
             if (lvAccounts != null && lvAccounts.SelectedItem != null)
             {
-                accountsView = lvAccounts.SelectedValue as AccountsView;
+                account = lvAccounts.SelectedValue as Accounts;
             }
 
-            var accountsViews = DependencyConfigView.AccountsServiceView.GetAllOpenedListView();
-            viewAccounts = CollectionViewSource.GetDefaultView(accountsViews);
-            lvAccounts.ItemsSource = viewAccounts;
-            viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("AccountsTypesdescription"));
-            viewAccounts.SortDescriptions.Add(new SortDescription("AccountsTypesid", ListSortDirection.Ascending));
-            RefreshBalance();
-
-            if (accountsView != null)
+            if (lvAccounts != null)
             {
-                var index = -1;
-                for (var i = 0; i < lvAccounts.Items.Count - 1; i++)
-                {
-                    if (((AccountsView)lvAccounts.Items[i]).Id.Equals(accountsView.Id))
-                    {
-                        index = i;
-                        break;
-                    }
-                }
 
-                if (index != -1)
+                var accounts = await iAccountsService.GetAllOpened();
+                viewAccounts = CollectionViewSource.GetDefaultView(accounts);
+                lvAccounts.ItemsSource = viewAccounts;
+                viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("AccountsTypesdescription"));
+                viewAccounts.SortDescriptions.Add(new SortDescription("AccountsTypesId", ListSortDirection.Ascending));
+                await RefreshBalanceAccount();
+
+                if (account != null)
                 {
-                    lvAccounts.SelectedIndex = index;
-                }
-                else
-                {
-                    ToggleViews(EViews.Home);
+                    var index = -1;
+                    for (var i = 0; i < lvAccounts.Items.Count - 1; i++)
+                    {
+                        if (((Accounts)lvAccounts.Items[i]).Id.Equals(account.Id))
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+
+                    if (index != -1)
+                    {
+                        lvAccounts.SelectedIndex = index;
+                    }
+                    else
+                    {
+                        ToggleViews(EViews.Home);
+                    }
                 }
             }
 
         }
 
-        private async void UpdateBalances()
+        private async Task UpdateBalances()
         {
             try
             {
-                var laccounts = DependencyConfigView.AccountsServiceView.GetAll();
+                var laccounts = await iAccountsService.GetAll();
 
                 if (laccounts != null)
                 {
-                    LoadDialog loadDialog = new(laccounts.Count);
+                    LoadDialog loadDialog = new(laccounts.Count());
                     loadDialog.Show();
 
                     foreach (var accounts in laccounts)
                     {
-                        await DependencyConfigView.TransactionsServiceView.RefreshBalanceTransactions(accounts);
+                        await iTransactionsService.RefreshBalanceTransactions(accounts);
                         loadDialog.PerformeStep();
                     }
 
+                    await RefreshBalance();
                     loadDialog.Close();
                     MessageBox.Show("Actualizado con exito!", "Actualización de saldos");
                 }
@@ -476,16 +480,16 @@ namespace GARCA
         {
             try
             {
-                var lInvestmentProducts = DependencyConfigView.InvestmentProductsServiceView.GetAll()?.Where(x => !String.IsNullOrWhiteSpace(x.Url) || x.Active == true).ToList();
+                var lInvestmentProducts = (await iInvestmentProductsService.GetAll())?.Where(x => !String.IsNullOrWhiteSpace(x.Url) || x.Active == true);
 
                 if (lInvestmentProducts != null)
                 {
-                    LoadDialog loadDialog = new(lInvestmentProducts.Count);
+                    LoadDialog loadDialog = new(lInvestmentProducts.Count());
                     loadDialog.Show();
 
                     foreach (var investmentProducts in lInvestmentProducts)
                     {
-                        await DependencyConfigView.InvestmentProductsPricesServiceView.getPricesOnlineAsync(investmentProducts);
+                        await iInvestmentProductsPricesService.getPricesOnlineAsync(investmentProducts);
                         loadDialog.PerformeStep();
                     }
 
