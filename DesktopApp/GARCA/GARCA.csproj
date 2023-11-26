@@ -8,10 +8,10 @@
     <Authors>Ricardo González Fabelo</Authors>
     <NeutralLanguage>es-ES</NeutralLanguage>
     <PackageIcon>Logo-100.png</PackageIcon>
-    <AssemblyVersion>4.0.0.0</AssemblyVersion>
-    <FileVersion>4.0.0.0</FileVersion>
-    <InformationalVersion>4.0.0+Branch.hotfix-GARCA-INC-nombre-BBDD.Sha.459600fc5b9e49bf06b6c3760f52c9e868fbc18b</InformationalVersion>
-    <Version>4.0.0</Version>
+    <AssemblyVersion>4.1.0.48</AssemblyVersion>
+    <FileVersion>4.1.0.0</FileVersion>
+    <InformationalVersion>4.1.0-alpha.48+Branch.develop.Sha.55a5964f2d6eb07b6e944e016ca9369f538c7dbe</InformationalVersion>
+    <Version>4.1.0-alpha0048</Version>
     <RootNamespace />
   </PropertyGroup>
   <ItemGroup>
