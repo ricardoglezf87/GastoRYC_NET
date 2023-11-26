@@ -4,14 +4,7 @@
     {
         public static string ToShortDateString(this DateTime? date)
         {
-            if (date.HasValue)
-            {
-                return date.Value.ToString("dd/MM/yyyy");
-            }
-            else
-            {
-                return "";
-            }
+            return date.HasValue ? date.Value.ToString("dd/MM/yyyy") : "";
         }
 
         public static DateTime? AddDay(this DateTime? date)

@@ -157,8 +157,8 @@ namespace GARCA.View.Views
             chForecast.Series.Clear();
 
             var lAccounts = await iAccountsService.GetAllOpened();
-            
-            if(lAccounts != null) 
+
+            if (lAccounts != null)
             {
                 foreach (var accounts in lAccounts.Where(x => iAccountsTypesService.AccountExpensives(x.AccountsTypesId)))
                 {

@@ -41,7 +41,7 @@ namespace GARCA.Data.Services
                                 }
                                 else
                                 {
-                                    buy.NumShares += shares;                                    
+                                    buy.NumShares += shares;
                                     break;
                                 }
                             }
@@ -67,7 +67,7 @@ namespace GARCA.Data.Services
         private async Task<IOrderedEnumerable<TransactionsArchived>?> GetBuyOperations(InvestmentProducts investmentProducts)
         {
             var res = (await iTransactionsArchivedService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares < 0)?.ToList();
-            res.AddRange((await  iTransactionsService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares < 0)?.ToList());
+            res.AddRange((await iTransactionsService.GetByInvestmentProduct(investmentProducts))?.Where(x => x.NumShares < 0)?.ToList());
             return res?.OrderBy(x => x.Orden);
         }
 

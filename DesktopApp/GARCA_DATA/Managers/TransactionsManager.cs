@@ -1,14 +1,13 @@
 ﻿using Dapper;
 using Dommel;
 using GARCA.Models;
-using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
     public class TransactionsManager : ManagerBase<Transactions>
     {
-        public async override Task<IEnumerable<Transactions>?> GetAll()
+        public override async Task<IEnumerable<Transactions>?> GetAll()
         {
             return await iRycContextService.getConnection().GetAllAsync<Transactions, Accounts, Categories, TransactionsStatus, Persons, Tags, InvestmentProducts, Transactions>();
         }

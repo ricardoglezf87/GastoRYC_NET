@@ -1,7 +1,6 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
-using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {

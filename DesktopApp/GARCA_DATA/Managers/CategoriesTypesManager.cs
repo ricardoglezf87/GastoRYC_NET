@@ -1,12 +1,4 @@
-﻿using Dapper;
-using GARCA.Data.Services;
-using GARCA.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static GARCA.Data.IOC.DependencyConfig;
+﻿using GARCA.Models;
 
 namespace GARCA.Data.Managers
 {

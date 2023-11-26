@@ -1,7 +1,6 @@
 ﻿
 using Dommel;
 using GARCA.Models;
-using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
@@ -10,8 +9,8 @@ namespace GARCA.Data.Managers
     {
         public async Task<bool> Exists(int investmentProductId, DateTime date)
         {
-            return await iRycContextService.getConnection().SelectAsync <InvestmentProductsPrices>(
-                x => x.InvestmentProductsid == investmentProductId && x.Date == date) != null;           
+            return await iRycContextService.getConnection().SelectAsync<InvestmentProductsPrices>(
+                x => x.InvestmentProductsid == investmentProductId && x.Date == date) != null;
         }
 
         public async Task<Decimal?> GetActualPrice(InvestmentProducts investmentProducts)

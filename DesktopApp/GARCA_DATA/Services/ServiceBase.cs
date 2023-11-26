@@ -1,16 +1,9 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
-using GARCA_DATA.Managers;
-using Google.Apis.Sheets.v4.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GARCA.Data.Services
 {
-    public class ServiceBase <T,Q>
+    public class ServiceBase<T, Q>
         where Q : ModelBase, new()
         where T : ManagerBase<Q>, new()
     {
@@ -21,33 +14,32 @@ namespace GARCA.Data.Services
             manager = new T();
         }
 
-        public async virtual Task<IEnumerable<Q>?> GetAll()
+        public virtual async Task<IEnumerable<Q>?> GetAll()
         {
             return await manager.GetAll();
         }
 
-        public async virtual Task<Q?> GetById(int id)
+        public virtual async Task<Q?> GetById(int id)
         {
             return await manager.GetById(id);
         }
 
-        public async virtual Task<Q?> GetById(DateTime id)
+        public virtual async Task<Q?> GetById(DateTime id)
         {
             return await manager.GetById(id);
         }
 
-        public async virtual Task<bool> Delete(Q? obj)
+        public virtual async Task<bool> Delete(Q? obj)
         {
-            if (obj == null) return false;
-            return await manager.Delete(obj);
+            return obj != null && await manager.Delete(obj);
         }
 
-        public async virtual Task<bool> Delete(int i)
+        public virtual async Task<bool> Delete(int i)
         {
             return await manager.Delete(i);
         }
 
-        public async virtual Task<Q> Save(Q obj)
+        public virtual async Task<Q> Save(Q obj)
         {
             return await manager.Save(obj);
         }

@@ -40,7 +40,7 @@ namespace GARCA.View.Views
         private async void btnSkip_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Esta seguro de querer saltar este recordatorío?", "recordatorio movimiento", MessageBoxButton.YesNo,
-                   MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes 
+                   MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.Yes
                    && ((Button)sender).Tag != null)
             {
                 await PutDoneReminder((int)((Button)sender).Tag);
@@ -88,7 +88,7 @@ namespace GARCA.View.Views
         private async Task PutDoneReminder(int? id)
         {
             var expirationsReminders = await iExpirationsRemindersService.GetById(id ?? -99);
-            
+
             if (expirationsReminders != null)
             {
                 expirationsReminders.Done = true;

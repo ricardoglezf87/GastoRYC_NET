@@ -1,5 +1,4 @@
 ﻿using GARCA.Models;
-using GARCA.View.ViewModels;
 using GARCA.View.Views;
 using GARCA.View.Views.Common;
 using GARCA.WebReport;
@@ -43,7 +42,7 @@ namespace GARCA
         {
             InitializeComponent();
             rbMenu.BackStageButton.Visibility = Visibility.Collapsed;
-            SfSkinManager.ApplyStylesOnApplication = true;      
+            SfSkinManager.ApplyStylesOnApplication = true;
         }
 
         #endregion
@@ -59,16 +58,9 @@ namespace GARCA
             }
             else
             {
-                DateTime date;
-                if (strDate.Length == 8)
-                {
-                    date = DateTime.ParseExact(strDate, "dd/MM/yy", CultureInfo.InvariantCulture);
-                }
-                else
-                {
-                    date = DateTime.ParseExact(strDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                }
-
+                DateTime date = strDate.Length == 8
+                    ? DateTime.ParseExact(strDate, "dd/MM/yy", CultureInfo.InvariantCulture)
+                    : DateTime.ParseExact(strDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
                 Mouse.OverrideCursor = Cursors.Wait;
 
                 iRycContextService.MakeBackup();
@@ -148,7 +140,7 @@ namespace GARCA
             {
                 case Key.F1:
                     await OpenNewTransaction();
-                    break;                
+                    break;
                 case Key.F5:
                     switch (actualPrincipalContent)
                     {
@@ -351,24 +343,22 @@ namespace GARCA
 
         private bool isSameView(EViews views)
         {
-            switch (views)
+            return views switch
             {
-                case EViews.Home:
-                    return actualPrincipalContent is PartialHome;                    
-                case EViews.Transactions:
-                    return actualPrincipalContent is PartialTransactions;
-                case EViews.Reminders:
-                    return actualPrincipalContent is PartialReminders;
-                case EViews.Portfolio:
-                    return actualPrincipalContent is PartialPortfolio;
-            }
-            return false;
+                EViews.Home => actualPrincipalContent is PartialHome,
+                EViews.Transactions => actualPrincipalContent is PartialTransactions,
+                EViews.Reminders => actualPrincipalContent is PartialReminders,
+                EViews.Portfolio => actualPrincipalContent is PartialPortfolio,
+                _ => false,
+            };
         }
 
         private void ToggleViews(EViews views)
         {
-            if (isSameView(views)) return;
-
+            if (isSameView(views))
+            {
+                return;
+            }
 
             Page? win = null;
             principalContent.Content = null;
@@ -418,7 +408,7 @@ namespace GARCA
             {
                 account = lvAccounts.SelectedValue as Accounts;
             }
-            
+
             if (lvAccounts != null)
             {
 
@@ -472,7 +462,7 @@ namespace GARCA
                     }
 
                     await RefreshBalance();
-                    loadDialog.Close();                    
+                    loadDialog.Close();
                     MessageBox.Show("Actualizado con exito!", "Actualización de saldos");
                 }
                 else

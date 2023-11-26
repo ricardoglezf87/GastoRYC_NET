@@ -1,21 +1,17 @@
-﻿using Dapper;
-
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
-using GARCA.Data.Services;
-using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsService : ServiceBase<TransactionsManager,Transactions>
+    public class TransactionsService : ServiceBase<TransactionsManager, Transactions>
     {
         #region TransactionsActions
 
         public async Task<IEnumerable<Transactions>?> GetAllOpenned()
         {
-            return (await GetAll())?.Where(x => !x.Accounts.Closed.HasValue 
+            return (await GetAll())?.Where(x => !x.Accounts.Closed.HasValue
                 || !x.Accounts.Closed.Value);
         }
 
@@ -59,7 +55,7 @@ namespace GARCA.Data.Services
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(int? id)
         {
-            return  (await GetAll())?.Where(x => id.Equals(x.AccountsId));
+            return (await GetAll())?.Where(x => id.Equals(x.AccountsId));
         }
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(Accounts? accounts)
@@ -100,7 +96,7 @@ namespace GARCA.Data.Services
             transactions.AmountOut ??= 0;
 
             await UpdateTranfer(transactions);
-            await UpdateTranferFromSplit(transactions);            
+            await UpdateTranferFromSplit(transactions);
             transactions = await Save(transactions);
             await iPersonsService.SetCategoryDefault(transactions.PersonsId ?? -11);
             return transactions;
@@ -226,8 +222,11 @@ namespace GARCA.Data.Services
             if (transactions.Id == 0)
             {
                 await Save(transactions);
-                
-                if (lSplits == null) return;
+
+                if (lSplits == null)
+                {
+                    return;
+                }
 
                 foreach (var splits in lSplits)
                 {
@@ -240,7 +239,7 @@ namespace GARCA.Data.Services
                 await Save(transactions);
             }
         }
-        
+
         public async Task<Splits> UpdateTranferSplits(Transactions? transactions, Splits splits)
         {
             //TODO:Ver si sobra esta asignacion y no coger directamente de la variable

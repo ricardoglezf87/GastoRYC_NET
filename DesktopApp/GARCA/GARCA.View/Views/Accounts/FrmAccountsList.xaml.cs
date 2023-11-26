@@ -90,7 +90,7 @@ namespace GARCA.View.Views
                 await iCategoriesService.Save(categories);
             }
         }
-        
+
         private async void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var accounts = (Accounts)e.RowData;

@@ -1,13 +1,12 @@
-﻿using static GARCA.Data.IOC.DependencyConfig;
+﻿using Dommel;
 using GARCA.Models;
-using System.Linq.Expressions;
-using Dommel;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
     public class TransactionsArchivedManager : ManagerBase<TransactionsArchived>
     {
-        public async override Task<IEnumerable<TransactionsArchived>?> GetAll()
+        public override async Task<IEnumerable<TransactionsArchived>?> GetAll()
         {
             return await iRycContextService.getConnection().GetAllAsync<TransactionsArchived, Accounts, Categories, TransactionsStatus, Persons, Tags, InvestmentProducts, TransactionsArchived>();
         }
@@ -19,7 +18,7 @@ namespace GARCA.Data.Managers
 
         public async Task<IEnumerable<TransactionsArchived>?> GetByPerson(int id)
         {
-            return await iRycContextService.getConnection().SelectAsync<TransactionsArchived>(x => x.PersonsId==id);
+            return await iRycContextService.getConnection().SelectAsync<TransactionsArchived>(x => x.PersonsId == id);
         }
 
         public async Task<IEnumerable<TransactionsArchived>?> GetByAccountOrderByOrdenDesc(int id)
@@ -27,12 +26,12 @@ namespace GARCA.Data.Managers
             return (await iRycContextService.getConnection()
                 .SelectAsync<TransactionsArchived>(x => id.Equals(x.AccountsId)))?
                 .OrderByDescending(x => x.Orden);
-        }        
-        
+        }
+
         public async Task<IEnumerable<TransactionsArchived>?> GetByInvestmentProduct(int id)
         {
             return await iRycContextService.getConnection()
-                .SelectAsync<TransactionsArchived,InvestmentProducts,TransactionsArchived>(x => x.InvestmentProductsId == id);
+                .SelectAsync<TransactionsArchived, InvestmentProducts, TransactionsArchived>(x => x.InvestmentProductsId == id);
         }
     }
 }

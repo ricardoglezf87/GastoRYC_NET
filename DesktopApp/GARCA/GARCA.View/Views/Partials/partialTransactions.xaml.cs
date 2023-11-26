@@ -2,7 +2,6 @@
 using GARCA.Models;
 using GARCA.Utils.Extensions;
 using GARCA.View.ViewModels;
-using Syncfusion.UI.Xaml.Grid;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -20,8 +19,8 @@ namespace GARCA.View.Views
         #region Variables
 
         private readonly MainWindow parentForm;
-        public Accounts? AccountSelected {  get; set; }
-        public TransactionViewModel TransactionsData { get; set; }  
+        public Accounts? AccountSelected { get; set; }
+        public TransactionViewModel TransactionsData { get; set; }
 
         #endregion
 
@@ -64,7 +63,7 @@ namespace GARCA.View.Views
             await parentForm.LoadAccounts();
         }
 
-        
+
 
         private void btnCopy_Click(object sender, RoutedEventArgs e)
         {
@@ -171,14 +170,17 @@ namespace GARCA.View.Views
             {
                 MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
             }
-}
+        }
 
         private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
             {
                 if (MessageBox.Show("Esta seguro de querer eliminar este movimiento?", "Eliminación movimientos", MessageBoxButton.YesNo,
-                    MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No) return;
+                    MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
+                {
+                    return;
+                }
 
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
@@ -205,7 +207,7 @@ namespace GARCA.View.Views
                     await iTransactionsService.Save(transactions);
                 }
                 await RefreshData();
-            } 
+            }
             else
             {
                 MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
@@ -282,7 +284,7 @@ namespace GARCA.View.Views
         }
 
         public void SetColumnVisibility()
-        {            
+        {
             if (gvTransactions.View != null)
             {
                 if (AccountSelected != null)
@@ -310,7 +312,7 @@ namespace GARCA.View.Views
                 }
             }
         }
-        
+
         private async Task RemoveTransaction(Transactions transactions)
         {
             if (transactions.TranferSplitId != null)
@@ -341,7 +343,7 @@ namespace GARCA.View.Views
                     await iTransactionsService.Delete(await iTransactionsService.GetById(transactions.TranferId ?? -99));
                 }
 
-                await iTransactionsService.Delete(transactions);                
+                await iTransactionsService.Delete(transactions);
             }
         }
 

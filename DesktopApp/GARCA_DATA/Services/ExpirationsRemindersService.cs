@@ -1,7 +1,6 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
-using GARCA_DATA.Managers;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
@@ -80,12 +79,13 @@ namespace GARCA.Data.Services
             {
                 var expirationsReminders = await GetById(id ?? -99);
 
-                if (expirationsReminders == null) { 
-                    return null; 
+                if (expirationsReminders == null)
+                {
+                    return null;
                 }
 
                 expirationsReminders.TransactionsReminders = await iTransactionsRemindersService.
-                    GetById(expirationsReminders.TransactionsRemindersId ?? -99 );
+                    GetById(expirationsReminders.TransactionsRemindersId ?? -99);
 
                 if (expirationsReminders.TransactionsReminders != null)
                 {
@@ -93,7 +93,7 @@ namespace GARCA.Data.Services
                     transactions.Date = expirationsReminders.Date;
                     transactions.AccountsId = expirationsReminders.TransactionsReminders.AccountsId;
                     transactions.PersonsId = expirationsReminders.TransactionsReminders.PersonsId;
-                    transactions.CategoriesId = expirationsReminders.TransactionsReminders.CategoriesId;                    
+                    transactions.CategoriesId = expirationsReminders.TransactionsReminders.CategoriesId;
                     transactions.Memo = expirationsReminders.TransactionsReminders.Memo;
                     transactions.AmountIn = expirationsReminders.TransactionsReminders.AmountIn;
                     transactions.AmountOut = expirationsReminders.TransactionsReminders.AmountOut;
@@ -111,7 +111,7 @@ namespace GARCA.Data.Services
                         splits.AmountIn = splitsReminders.AmountIn;
                         splits.AmountOut = splitsReminders.AmountOut;
                         splits.TagsId = splitsReminders.TagsId;
-                        
+
                         splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
                         await iSplitsService.SaveChanges(splits);
                     }
@@ -168,7 +168,7 @@ namespace GARCA.Data.Services
                             TagsId = splitsReminders.TagsId
                         };
 
-                        if (await iCategoriesService.IsTranfer(splits.CategoriesId ?? -99))                       
+                        if (await iCategoriesService.IsTranfer(splits.CategoriesId ?? -99))
                         {
                             lTransactions.Add(await UpdateTranferSplitsSimulation(transactions, splits));
                         }

@@ -1,8 +1,5 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
-using GARCA_DATA.Managers;
-using System.Configuration;
-using System.Runtime.CompilerServices;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
@@ -13,7 +10,7 @@ namespace GARCA.Data.Services
 
         #region TransactionsRemindersActions        
 
-        public async override Task<TransactionsReminders?> Save(TransactionsReminders transactionsReminders)
+        public override async Task<TransactionsReminders?> Save(TransactionsReminders transactionsReminders)
         {
             await iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
             return await base.Save(transactionsReminders);
@@ -69,8 +66,11 @@ namespace GARCA.Data.Services
             if (transactionsReminders.Id == 0)
             {
                 await Save(transactionsReminders);
-                
-                if (lSplitsReminders == null) return;
+
+                if (lSplitsReminders == null)
+                {
+                    return;
+                }
 
                 foreach (var splitsReminders in lSplitsReminders)
                 {

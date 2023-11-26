@@ -155,7 +155,7 @@ namespace GARCA.WebReport
 
             var accountsTypes = await iAccountsTypesService.GetAll();
             var transactions = await iTransactionsArchivedService.GetAll();
-            
+
             if (transactions != null)
             {
                 loadDialog.setMax(transactions.Count());

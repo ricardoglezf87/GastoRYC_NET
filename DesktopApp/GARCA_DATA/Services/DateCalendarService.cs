@@ -1,8 +1,6 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 
-using static GARCA.Data.IOC.DependencyConfig;
-
 namespace GARCA.Data.Services
 {
     public class DateCalendarService : ServiceBase<DateCalendarManager, DateCalendar>

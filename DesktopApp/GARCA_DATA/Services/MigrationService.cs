@@ -1,9 +1,4 @@
 ﻿using GARCA.Data.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GARCA.Data.Services
 {
@@ -11,14 +6,14 @@ namespace GARCA.Data.Services
     {
         private readonly MigrationManager migrationManager;
 
-        public MigrationService() 
+        public MigrationService()
         {
             migrationManager = new();
         }
 
-        public async Task Migrate() 
-        { 
-            await migrationManager.Migrate(); 
+        public async Task Migrate()
+        {
+            await migrationManager.Migrate();
         }
     }
 }

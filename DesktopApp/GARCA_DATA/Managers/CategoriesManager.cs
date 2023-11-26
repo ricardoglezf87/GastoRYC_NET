@@ -1,19 +1,13 @@
 ﻿using Dapper;
 using Dommel;
-using GARCA.Data.Services;
 using GARCA.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
     public class CategoriesManager : ManagerBase<Categories>
     {
-        public async override Task<IEnumerable<Categories>?> GetAll()
+        public override async Task<IEnumerable<Categories>?> GetAll()
         {
             return await iRycContextService.getConnection().GetAllAsync<Categories, CategoriesTypes, Categories>();
         }

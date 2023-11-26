@@ -78,7 +78,7 @@ namespace GARCA.Models
         public virtual Double? Orden { set; get; }
 
         [NotMapped]
-        public virtual string CategoryDescripGrid => InvestmentCategory.HasValue && !InvestmentCategory.Value  ?
+        public virtual string CategoryDescripGrid => InvestmentCategory.HasValue && !InvestmentCategory.Value ?
            NumShares > 0 ? "Inversiones:Venta" : "Inversiones:Compra" : Categories?.Description ?? string.Empty;
 
         [NotMapped]

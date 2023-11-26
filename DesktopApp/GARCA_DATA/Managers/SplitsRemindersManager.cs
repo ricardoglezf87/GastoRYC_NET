@@ -1,20 +1,19 @@
-﻿using static GARCA.Data.IOC.DependencyConfig;
+﻿using Dommel;
 using GARCA.Models;
-using System.Linq.Expressions;
-using Dommel;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
     public class SplitsRemindersManager : ManagerBase<SplitsReminders>
     {
-       public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionidNull()
+        public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionidNull()
         {
             return await iRycContextService.getConnection().SelectAsync<SplitsReminders>(x => x.TransactionsId == null);
         }
 
         public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionid(int transactionid)
         {
-                return await iRycContextService.getConnection().SelectAsync<SplitsReminders>(x => x.TransactionsId == transactionid);          
+            return await iRycContextService.getConnection().SelectAsync<SplitsReminders>(x => x.TransactionsId == transactionid);
         }
     }
 }

@@ -5,7 +5,7 @@ using GARCA.Models;
 namespace GARCA.Data.Services
 {
     public class TransactionsStatusService : ServiceBase<TransactionsStatusManager, TransactionsStatus>
-    {       
+    {
         public enum ETransactionsTypes
         {
             Pending = 1,

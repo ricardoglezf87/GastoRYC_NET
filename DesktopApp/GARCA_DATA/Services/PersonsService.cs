@@ -1,8 +1,5 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
-using GARCA.Utils.Extensions;
-using GARCA_DATA.Managers;
-using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {

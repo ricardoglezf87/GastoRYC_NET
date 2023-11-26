@@ -1,9 +1,5 @@
-﻿using Dapper;
-using GARCA.Data.Managers;
+﻿using GARCA.Data.Managers;
 using GARCA.Models;
-using GARCA.Data.Services;
-using static GARCA.Data.IOC.DependencyConfig;
-using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {

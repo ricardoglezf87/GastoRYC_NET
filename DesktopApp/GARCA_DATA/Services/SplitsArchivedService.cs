@@ -9,6 +9,6 @@ namespace GARCA.Data.Services
         public async Task<IEnumerable<SplitsArchived>?> GetbyTransactionid(int transactionid)
         {
             return await manager.GetbyTransactionid(transactionid);
-        }        
+        }
     }
 }

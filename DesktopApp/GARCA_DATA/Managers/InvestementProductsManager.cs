@@ -1,7 +1,5 @@
 ﻿using Dommel;
-using GARCA.Data.Services;
 using GARCA.Models;
-using System.Linq.Expressions;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers

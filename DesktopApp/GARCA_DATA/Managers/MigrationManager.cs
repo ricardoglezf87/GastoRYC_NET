@@ -1,10 +1,5 @@
 ﻿using Dapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 using static GARCA.Data.IOC.DependencyConfig;
 
@@ -20,10 +15,13 @@ namespace GARCA.Data.Managers
 
             foreach (Type clase in clases)
             {
-                if (await IsMigrateFeature(clase.Name)) continue;
+                if (await IsMigrateFeature(clase.Name))
+                {
+                    continue;
+                }
 
                 object? instancia = Activator.CreateInstance(clase);
-                
+
                 MethodInfo? metodoDo = clase.GetMethod("Do");
 
                 if (metodoDo != null)

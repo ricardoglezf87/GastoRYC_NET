@@ -1,16 +1,12 @@
-﻿using GARCA.Models;
-using Syncfusion.UI.Xaml.Grid;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using Syncfusion.UI.Xaml.Grid;
 using System.Threading.Tasks;
-using System.Windows.Data;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.View.ViewModels
 {
     public class TransactionViewModel
     {
-        private GridVirtualizingCollectionView source ;
+        private GridVirtualizingCollectionView source;
 
         public TransactionViewModel()
         {
@@ -34,7 +30,7 @@ namespace GARCA.View.ViewModels
 
         public void Refresh()
         {
-            source.Refresh();  
+            source.Refresh();
         }
     }
 }

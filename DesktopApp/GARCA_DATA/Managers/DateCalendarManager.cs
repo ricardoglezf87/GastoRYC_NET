@@ -1,10 +1,8 @@
 ﻿
 
-using static GARCA.Data.IOC.DependencyConfig;
-using GARCA.Data.Services;
-using GARCA.Models;
 using Dommel;
-using Dapper;
+using GARCA.Models;
+using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
 {
@@ -13,11 +11,7 @@ namespace GARCA.Data.Managers
         public async Task<DateCalendar?> GetByDate(DateTime date)
         {
             var obj = await iRycContextService.getConnection().SelectAsync<DateCalendar>(x => x.Date == date);
-            if (obj == null || !obj.Any())
-            {
-                return null;
-            }
-           return obj.First();
+            return obj == null || !obj.Any() ? null : obj.First();
         }
     }
 }

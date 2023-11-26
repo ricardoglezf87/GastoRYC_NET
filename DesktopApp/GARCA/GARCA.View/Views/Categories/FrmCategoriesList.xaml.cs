@@ -1,5 +1,4 @@
 ﻿using GARCA.Models;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,7 +18,7 @@ namespace GARCA.View.Views
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            cbCategoriesTypes.ItemsSource = await  iCategoriesTypesService.GetAllWithoutSpecialTransfer();
+            cbCategoriesTypes.ItemsSource = await iCategoriesTypesService.GetAllWithoutSpecialTransfer();
             await LoadItemSource();
         }
 

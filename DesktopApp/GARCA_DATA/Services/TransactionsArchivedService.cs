@@ -1,7 +1,6 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
-using GARCA_DATA.Managers;
 using static GARCA.Data.IOC.DependencyConfig;
 
 
@@ -31,7 +30,7 @@ namespace GARCA.Data.Services
         {
             return await GetByInvestmentProduct(investment.Id);
         }
-               
+
         public async Task<IEnumerable<TransactionsArchived>?> GetByAccount(int id)
         {
             return await manager.GetByAccount(id);

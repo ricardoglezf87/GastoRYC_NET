@@ -1,6 +1,5 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
-using GARCA_DATA.Managers;
 using GARCA_UTIL.Exceptions;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
