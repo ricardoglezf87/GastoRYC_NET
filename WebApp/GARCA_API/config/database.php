@@ -48,7 +48,7 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '192.168.1.142'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'garca_pre'),
+            'database' => env('DB_DATABASE', 'garca'),
             'username' => env('DB_USERNAME', 'arcadb'),
             'password' => env('DB_PASSWORD', '5*GEs4*8q8WGy!f8KU'),
             'unix_socket' => env('DB_SOCKET', ''),
