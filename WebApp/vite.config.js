@@ -10,6 +10,8 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/accounts_types/scripts.js',
                 'resources/css/accounts_types/styles.css',
+                'resources/js/transactions/scripts.js',
+                'resources/css/transactions/styles.css',
             ],
             refresh: true,
         }),
@@ -25,6 +27,9 @@ export default defineConfig({
         emptyOutDir: true,
         outDir: 'public/build',
         assetsDir: '.',
+        rollupOptions: {
+            external: ['@oruga-ui/oruga'],
+          },
     },
 });
 

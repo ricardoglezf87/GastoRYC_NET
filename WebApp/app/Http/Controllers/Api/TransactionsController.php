@@ -11,33 +11,7 @@ class TransactionsController extends Controller
 {
     public function index()
     {
-        $response = new StreamedResponse(function () {
-            $transactions = Transactions::cursor();
-
-            echo '[';
-
-            $first = true;
-
-            foreach ($transactions as $transaction) {
-                if (!$first) {
-                    echo ',';
-                } else {
-                    $first = false;
-                }
-
-                echo json_encode($transaction->toArray());
-            }
-
-            echo ']';
-        });
-
-        $response->headers->set('Content-Type', 'application/json');
-        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-        $response->headers->set('Pragma', 'no-cache');
-        $response->headers->set('Expires', 'Fri, 01 Jan 1990 00:00:00 GMT');
-
-        return $response;
-        //return Transactions::all();
+        return response()->json(Transactions::paginate(100));
     }
 
     public function update(Request $request, $id)

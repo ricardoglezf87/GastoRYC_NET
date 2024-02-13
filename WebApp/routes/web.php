@@ -1,7 +1,9 @@
 <?php
 
-use App\Http\Controllers\AccountsTypesController;
+use App\Models\Transactions;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AccountsTypesController;
+use App\Http\Controllers\TransactionsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,3 +17,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/accounts_types', [AccountsTypesController::class, 'index'])->name('accounts_types.index');
+Route::get('/transactions', [TransactionsController::class, 'index'])->name('accounts_types.index');
