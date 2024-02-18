@@ -3,22 +3,35 @@
         <section>
             <o-table :loading="isLoading"
                 :data="transactions.current_page && transactions.data.lenght == 0 ? [] : transactions.data">
-                <o-table-column field="id" label="ID" numeric v-slot="t">
+                <o-table-column label="ID" numeric v-slot="t">
                     {{ t.row.id }}
                 </o-table-column>
-                <o-table-column field="date" label="Fecha" date v-slot="t">
+                <o-table-column label="Fecha" date v-slot="t">
                     {{ t.row.date }}
                 </o-table-column>
-                <o-table-column field="id" label="Cuenta" numeric v-slot="t">
-                    {{ t.row.accountid }}
+                <o-table-column v-slot="t">
+                        {{ t.row.account_id }}
                 </o-table-column>
-                <o-table-column field="id" label="Persona" numeric v-slot="t">
+                <o-table-column label="Persona" numeric v-slot="t">
                     {{ t.row.personid }}
                 </o-table-column>
-                <o-table-column field="id" label="Categoria" numeric v-slot="t">
+                <o-table-column label="Categoria" numeric v-slot="t">
                     {{ t.row.categoryid }}
                 </o-table-column>
-
+                <o-table-column label="Ingreso" numeric v-slot="t">
+                    {{ t.row.amountin }}
+                </o-table-column>
+                <o-table-column label="Gasto" numeric v-slot="t">
+                    {{ t.row.amountout }}
+                </o-table-column>
+                <o-table-column label="Importe" numeric v-slot="t">
+                    {{ t.row.amountin - t.row.amountout }}
+                </o-table-column>
+                <o-table-column label="" v-slot="t">
+                    <o-button variant="info" icon-right="mdiPencil" />
+                    <o-button variant="primary" icon-right="mdiCallSplit" />
+                    <o-button variant="danger" icon-right="trash" />
+                </o-table-column>
             </o-table>
             <o-pagination v-if="transactions.current_page" v-model:current="currentPage" :total="transactions.total"
                 :range-before="5" :range-after="5" order="centered" :simple="false" :rounded="true"

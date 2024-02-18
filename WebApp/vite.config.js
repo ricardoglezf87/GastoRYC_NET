@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import Vue from '@vitejs/plugin-vue';
+import postcssConfig from './postcss.config.cjs';
 
 export default defineConfig({
     plugins: [
@@ -10,12 +10,11 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/accounts_types/scripts.js',
                 'resources/css/accounts_types/styles.css',
-                'resources/js/transactions/scripts.js',
-                'resources/css/transactions/styles.css',
+                //'resources/js/transactions/scripts.js',
+                //'resources/css/transactions/styles.css',
             ],
             refresh: true,
         }),
-        Vue(),
     ],
     server: {
         proxy: {
@@ -27,9 +26,8 @@ export default defineConfig({
         emptyOutDir: true,
         outDir: 'public/build',
         assetsDir: '.',
-        rollupOptions: {
-            external: ['@oruga-ui/oruga'],
-          },
     },
+    css: {
+        plugins: postcssConfig.plugins || [],
+      },
 });
-

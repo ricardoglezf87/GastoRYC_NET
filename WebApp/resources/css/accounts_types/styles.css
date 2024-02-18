@@ -1,60 +1,78 @@
-/* En resources/css/accounts_types.css */
+/* Estilos básicos para la tabla */
+.accounts_types-container {
+    max-width: 800px;
+    margin: 20px auto;
+}
 
-/* Estilo general para la tabla */
 .accounts_types-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #fff;
 }
 
-/* Estilo para las celdas del encabezado */
-.accounts_types-table th {
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
+.accounts_types-table th,
+.accounts_types-table td {
+    border: 1px solid #e1e1e1;
     padding: 12px;
     text-align: left;
-    border-bottom: 2px solid #45a049;
 }
 
-/* Estilo para las celdas de datos */
-.accounts_types-table td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
+/* Estilos para las filas impares (opcional) */
+.accounts_types-table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
 }
 
-/* Estilo de hover para las filas */
-.accounts_types-table tr:hover {
-    background-color: #f5f5f5;
-}
-
-/* Estilo de las esquinas redondeadas */
-.accounts_types-table th:first-child {
-    border-top-left-radius: 8px;
-}
-
-.accounts_types-table th:last-child {
-    border-top-right-radius: 8px;
-}
-
-.accounts_types-table td:first-child {
-    border-bottom-left-radius: 8px;
-}
-
-.accounts_types-table td:last-child {
-    border-bottom-right-radius: 8px;
-}
-
-/* Estilo para las celdas de datos */
-.accounts_types-table td {
-   text-align: center;
-}
-
-.accounts_types-table input:not([type="checkbox"]){
+/* Estilos para el input en las celdas */
+.accounts_types-table input {
     width: 100%;
-    border: 0;
-    background-color:transparent
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Estilos para los botones */
+.accounts_types-table button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+/* Efecto al pasar el ratón sobre los botones */
+.accounts_types-table button:hover {
+    background-color: #45a049;
+}
+
+/* Estilos para el encabezado de la tabla (opcional) */
+.accounts_types-table thead th {
+    background-color: #333;
+    color: white;
+}
+
+/* Estilos para el formulario de entrada */
+.accounts_types-form {
+    padding: 20px;
+}
+
+/* Estilos para el mensaje de error (opcional) */
+.accounts_types-error {
+    color: #e74c3c;
+    margin-top: 5px;
+}
+
+/* Estilos para el botón de eliminar (basura) */
+.accounts_types-table button.delete-btn {
+    background-color: #e74c3c;
+}
+
+/* Efecto al pasar el ratón sobre el botón de eliminar */
+.accounts_types-table button.delete-btn:hover {
+    background-color: #c0392b;
 }

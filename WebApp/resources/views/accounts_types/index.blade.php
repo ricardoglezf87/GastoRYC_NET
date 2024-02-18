@@ -1,13 +1,9 @@
 @extends('layouts.app')
-
-
+@livewireStyles
 
 @section('content')
-
-    <h1>Tipos de Cuentas</h1>
-
-    <div id="accounts_types"></div>
-
-    @vite(['resources/css/accounts_types/styles.css', 'resources/js/accounts_types/scripts.js'])
-
+    @vite('resources/css/accounts_types/styles.css')
+    @livewire('AccountsTypesGrid')
 @endsection
+
+@livewireScripts

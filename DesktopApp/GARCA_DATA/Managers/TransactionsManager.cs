@@ -1,6 +1,8 @@
 ﻿using Dapper;
 using Dommel;
 using GARCA.Models;
+using Newtonsoft.Json;
+using System.Text;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Managers
@@ -9,7 +11,33 @@ namespace GARCA.Data.Managers
     {
         public override async Task<IEnumerable<Transactions>?> GetAll()
         {
-            return await iRycContextService.getConnection().GetAllAsync<Transactions, Accounts, Categories, TransactionsStatus, Persons, Tags, InvestmentProducts, Transactions>();
+            // return await iRycContextService.getConnection().GetAllAsync<Transactions, Accounts, Categories, TransactionsStatus, Persons, Tags, InvestmentProducts, Transactions>();
+            // URL del servicio Laravel
+            string apiUrl = "http://192.168.1.142:8787/api/transactions";
+
+            // Instancia de HttpClient
+            using (HttpClient client = new HttpClient())
+            {
+                // Obtener todas las transacciones
+                HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    // Deserializar el objeto JSON
+                    var responseObject = JsonConvert.DeserializeObject<ApiResponse>(jsonResponse);
+
+                    // Acceder a la lista de transacciones dentro del objeto
+                    IEnumerable<Transactions> transactionsList = responseObject.Data;
+
+                    return transactionsList;
+                }
+                else
+                {
+                    throw new Exception($"Error: {response.StatusCode}, {response.ReasonPhrase}" );
+                }
+            }
         }
 
         public async Task<int> GetNextId()
@@ -29,5 +57,12 @@ namespace GARCA.Data.Managers
                 where accountid = {id}
             ");
         }
+    }
+
+    public class ApiResponse
+    {
+        public int CurrentPage { get; set; }
+        public IEnumerable<Transactions> Data { get; set; }
+        public int PerPage { get; set; }
     }
 }

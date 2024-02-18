@@ -1,80 +1,81 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace GARCA.Models
 {
     [Table("Transactions")]
     public class Transactions : ModelBase
     {
-        [Column("date")]
+        [JsonProperty("date")]
         public virtual DateTime? Date { set; get; }
 
-        [Column("accountid")]
+        [JsonProperty("accountid")]
         public virtual int? AccountsId { set; get; }
 
-        [Column("account")]
+        [JsonProperty("account")]
         public virtual Accounts? Accounts { set; get; }
 
-        [Column("personid")]
+        [JsonProperty("personid")]
         public virtual int? PersonsId { set; get; }
 
-        [Column("person")]
+        [JsonProperty("person")]
         public virtual Persons? Persons { set; get; }
 
-        [Column("tagid")]
+        [JsonProperty("tagid")]
         public virtual int? TagsId { set; get; }
 
-        [Column("tag")]
+        [JsonProperty("tag")]
         public virtual Tags? Tags { set; get; }
 
-        [Column("categoryid")]
+        [JsonProperty("categoryid")]
         public virtual int? CategoriesId { set; get; }
 
-        [Column("category")]
+        [JsonProperty("category")]
         public virtual Categories? Categories { set; get; }
 
-        [Column("amountIn")]
+        [JsonProperty("amountin")]
         public virtual Decimal? AmountIn { set; get; }
 
-        [Column("amountOut")]
+        [JsonProperty("amountout")]
         public virtual Decimal? AmountOut { set; get; }
 
-        [Column("tranferid")]
+        [JsonProperty("tranferid")]
         public virtual int? TranferId { set; get; }
 
-        [Column("tranferSplitid")]
+        [JsonProperty("tranferSplitid")]
         public virtual int? TranferSplitId { set; get; }
 
-        [Column("memo")]
+        [JsonProperty("memo")]
         public virtual String? Memo { set; get; }
 
-        [Column("transactionStatusid")]
+        [JsonProperty("transactionStatusid")]
         public virtual int? TransactionsStatusId { set; get; }
 
-        [Column("transactionStatus")]
+        [JsonProperty("transactionStatus")]
         public virtual TransactionsStatus? TransactionsStatus { set; get; }
 
-        [Column("investmentProductsid")]
+        [JsonProperty("investmentProductsid")]
         public virtual int? InvestmentProductsId { set; get; }
 
-        [Column("investmentProducts")]
+        [JsonProperty("investmentProducts")]
         public virtual InvestmentProducts? InvestmentProducts { set; get; }
 
-        [Column("splits")]
+        [JsonProperty("splits")]
         public virtual HashSet<Splits>? Splits { set; get; }
 
-        [Column("numShares")]
+        [JsonProperty("numShares")]
         public virtual Decimal? NumShares { set; get; }
 
-        [Column("pricesShares")]
+        [JsonProperty("pricesShares")]
         public virtual Decimal? PricesShares { set; get; }
 
-        [Column("investmentCategory")]
+        [JsonProperty("investmentCategory")]
         public virtual bool? InvestmentCategory { set; get; }
 
-        [Column("balance")]
+        [JsonProperty("balance")]
         public virtual Decimal? Balance { set; get; }
 
-        [Column("orden")]
+        [JsonProperty("orden")]
         public virtual Double? Orden { set; get; }
 
         [NotMapped]

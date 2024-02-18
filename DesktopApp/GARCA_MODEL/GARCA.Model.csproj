@@ -9,4 +9,7 @@
     <InformationalVersion>4.1.0-alpha.48+Branch.develop.Sha.55a5964f2d6eb07b6e944e016ca9369f538c7dbe</InformationalVersion>
     <Version>4.1.0-alpha0048</Version>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
 </Project>
