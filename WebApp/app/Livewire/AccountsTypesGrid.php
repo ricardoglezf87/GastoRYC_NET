@@ -3,59 +3,58 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\Attributes\On;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
 use App\Models\AccountsTypes;
 
-class AccountsTypesGrid extends Component
+class AccountsTypesGrid extends Component implements HasForms, HasTable
 {
+    use InteractsWithTable;
+    use InteractsWithForms;
     public $accounts_types;
-    public $nuevaLinea;
-    public $headers;
 
-    public function mount()
+    public function table(Table $table): Table
     {
-        $this->loadAccountType();
-        $this->nuevaLinea = [
-            'description' => '',
-        ];
-        $this->headers = [
-            ['key' => 'id', 'label' => '#', 'class' => 'text-red-400'], # <-- css
-            ['key' => 'description', 'label' => 'Descripción'],
-        ];
-    }
-
-    public function updateAccountType($id, $campo, $valor)
-    {
-        $accountType = AccountsTypes::findOrFail($id);
-        $accountType->$campo = $valor;
-        $accountType->save();
-    }
-
-    public function createAccountType()
-    {
-        $this->validate([
-            'nuevaLinea.description' => 'required',
-        ]);
-
-        AccountsTypes::create($this->nuevaLinea);
-
-        $this->nuevaLinea = [
-            'description' => '',
-        ];
-
-        $this->loadAccountType();
+        return $table
+            ->query(AccountsTypes::query())
+            ->searchPlaceholder('Buscar por descripción')
+            ->actions([
+                    EditAction::make(),
+                    DeleteAction::make(),
+            ])
+            ->columns(
+                [
+                    TextColumn::make('id'),
+                    TextColumn::make('description')
+                        ->searchable()
+                        ->action(function (AccountsTypes $record): void {
+                            $this->dispatch('open-post-edit-modal', post: $record->getKey());
+                        })
+                ]
+            );
     }
 
     public function deleteAccountType($id)
     {
-       // if (confirm("¿Estás seguro de que quieres borrar este account_type?")) {
-            AccountsTypes::findOrFail($id)->delete();
-            $this->loadAccountType();
-       // }
+        AccountsTypes::findOrFail($id)->delete();
+        $this->loadAccountType();
     }
 
-    public function render()
+    #[On('object-added')]
+    public function render(): View
     {
-        return view('accounts_types.AccountsTypesGrid');
+        $this->accounts_types = AccountsTypes::all();
+        return view('accounts_types.list_component');
     }
 
     private function loadAccountType()

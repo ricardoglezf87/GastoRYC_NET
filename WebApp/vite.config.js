@@ -1,33 +1,25 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import postcssConfig from './postcss.config.cjs';
+import { defineConfig } from 'vite'
+import laravel, { refreshPaths } from 'laravel-vite-plugin'
 
 export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/js/app.js',
-                'resources/css/app.css',
-                'resources/js/accounts_types/scripts.js',
-                'resources/css/accounts_types/styles.css',
-                //'resources/js/transactions/scripts.js',
-                //'resources/css/transactions/styles.css',
+                        'resources/css/app.css',
+                        'resources/js/app.js',
+                        'resources/css/accounts_types/styles.css',
+                        'resources/js/accounts_types/scripts.js'
+
+                    ],
+            refresh: [
+                ...refreshPaths,
+                'app/Filament/**',
+                'app/Forms/Components/**',
+                'app/Livewire/**',
+                'app/Infolists/Components/**',
+                'app/Providers/Filament/**',
+                'app/Tables/Columns/**',
             ],
-            refresh: true,
         }),
     ],
-    server: {
-        proxy: {
-            '/': 'http://localhost', // Apunta a tu servidor Laravel
-        },
-    },
-    build: {
-        minify: 'esbuild',
-        emptyOutDir: true,
-        outDir: 'public/build',
-        assetsDir: '.',
-    },
-    css: {
-        plugins: postcssConfig.plugins || [],
-      },
-});
+})
