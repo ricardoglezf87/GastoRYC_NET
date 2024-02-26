@@ -14,4 +14,9 @@ class CategoriesTypes extends Model
     protected $fillable = [
         'description',
     ];
+
+    public function categories()
+    {
+        return $this->hasMany(Categories::class, 'categoriestypesid', 'id');
+    }
 }

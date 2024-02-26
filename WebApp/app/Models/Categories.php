@@ -15,4 +15,9 @@ class Categories extends Model
         'description',
         'categoriestypesid',
     ];
+
+    public function categoryType()
+    {
+        return $this->belongsTo(CategoriesTypes::class, 'categoriestypesid', 'id');
+    }
 }
