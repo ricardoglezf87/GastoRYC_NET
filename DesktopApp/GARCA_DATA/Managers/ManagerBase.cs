@@ -30,7 +30,7 @@ namespace GARCA.Data.Managers
             }
             else
             {
-                obj.Id = Convert.ToInt32(await Insert(obj));
+                obj.Id = await Insert(obj);
             }
             return obj;
         }
@@ -40,9 +40,9 @@ namespace GARCA.Data.Managers
             return await iRycContextService.getConnection().UpdateAsync(obj);
         }
 
-        public virtual async Task<long> Insert(Q obj)
+        public virtual async Task<int> Insert(Q obj)
         {
-            return (long)await iRycContextService.getConnection().InsertAsync<Q>(obj);
+            return (int)(UInt64)await iRycContextService.getConnection().InsertAsync<Q>(obj);
         }
 
         public virtual async Task<bool> Delete(Q obj)

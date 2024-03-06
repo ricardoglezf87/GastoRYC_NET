@@ -3,7 +3,7 @@ using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
-    public class AccountsTypesService : ServiceBase<AccountsTypesManager, AccountsTypes>
+    public class AccountsTypesService : ServiceBaseWS<AccountsTypes>
     {
         public enum EAccountsTypes
         {

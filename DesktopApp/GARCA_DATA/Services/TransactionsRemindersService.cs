@@ -54,7 +54,7 @@ namespace GARCA.Data.Services
                     transactionsReminders.AmountOut += splitsReminders.AmountOut ?? 0;
                 }
 
-                transactionsReminders.CategoriesId = (int)CategoriesService.ESpecialCategories.Split;
+                transactionsReminders.CategoriesId = (int?)CategoriesService.ESpecialCategories.Split;
                 transactionsReminders.Categories = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
             }
             else if (transactionsReminders.CategoriesId is ((int)CategoriesService.ESpecialCategories.Split))

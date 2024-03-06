@@ -98,7 +98,7 @@ namespace GARCA.Data.Services
             await UpdateTranfer(transactions);
             await UpdateTranferFromSplit(transactions);
             transactions = await Save(transactions);
-            await iPersonsService.SetCategoryDefault(transactions.PersonsId ?? -11);
+            await iPersonsService.SetCategoryDefault(transactions.PersonsId ?? -1);
             return transactions;
         }
 

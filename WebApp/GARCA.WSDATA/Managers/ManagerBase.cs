@@ -30,7 +30,7 @@ namespace GARCA.wsData.Managers
             }
             else
             {
-                obj.Id = Convert.ToInt32(await Insert(obj));
+                obj.Id = await Insert(obj);
             }
             return obj;
         }
@@ -40,9 +40,9 @@ namespace GARCA.wsData.Managers
             return await dbContext.OpenConnection().UpdateAsync(obj);
         }
 
-        public virtual async Task<long> Insert(Q obj)
+        public virtual async Task<int> Insert(Q obj)
         {
-            return (long)await dbContext.OpenConnection().InsertAsync<Q>(obj);
+            return (int)(UInt64)await dbContext.OpenConnection().InsertAsync<Q>(obj);
         }
 
         public virtual async Task<bool> Delete(Q obj)

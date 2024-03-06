@@ -16,7 +16,7 @@ namespace GARCA.wsData.Managers
 
         public Task<bool> Update(Q obj);
 
-        public Task<long> Insert(Q obj);
+        public Task<int> Insert(Q obj);
 
         public Task<bool> Delete(Q obj);
 
