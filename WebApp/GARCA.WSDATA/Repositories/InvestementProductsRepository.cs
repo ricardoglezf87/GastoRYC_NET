@@ -2,9 +2,9 @@
 using GARCA.Models;
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class InvestmentProductsManager : ManagerBase<InvestmentProducts>
+    public class InvestmentProductsRepository : RepositoryBase<InvestmentProducts>
     {
         public async Task<IEnumerable<InvestmentProducts>?> GetAllOpened()
         {

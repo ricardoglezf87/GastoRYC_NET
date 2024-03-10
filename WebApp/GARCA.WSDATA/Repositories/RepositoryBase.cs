@@ -1,9 +1,10 @@
 ﻿using Dommel;
 using GARCA.Models;
+using System.Linq.Expressions;
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class ManagerBase<Q> : IManagerBase<Q>
+    public class RepositoryBase<Q> : IRepositoryBase<Q>
         where Q : ModelBase, new()
     {
 
@@ -20,6 +21,11 @@ namespace GARCA.wsData.Managers
         public virtual async Task<Q?> GetById(DateTime id)
         {
             return await dbContext.OpenConnection().GetAsync<Q>(id);
+        }
+
+        public virtual async Task<IEnumerable<Q>?> Get(Expression<Func<Q,bool>> predicate)
+        {
+            return await dbContext.OpenConnection().SelectAsync<Q>(predicate);
         }
 
         public virtual async Task<Q> Save(Q obj)

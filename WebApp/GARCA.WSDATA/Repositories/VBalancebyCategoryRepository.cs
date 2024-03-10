@@ -3,9 +3,9 @@ using Dommel;
 using GARCA.Models;
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class VBalancebyCategoryManager
+    public class VBalancebyCategoryRepository
     {
         public async Task<IEnumerable<VBalancebyCategory>?> GetAll()
         {

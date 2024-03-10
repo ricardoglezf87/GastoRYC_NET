@@ -3,9 +3,9 @@ using Dommel;
 using GARCA.Models;
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class CategoriesManager : ManagerBase<Categories>
+    public class CategoriesRepository : RepositoryBase<Categories>
     {
         public override async Task<IEnumerable<Categories>?> GetAll()
         {

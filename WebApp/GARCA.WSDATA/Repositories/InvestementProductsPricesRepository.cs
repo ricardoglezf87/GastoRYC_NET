@@ -3,9 +3,9 @@ using Dommel;
 using GARCA.Models;
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class InvestmentProductsPricesManager : ManagerBase<InvestmentProductsPrices>
+    public class InvestmentProductsPricesRepository : RepositoryBase<InvestmentProductsPrices>
     {
         public async Task<bool> Exists(int investmentProductId, DateTime date)
         {

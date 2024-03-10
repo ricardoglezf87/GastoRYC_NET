@@ -2,9 +2,9 @@
 using GARCA.Models;
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class SplitsRemindersManager : ManagerBase<SplitsReminders>
+    public class SplitsRemindersRepository : RepositoryBase<SplitsReminders>
     {
         public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionidNull()
         {

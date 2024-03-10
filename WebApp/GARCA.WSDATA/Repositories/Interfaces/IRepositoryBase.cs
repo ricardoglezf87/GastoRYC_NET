@@ -1,9 +1,10 @@
 ﻿using Dommel;
 using GARCA.Models;
+using System.Linq.Expressions;
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public interface IManagerBase<Q>
+    public interface IRepositoryBase<Q>
         where Q : ModelBase, new()
     {
         public Task<IEnumerable<Q>?> GetAll();
@@ -11,6 +12,8 @@ namespace GARCA.wsData.Managers
         public Task<Q?> GetById(int id);
 
         public Task<Q?> GetById(DateTime id);
+
+        public Task<IEnumerable<Q>?> Get(Expression<Func<Q, bool>> predicate);
 
         public Task<Q> Save(Q obj);
 

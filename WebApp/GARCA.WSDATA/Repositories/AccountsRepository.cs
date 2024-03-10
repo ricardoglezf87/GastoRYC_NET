@@ -1,11 +1,11 @@
 ﻿using Dommel;
-using GARCA.wsData.Managers;
+using GARCA.wsData.Repositories;
 using GARCA.Models;
 
 
-namespace GARCA_DATA.Managers
+namespace GARCA_DATA.Repositories
 {
-    public class AccountsManager : ManagerBase<Accounts>
+    public class AccountsRepository : RepositoryBase<Accounts>
     {
         public override async Task<IEnumerable<Accounts>?> GetAll()
         {

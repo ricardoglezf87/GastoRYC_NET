@@ -3,9 +3,9 @@ using Dommel;
 using GARCA.Models;
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class SplitsManager : ManagerBase<Splits>
+    public class SplitsRepository : RepositoryBase<Splits>
     {
         public async Task<IEnumerable<Splits>?> GetbyTransactionidNull()
         {

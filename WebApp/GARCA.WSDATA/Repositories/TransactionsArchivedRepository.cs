@@ -2,9 +2,9 @@
 using GARCA.Models;
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class TransactionsArchivedManager : ManagerBase<TransactionsArchived>
+    public class TransactionsArchivedRepository : RepositoryBase<TransactionsArchived>
     {
         public override async Task<IEnumerable<TransactionsArchived>?> GetAll()
         {

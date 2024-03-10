@@ -4,9 +4,9 @@ using Dommel;
 using GARCA.Models;
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class DateCalendarManager : ManagerBase<DateCalendar>
+    public class DateCalendarRepository : RepositoryBase<DateCalendar>
     {
         public async Task<DateCalendar?> GetByDate(DateTime date)
         {

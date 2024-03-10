@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using GARCA.wsData.Managers;
+using GARCA.wsData.Repositories;
 
 
 namespace wsData.Migrations

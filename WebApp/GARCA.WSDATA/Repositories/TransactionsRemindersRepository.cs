@@ -3,9 +3,9 @@ using GARCA.Models;
 
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class TransactionsRemindersManager : ManagerBase<TransactionsReminders>
+    public class TransactionsRemindersRepository : RepositoryBase<TransactionsReminders>
     {
         public override async Task<IEnumerable<TransactionsReminders>?> GetAll()
         {

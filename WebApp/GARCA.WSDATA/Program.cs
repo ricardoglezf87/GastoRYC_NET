@@ -1,5 +1,5 @@
 using GARCA.wsData.Endpoints;
-using GARCA.wsData.Managers;
+using GARCA.wsData.Repositories;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,13 +9,13 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IAccountsTypesManager, AccountsTypesManager>();
+builder.Services.AddScoped<IAccountsTypesRepository, AccountsTypesRepository>();
 
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-await MigrationManager.Migrate();
+await MigrationRepository.Migrate();
 
 app.ConfigEndPointTypesAccounts();
 

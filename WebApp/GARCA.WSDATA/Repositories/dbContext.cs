@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
     static class dbContext
     {

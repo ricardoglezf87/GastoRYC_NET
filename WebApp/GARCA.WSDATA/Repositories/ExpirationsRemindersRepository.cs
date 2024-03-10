@@ -3,9 +3,9 @@ using Dommel;
 using GARCA.Models;
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public class ExpirationsRemindersManager : ManagerBase<ExpirationsReminders>
+    public class ExpirationsRemindersRepository : RepositoryBase<ExpirationsReminders>
     {
         public override async Task<IEnumerable<ExpirationsReminders>?> GetAll()
         {

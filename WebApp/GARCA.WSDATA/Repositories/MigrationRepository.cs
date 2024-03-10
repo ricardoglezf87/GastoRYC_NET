@@ -4,9 +4,9 @@ using System.Reflection;
 
 
 
-namespace GARCA.wsData.Managers
+namespace GARCA.wsData.Repositories
 {
-    public static class MigrationManager
+    public static class MigrationRepository
     {
         public static async Task Migrate()
         {
