@@ -20,4 +20,8 @@
     <ProjectReference Include="..\..\DesktopApp\GARCA_UTIL\GARCA.Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\Seeder\" />
+  </ItemGroup>
+
 </Project>

@@ -10,6 +10,17 @@ namespace GARCA.wsData.Repositories
     {
         public static async Task Migrate()
         {
+            await dbContext.OpenConnection(true).ExecuteAsync(@"
+
+                -- MigrationsHistory definition
+
+               CREATE TABLE IF NOT EXISTS `MigrationsHistory` (
+                  `MigrationId` text DEFAULT NULL,
+                  `ProductVersion` varchar(100) DEFAULT NULL
+                );
+            ");
+
+
             Type[] clases = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.Namespace == "wsData.Migrations" && t.IsClass && !t.IsNested)
                 .ToArray();
