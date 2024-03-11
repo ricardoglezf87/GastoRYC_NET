@@ -2,7 +2,7 @@
 
 namespace GARCA.wsData.Endpoints
 {
-    public class AcountsTypesAPI : BaseAPI<AccountsTypes>   
+    public class DateCalendarAPI : BaseAPI<DateCalendar>   
     {
     }
 }
