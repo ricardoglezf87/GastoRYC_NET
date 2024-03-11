@@ -2,7 +2,7 @@
 
 namespace GARCA.wsData.Repositories
 {
-    public class AccountsTypesRepository : RepositoryBase<AccountsTypes>, IAccountsTypesRepository
+    public class AccountsTypesRepository : RepositoryBase<AccountsTypes>
     {
     }
 }

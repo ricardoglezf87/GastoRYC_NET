@@ -15,7 +15,7 @@ using static System.Net.WebRequestMethods;
 
 namespace GARCA.wsData.Endpoints
 {
-    public class AcountsTypesAPI : BaseAPI<AccountsTypes>   
+    public class AcountsAPI : BaseAPI<Accounts>   
     {
     }
 }
