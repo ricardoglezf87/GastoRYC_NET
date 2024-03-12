@@ -1,6 +1,8 @@
 ﻿using FluentValidation;
 using GARCA.Model;
 using GARCA.Models;
+using GARCA.Utils.Data;
+using GARCA.Utils.Logging;
 using GARCA.wsData.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq.Dynamic.Core;
@@ -29,19 +31,19 @@ namespace GARCA.wsData.Endpoints
             app.MapDelete("/" + ClassName + "/{id}", Delete).WithTags(ClassName);
         }
 
-        private async static Task<IResult> GetAll([FromServices] IRepositoryBase<Q> repository, [FromServices] ILogger<Program> logger)
+        public async static Task<IResult> GetAll([FromServices] IRepositoryBase<Q> repository)
         {
             var response = new ResponseAPI();
 
             try
             {
-                logger.LogInformation("Getting All {ClassName}");
+                Log.LogInformation($"Getting All {ClassName}");
 
                 var lobj = await repository.GetAll();
 
                 if (lobj == null)
                 {
-                    response.Success = true;
+                    response.Success = false;
                     response.StatusCode = HttpStatusCode.NotFound;
                     return Results.NotFound(response);
                 }
@@ -53,23 +55,20 @@ namespace GARCA.wsData.Endpoints
             }
             catch (Exception ex)
             {
-                response.Result = ex.Message;
-                response.Success = true;
-                response.StatusCode = HttpStatusCode.InternalServerError;
-                return Results.UnprocessableEntity(response);
+                Log.LogError(ex.Message);
+                return Results.Problem(ex.Message);                
             }
         }
 
-        private async static Task<IResult> Get([FromQuery] string predicateStr, 
-            [FromServices] IRepositoryBase<Q> repository, [FromServices] ILogger<Program> logger)
+        public async static Task<IResult> Get([FromQuery] string predicateStr, [FromServices] IRepositoryBase<Q> repository)
         {
             var response = new ResponseAPI();
 
             try
             {
-                logger.LogInformation("Getting {ClassName} by predicate");
+                Log.LogInformation($"Getting {ClassName} by predicate");
 
-                Expression<Func<Q, bool>> predicate = ConvertToLambda<Q>(predicateStr);
+                Expression<Func<Q, bool>> predicate = DataUtils.ConvertToLambda<Q>(predicateStr);
 
                 var lobj = await repository.Get(predicate);
 
@@ -82,32 +81,19 @@ namespace GARCA.wsData.Endpoints
                 }
                 else
                 {
-                    response.Success = true;
+                    response.Success = false;
                     response.StatusCode = HttpStatusCode.NotFound;
                     return Results.NotFound(response);
                 }
             }
             catch (Exception ex)
             {
-                response.Result = ex.Message;
-                response.Success = true;
-                response.StatusCode = HttpStatusCode.InternalServerError;
-                return Results.UnprocessableEntity(response);
+                Log.LogError(ex.Message);
+                return Results.Problem(ex.Message);
             }
-        }
+        }      
 
-        //TODO: Pasar a utils
-        static Expression<Func<Q, bool>> ConvertToLambda<Q>(string lambdaString)
-        {
-            // Puedes agregar más manejo de errores para cadenas inválidas
-            var parameters = new[] { Expression.Parameter(typeof(Q), "x") };
-            var body = DynamicExpressionParser.ParseLambda(parameters, null, lambdaString).Body;
-
-            return Expression.Lambda<Func<Q, bool>>(body, parameters);
-        }
-
-        private async static Task<IResult> GetById(string id, [FromServices] IRepositoryBase<Q>  repository, 
-            [FromServices] ILogger<Program> logger)
+        public async static Task<IResult> GetById(string id, [FromServices] IRepositoryBase<Q>  repository)
         {
             var response = new ResponseAPI();
 
@@ -121,8 +107,7 @@ namespace GARCA.wsData.Endpoints
                     return Results.BadRequest(response);
                 }
 
-
-                logger.LogInformation($"Getting {ClassName} by ID={nId}");
+                Log.LogInformation($"Getting {ClassName} by ID={nId}");
 
                 var obj = await repository.GetById(nId);
 
@@ -140,23 +125,19 @@ namespace GARCA.wsData.Endpoints
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
-                response.Result = ex.Message;
-                response.Success = false;
-                response.StatusCode = HttpStatusCode.InternalServerError;
-                return Results.UnprocessableEntity(response);
+                Log.LogError(ex.Message);
+                return Results.Problem(ex.Message);
             }
         }
 
-        private async static Task<IResult> Update([FromBody] Q obj,
-            [FromServices] IRepositoryBase<Q> repository, [FromServices] ILogger<Program> logger, 
-            [FromServices] IValidator<Q> validator)
+        public async static Task<IResult> Update([FromBody] Q obj,
+            [FromServices] IRepositoryBase<Q> repository,[FromServices] IValidator<Q> validator)
         {
             var response = new ResponseAPI();
 
             try
             {
-                logger.LogInformation($"Updating {ClassName}");
+                Log.LogInformation($"Updating {ClassName}");
 
                 var valResult = await validator.ValidateAsync(obj);
 
@@ -185,23 +166,19 @@ namespace GARCA.wsData.Endpoints
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
-                response.Result = ex.Message;
-                response.Success = false;
-                response.StatusCode = HttpStatusCode.InternalServerError;
-                return Results.UnprocessableEntity(response);
+                Log.LogError(ex.Message);
+                return Results.Problem(ex.Message);
             }
         }
 
-        private async static Task<IResult> Create([FromBody] Q obj,
-           [FromServices] IRepositoryBase<Q> repository, [FromServices] ILogger<Program> logger, 
-           [FromServices] IValidator<Q> validator)
+        public async static Task<IResult> Create([FromBody] Q obj,
+           [FromServices] IRepositoryBase<Q> repository,[FromServices] IValidator<Q> validator)
         {
             var response = new ResponseAPI();
 
             try
             {
-                logger.LogInformation($"Creating {ClassName}");
+                Log.LogInformation($"Creating {ClassName}");
 
                 var valResult = await validator.ValidateAsync(obj);
 
@@ -230,16 +207,12 @@ namespace GARCA.wsData.Endpoints
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
-                response.Result = ex.Message;
-                response.Success = false;
-                response.StatusCode = HttpStatusCode.InternalServerError;
-                return Results.UnprocessableEntity(response);
+                Log.LogError(ex.Message);
+                return Results.Problem(ex.Message);
             }
         }
 
-        private async static Task<IResult> Delete(string id, [FromServices] IRepositoryBase<Q> repository, 
-            [FromServices] ILogger<Program> logger)
+        public async static Task<IResult> Delete(string id, [FromServices] IRepositoryBase<Q> repository)
         {
             var response = new ResponseAPI();
 
@@ -254,7 +227,7 @@ namespace GARCA.wsData.Endpoints
                 }
 
 
-                logger.LogInformation($"Deleting {ClassName} by ID={nId}");
+                Log.LogInformation($"Deleting {ClassName} by ID={nId}");
 
                 if ((await repository.GetById(nId)) == null)
                 {
@@ -273,11 +246,8 @@ namespace GARCA.wsData.Endpoints
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message);
-                response.Result = "Borrado con exito";
-                response.Success = false;
-                response.StatusCode = HttpStatusCode.InternalServerError;
-                return Results.UnprocessableEntity(response);
+                Log.LogError(ex.Message);
+                return Results.Problem(ex.Message);
             }
         }
     }

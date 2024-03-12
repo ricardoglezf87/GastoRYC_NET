@@ -59,7 +59,7 @@ namespace wsData.Migrations
 
                 await dbContext.OpenConnection(true).ExecuteAsync(@"
                 -- tags definition
-                    CREATE TABLE tags (
+                    CREATE TABLE Tags (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                         description TEXT NULL
                     );
