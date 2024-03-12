@@ -34,7 +34,7 @@ app.UseSwagger();
 
 app.UseSwaggerUI();
 
-await MigrationRepository.Migrate();
+MigrationRepository.Migrate();
 
 CategoriesTypesAPI.ConfigEndPoint(app);
 CategoriesAPI.ConfigEndPoint(app);

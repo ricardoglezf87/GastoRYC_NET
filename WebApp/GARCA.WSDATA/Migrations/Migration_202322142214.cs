@@ -6,11 +6,11 @@ namespace wsData.Migrations
 {
     public class Migration_202411030901
     {
-        public async Task Do()
+        public  void Do()
         {
             try
             {
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- accountsTypes definition
                     CREATE TABLE AccountsTypes (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -18,7 +18,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- accounts definition
                     CREATE TABLE Accounts (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -29,7 +29,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- categoriesTypes definition
                     CREATE TABLE CategoriesTypes (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -37,7 +37,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- categories definition
                     CREATE TABLE Categories (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -46,7 +46,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- dateCalendar definition
                     CREATE TABLE DateCalendar (
                         id INT PRIMARY KEY,
@@ -57,7 +57,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- tags definition
                     CREATE TABLE Tags (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -65,7 +65,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                     -- persons definition
                     CREATE TABLE Persons (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -74,7 +74,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- transactionsStatus definition
                     CREATE TABLE TransactionsStatus (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -82,7 +82,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- InvestmentProductsTypes definition
                     CREATE TABLE InvestmentProductsTypes (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -90,7 +90,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- InvestmentProducts definition
                     CREATE TABLE InvestmentProducts (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -102,7 +102,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- investmentProductsPrices definition
                     CREATE TABLE InvestmentProductsPrices (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -112,7 +112,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- periodsReminders definition
                     CREATE TABLE PeriodsReminders (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -120,7 +120,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- transactions definition
                     CREATE TABLE Transactions (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -144,7 +144,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- splits definition
                     CREATE TABLE Splits (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -158,7 +158,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- TransactionsReminders definition
                     CREATE TABLE TransactionsReminders (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -176,7 +176,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- TransactionsArchived definition
                     CREATE TABLE TransactionsArchived (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -201,7 +201,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- splitsReminders definition
                     CREATE TABLE SplitsReminders (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -215,7 +215,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- SplitsArchived definition
                     CREATE TABLE SplitsArchived (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -230,7 +230,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
                 -- expirationsReminders definition
                     CREATE TABLE ExpirationsReminders (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -241,7 +241,7 @@ namespace wsData.Migrations
                 ");
 
 
-                await dbContext.OpenConnection(true).ExecuteAsync(@"
+                 dbContext.OpenConnection(true).Execute(@"
 
                 INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202411030901', '5.0');
 

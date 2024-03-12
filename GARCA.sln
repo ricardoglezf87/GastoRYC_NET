@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA.Model", "DesktopApp\G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA.wsData", "WebApp\GARCA.WSDATA\GARCA.wsData.csproj", "{B7AF5A8D-CFD6-42C9-A5F0-D46F304E6E87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GARCA.wsDataTest", "GARCA.wsDataTest\GARCA.wsDataTest.csproj", "{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA.wsDataTest", "WebApp\GARCA.wsTests\GARCA.wsTests.csproj", "{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

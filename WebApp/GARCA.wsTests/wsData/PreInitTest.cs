@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 using System.Net;
 
-namespace GARCA.wsDataTest
+namespace GARCA.wsTests.wsData
 {
     [SetUpFixture]
     [NonParallelizable]
@@ -19,13 +19,13 @@ namespace GARCA.wsDataTest
         {
             try
             {
-                MigrationRepository.Migrate().RunSynchronously();
+                MigrationRepository.Migrate();
             }
             catch (Exception ex)
             {
                 Log.LogError(ex.Message);
                 Assert.Fail(ex.Message);
             }
-        }        
+        }
     }
 }

@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Http.HttpResults;
 
 using System.Net;
 
-namespace GARCA.wsDataTest
+namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class CategoriesTypesUT: BaseUT<CategoriesTypes>
-    {       
+    public class InvestmentProductsTypesUT : BaseUT<InvestmentProductsTypes>
+    {
     }
 }

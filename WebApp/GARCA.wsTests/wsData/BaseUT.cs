@@ -7,10 +7,10 @@ using GARCA.wsData.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Net;
 
-namespace GARCA.wsDataTest
+namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    [Ignore("Ignorando pruebas en BaseUT<Q>")]    
+    [Ignore("Ignorando pruebas en BaseUT<Q>")]
     public class BaseUT<Q>
         where Q : ModelBase, new()
     {
@@ -29,7 +29,7 @@ namespace GARCA.wsDataTest
             {
                 // Act
 
-                var result = (Ok<ResponseAPI>) BaseAPI<Q>.GetAll(repository).Result;
+                var result = (Ok<ResponseAPI>)BaseAPI<Q>.GetAll(repository).Result;
 
                 // Assert
 
@@ -48,7 +48,7 @@ namespace GARCA.wsDataTest
         {
             try
             {
-                var invalidId = Int32.MaxValue.ToString();
+                var invalidId = int.MaxValue.ToString();
 
                 // Act
 

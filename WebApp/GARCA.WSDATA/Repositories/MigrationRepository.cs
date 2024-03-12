@@ -8,9 +8,9 @@ namespace GARCA.wsData.Repositories
 {
     public static class MigrationRepository
     {
-        public static async Task Migrate()
+        public static void Migrate()
         {
-            await dbContext.OpenConnection(true).ExecuteAsync(@"
+            dbContext.OpenConnection(true).Execute(@"
 
                 -- MigrationsHistory definition
 
@@ -27,7 +27,7 @@ namespace GARCA.wsData.Repositories
 
             foreach (Type clase in clases)
             {
-                if (await IsMigrateFeature(clase.Name))
+                if (IsMigrateFeature(clase.Name))
                 {
                     continue;
                 }
@@ -38,7 +38,7 @@ namespace GARCA.wsData.Repositories
 
                 if (metodoDo != null)
                 {
-                    await Task.Run(() => metodoDo.Invoke(instancia, null));
+                     metodoDo.Invoke(instancia, null);
                 }
                 else
                 {
@@ -47,9 +47,9 @@ namespace GARCA.wsData.Repositories
             }
         }
 
-        public static async Task<bool> IsMigrateFeature(string feature)
+        public static bool IsMigrateFeature(string feature)
         {
-            return Convert.ToInt32(await dbContext.OpenConnection().ExecuteScalarAsync($"Select count(*) from MigrationsHistory where MigrationId='{feature}'")) != 0;
+            return Convert.ToInt32(dbContext.OpenConnection().ExecuteScalar($"Select count(*) from MigrationsHistory where MigrationId='{feature}'")) != 0;
         }
     }
 }
