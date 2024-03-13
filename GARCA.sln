@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA.Model", "DesktopApp\G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA.wsData", "WebApp\GARCA.WSDATA\GARCA.wsData.csproj", "{B7AF5A8D-CFD6-42C9-A5F0-D46F304E6E87}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA.wsDataTest", "WebApp\GARCA.wsTests\GARCA.wsTests.csproj", "{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GARCA.wsTests", "WebApp\GARCA.wsTests\GARCA.wsTests.csproj", "{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,11 +96,10 @@ Global
 		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Release|x64.ActiveCfg = Release|Any CPU
-		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Release|x64.Build.0 = Release|Any CPU
 		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Test|Any CPU.ActiveCfg = Debug|Any CPU
 		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Test|Any CPU.Build.0 = Debug|Any CPU
-		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Test|x64.ActiveCfg = Debug|Any CPU
-		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Test|x64.Build.0 = Debug|Any CPU
+		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Test|x64.ActiveCfg = TEST|Any CPU
+		{B8B7C241-54AA-4202-8ED3-5B1BAB4D8412}.Test|x64.Build.0 = TEST|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

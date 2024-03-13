@@ -1,10 +1,11 @@
 ﻿using Dapper;
+using GARCA.Utils.Logging;
 using GARCA.wsData.Repositories;
 
 
 namespace wsData.Migrations
 {
-    public class Migration_202411030901
+    public class Migration_202403030901
     {
         public  void Do()
         {
@@ -243,13 +244,13 @@ namespace wsData.Migrations
 
                  dbContext.OpenConnection(true).Execute(@"
 
-                INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202411030901', '5.0');
+                INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202403030901', '5.0');
 
                 ");
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Log.LogError(ex.Message);
             }
         }
     }

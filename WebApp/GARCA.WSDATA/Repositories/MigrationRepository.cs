@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using GARCA.Utils.Logging;
 using GARCA_UTIL.Exceptions;
 using System.Reflection;
 
@@ -8,6 +9,49 @@ namespace GARCA.wsData.Repositories
 {
     public static class MigrationRepository
     {
+
+        public static void CleanDataBase()
+        {
+            try
+            {
+                dbContext.OpenConnection(true).Execute(@"
+                    DROP TABLE GARCA_TEST.ExpirationsReminders;
+                    DROP TABLE GARCA_TEST.SplitsArchived;
+                    DROP TABLE GARCA_TEST.SplitsReminders;
+                    DROP TABLE GARCA_TEST.TransactionsReminders;
+                    DROP TABLE GARCA_TEST.Splits;
+                    DROP TABLE GARCA_TEST.Transactions;
+                    DROP TABLE GARCA_TEST.InvestmentProductsPrices;
+                    DROP TABLE GARCA_TEST.TransactionsArchived;
+                    DROP TABLE GARCA_TEST.Accounts;
+                    DROP TABLE GARCA_TEST.AccountsTypes;
+                    DROP TABLE GARCA_TEST.DateCalendar;
+                    DROP TABLE GARCA_TEST.InvestmentProducts;
+                    DROP TABLE GARCA_TEST.InvestmentProductsTypes;
+                    DROP TABLE GARCA_TEST.MigrationsHistory;
+                    DROP TABLE GARCA_TEST.PeriodsReminders;
+                    DROP TABLE GARCA_TEST.Persons;
+                    DROP TABLE GARCA_TEST.Tags;
+                    DROP TABLE GARCA_TEST.TransactionsStatus;
+                    DROP TABLE GARCA_TEST.Categories;
+                    DROP TABLE GARCA_TEST.CategoriesTypes;
+                ");
+
+
+
+                dbContext.OpenConnection(true).Execute(@"
+
+                INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202403030902', '5.0');
+
+                ");
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex.Message);
+            }
+        }
+
+
         public static void Migrate()
         {
             dbContext.OpenConnection(true).Execute(@"
