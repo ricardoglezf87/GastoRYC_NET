@@ -4,14 +4,23 @@ using GARCA.Models;
 using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
+using GARCA.wsData.Validations;
+using Google.Apis.Sheets.v4.Data;
 using Microsoft.AspNetCore.Http.HttpResults;
-
 using System.Net;
 
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class AccountsTypesUT : BaseUT<AccountsTypes>
+    public class AccountsTypesUT : BaseUT<AccountsTypes,AccountsTypesValidations>
     {
+        protected override AccountsTypes CreateObj()
+        {
+            return new AccountsTypes()
+            {
+                Id = int.MaxValue,
+                Description = "Prueba"
+            };
+        }
     }
 }

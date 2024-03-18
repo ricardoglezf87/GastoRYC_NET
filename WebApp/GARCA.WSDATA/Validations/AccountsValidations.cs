@@ -4,12 +4,14 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace GARCA.wsData.Validations
 {
-    public class CategoriesTypesValidations: AbstractValidator<CategoriesTypes>
+    public class AccountsValidations: AbstractValidator<Accounts>
     {
-        public CategoriesTypesValidations()
+        public AccountsValidations()
         {
             RuleFor(model => model.Id).GreaterThanOrEqualTo(0);
             RuleFor(model => model.Description).NotEmpty();
+            RuleFor(model => model.AccountsTypesId).GreaterThanOrEqualTo(0);
+            RuleFor(model => model.Categoryid).GreaterThanOrEqualTo(0);
         }
     }
 }
