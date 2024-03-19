@@ -14,5 +14,18 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class TransactionsRemindersUT : BaseUT<TransactionsReminders,TransactionsRemindersValidations>
     {
+        public override TransactionsReminders CreateObj()
+        {
+            return new TransactionsReminders()
+            {
+                Id = int.MaxValue,
+                Date = DateTime.Now,
+                AccountsId = int.MaxValue,
+                CategoriesId = int.MaxValue,
+                AmountIn = decimal.MaxValue,
+                AmountOut = decimal.MaxValue,
+                TransactionsStatusId = int.MaxValue,
+            };
+        }
     }
 }

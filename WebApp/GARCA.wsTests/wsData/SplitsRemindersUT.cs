@@ -14,5 +14,16 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class SplitsRemindersUT : BaseUT<SplitsReminders,SplitsRemindersValidations>
     {
+        public override SplitsReminders CreateObj()
+        {
+            return new SplitsReminders()
+            {
+                Id = int.MaxValue,
+                CategoriesId = int.MaxValue,
+                TransactionsId = int.MaxValue,
+                AmountIn = decimal.MaxValue,
+                AmountOut = decimal.MaxValue
+            };
+        }
     }
 }

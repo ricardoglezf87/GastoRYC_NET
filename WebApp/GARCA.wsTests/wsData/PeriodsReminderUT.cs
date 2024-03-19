@@ -14,5 +14,13 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class PeriodsReminderUT : BaseUT<PeriodsReminders,PeriodsRemindersValidations>
     {
+        public override PeriodsReminders CreateObj()
+        {
+            return new PeriodsReminders()
+            {
+                Id = int.MaxValue,
+                Description = "TestDescrip"
+            };
+        }
     }
 }

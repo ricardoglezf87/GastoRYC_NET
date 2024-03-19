@@ -14,5 +14,16 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class SplitsUT : BaseUT<Splits, SplitsValidations>
     {
+        public override Splits CreateObj()
+        {
+            return new Splits()
+            {
+                Id = int.MaxValue,
+                CategoriesId = int.MaxValue,
+                TransactionsId = int.MaxValue,
+                AmountIn = decimal.MaxValue,
+                AmountOut = decimal.MaxValue
+            };
+        }
     }
 }

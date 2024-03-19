@@ -14,12 +14,12 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class AccountsTypesUT : BaseUT<AccountsTypes,AccountsTypesValidations>
     {
-        protected override AccountsTypes CreateObj()
+        public override AccountsTypes CreateObj()
         {
             return new AccountsTypes()
             {
                 Id = int.MaxValue,
-                Description = "Prueba"
+                Description = "TestDescrip"
             };
         }
     }

@@ -10,7 +10,7 @@ namespace GARCA.wsData.Validations
         {
             RuleFor(model => model.Id).GreaterThanOrEqualTo(0);
             RuleFor(model => model.Description).NotEmpty();
-            RuleFor(model => model.CategoriesTypesId).GreaterThanOrEqualTo(0);
+            RuleFor(model => model.CategoriesTypesId).GreaterThanOrEqualTo(0).NotEmpty();
         }
     }
 }

@@ -14,5 +14,15 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class ExpirationsRemindersUT : BaseUT<ExpirationsReminders,ExpirationsRemindersValidations>
     {
+        public override ExpirationsReminders CreateObj()
+        {
+       
+            return new ExpirationsReminders()
+            {
+                Id = int.MaxValue,
+                Date = DateTime.Now,
+                TransactionsRemindersId = int.MaxValue,
+            };
+        }
     }
 }

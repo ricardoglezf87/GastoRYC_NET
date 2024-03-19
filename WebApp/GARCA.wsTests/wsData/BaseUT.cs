@@ -80,6 +80,13 @@ namespace GARCA.wsTests.wsData
                 // Act
                 var obj = CreateObj();
 
+                var val = validator.Validate(obj);
+
+                if (!val.IsValid)
+                {
+                    throw new Exception(val.Errors[0].ErrorMessage);
+                }
+
                 var result = (Ok<ResponseAPI>)BaseAPI<Q>.Create(obj,repository, validator).Result;
 
                 // Assert
@@ -95,7 +102,7 @@ namespace GARCA.wsTests.wsData
         }
 
 
-        protected virtual Q CreateObj()
+        public virtual Q CreateObj()
         {
             return new Q() { Id = 99 };
         }

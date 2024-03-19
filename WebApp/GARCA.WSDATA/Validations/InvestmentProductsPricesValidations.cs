@@ -10,8 +10,8 @@ namespace GARCA.wsData.Validations
         {
             RuleFor(model => model.Id).GreaterThanOrEqualTo(0);
             RuleFor(model => model.Date).NotEmpty();
-            RuleFor(model => model.InvestmentProductsid).GreaterThan(0);
-            RuleFor(model => model.Prices).GreaterThan(0);
+            RuleFor(model => model.InvestmentProductsid).GreaterThan(0).NotEmpty();
+            RuleFor(model => model.Prices).GreaterThan(0).NotEmpty();
         }
     }
 }

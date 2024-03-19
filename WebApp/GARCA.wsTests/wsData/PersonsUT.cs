@@ -14,5 +14,14 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class PersonsUT : BaseUT<Persons,PersonsValidations>
     {
+        public override Persons CreateObj()
+        {
+            return new Persons()
+            {
+                Id = int.MaxValue,
+                Name = "TestDescrip",
+                Categoryid = int.MaxValue,
+            };
+        }
     }
 }

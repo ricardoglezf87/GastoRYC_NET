@@ -14,5 +14,13 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class TagsUT : BaseUT<Tags,TagsValidations>
     {
+        public override Tags CreateObj()
+        {
+            return new Tags()
+            {
+                Id = int.MaxValue,
+                Description = "TestDescrip"
+            };
+        }
     }
 }

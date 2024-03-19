@@ -14,5 +14,13 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class CategoriesTypesUT : BaseUT<CategoriesTypes,CategoriesTypesValidations>
     {
+        public override CategoriesTypes CreateObj()
+        {
+            return new CategoriesTypes()
+            {
+                Id = int.MaxValue,
+                Description = "TestDescrip"
+            };
+        }
     }
 }

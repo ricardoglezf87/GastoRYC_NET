@@ -50,7 +50,7 @@ namespace wsData.Migrations
                  dbContext.OpenConnection(true).Execute(@"
                 -- dateCalendar definition
                     CREATE TABLE DateCalendar (
-                        id INT PRIMARY KEY,
+                        id INT PRIMARY KEY AUTO_INCREMENT,
                         day INT,
                         month INT,
                         year INT,

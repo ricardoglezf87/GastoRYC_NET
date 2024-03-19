@@ -14,5 +14,13 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class TransactionsStatusUT : BaseUT<TransactionsStatus,TransactionsStatusValidations>
     {
+        public override TransactionsStatus CreateObj()
+        {
+            return new TransactionsStatus()
+            {
+                Id = int.MaxValue,
+                Description = "TestDescrip"
+            };
+        }
     }
 }

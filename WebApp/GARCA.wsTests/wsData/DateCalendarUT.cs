@@ -14,5 +14,16 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class DateCalendarUT : BaseUT<DateCalendar,DateCalendarValidations>
     {
+        public override DateCalendar CreateObj()
+        {
+            return new DateCalendar()
+            {
+                Id = int.MaxValue,
+                Date = DateTime.Now,
+                Day = DateTime.Now.Day,
+                Month = DateTime.Now.Month,
+                Year = DateTime.Now.Year,
+            };
+        }
     }
 }

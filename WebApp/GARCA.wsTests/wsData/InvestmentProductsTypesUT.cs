@@ -14,5 +14,13 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class InvestmentProductsTypesUT : BaseUT<InvestmentProductsTypes, InvestmentProductsTypesValidations>
     {
+        public override InvestmentProductsTypes CreateObj()
+        {
+            return new InvestmentProductsTypes()
+            {
+                Id = int.MaxValue,
+                Description = "TestDescrip"
+            };
+        }
     }
 }
