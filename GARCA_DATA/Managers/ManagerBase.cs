@@ -9,17 +9,26 @@ namespace GARCA.Data.Managers
     {
         public virtual async Task<IEnumerable<Q>?> GetAll()
         {
-            return await iRycContextService.getConnection().GetAllAsync<Q>();
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.GetAllAsync<Q>();
+            }
         }
 
         public virtual async Task<Q?> GetById(int id)
         {
-            return await iRycContextService.getConnection().GetAsync<Q>(id);
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.GetAsync<Q>(id);
+            }
         }
 
         public virtual async Task<Q?> GetById(DateTime id)
         {
-            return await iRycContextService.getConnection().GetAsync<Q>(id);
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.GetAsync<Q>(id);
+            }
         }
 
         public virtual async Task<Q> Save(Q obj)
@@ -37,12 +46,18 @@ namespace GARCA.Data.Managers
 
         public virtual async Task<bool> Update(Q obj)
         {
-            return await iRycContextService.getConnection().UpdateAsync(obj);
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.UpdateAsync(obj);
+            }
         }
 
         public virtual async Task<int> Insert(Q obj)
         {
-            return (int)(UInt64)await iRycContextService.getConnection().InsertAsync<Q>(obj);
+            using (var connection = iRycContextService.getConnection())
+            {
+                return Convert.ToInt32(await connection.InsertAsync<Q>(obj));
+            }
         }
 
         public virtual async Task<bool> Delete(Q obj)
@@ -52,7 +67,10 @@ namespace GARCA.Data.Managers
 
         public virtual async Task<bool> Delete(int id)
         {
-            return await iRycContextService.getConnection().DeleteAsync(new Q() { Id = id });
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.DeleteAsync(new Q() { Id = id });
+            }
         }
     }
 }

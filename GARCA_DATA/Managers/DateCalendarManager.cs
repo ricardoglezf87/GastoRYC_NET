@@ -10,8 +10,11 @@ namespace GARCA.Data.Managers
     {
         public async Task<DateCalendar?> GetByDate(DateTime date)
         {
-            var obj = await iRycContextService.getConnection().SelectAsync<DateCalendar>(x => x.Date == date);
-            return obj == null || !obj.Any() ? null : obj.First();
+            using (var connection = iRycContextService.getConnection())
+            {
+                var obj = await connection.SelectAsync<DateCalendar>(x => x.Date == date);
+                return obj == null || !obj.Any() ? null : obj.First();
+            }
         }
     }
 }

@@ -38,7 +38,10 @@ namespace GARCA.Data.Managers
 
         public async Task<bool> IsMigrateFeature(string feature)
         {
-            return Convert.ToInt32(await iRycContextService.getConnection().ExecuteScalarAsync($"Select count(*) from MigrationsHistory where MigrationId='{feature}'")) != 0;
+            using (var connection = iRycContextService.getConnection())
+            {
+                return Convert.ToInt32(await connection.ExecuteScalarAsync($"Select count(*) from MigrationsHistory where MigrationId='{feature}'")) != 0;
+            }
         }
     }
 }

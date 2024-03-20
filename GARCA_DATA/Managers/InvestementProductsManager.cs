@@ -8,7 +8,10 @@ namespace GARCA.Data.Managers
     {
         public async Task<IEnumerable<InvestmentProducts>?> GetAllOpened()
         {
-            return await iRycContextService.getConnection().SelectAsync<InvestmentProducts, InvestmentProductsTypes, InvestmentProducts>(x => x.Active == true);
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.SelectAsync<InvestmentProducts, InvestmentProductsTypes, InvestmentProducts>(x => x.Active == true);
+            }
         }
     }
 }

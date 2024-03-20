@@ -9,8 +9,10 @@ namespace GARCA.Data.Managers
     {
         public override async Task<IEnumerable<TransactionsReminders>?> GetAll()
         {
-            return await iRycContextService.getConnection().GetAllAsync<TransactionsReminders,
-                PeriodsReminders, Accounts, Categories, TransactionsStatus, Persons, Tags, TransactionsReminders>();
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.GetAllAsync<TransactionsReminders,PeriodsReminders, Accounts, Categories, TransactionsStatus, Persons, Tags, TransactionsReminders>();
+            }
         }
     }
 }

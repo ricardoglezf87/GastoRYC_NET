@@ -9,7 +9,10 @@ namespace GARCA_DATA.Managers
     {
         public override async Task<IEnumerable<Accounts>?> GetAll()
         {
-            return await iRycContextService.getConnection().GetAllAsync<Accounts, AccountsTypes, Accounts>();
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.GetAllAsync<Accounts, AccountsTypes, Accounts>();
+            }
         }
     }
 }

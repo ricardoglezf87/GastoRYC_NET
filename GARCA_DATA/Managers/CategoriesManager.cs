@@ -9,12 +9,18 @@ namespace GARCA.Data.Managers
     {
         public override async Task<IEnumerable<Categories>?> GetAll()
         {
-            return await iRycContextService.getConnection().GetAllAsync<Categories, CategoriesTypes, Categories>();
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.GetAllAsync<Categories, CategoriesTypes, Categories>();
+            }
         }
 
         public async Task<int> GetNextId()
         {
-            return await iRycContextService.getConnection().ExecuteScalarAsync<int>("SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';");
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.ExecuteScalarAsync<int>("SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';");
+            }
         }
     }
 }

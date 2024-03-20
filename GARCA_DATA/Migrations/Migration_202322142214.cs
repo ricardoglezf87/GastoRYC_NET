@@ -7,7 +7,10 @@ namespace GARCA.Data.Migrations
     {
         public async Task Do()
         {
-            await iRycContextService.getConnection().ExecuteAsync(@"
+            using (var connection = iRycContextService.getConnection())
+            {
+
+                await connection.ExecuteAsync(@"
 
                     DROP TABLE dateCalendar;
 
@@ -21,11 +24,12 @@ namespace GARCA.Data.Migrations
 
                 ");
 
-            await iRycContextService.getConnection().ExecuteAsync(@"
+                await connection.ExecuteAsync(@"
 
-                INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202322142214', '4.0');
+                    INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202322142214', '4.0');
 
                 ");
+            }
 
         }
     }

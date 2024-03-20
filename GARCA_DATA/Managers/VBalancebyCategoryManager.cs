@@ -9,7 +9,10 @@ namespace GARCA.Data.Managers
     {
         public async Task<IEnumerable<VBalancebyCategory>?> GetAll()
         {
-            return await iRycContextService.getConnection().GetAllAsync<VBalancebyCategory>();
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.GetAllAsync<VBalancebyCategory>();
+            }
         }
     }
 }

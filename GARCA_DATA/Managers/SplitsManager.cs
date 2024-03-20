@@ -9,12 +9,18 @@ namespace GARCA.Data.Managers
     {
         public async Task<IEnumerable<Splits>?> GetbyTransactionidNull()
         {
-            return await iRycContextService.getConnection().SelectAsync<Splits>(x => x.TransactionsId == null);
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.SelectAsync<Splits>(x => x.TransactionsId == null);
+            }
         }
 
         public async Task<IEnumerable<Splits>?> GetbyTransactionid(int transactionid)
         {
-            return await iRycContextService.getConnection().SelectAsync<Splits>(x => x.TransactionsId == transactionid);
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.SelectAsync<Splits>(x => x.TransactionsId == transactionid);
+            }
         }
     }
 }
