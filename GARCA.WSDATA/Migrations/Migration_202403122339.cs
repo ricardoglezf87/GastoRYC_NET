@@ -18,11 +18,12 @@ namespace wsData.Migrations
                 PeriodsRemindersSeed.Do();
                 TransactionsStatusSeed.Do();
 
-                dbContext.OpenConnection(true).Execute(@"
-
-                INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202403122339', '5.0');
-
-                ");
+                using (var connection = dbContext.OpenConnection(true))
+                {
+                    connection.Execute(@"
+                        INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202403122339', '5.0');
+                    ");
+                }
             }
             catch(Exception ex)
             {

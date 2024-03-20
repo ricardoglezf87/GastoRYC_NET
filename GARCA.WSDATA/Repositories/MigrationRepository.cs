@@ -14,36 +14,32 @@ namespace GARCA.wsData.Repositories
         {
             try
             {
-                dbContext.OpenConnection(true).Execute(@"
-                    DROP TABLE GARCA_TEST.ExpirationsReminders;
-                    DROP TABLE GARCA_TEST.SplitsArchived;
-                    DROP TABLE GARCA_TEST.SplitsReminders;
-                    DROP TABLE GARCA_TEST.TransactionsReminders;
-                    DROP TABLE GARCA_TEST.Splits;
-                    DROP TABLE GARCA_TEST.Transactions;
-                    DROP TABLE GARCA_TEST.InvestmentProductsPrices;
-                    DROP TABLE GARCA_TEST.TransactionsArchived;
-                    DROP TABLE GARCA_TEST.Accounts;
-                    DROP TABLE GARCA_TEST.AccountsTypes;
-                    DROP TABLE GARCA_TEST.DateCalendar;
-                    DROP TABLE GARCA_TEST.InvestmentProducts;
-                    DROP TABLE GARCA_TEST.InvestmentProductsTypes;
-                    DROP TABLE GARCA_TEST.MigrationsHistory;
-                    DROP TABLE GARCA_TEST.PeriodsReminders;
-                    DROP TABLE GARCA_TEST.Persons;
-                    DROP TABLE GARCA_TEST.Tags;
-                    DROP TABLE GARCA_TEST.TransactionsStatus;
-                    DROP TABLE GARCA_TEST.Categories;
-                    DROP TABLE GARCA_TEST.CategoriesTypes;
-                ");
+                using (var connection = dbContext.OpenConnection(true))
+                {
+                   connection.Execute(@"
+                        DROP TABLE GARCA_TEST.ExpirationsReminders;
+                        DROP TABLE GARCA_TEST.SplitsArchived;
+                        DROP TABLE GARCA_TEST.SplitsReminders;
+                        DROP TABLE GARCA_TEST.TransactionsReminders;
+                        DROP TABLE GARCA_TEST.Splits;
+                        DROP TABLE GARCA_TEST.Transactions;
+                        DROP TABLE GARCA_TEST.InvestmentProductsPrices;
+                        DROP TABLE GARCA_TEST.TransactionsArchived;
+                        DROP TABLE GARCA_TEST.Accounts;
+                        DROP TABLE GARCA_TEST.AccountsTypes;
+                        DROP TABLE GARCA_TEST.DateCalendar;
+                        DROP TABLE GARCA_TEST.InvestmentProducts;
+                        DROP TABLE GARCA_TEST.InvestmentProductsTypes;
+                        DROP TABLE GARCA_TEST.MigrationsHistory;
+                        DROP TABLE GARCA_TEST.PeriodsReminders;
+                        DROP TABLE GARCA_TEST.Persons;
+                        DROP TABLE GARCA_TEST.Tags;
+                        DROP TABLE GARCA_TEST.TransactionsStatus;
+                        DROP TABLE GARCA_TEST.Categories;
+                        DROP TABLE GARCA_TEST.CategoriesTypes;
+                    ");
 
-
-
-                dbContext.OpenConnection(true).Execute(@"
-
-                INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202403030902', '5.0');
-
-                ");
+                }                
             }
             catch (Exception ex)
             {
@@ -54,16 +50,17 @@ namespace GARCA.wsData.Repositories
 
         public static void Migrate()
         {
-            dbContext.OpenConnection(true).Execute(@"
+            using (var connection = dbContext.OpenConnection(true))
+            {
+                connection.Execute(@"
+                    -- MigrationsHistory definition
 
-                -- MigrationsHistory definition
-
-               CREATE TABLE IF NOT EXISTS `MigrationsHistory` (
-                  `MigrationId` text DEFAULT NULL,
-                  `ProductVersion` varchar(100) DEFAULT NULL
-                );
-            ");
-
+                   CREATE TABLE IF NOT EXISTS `MigrationsHistory` (
+                      `MigrationId` text DEFAULT NULL,
+                      `ProductVersion` varchar(100) DEFAULT NULL
+                    );
+                ");
+            }
 
             Type[] clases = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.Namespace == "wsData.Migrations" && t.IsClass && !t.IsNested)
@@ -93,7 +90,10 @@ namespace GARCA.wsData.Repositories
 
         public static bool IsMigrateFeature(string feature)
         {
-            return Convert.ToInt32(dbContext.OpenConnection().ExecuteScalar($"Select count(*) from MigrationsHistory where MigrationId='{feature}'")) != 0;
+            using (var connection = dbContext.OpenConnection())
+            {
+                return Convert.ToInt32(connection.ExecuteScalar($"Select count(*) from MigrationsHistory where MigrationId='{feature}'")) != 0;
+            }
         }
     }
 }

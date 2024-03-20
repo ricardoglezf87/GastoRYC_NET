@@ -10,8 +10,11 @@ namespace GARCA.wsData.Repositories
     {
         public async Task<DateCalendar?> GetByDate(DateTime date)
         {
-            var obj = await dbContext.OpenConnection().SelectAsync<DateCalendar>(x => x.Date == date);
-            return obj == null || !obj.Any() ? null : obj.First();
+            using (var connection = dbContext.OpenConnection())
+            {
+                var obj = await connection.SelectAsync<DateCalendar>(x => x.Date == date);
+                return obj == null || !obj.Any() ? null : obj.First();
+            }
         }
     }
 }

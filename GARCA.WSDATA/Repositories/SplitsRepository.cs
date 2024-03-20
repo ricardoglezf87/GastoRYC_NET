@@ -9,12 +9,18 @@ namespace GARCA.wsData.Repositories
     {
         public async Task<IEnumerable<Splits>?> GetbyTransactionidNull()
         {
-            return await dbContext.OpenConnection().SelectAsync<Splits>(x => x.TransactionsId == null);
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.SelectAsync<Splits>(x => x.TransactionsId == null);
+            }
         }
 
         public async Task<IEnumerable<Splits>?> GetbyTransactionid(int transactionid)
         {
-            return await dbContext.OpenConnection().SelectAsync<Splits>(x => x.TransactionsId == transactionid);
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.SelectAsync<Splits>(x => x.TransactionsId == transactionid);
+            }
         }
     }
 }

@@ -7,16 +7,19 @@ namespace GARCA.wsData.Migrations.Seeder
     {
         public static void Do()
         {
-            dbContext.OpenConnection().Execute(@"
-                INSERT INTO AccountsTypes (description) VALUES
-	             ('Efectivo'),
-	             ('Banco'),
-	             ('Tarjetas'),
-	             ('Inversiones'),
-	             ('Prestamos'),
-	             ('Inmovilizados'),
-	             ('Ahorros');
-            ");
+            using (var connection = dbContext.OpenConnection())
+            {
+                connection.Execute(@"
+                    INSERT INTO AccountsTypes (description) VALUES
+	                    ('Efectivo'),
+	                    ('Banco'),
+	                    ('Tarjetas'),
+	                    ('Inversiones'),
+	                    ('Prestamos'),
+	                    ('Inmovilizados'),
+	                    ('Ahorros');
+                ");
+            }
         }
 
     }

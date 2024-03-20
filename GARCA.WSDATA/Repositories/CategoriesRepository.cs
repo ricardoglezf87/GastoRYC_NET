@@ -9,12 +9,18 @@ namespace GARCA.wsData.Repositories
     {
         public override async Task<IEnumerable<Categories>?> GetAll()
         {
-            return await dbContext.OpenConnection().GetAllAsync<Categories, CategoriesTypes, Categories>();
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.GetAllAsync<Categories, CategoriesTypes, Categories>();
+            }
         }
 
         public async Task<int> GetNextId()
         {
-            return await dbContext.OpenConnection().ExecuteScalarAsync<int>("SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';");
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.ExecuteScalarAsync<int>("SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';");
+            }
         }
     }
 }

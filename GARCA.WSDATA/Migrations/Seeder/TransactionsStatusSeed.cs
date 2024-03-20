@@ -7,12 +7,15 @@ namespace GARCA.wsData.Migrations.Seeder
     {
         public static void Do()
         {
-            dbContext.OpenConnection().Execute(@"
-                INSERT INTO TransactionsStatus (description) VALUES
-	             ('Pendiente'),
-	             ('Provisional'),
-	             ('Conciliado');
-            ");
+            using (var connection = dbContext.OpenConnection())
+            {
+                connection.Execute(@"
+                    INSERT INTO TransactionsStatus (description) VALUES
+	                 ('Pendiente'),
+	                 ('Provisional'),
+	                 ('Conciliado');
+                ");
+            }
         }
 
     }

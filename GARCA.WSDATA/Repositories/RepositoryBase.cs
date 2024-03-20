@@ -10,22 +10,34 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<IEnumerable<Q>?> GetAll()
         {
-            return await dbContext.OpenConnection().GetAllAsync<Q>();
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.GetAllAsync<Q>();
+            }
         }
 
         public virtual async Task<Q?> GetById(int id)
         {
-            return await dbContext.OpenConnection().GetAsync<Q>(id);
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.GetAsync<Q>(id);
+            }
         }
 
         public virtual async Task<Q?> GetById(DateTime id)
         {
-            return await dbContext.OpenConnection().GetAsync<Q>(id);
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.GetAsync<Q>(id);
+            }
         }
 
-        public virtual async Task<IEnumerable<Q>?> Get(Expression<Func<Q,bool>> predicate)
+        public virtual async Task<IEnumerable<Q>?> Get(Expression<Func<Q, bool>> predicate)
         {
-            return await dbContext.OpenConnection().SelectAsync<Q>(predicate);
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.SelectAsync<Q>(predicate);
+            }
         }
 
         public virtual async Task<Q> Save(Q obj)
@@ -43,12 +55,18 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<bool> Update(Q obj)
         {
-            return await dbContext.OpenConnection().UpdateAsync(obj);
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.UpdateAsync(obj);
+            }
         }
 
         public virtual async Task<int> Insert(Q obj)
         {
-            return (int)(UInt64)await dbContext.OpenConnection().InsertAsync<Q>(obj);
+            using (var connection = dbContext.OpenConnection())
+            {
+                return (int)(UInt64)await connection.InsertAsync<Q>(obj);
+            }
         }
 
         public virtual async Task<bool> Delete(Q obj)
@@ -58,7 +76,10 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<bool> Delete(int id)
         {
-            return await dbContext.OpenConnection().DeleteAsync(new Q() { Id = id });
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.DeleteAsync(new Q() { Id = id });
+            }
         }
     }
 }

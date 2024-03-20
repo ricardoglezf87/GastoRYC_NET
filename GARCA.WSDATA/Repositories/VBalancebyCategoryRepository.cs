@@ -9,7 +9,10 @@ namespace GARCA.wsData.Repositories
     {
         public async Task<IEnumerable<VBalancebyCategory>?> GetAll()
         {
-            return await dbContext.OpenConnection().GetAllAsync<VBalancebyCategory>();
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.GetAllAsync<VBalancebyCategory>();
+            }
         }
     }
 }

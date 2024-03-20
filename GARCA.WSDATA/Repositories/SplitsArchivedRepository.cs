@@ -9,8 +9,10 @@ namespace GARCA.wsData.Repositories
     {
         public async Task<IEnumerable<SplitsArchived>?> GetbyTransactionid(int transactionid)
         {
-            return await dbContext.OpenConnection().
-                SelectAsync<SplitsArchived>(x => x.TransactionsId == transactionid);
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.SelectAsync<SplitsArchived>(x => x.TransactionsId == transactionid);
+            }
         }
     }
 }

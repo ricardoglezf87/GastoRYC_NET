@@ -9,7 +9,10 @@ namespace GARCA_DATA.Repositories
     {
         public override async Task<IEnumerable<Accounts>?> GetAll()
         {
-            return await dbContext.OpenConnection().GetAllAsync<Accounts, AccountsTypes, Accounts>();
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.GetAllAsync<Accounts, AccountsTypes, Accounts>();
+            }
         }
     }
 }

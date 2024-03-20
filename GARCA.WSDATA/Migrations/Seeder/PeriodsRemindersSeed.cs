@@ -7,16 +7,19 @@ namespace GARCA.wsData.Migrations.Seeder
     {
         public static void Do()
         {
-            dbContext.OpenConnection().Execute(@"
-                INSERT INTO PeriodsReminders (description) VALUES
-	             ('Diario'),
-	             ('Semanal'),
-	             ('Mensual'),
-	             ('Bimestral'),
-	             ('Trimestral'),
-	             ('Semestral'),
-	             ('Anual');
-            ");
+            using (var connection = dbContext.OpenConnection())
+            {
+                connection.Execute(@"
+                    INSERT INTO PeriodsReminders (description) VALUES
+	                 ('Diario'),
+	                 ('Semanal'),
+	                 ('Mensual'),
+	                 ('Bimestral'),
+	                 ('Trimestral'),
+	                 ('Semestral'),
+	                 ('Anual');
+                ");
+            }
         }
 
     }

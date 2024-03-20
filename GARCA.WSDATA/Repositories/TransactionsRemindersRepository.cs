@@ -9,8 +9,11 @@ namespace GARCA.wsData.Repositories
     {
         public override async Task<IEnumerable<TransactionsReminders>?> GetAll()
         {
-            return await dbContext.OpenConnection().GetAllAsync<TransactionsReminders,
+            using (var connection = dbContext.OpenConnection())
+            {
+                return await connection.GetAllAsync<TransactionsReminders,
                 PeriodsReminders, Accounts, Categories, TransactionsStatus, Persons, Tags, TransactionsReminders>();
+            }
         }
     }
 }

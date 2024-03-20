@@ -11,7 +11,9 @@ namespace wsData.Migrations
         {
             try
             {
-                 dbContext.OpenConnection(true).Execute(@"
+                using (var connection = dbContext.OpenConnection(true))
+                {
+                    connection.Execute(@"
                 -- accountsTypes definition
                     CREATE TABLE AccountsTypes (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -19,7 +21,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- accounts definition
                     CREATE TABLE Accounts (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -30,7 +32,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- categoriesTypes definition
                     CREATE TABLE CategoriesTypes (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -38,7 +40,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- categories definition
                     CREATE TABLE Categories (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -47,7 +49,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- dateCalendar definition
                     CREATE TABLE DateCalendar (
                         id INT PRIMARY KEY AUTO_INCREMENT,
@@ -58,7 +60,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- tags definition
                     CREATE TABLE Tags (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -66,7 +68,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                     -- persons definition
                     CREATE TABLE Persons (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -75,7 +77,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- transactionsStatus definition
                     CREATE TABLE TransactionsStatus (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -83,7 +85,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- InvestmentProductsTypes definition
                     CREATE TABLE InvestmentProductsTypes (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -91,7 +93,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- InvestmentProducts definition
                     CREATE TABLE InvestmentProducts (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -103,7 +105,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- investmentProductsPrices definition
                     CREATE TABLE InvestmentProductsPrices (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -113,7 +115,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- periodsReminders definition
                     CREATE TABLE PeriodsReminders (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -121,7 +123,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- transactions definition
                     CREATE TABLE Transactions (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -145,7 +147,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- splits definition
                     CREATE TABLE Splits (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -159,7 +161,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- TransactionsReminders definition
                     CREATE TABLE TransactionsReminders (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -177,7 +179,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- TransactionsArchived definition
                     CREATE TABLE TransactionsArchived (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -202,7 +204,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- splitsReminders definition
                     CREATE TABLE SplitsReminders (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -216,7 +218,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- SplitsArchived definition
                     CREATE TABLE SplitsArchived (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -231,7 +233,7 @@ namespace wsData.Migrations
                     );
                 ");
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
                 -- expirationsReminders definition
                     CREATE TABLE ExpirationsReminders (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -242,11 +244,12 @@ namespace wsData.Migrations
                 ");
 
 
-                 dbContext.OpenConnection(true).Execute(@"
+                    connection.Execute(@"
 
                 INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202403030901', '5.0');
 
                 ");
+                }
             }
             catch(Exception ex)
             {
