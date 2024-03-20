@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DesktopApp\GARCA_MODEL\GARCA.Model.csproj" />
-    <ProjectReference Include="..\..\DesktopApp\GARCA_UTIL\GARCA.Utils.csproj" />
+    <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
+    <ProjectReference Include="..\GARCA_UTIL\GARCA.Utils.csproj" />
   </ItemGroup>
 
 </Project>

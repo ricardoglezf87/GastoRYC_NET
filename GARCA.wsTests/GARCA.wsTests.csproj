@@ -26,6 +26,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GARCA.WSDATA\GARCA.wsData.csproj" />
+    <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
+    <ProjectReference Include="..\GARCA_UTIL\GARCA.Utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>
