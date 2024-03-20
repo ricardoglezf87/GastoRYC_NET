@@ -14,6 +14,12 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class InvestmentProductsUT : BaseUT<InvestmentProducts, InvestmentProductsValidations>
     {
+        public override InvestmentProducts MakeChange(InvestmentProducts obj)
+        {
+            obj.Description = "TestDescripUpdate";
+            return obj;
+        }
+
         public override InvestmentProducts CreateObj()
         {
             var investmentProductsTypesId = new InvestmentProductsTypesRepository().

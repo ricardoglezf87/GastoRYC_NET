@@ -14,13 +14,21 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class PersonsUT : BaseUT<Persons,PersonsValidations>
     {
+        public override Persons MakeChange(Persons obj)
+        {
+            obj.Name = "TestDescripUpdate";
+            return obj;
+        }
+
         public override Persons CreateObj()
         {
+            var categoryid = new CategoriesRepository().Insert(new CategoriesUT().CreateObj()).Result;
+
             return new Persons()
             {
                 Id = int.MaxValue,
                 Name = "TestDescrip",
-                Categoryid = int.MaxValue,
+                Categoryid = categoryid,
             };
         }
     }

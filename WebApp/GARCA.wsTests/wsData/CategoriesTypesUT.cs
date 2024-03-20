@@ -14,6 +14,12 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class CategoriesTypesUT : BaseUT<CategoriesTypes,CategoriesTypesValidations>
     {
+        public override CategoriesTypes MakeChange(CategoriesTypes obj)
+        {
+            obj.Description = "TestDescripUpdate";
+            return obj;
+        }
+
         public override CategoriesTypes CreateObj()
         {
             return new CategoriesTypes()

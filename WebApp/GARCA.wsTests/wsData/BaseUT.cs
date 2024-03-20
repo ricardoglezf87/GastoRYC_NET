@@ -101,6 +101,80 @@ namespace GARCA.wsTests.wsData
             }
         }
 
+        [Test]
+        public void Delete_Ok()
+        {
+            try
+            {
+                // Act
+                Q obj = CreateObj();
+
+                var val = validator.Validate(obj);
+
+                if (!val.IsValid)
+                {
+                    throw new Exception(val.Errors[0].ErrorMessage);
+                }
+
+                var result = (Ok<ResponseAPI>)BaseAPI<Q>.Create(obj, repository, validator).Result;
+
+                // Assert
+
+                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+                obj = (Q)result.Value.Result;
+
+                result = (Ok<ResponseAPI>)BaseAPI<Q>.Delete(obj.Id.ToString(), repository).Result;
+
+                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex.Message);
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
+        public void Update_Ok()
+        {
+            try
+            {
+                // Act
+                Q obj = CreateObj();
+
+                var val = validator.Validate(obj);
+
+                if (!val.IsValid)
+                {
+                    throw new Exception(val.Errors[0].ErrorMessage);
+                }
+
+                var result = (Ok<ResponseAPI>)BaseAPI<Q>.Create(obj, repository, validator).Result;
+
+                // Assert
+
+                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+                obj = (Q)result.Value.Result;
+
+                obj = MakeChange(obj);
+
+                result = (Ok<ResponseAPI>)BaseAPI<Q>.Update(obj, repository,validator).Result;
+
+                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex.Message);
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        public virtual Q MakeChange(Q obj)
+        {
+            return new Q() { Id = 99 };
+        }
 
         public virtual Q CreateObj()
         {

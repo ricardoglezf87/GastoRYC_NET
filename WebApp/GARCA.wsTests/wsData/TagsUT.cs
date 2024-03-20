@@ -14,6 +14,12 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class TagsUT : BaseUT<Tags,TagsValidations>
     {
+        public override Tags MakeChange(Tags obj)
+        {
+            obj.Description = "TestDescripUpdate";
+            return obj;
+        }
+
         public override Tags CreateObj()
         {
             return new Tags()

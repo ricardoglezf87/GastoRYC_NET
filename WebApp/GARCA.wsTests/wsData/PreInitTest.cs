@@ -1,3 +1,4 @@
+using Castle.Components.DictionaryAdapter;
 using FluentValidation;
 using GARCA.Model;
 using GARCA.Models;
@@ -10,11 +11,11 @@ using System.Net;
 
 namespace GARCA.wsTests.wsData
 {
-    [SetUpFixture]
-    [NonParallelizable]
+    [TestFixture]
+    [Ignore("Ignorando pruebas en BaseUT<Q>")]
     public class PreInitTest
     {
-        [OneTimeSetUp]
+        [Test]
         public void setupTest()
         {
             try

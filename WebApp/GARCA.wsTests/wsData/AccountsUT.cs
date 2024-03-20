@@ -8,6 +8,12 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class AccountsUT : BaseUT<Accounts,AccountsValidations>
     {
+        public override Accounts MakeChange(Accounts obj)
+        {
+            obj.Description = "TestDescripUpdate";
+            return obj;
+        }
+
         public override Accounts CreateObj()
         {
             var accountsTypesId = new AccountsTypesRepository().Insert(new AccountsTypesUT().CreateObj()).Result;

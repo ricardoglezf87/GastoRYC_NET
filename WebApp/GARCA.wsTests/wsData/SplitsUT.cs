@@ -14,13 +14,22 @@ namespace GARCA.wsTests.wsData
     [TestFixture]
     public class SplitsUT : BaseUT<Splits, SplitsValidations>
     {
+        public override Splits MakeChange(Splits obj)
+        {
+            obj.Memo = "TestDescripUpdate";
+            return obj;
+        }
+
         public override Splits CreateObj()
         {
+            var categoryid = new CategoriesRepository().Insert(new CategoriesUT().CreateObj()).Result;
+            var transid = new TransactionsRepository().Insert(new TransactionsUT().CreateObj()).Result;
+
             return new Splits()
             {
                 Id = int.MaxValue,
-                CategoriesId = int.MaxValue,
-                TransactionsId = int.MaxValue,
+                CategoriesId = categoryid,
+                TransactionsId = transid,
                 AmountIn = decimal.MaxValue,
                 AmountOut = decimal.MaxValue
             };
