@@ -8,6 +8,17 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -30,8 +41,8 @@ builder.Services.AddScoped<IRepositoryBase<ExpirationsReminders>, ExpirationsRem
 builder.Services.AddScoped<IRepositoryBase<DateCalendar>, DateCalendarRepository>();
 
 var app = builder.Build();
+app.UseCors("AllowAnyOrigin");
 app.UseSwagger();
-
 app.UseSwaggerUI();
 
 MigrationRepository.Migrate();
