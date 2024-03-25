@@ -1,4 +1,4 @@
-﻿@page "/AccountsTypes/List/{msg?}"
+﻿@page "/AccountsTypes/List"
 @rendermode InteractiveAuto
 @inject IJSRuntime JsRuntime
 
@@ -52,10 +52,6 @@
 
 
 @code {
-
-    [Parameter]
-    public string? msg { get; set; }
-
     private AccountsTypesRepository repository { get; set; } = new AccountsTypesRepository();
     private IEnumerable<AccountsTypes> lObj { get; set; } = new List<AccountsTypes>();
     private bool IsProcessing { get; set; } = false;
@@ -68,9 +64,10 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender) 
     {
-        if (firstRender && !string.IsNullOrEmpty(msg))
+        if (firstRender && !await JsRuntime.SessionEmpty("msgSucess"))
         {
-            await JsRuntime.ToastrSuccess(msg);
+            await JsRuntime.ToastrSuccess(await JsRuntime.GetSessionVariable("msgSucess"));
+            await JsRuntime.RemoveSessionVariable("msgSucess");
         }
     }
 

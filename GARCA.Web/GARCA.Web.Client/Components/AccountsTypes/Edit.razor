@@ -70,7 +70,9 @@
                 await repository.Create(obj);
             }
 
-            navigationManager.NavigateTo($"AccountsTypes/List/{Uri.EscapeDataString("Tipo cuenta guardado correctamente!")}");
+            await JsRuntime.SetSessionVariable("msgSucess", "Tipo cuenta guardado correctamente!");
+
+            navigationManager.NavigateTo("AccountsTypes/List");
         }
         catch (Exception e)
         {
