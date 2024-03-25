@@ -12,7 +12,7 @@ namespace GARCA.wsData.Repositories
     {
         public static IDbConnection OpenConnection(bool migration = false)
         {
-            MySqlConnection connection = null;
+            MySqlConnection connection;
 
 #if DEBUG
             if (migration)

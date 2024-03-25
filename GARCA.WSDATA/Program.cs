@@ -1,10 +1,7 @@
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
 using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
 using GARCA.Models;
-using GARCA_DATA.Repositories;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,9 +1,9 @@
 ﻿using GARCA.Models;
 
 
-namespace GARCA.wsData.Repositories
+namespace GARCA.Web.Data.Repositories
 {
     public class AccountsRepository : RepositoryBase<Accounts>
-    {
+    {        
     }
 }

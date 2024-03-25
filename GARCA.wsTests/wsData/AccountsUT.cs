@@ -1,7 +1,6 @@
 using GARCA.Models;
 using GARCA.wsData.Repositories;
 using GARCA.wsData.Validations;
-using GARCA_DATA.Repositories;
 
 namespace GARCA.wsTests.wsData
 {

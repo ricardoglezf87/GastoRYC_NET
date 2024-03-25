@@ -11,6 +11,6 @@ namespace GARCA.Model
     {
         public bool Success { set; get; }
         public HttpStatusCode StatusCode { set; get; }
-        public object Result { set; get; }
+        public object? Result { set; get; }
     }
 }
