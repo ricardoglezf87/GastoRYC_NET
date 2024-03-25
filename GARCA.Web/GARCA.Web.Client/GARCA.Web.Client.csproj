@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\GARCA.Web.Data\GARCA.Web.Data.csproj" />
     <ProjectReference Include="..\..\GARCA_MODEL\GARCA.Model.csproj" />
+    <ProjectReference Include="..\..\GARCA_UTIL\GARCA.Utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

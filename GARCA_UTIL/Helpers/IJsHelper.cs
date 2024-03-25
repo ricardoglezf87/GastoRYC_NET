@@ -1,6 +1,6 @@
 ﻿using Microsoft.JSInterop;
 
-namespace GARCA.Web.Helpers
+namespace GARCA.Utils.Helpers
 {
     public static class IJsHelper
     {

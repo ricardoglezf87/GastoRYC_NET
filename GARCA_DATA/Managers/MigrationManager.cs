@@ -10,6 +10,19 @@ namespace GARCA.Data.Managers
     {
         public async Task Migrate()
         {
+            using (var connection = iRycContextService.getConnection())
+            {
+                connection.Execute(@"
+                    -- MigrationsHistory definition
+
+                   CREATE TABLE IF NOT EXISTS MigrationsHistory (
+                        MigrationId TEXT NOT NULL CONSTRAINT PK___EFMigrationsHistory PRIMARY KEY,
+                        ProductVersion TEXT NOT NULL
+                    );
+                ");
+            }
+
+
             Type[] clases = Assembly.GetExecutingAssembly().GetTypes()
                 .Where(t => t.Namespace == "GARCA.Data.Migrations" && t.IsClass && !t.IsNested)
                 .ToArray();
