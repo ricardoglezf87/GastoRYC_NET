@@ -45,6 +45,7 @@
 
 @code {
     private AccountsTypes obj { get; set; } = new AccountsTypes();
+    private AccountsTypesRepository repository { get; set; } = new AccountsTypesRepository();
     [Parameter]
     public int? Id { get; set; }
 
@@ -52,7 +53,7 @@
     {
         if (Id.HasValue)
         {
-            obj = await new RepositoryBase().GetById(Id.Value);
+            obj = await repository.GetById(Id.Value);
         }
     }
 
@@ -62,11 +63,11 @@
         {
             if (Id.HasValue)
             {
-                await new RepositoryBase().Update(obj);
+                await repository.Update(obj);
             }
             else
             {
-                await new RepositoryBase().Create(obj);
+                await repository.Create(obj);
             }
 
             navigationManager.NavigateTo($"AccountsTypes/List/{Uri.EscapeDataString("Tipo cuenta guardado correctamente!")}");

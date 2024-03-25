@@ -10,9 +10,12 @@ using System.Threading.Tasks;
 
 namespace GARCA.Web.Data.Repositories
 {
-    public class RepositoryBase
+    public class RepositoryBase<Q>
+        where Q : ModelBase
     {
         private readonly HttpClient cliente;
+        private static string ClassName { get { return typeof(Q).Name; } }
+
 #if DEBUG
         protected const string urlwsData = "http://192.168.1.142:1313";
 #else
@@ -24,17 +27,17 @@ namespace GARCA.Web.Data.Repositories
             cliente = new HttpClient();
         }
 
-        public async Task<AccountsTypes> GetById(int id)
+        public async Task<Q> GetById(int id)
         {
             try
             {
-                var response = await cliente.GetAsync(urlwsData + $"/AccountsTypes/{id}");
+                var response = await cliente.GetAsync(urlwsData + $"/{ClassName}/{id}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
                     var result = JsonConvert.DeserializeObject<ResponseAPI>(responseContent);
-                    return JsonConvert.DeserializeObject<AccountsTypes>(result.Result.ToString());
+                    return JsonConvert.DeserializeObject<Q>(result.Result.ToString());
                 }
                 else
                 {
@@ -51,7 +54,7 @@ namespace GARCA.Web.Data.Repositories
         {
             try
             {
-                var response = await cliente.DeleteAsync(urlwsData + $"/AccountsTypes/{id}");
+                var response = await cliente.DeleteAsync(urlwsData + $"/{ClassName}/{id}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
@@ -65,14 +68,14 @@ namespace GARCA.Web.Data.Repositories
             }           
         }
 
-        public async Task Create(AccountsTypes obj)
+        public async Task Create(Q obj)
         {
             try
             {
                 var json = JsonConvert.SerializeObject(obj);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await cliente.PostAsync(urlwsData + "/AccountsTypes", content);
+                var response = await cliente.PostAsync(urlwsData + $"/{ClassName}", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
@@ -91,14 +94,14 @@ namespace GARCA.Web.Data.Repositories
             }
         }
 
-        public async Task Update(AccountsTypes obj)
+        public async Task Update(Q obj)
         {
             try
             {
                 var json = JsonConvert.SerializeObject(obj);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await cliente.PutAsync(urlwsData + "/AccountsTypes", content);
+                var response = await cliente.PutAsync(urlwsData + $"/{ClassName}", content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
@@ -117,17 +120,17 @@ namespace GARCA.Web.Data.Repositories
             }
         }
 
-        public async Task<IEnumerable<AccountsTypes>> GetAll()
+        public async Task<IEnumerable<Q>> GetAll()
         {
             try
             {
-                var response = await cliente.GetAsync(urlwsData + "/AccountsTypes");
+                var response = await cliente.GetAsync(urlwsData + $"/{ClassName}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (response.IsSuccessStatusCode)
                 {
                     var result = JsonConvert.DeserializeObject<ResponseAPI>(responseContent);
-                    return JsonConvert.DeserializeObject<IEnumerable<AccountsTypes>>(result.Result.ToString());
+                    return JsonConvert.DeserializeObject<IEnumerable<Q>>(result.Result.ToString());
                 }
                 else
                 {
