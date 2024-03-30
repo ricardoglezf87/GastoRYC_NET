@@ -6,20 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>CS0168,CS1998,BL9993,CS0649,CS0436,0436</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>CS0168,CS1998,BL9993,CS0649,CS0436,0436</NoWarn>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\GARCA.Web.Data\GARCA.Web.Data.csproj">
       <TreatAsUsed>true</TreatAsUsed>
     </ProjectReference>
     <ProjectReference Include="..\..\GARCA_MODEL\GARCA.Model.csproj" />
-    <PackageReference Include="Radzen.Blazor" Version="4.29.1" />
+    <ProjectReference Include="..\GARCA.Web.Client\GARCA.Web.Client.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,14 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\" />
-    <Folder Include="wwwroot\images\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\css\bootstrap\bootstrap.min.css" />
-    <None Include="wwwroot\css\bootstrap\bootstrap.min.css.map" />
-    <None Include="wwwroot\css\site.css" />
+    <Folder Include="Components\NewFolder\" />
   </ItemGroup>
 
 </Project>

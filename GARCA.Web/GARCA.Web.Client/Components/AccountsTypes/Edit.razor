@@ -1,4 +1,4 @@
-﻿@page "/AccountsTypes/Edit/{Id:int?}"
+﻿@* @page "/AccountsTypes/Edit/{Id:int?}"
 @rendermode InteractiveAuto
 @inject IJSRuntime JsRuntime
 @inject NavigationManager navigationManager
@@ -79,4 +79,4 @@
             await JsRuntime.ToastrError(e.Message);
         }
     }
-}
+} *@

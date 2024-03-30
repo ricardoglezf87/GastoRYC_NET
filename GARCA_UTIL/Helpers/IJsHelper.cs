@@ -5,16 +5,6 @@ namespace GARCA.Utils.Helpers
 {
     public static class IJsHelper
     {
-        public static async ValueTask ToastrSuccess(this IJSRuntime JSRuntime, string message)
-        {
-            await JSRuntime.InvokeVoidAsync("ShowToastr", "success", message);
-        }
-
-        public static async ValueTask ToastrError(this IJSRuntime JSRuntime, string message)
-        {
-            await JSRuntime.InvokeVoidAsync("ShowToastr", "error", message);
-        }
-
         public static async ValueTask SetSessionVariable(this IJSRuntime JSRuntime, string name, string value)
         {
             await JSRuntime.InvokeVoidAsync("localStorage.setItem", name, value);
