@@ -32,22 +32,27 @@ namespace GARCA.Web.Components.AccountsTypes
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        protected AccountsTypesRepository accountsTypesRepository { get; set; } = new ();
+        protected AccountsTypesRepository repository { get; set; } = new ();
 
-        protected IEnumerable<Models.AccountsTypes> accountsTypes;
+        protected IEnumerable<Models.AccountsTypes> lObj;
 
         protected RadzenDataGrid<Models.AccountsTypes> grid0;
 
         protected int count;
 
+        protected override async Task OnInitializedAsync()
+        {
+            repository = new();
+        }
+
         protected async Task Grid0LoadData(LoadDataArgs args)
         {
             try
             {
-                var result = await accountsTypesRepository.GetAll();
+                var result = await repository.GetAll();
                 //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 //accountsTypes = result.Value.AsODataEnumerable();                
-                accountsTypes = result;
+                lObj = result;
                 count = result.Count();
             }
             catch (Exception ex)
@@ -58,13 +63,13 @@ namespace GARCA.Web.Components.AccountsTypes
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            //    await DialogService.OpenAsync<AddAccountsType>("Add AccountsType", null);
+            await DialogService.OpenAsync<EditAccountsType>("Crear Tipo de cuenta", null);
             await grid0.Reload();
         }
 
         protected async Task EditRow(DataGridRowMouseEventArgs<GARCA.Models.AccountsTypes> args)
         {
-            //    await DialogService.OpenAsync<EditAccountsType>("Edit AccountsType", new Dictionary<string, object> { {"id", args.Data.id} });
+            await DialogService.OpenAsync<EditAccountsType>("Editar Tipo de cuenta", new Dictionary<string, object> { {"id", args.Data.Id} });
             await grid0.Reload();
         }
 
@@ -74,7 +79,7 @@ namespace GARCA.Web.Components.AccountsTypes
             {
                 if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
-                    await accountsTypesRepository.Delete(accountsType.Id);
+                    await repository.Delete(accountsType.Id);
                     await grid0.Reload();
                 }
             }

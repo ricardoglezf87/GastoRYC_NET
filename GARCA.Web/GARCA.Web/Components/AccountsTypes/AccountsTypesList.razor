@@ -1,4 +1,4 @@
-@page "/accounts-types"
+@page "/AccountsTypes"
 
 <PageTitle>Tipos de cuentas</PageTitle>
 <RadzenStack>
@@ -19,11 +19,11 @@
     <RadzenRow>
       <RadzenColumn SizeMD=12>
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-                            Data="@accountsTypes" LoadData="@Grid0LoadData" Count="@count" TItem="GARCA.Models.AccountsTypes" RowDoubleClick="@EditRow">
+                            Data="@lObj" LoadData="@Grid0LoadData" Count="@count" TItem="GARCA.Models.AccountsTypes" RowDoubleClick="@EditRow">
             <Columns>
                 <RadzenDataGridColumn TItem="GARCA.Models.AccountsTypes" Property="Id" Title="#">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="GARCA.Models.AccountsTypes" Property="Description" Title="descripción">
+                <RadzenDataGridColumn TItem="GARCA.Models.AccountsTypes" Property="Description" Title="Descripción">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="GARCA.Models.AccountsTypes" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="accountsType">
