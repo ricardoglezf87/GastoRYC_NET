@@ -63,13 +63,13 @@ namespace GARCA.Web.Components.AccountsTypes
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<EditAccountsType>("Crear Tipo de cuenta", null);
+            await DialogService.OpenAsync<AccountsTypeEdit>("Crear Tipo de cuenta", null);
             await grid0.Reload();
         }
 
         protected async Task EditRow(DataGridRowMouseEventArgs<GARCA.Models.AccountsTypes> args)
         {
-            await DialogService.OpenAsync<EditAccountsType>("Editar Tipo de cuenta", new Dictionary<string, object> { {"id", args.Data.Id} });
+            await DialogService.OpenAsync<AccountsTypeEdit>("Editar Tipo de cuenta", new Dictionary<string, object> { {"id", args.Data.Id} });
             await grid0.Reload();
         }
 

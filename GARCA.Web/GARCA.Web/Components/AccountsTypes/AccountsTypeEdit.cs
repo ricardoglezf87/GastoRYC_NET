@@ -11,7 +11,7 @@ using GARCA.Web.Data.Repositories;
 
 namespace GARCA.Web.Components.AccountsTypes
 {
-    public partial class EditAccountsType
+    public partial class AccountsTypeEdit
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
