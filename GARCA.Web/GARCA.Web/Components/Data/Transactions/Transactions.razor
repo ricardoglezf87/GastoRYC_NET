@@ -1,0 +1,74 @@
+@page "/Transactions"
+
+<PageTitle>Transactions</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="Transactions" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                <RadzenSplitButton Icon="get_app" Text="Export" Click="@ExportClick" Variant="Variant.Flat" Shade="Shade.Lighter">
+                    <RadzenSplitButtonItem Text="Excel" Value="xlsx" />
+                    <RadzenSplitButtonItem Text="CSV" Value="csv" />
+                </RadzenSplitButton>
+                <RadzenButton Icon="add_circle_outline" Text="Add" Click="@AddButtonClick" Variant="Variant.Flat" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+      <RadzenColumn SizeMD=12>
+        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+            Data="@transactions" TItem="GARCA.Models.Transactions" RowDoubleClick="@EditRow">
+            <Columns>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="Id" Title="#">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="Account.Description" Title="Account">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="AmountIn" Title="Amount In">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="AmountOut" Title="Amount Out">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="Category.Description" Title="Category">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="date" Title="date">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="InvestmentProduct.Description" Title="Investment Product">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="memo" Title="memo">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="Person.Name" Title="Person">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="Tag.Description" Title="Tag">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="TranferSplitId" Title="tranfer Splitid">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="TranferId" Title="TranferId">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="TransactionsStatus.Description" Title="Transactions Status">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="NumShares" Title="num Shares">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="PricesShares" Title="Prices Shares">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="InvestmentCategory" Title="investment Category">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="balance" Title="balance">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="Orden" Title="Orden">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                    <Template Context="transaction">
+
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                            Shade="Shade.Lighter" Variant="Variant.Flat"
+                            Click=@(args => GridDeleteButtonClick(args, transaction)) @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+
+        </RadzenDataGrid>
+
+    </RadzenColumn>
+  </RadzenRow>
+</RadzenStack>

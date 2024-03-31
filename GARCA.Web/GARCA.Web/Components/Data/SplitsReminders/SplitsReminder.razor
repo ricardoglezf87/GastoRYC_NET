@@ -1,0 +1,75 @@
+@page "/SplitsReminder"
+
+<PageTitle>Edit SplitsReminder</PageTitle>
+
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save SplitsReminder</RadzenAlert>
+        <RadzenTemplateForm TItem="GARCA.Models.SplitsReminders" Data="@splitsReminder" Visible="@(splitsReminder != null)" Submit="@FormSubmit">
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Transactions Reminder" Component="TransactionsReminder" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@transactionsRemindersForTransactionsId" TextProperty="AmountIn" ValueProperty="Id" AllowClear=true
+                         Placeholder="Choose TransactionsReminder" style="display: block; width: 100%" @bind-Value="@splitsReminder.TransactionsId" Name="TransactionsId"
+                           />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Tag" Component="Tag" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@tagsForTagsId" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                         Placeholder="Choose Tag" style="display: block; width: 100%" @bind-Value="@splitsReminder.TagsId" Name="TagsId"
+                           />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Category" Component="Category" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@categoriesForCategoryid" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                                        Placeholder="Choose Category" style="display: block; width: 100%" @bind-Value="@splitsReminder.CategoriesId" Name="CategoriesId" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Amount In" Component="AmountIn" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@splitsReminder.AmountIn" Name="AmountIn" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Amount Out" Component="AmountOut" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@splitsReminder.AmountOut" Name="AmountOut" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="memo" Component="memo" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@splitsReminder.Memo" Name="memo" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="TranferId" Component="TranferId" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@splitsReminder.TranferId" Name="TranferId" />
+                </RadzenColumn>
+            </RadzenRow>
+          <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

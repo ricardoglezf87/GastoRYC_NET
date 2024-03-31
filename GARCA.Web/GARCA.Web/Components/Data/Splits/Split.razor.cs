@@ -9,9 +9,9 @@ using Radzen;
 using Radzen.Blazor;
 using GARCA.Web.Data.Repositories;
 
-namespace GARCA.Web.Components.AccountsTypes
+namespace GARCA.Web.Components.Data.Splits
 {
-    public partial class AccountsTypeEdit
+    public partial class Split
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
@@ -30,50 +30,46 @@ namespace GARCA.Web.Components.AccountsTypes
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-
-        protected AccountsTypesRepository repository { get; set; }
-
-        protected bool errorVisible;
-
-        protected GARCA.Models.AccountsTypes obj;
+        
+        public SplitsRepository repository { get; set; }
 
         [Parameter]
-        public int? id { get; set; }
+        public int id { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            try
-            {
-                if (id != null && id != 0)
-                {
-                    obj = await repository.GetById(id.Value);
-                }
-                else
-                {
-                    obj = new();
-                }
-            }
-            catch (Exception ex)
-            {
-                errorVisible = true;
-            }
+            split = await repository.GetById(id);
+
+            transactionsForTransactionsId = await new TransactionsRepository().GetAll();
+
+            tagsForTagsId = await new TagsRepository().GetAll();
+
+            categoriesForCategoryid = await new CategoriesRepository().GetAll();
         }
+        protected bool errorVisible;
+        protected GARCA.Models.Splits split;
+
+        protected IEnumerable<GARCA.Models.Transactions> transactionsForTransactionsId;
+
+        protected IEnumerable<GARCA.Models.Tags> tagsForTagsId;
+
+        protected IEnumerable<GARCA.Models.Categories> categoriesForCategoryid;
 
         protected async Task FormSubmit()
         {
             try
             {
-                if(id == null || id == 0)
+                if (id == null || id == 0)
                 {
-                    await repository.Create(obj);
+                    await repository.Create(split);
                 }
                 else
                 {
-                    await repository.Update(obj);
+                    await repository.Update(split);
                 }
 
-                DialogService.Close(obj);
+                DialogService.Close(split);
             }
             catch (Exception ex)
             {

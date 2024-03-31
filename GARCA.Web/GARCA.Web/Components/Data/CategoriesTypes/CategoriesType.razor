@@ -1,15 +1,16 @@
-@page "/AccountsTypes/edit"
+@page "/CategoriesType"
 
-<PageTitle>Editar Tipo de cuenta</PageTitle>
+<PageTitle>Edit CategoriesType</PageTitle>
+
     <RadzenColumn SizeMD=12>
-        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede guardar el registro</RadzenAlert>
-        <RadzenTemplateForm TItem="GARCA.Models.AccountsTypes" Data="@obj" Visible="@(obj != null)" Submit="@FormSubmit">
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save CategoriesType</RadzenAlert>
+        <RadzenTemplateForm TItem="GARCA.Models.CategoriesTypes" Data="@categoriesType" Visible="@(categoriesType != null)" Submit="@FormSubmit">
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Descripción" Component="Description" style="width: 100%" />
+                    <RadzenLabel Text="Description" Component="Description" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@obj.Description" Name="Description" />
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@categoriesType.Description" Name="Description" />
                 </RadzenColumn>
             </RadzenRow>
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">

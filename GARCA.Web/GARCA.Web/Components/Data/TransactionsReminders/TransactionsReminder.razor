@@ -1,0 +1,113 @@
+@page "/TransactionsReminder"
+
+<PageTitle>Edit TransactionsReminder</PageTitle>
+
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save TransactionsReminder</RadzenAlert>
+        <RadzenTemplateForm TItem="GARCA.Models.TransactionsReminders" Data="@transactionsReminder" Visible="@(transactionsReminder != null)" Submit="@FormSubmit">
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Account" Component="Account" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@accountsForAccountsId" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                         Placeholder="Choose Account" style="display: block; width: 100%" @bind-Value="@transactionsReminder.AccountsId" Name="AccountsId"
+                           />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Amount In" Component="AmountIn" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transactionsReminder.AmountIn" Name="AmountIn" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Amount Out" Component="AmountOut" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transactionsReminder.AmountOut" Name="AmountOut" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="auto Register" Component="AutoRegister" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transactionsReminder.AutoRegister" Name="AutoRegister" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Category" Component="Category" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@categoriesForCategoryid" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                                        Placeholder="Choose Category" style="display: block; width: 100%" @bind-Value="@transactionsReminder.CategoriesId" Name="CategoriesId" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="date" Component="date" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                <RadzenDatePicker style="display: block; width: 100%" @bind-Value="@transactionsReminder.Date" Name="date" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="memo" Component="memo" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@transactionsReminder.Memo" Name="memo" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Periods Reminder" Component="PeriodsReminder" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@periodsRemindersForPeriodsRemindersId" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                         Placeholder="Choose PeriodsReminder" style="display: block; width: 100%" @bind-Value="@transactionsReminder.PeriodsRemindersId" Name="PeriodsRemindersId"
+                           />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Person" Component="Person" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@peopleForPersonsId" TextProperty="name" ValueProperty="Id" AllowClear=true
+                         Placeholder="Choose Person" style="display: block; width: 100%" @bind-Value="@transactionsReminder.PersonsId" Name="PersonsId"
+                           />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Tag" Component="Tag" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@tagsForTagsId" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                         Placeholder="Choose Tag" style="display: block; width: 100%" @bind-Value="@transactionsReminder.TagsId" Name="TagsId"
+                           />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Transactions Status" Component="TransactionsStatus" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@transactionsStatusesForTransactionsStatusId" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                         Placeholder="Choose TransactionsStatus" style="display: block; width: 100%" @bind-Value="@transactionsReminder.TransactionsStatusId" Name="TransactionsStatusId"
+                           />
+                </RadzenColumn>
+            </RadzenRow>
+          <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

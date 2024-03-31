@@ -10,9 +10,9 @@ using Radzen.Blazor;
 using GARCA.Models;
 using GARCA.Web.Data.Repositories;
 
-namespace GARCA.Web.Components.AccountsTypes
+namespace GARCA.Web.Components.Data.AccountsTypes
 {
-    public partial class AccountsTypesList
+    public partial class AccountsTypes
     {
         [Inject]
         protected IJSRuntime JSRuntime { get; set; }
@@ -32,9 +32,9 @@ namespace GARCA.Web.Components.AccountsTypes
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        protected AccountsTypesRepository repository { get; set; } = new ();
+        protected AccountsTypesRepository repository { get; set; } 
 
-        protected IEnumerable<Models.AccountsTypes> lObj;
+        protected IEnumerable<Models.AccountsTypes> accountsTypes;
 
         protected RadzenDataGrid<Models.AccountsTypes> grid0;
 
@@ -52,7 +52,7 @@ namespace GARCA.Web.Components.AccountsTypes
                 var result = await repository.GetAll();
                 //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 //accountsTypes = result.Value.AsODataEnumerable();                
-                lObj = result;
+                accountsTypes = result;
                 count = result.Count();
             }
             catch (Exception ex)
@@ -63,13 +63,13 @@ namespace GARCA.Web.Components.AccountsTypes
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<AccountsTypeEdit>("Crear Tipo de cuenta", null);
+            await DialogService.OpenAsync<AccountsType>("Crear Tipo de cuenta", null);
             await grid0.Reload();
         }
 
         protected async Task EditRow(DataGridRowMouseEventArgs<GARCA.Models.AccountsTypes> args)
         {
-            await DialogService.OpenAsync<AccountsTypeEdit>("Editar Tipo de cuenta", new Dictionary<string, object> { {"id", args.Data.Id} });
+            await DialogService.OpenAsync<AccountsType>("Editar Tipo de cuenta", new Dictionary<string, object> { {"Id", args.Data.Id} });
             await grid0.Reload();
         }
 
@@ -94,7 +94,7 @@ namespace GARCA.Web.Components.AccountsTypes
         {
             //            if (args?.Value == "csv")
             //            {
-            //                await GARCA_PREService.ExportAccountsTypesToCSV(new Query
+            //                await repository.ExportAccountsTypesToCSV(new Query
             //{
             //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
             //    OrderBy = $"{grid0.Query.OrderBy}",
@@ -105,7 +105,7 @@ namespace GARCA.Web.Components.AccountsTypes
 
             //            if (args == null || args.Value == "xlsx")
             //            {
-            //                await GARCA_PREService.ExportAccountsTypesToExcel(new Query
+            //                await repository.ExportAccountsTypesToExcel(new Query
             //{
             //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
             //    OrderBy = $"{grid0.Query.OrderBy}",
