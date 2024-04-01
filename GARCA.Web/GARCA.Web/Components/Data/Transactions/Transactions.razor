@@ -1,10 +1,10 @@
 @page "/Transactions"
 
-<PageTitle>Transactions</PageTitle>
+<PageTitle>Movimiento</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="Transactions" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="Movimientos" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
@@ -19,7 +19,7 @@
     <RadzenRow>
       <RadzenColumn SizeMD=12>
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-            Data="@transactions" TItem="GARCA.Models.Transactions" RowDoubleClick="@EditRow">
+            Data="@modelPage" TItem="GARCA.Models.Transactions" LoadData="@Grid0LoadData" Count="@count" RowDoubleClick="@EditRow">
             <Columns>
                 <RadzenDataGridColumn TItem="GARCA.Models.Transactions" Property="Id" Title="#">
                 </RadzenDataGridColumn>

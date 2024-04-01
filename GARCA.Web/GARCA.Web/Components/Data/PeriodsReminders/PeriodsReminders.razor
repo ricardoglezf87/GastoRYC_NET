@@ -19,11 +19,11 @@
     <RadzenRow>
       <RadzenColumn SizeMD=12>
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-            Data="@periodsReminders" TItem="GARCA.Models.PeriodsReminders" RowDoubleClick="@EditRow">
+                            Data="@modelPage" TItem="GARCA.Models.PeriodsReminders" LoadData="@Grid0LoadData" Count="@count" RowDoubleClick="@EditRow">
             <Columns>
                 <RadzenDataGridColumn TItem="GARCA.Models.PeriodsReminders" Property="Id" Title="#">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="GARCA.Models.PeriodsReminders" Property="Description" Title="Description">
+                <RadzenDataGridColumn TItem="GARCA.Models.PeriodsReminders" Property="Description" Title="Descripción">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="GARCA.Models.PeriodsReminders" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="periodsReminder">

@@ -39,7 +39,7 @@ namespace GARCA.Web.Components.Data.Transactions
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            transaction = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
 
             accountsForAccountsId = await new AccountsRepository().GetAll();
 
@@ -54,7 +54,7 @@ namespace GARCA.Web.Components.Data.Transactions
             transactionsStatusesForTransactionsStatusId = await new TransactionsStatusRepository().GetAll();
         }
         protected bool errorVisible;
-        protected GARCA.Models.Transactions transaction;
+        protected GARCA.Models.Transactions modelPage;
 
         protected IEnumerable<GARCA.Models.Accounts> accountsForAccountsId;
 
@@ -74,14 +74,14 @@ namespace GARCA.Web.Components.Data.Transactions
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(transaction);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(transaction);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(transaction);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

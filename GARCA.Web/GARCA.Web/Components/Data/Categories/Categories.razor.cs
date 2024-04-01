@@ -34,31 +34,50 @@ namespace GARCA.Web.Components.Data.Categories
         
         public CategoriesRepository repository { get; set; }
 
-        protected IEnumerable<GARCA.Models.Categories> categories;
+        protected IEnumerable<GARCA.Models.Categories> modelPage;
 
         protected RadzenDataGrid<GARCA.Models.Categories> grid0;
+
+        protected int count;
+
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            categories = await repository.GetAll();
+        }
+
+        protected async Task Grid0LoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await repository.GetAll();
+                //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
+                //modelPage = result.Value.AsODataEnumerable();                
+                modelPage = result;
+                count = result.Count();
+            }
+            catch (Exception ex)
+            {
+                NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"No se ha podido cargar la lista:" + ex.Message });
+            }
         }
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<Category>("Nuevo Category", null);
+            await DialogService.OpenAsync<Category>("Nueva categoría", null);
             await grid0.Reload();
         }
 
         protected async Task EditRow(DataGridRowMouseEventArgs<GARCA.Models.Categories> args)
         {
-            await DialogService.OpenAsync<Category>("Editar Category", new Dictionary<string, object> { {"Id", args.Data.Id} });
+            await DialogService.OpenAsync<Category>("Editar categoría", new Dictionary<string, object> { {"Id", args.Data.Id} });
+            await grid0.Reload();
         }
 
         protected async Task GridDeleteButtonClick(MouseEventArgs args, GARCA.Models.Categories category)
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+                if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
                     await repository.Delete(category.Id);
                     await grid0.Reload();

@@ -1,16 +1,16 @@
 @page "/Tag"
 
-<PageTitle>Edit Tag</PageTitle>
+<PageTitle>Tag</PageTitle>
 
     <RadzenColumn SizeMD=12>
-        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Tag</RadzenAlert>
-        <RadzenTemplateForm TItem="GARCA.Models.Tags" Data="@tag" Visible="@(tag != null)" Submit="@FormSubmit">
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede grabar Tag</RadzenAlert>
+        <RadzenTemplateForm TItem="GARCA.Models.Tags" Data="@modelPage" Visible="@(modelPage != null)" Submit="@FormSubmit">
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Description" Component="Description" style="width: 100%" />
+                    <RadzenLabel Text="Descripción" Component="Description" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@tag.Description" Name="Description" />
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Description" Name="Description" />
                 </RadzenColumn>
             </RadzenRow>
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">

@@ -39,12 +39,12 @@ namespace GARCA.Web.Components.Data.ExpirationsReminders
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            expirationsReminder = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
 
             transactionsRemindersForTransactionsRemindersId = await new TransactionsRemindersRepository().GetAll();
         }
         protected bool errorVisible;
-        protected GARCA.Models.ExpirationsReminders expirationsReminder;
+        protected GARCA.Models.ExpirationsReminders modelPage;
 
         protected IEnumerable<GARCA.Models.TransactionsReminders> transactionsRemindersForTransactionsRemindersId;
 
@@ -54,14 +54,14 @@ namespace GARCA.Web.Components.Data.ExpirationsReminders
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(expirationsReminder);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(expirationsReminder);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(expirationsReminder);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

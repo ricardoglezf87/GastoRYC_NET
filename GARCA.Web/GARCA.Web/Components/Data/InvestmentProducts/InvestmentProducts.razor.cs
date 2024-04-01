@@ -34,13 +34,31 @@ namespace GARCA.Web.Components.Data.InvestmentProducts
         
         public InvestmentProductsRepository repository { get; set; }
 
-        protected IEnumerable<GARCA.Models.InvestmentProducts> investmentProducts;
+        protected IEnumerable<GARCA.Models.InvestmentProducts> modelPage;
 
         protected RadzenDataGrid<GARCA.Models.InvestmentProducts> grid0;
+
+        protected int count;
+
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            investmentProducts = await repository.GetAll();
+        }
+
+        protected async Task Grid0LoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await repository.GetAll();
+                //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
+                //modelPage = result.Value.AsODataEnumerable();                
+                modelPage = result;
+                count = result.Count();
+            }
+            catch (Exception ex)
+            {
+                NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"No se ha podido cargar la lista:" + ex.Message });
+            }
         }
 
         protected async Task AddButtonClick(MouseEventArgs args)
@@ -52,13 +70,14 @@ namespace GARCA.Web.Components.Data.InvestmentProducts
         protected async Task EditRow(DataGridRowMouseEventArgs<GARCA.Models.InvestmentProducts> args)
         {
             await DialogService.OpenAsync<InvestmentProduct>("Editar InvestmentProduct", new Dictionary<string, object> { {"Id", args.Data.Id} });
+            await grid0.Reload();
         }
 
         protected async Task GridDeleteButtonClick(MouseEventArgs args, GARCA.Models.InvestmentProducts investmentProduct)
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+                if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
                     await repository.Delete(investmentProduct.Id);
                     await grid0.Reload();

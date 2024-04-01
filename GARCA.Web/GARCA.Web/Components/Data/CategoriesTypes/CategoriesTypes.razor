@@ -1,10 +1,10 @@
 @page "/CategoriesTypes"
 
-<PageTitle>CategoriesTypes</PageTitle>
+<PageTitle>Tipos de categorías</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="CategoriesTypes" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="Tipos de categorías" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
@@ -17,26 +17,26 @@
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow>
-      <RadzenColumn SizeMD=12>
-        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-            Data="@categoriesTypes" TItem="GARCA.Models.CategoriesTypes" RowDoubleClick="@EditRow">
-            <Columns>
-                <RadzenDataGridColumn TItem="GARCA.Models.CategoriesTypes" Property="Id" Title="#">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="GARCA.Models.CategoriesTypes" Property="Description" Title="Description">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="GARCA.Models.CategoriesTypes" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
-                    <Template Context="categoriesType">
+        <RadzenColumn SizeMD=12>
+            <RadzenDataGrid @ref="grid0" ColumnWidth="200px" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+                            Data="@modelPage" TItem="GARCA.Models.CategoriesTypes" LoadData="@Grid0LoadData" Count="@count" RowDoubleClick="@EditRow">
+                <Columns>
+                    <RadzenDataGridColumn TItem="GARCA.Models.CategoriesTypes" Property="Id" Title="#">
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="GARCA.Models.CategoriesTypes" Property="Description" Title="Descripción">
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="GARCA.Models.CategoriesTypes" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                        <Template Context="categoriesType">
 
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
-                            Shade="Shade.Lighter" Variant="Variant.Flat"
-                            Click=@(args => GridDeleteButtonClick(args, categoriesType)) @onclick:stopPropagation="true" />
-                    </Template>
-                </RadzenDataGridColumn>
-            </Columns>
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                                          Shade="Shade.Lighter" Variant="Variant.Flat"
+                                          Click=@(args => GridDeleteButtonClick(args, categoriesType)) @onclick:stopPropagation="true" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
 
-        </RadzenDataGrid>
+            </RadzenDataGrid>
 
-    </RadzenColumn>
-  </RadzenRow>
+        </RadzenColumn>
+    </RadzenRow>
 </RadzenStack>

@@ -19,7 +19,7 @@
     <RadzenRow>
       <RadzenColumn SizeMD=12>
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-                            Data="@accountsTypes" LoadData="@Grid0LoadData" Count="@count" TItem="GARCA.Models.AccountsTypes" RowDoubleClick="@EditRow">
+                            Data="@modelPage" LoadData="@Grid0LoadData" Count="@count" TItem="GARCA.Models.AccountsTypes" RowDoubleClick="@EditRow">
             <Columns>
                 <RadzenDataGridColumn TItem="GARCA.Models.AccountsTypes" Property="Id" Title="#">
                 </RadzenDataGridColumn>

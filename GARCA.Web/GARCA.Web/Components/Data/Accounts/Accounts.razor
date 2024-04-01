@@ -1,10 +1,10 @@
 @page "/Accounts"
 
-<PageTitle>Accounts</PageTitle>
+<PageTitle>Cuentas</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="Accounts" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="Cuentas" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
@@ -19,13 +19,13 @@
     <RadzenRow>
       <RadzenColumn SizeMD=12>
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-            Data="@accounts" TItem="GARCA.Models.Accounts" RowDoubleClick="@EditRow">
+                            Data="@modelPage" LoadData="@Grid0LoadData" Count="@count"  TItem="GARCA.Models.Accounts" RowDoubleClick="@EditRow">
             <Columns>
                 <RadzenDataGridColumn TItem="GARCA.Models.Accounts" Property="Id" Title="#">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="GARCA.Models.Accounts" Property="Description" Title="Description">
+                <RadzenDataGridColumn TItem="GARCA.Models.Accounts" Property="Description" Title="Descripción">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="GARCA.Models.Accounts" Property="AccountsType.Description" Title="Accounts Type">
+                <RadzenDataGridColumn TItem="GARCA.Models.Accounts" Property="AccountsType.Description" Title="Tipo">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="GARCA.Models.Accounts" Property="Category.Description" Title="Category">
                 </RadzenDataGridColumn>

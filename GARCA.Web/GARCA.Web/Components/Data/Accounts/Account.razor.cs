@@ -39,14 +39,14 @@ namespace GARCA.Web.Components.Data.Accounts
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            account = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
 
             accountsTypesForAccountsTypesId = await new AccountsTypesRepository().GetAll();
 
             categoriesForCategoryid = await new CategoriesRepository().GetAll();
         }
         protected bool errorVisible;
-        protected GARCA.Models.Accounts account;
+        protected GARCA.Models.Accounts modelPage;
 
         protected IEnumerable<GARCA.Models.AccountsTypes> accountsTypesForAccountsTypesId;
 
@@ -58,14 +58,14 @@ namespace GARCA.Web.Components.Data.Accounts
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(account);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(account);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(account);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

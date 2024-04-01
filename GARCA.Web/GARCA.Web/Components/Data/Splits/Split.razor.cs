@@ -39,7 +39,7 @@ namespace GARCA.Web.Components.Data.Splits
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            split = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
 
             transactionsForTransactionsId = await new TransactionsRepository().GetAll();
 
@@ -48,7 +48,7 @@ namespace GARCA.Web.Components.Data.Splits
             categoriesForCategoryid = await new CategoriesRepository().GetAll();
         }
         protected bool errorVisible;
-        protected GARCA.Models.Splits split;
+        protected GARCA.Models.Splits modelPage;
 
         protected IEnumerable<GARCA.Models.Transactions> transactionsForTransactionsId;
 
@@ -62,14 +62,14 @@ namespace GARCA.Web.Components.Data.Splits
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(split);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(split);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(split);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

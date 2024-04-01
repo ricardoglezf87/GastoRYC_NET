@@ -1,16 +1,16 @@
 @page "/ExpirationsReminder"
 
-<PageTitle>Edit ExpirationsReminder</PageTitle>
+<PageTitle>ExpirationsReminder</PageTitle>
 
     <RadzenColumn SizeMD=12>
-        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save ExpirationsReminder</RadzenAlert>
-        <RadzenTemplateForm TItem="GARCA.Models.ExpirationsReminders" Data="@expirationsReminder" Visible="@(expirationsReminder != null)" Submit="@FormSubmit">
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede grabar ExpirationsReminder</RadzenAlert>
+        <RadzenTemplateForm TItem="GARCA.Models.ExpirationsReminders" Data="@modelPage" Visible="@(modelPage != null)" Submit="@FormSubmit">
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="date" Component="date" style="width: 100%" />
+                    <RadzenLabel Text="Fecha" Component="date" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenDatePicker style="display: block; width: 100%" @bind-Value="@expirationsReminder.Date" Name="date" />
+                    <RadzenDatePicker style="display: block; width: 100%" @bind-Value="@modelPage.Date" Name="date" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -19,7 +19,7 @@
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@transactionsRemindersForTransactionsRemindersId" TextProperty="AmountIn" ValueProperty="Id" AllowClear=true
-                         Placeholder="Choose TransactionsReminder" style="display: block; width: 100%" @bind-Value="@expirationsReminder.TransactionsRemindersId" Name="TransactionsRemindersId"
+                         Placeholder="Elige TransactionsReminder" style="display: block; width: 100%" @bind-Value="@modelPage.TransactionsRemindersId" Name="TransactionsRemindersId"
                            />
                 </RadzenColumn>
             </RadzenRow>
@@ -28,7 +28,7 @@
                 <RadzenLabel Text="Done" Component="Done" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@expirationsReminder.Done" Name="Done" />
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.Done" Name="Done" />
                 </RadzenColumn>
             </RadzenRow>
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">

@@ -39,7 +39,7 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            transactionsReminder = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
 
             accountsForAccountsId = await new AccountsRepository().GetAll();
 
@@ -54,7 +54,7 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
             transactionsStatusesForTransactionsStatusId = await new TransactionsStatusRepository().GetAll();
         }
         protected bool errorVisible;
-        protected GARCA.Models.TransactionsReminders transactionsReminder;
+        protected GARCA.Models.TransactionsReminders modelPage;
 
         protected IEnumerable<GARCA.Models.Accounts> accountsForAccountsId;
 
@@ -74,14 +74,14 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(transactionsReminder);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(transactionsReminder);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(transactionsReminder);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

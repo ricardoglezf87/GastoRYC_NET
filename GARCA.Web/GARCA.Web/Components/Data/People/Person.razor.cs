@@ -39,12 +39,12 @@ namespace GARCA.Web.Components.Data.People
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            person = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
 
             categoriesForCategoryid = await new CategoriesRepository().GetAll();
         }
         protected bool errorVisible;
-        protected GARCA.Models.Persons person;
+        protected GARCA.Models.Persons modelPage;
 
         protected IEnumerable<GARCA.Models.Categories> categoriesForCategoryid;
 
@@ -54,14 +54,14 @@ namespace GARCA.Web.Components.Data.People
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(person);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(person);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(person);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

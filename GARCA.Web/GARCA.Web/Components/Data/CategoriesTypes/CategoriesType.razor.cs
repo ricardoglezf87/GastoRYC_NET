@@ -34,15 +34,29 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
         public CategoriesTypesRepository repository { get; set; }
 
         [Parameter]
-        public int id { get; set; }
+        public int? id { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            categoriesType = await repository.GetById(id);
+            try
+            {
+                if (id != null && id != 0)
+                {
+                    modelPage = await repository.GetById(id.Value);
+                }
+                else
+                {
+                    modelPage = new();
+                }
+            }
+            catch (Exception ex)
+            {
+                errorVisible = true;
+            }
         }
         protected bool errorVisible;
-        protected GARCA.Models.CategoriesTypes categoriesType;
+        protected GARCA.Models.CategoriesTypes modelPage;
 
         protected async Task FormSubmit()
         {
@@ -50,14 +64,14 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(categoriesType);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(categoriesType);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(categoriesType);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

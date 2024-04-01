@@ -39,7 +39,7 @@ namespace GARCA.Web.Components.Data.SplitsReminders
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            splitsReminder = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
 
             transactionsRemindersForTransactionsId = await new TransactionsRemindersRepository().GetAll();
 
@@ -48,7 +48,7 @@ namespace GARCA.Web.Components.Data.SplitsReminders
             categoriesForCategoryid = await new CategoriesRepository().GetAll();
         }
         protected bool errorVisible;
-        protected GARCA.Models.SplitsReminders splitsReminder;
+        protected GARCA.Models.SplitsReminders modelPage;
 
         protected IEnumerable<GARCA.Models.TransactionsReminders> transactionsRemindersForTransactionsId;
 
@@ -62,14 +62,14 @@ namespace GARCA.Web.Components.Data.SplitsReminders
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(splitsReminder);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(splitsReminder);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(splitsReminder);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

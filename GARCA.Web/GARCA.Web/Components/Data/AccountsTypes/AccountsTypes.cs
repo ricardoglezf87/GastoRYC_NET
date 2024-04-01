@@ -34,7 +34,7 @@ namespace GARCA.Web.Components.Data.AccountsTypes
 
         protected AccountsTypesRepository repository { get; set; } 
 
-        protected IEnumerable<Models.AccountsTypes> accountsTypes;
+        protected IEnumerable<Models.AccountsTypes> modelPage;
 
         protected RadzenDataGrid<Models.AccountsTypes> grid0;
 
@@ -51,8 +51,8 @@ namespace GARCA.Web.Components.Data.AccountsTypes
             {
                 var result = await repository.GetAll();
                 //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
-                //accountsTypes = result.Value.AsODataEnumerable();                
-                accountsTypes = result;
+                //modelPage = result.Value.AsODataEnumerable();                
+                modelPage = result;
                 count = result.Count();
             }
             catch (Exception ex)

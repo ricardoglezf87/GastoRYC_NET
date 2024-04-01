@@ -38,12 +38,12 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
 
         protected bool errorVisible;
 
-        protected GARCA.Models.TransactionsStatus transactionsStatus;
+        protected GARCA.Models.TransactionsStatus modelPage;
 
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            transactionsStatus = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
         }
        
         protected async Task FormSubmit()
@@ -52,14 +52,14 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(transactionsStatus);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(transactionsStatus);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(transactionsStatus);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

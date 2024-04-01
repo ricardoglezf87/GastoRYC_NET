@@ -40,10 +40,10 @@ namespace GARCA.Web.Components.Data.InvestmentProductsPrices
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            investmentProductsPrice = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
         }
         protected bool errorVisible;
-        protected GARCA.Models.InvestmentProductsPrices investmentProductsPrice;
+        protected GARCA.Models.InvestmentProductsPrices modelPage;
 
         protected async Task FormSubmit()
         {
@@ -51,14 +51,14 @@ namespace GARCA.Web.Components.Data.InvestmentProductsPrices
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(investmentProductsPrice);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(investmentProductsPrice);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(investmentProductsPrice);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

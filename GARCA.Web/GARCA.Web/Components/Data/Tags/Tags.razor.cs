@@ -34,14 +34,31 @@ namespace GARCA.Web.Components.Data.Tags
         
         public TagsRepository repository { get; set; }
 
-        protected IEnumerable<GARCA.Models.Tags> tags;
+        protected IEnumerable<GARCA.Models.Tags> modelPage;
 
         protected RadzenDataGrid<GARCA.Models.Tags> grid0;
+
+        protected int count;
 
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            tags = await repository.GetAll();
+        }
+
+        protected async Task Grid0LoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await repository.GetAll();
+                //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
+                //modelPage = result.Value.AsODataEnumerable();                
+                modelPage = result;
+                count = result.Count();
+            }
+            catch (Exception ex)
+            {
+                NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"No se ha podido cargar la lista:" + ex.Message });
+            }
         }
 
         protected async Task AddButtonClick(MouseEventArgs args)
@@ -53,13 +70,14 @@ namespace GARCA.Web.Components.Data.Tags
         protected async Task EditRow(DataGridRowMouseEventArgs<GARCA.Models.Tags> args)
         {
             await DialogService.OpenAsync<Tag>("Editar Tag", new Dictionary<string, object> { {"Id", args.Data.Id} });
+            await grid0.Reload();
         }
 
         protected async Task GridDeleteButtonClick(MouseEventArgs args, GARCA.Models.Tags tag)
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+                if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
                     await repository.Delete(tag.Id);
                     await grid0.Reload();

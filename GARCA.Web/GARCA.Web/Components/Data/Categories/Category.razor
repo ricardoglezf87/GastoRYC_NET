@@ -1,16 +1,16 @@
 @page "/Category"
 
-<PageTitle>Edit Category</PageTitle>
+<PageTitle>Category</PageTitle>
 
     <RadzenColumn SizeMD=12>
-        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Category</RadzenAlert>
-        <RadzenTemplateForm TItem="GARCA.Models.Categories" Data="@category" Visible="@(category != null)" Submit="@FormSubmit">
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede grabar Category</RadzenAlert>
+        <RadzenTemplateForm TItem="GARCA.Models.Categories" Data="@modelPage" Visible="@(modelPage != null)" Submit="@FormSubmit">
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Description" Component="Description" style="width: 100%" />
+                    <RadzenLabel Text="Descripción" Component="Description" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@category.Description" Name="Description" />
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Description" Name="Description" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -19,7 +19,7 @@
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@categoriesTypesForCategoriesTypesId" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                         Placeholder="Choose CategoriesType" style="display: block; width: 100%" @bind-Value="@category.CategoriesTypesId" Name="CategoriesTypesId"
+                         Placeholder="Elige CategoriesType" style="display: block; width: 100%" @bind-Value="@modelPage.CategoriesTypesId" Name="CategoriesTypesId"
                            />
                 </RadzenColumn>
             </RadzenRow>

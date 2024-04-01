@@ -19,13 +19,13 @@
     <RadzenRow>
       <RadzenColumn SizeMD=12>
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-            Data="@investmentProducts" TItem="GARCA.Models.InvestmentProducts" RowDoubleClick="@EditRow">
+                            Data="@modelPage" TItem="GARCA.Models.InvestmentProducts" LoadData="@Grid0LoadData" Count="@count" RowDoubleClick="@EditRow">
             <Columns>
                 <RadzenDataGridColumn TItem="GARCA.Models.InvestmentProducts" Property="Id" Title="#">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="GARCA.Models.InvestmentProducts" Property="active" Title="active">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="GARCA.Models.InvestmentProducts" Property="Description" Title="Description">
+                <RadzenDataGridColumn TItem="GARCA.Models.InvestmentProducts" Property="Description" Title="Descripción">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="GARCA.Models.InvestmentProducts" Property="InvestmentProductsTypesId" Title="investment Products Typesid">
                 </RadzenDataGridColumn>

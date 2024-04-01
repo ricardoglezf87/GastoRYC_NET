@@ -34,31 +34,50 @@ namespace GARCA.Web.Components.Data.Accounts
        
         public AccountsRepository repository { get; set; }
 
-        protected IEnumerable<GARCA.Models.Accounts> accounts;
+        protected IEnumerable<GARCA.Models.Accounts> modelPage;
 
         protected RadzenDataGrid<GARCA.Models.Accounts> grid0;
+
+        protected int count;
+
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            accounts = await repository.GetAll();
+        }
+
+        protected async Task Grid0LoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await repository.GetAll();
+                //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
+                //modelPage = result.Value.AsODataEnumerable();                
+                modelPage = result;
+                count = result.Count();
+            }
+            catch (Exception ex)
+            {
+                NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"No se ha podido cargar la lista:" + ex.Message });
+            }
         }
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<Account>("Nuevo Account", null);
+            await DialogService.OpenAsync<Account>("Nueva cuenta", null);
             await grid0.Reload();
         }
 
         protected async Task EditRow(DataGridRowMouseEventArgs<GARCA.Models.Accounts> args)
         {
-            await DialogService.OpenAsync<Account>("Editar Account", new Dictionary<string, object> { {"Id", args.Data.Id} });
+            await DialogService.OpenAsync<Account>("Editar cuenta", new Dictionary<string, object> { {"Id", args.Data.Id} });
+            await grid0.Reload();
         }
 
         protected async Task GridDeleteButtonClick(MouseEventArgs args, GARCA.Models.Accounts account)
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+                if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
                     await repository.Delete(account.Id);
                     await grid0.Reload();

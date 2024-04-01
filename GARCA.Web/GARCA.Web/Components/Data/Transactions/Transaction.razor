@@ -1,60 +1,60 @@
 @page "/Transaction"
 
-<PageTitle>Edit Transaction</PageTitle>
+<PageTitle>Movimientos</PageTitle>
 
     <RadzenColumn SizeMD=12>
-        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Transaction</RadzenAlert>
-        <RadzenTemplateForm TItem="GARCA.Models.Transactions" Data="@transaction" Visible="@(transaction != null)" Submit="@FormSubmit">
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede grabar Transaction</RadzenAlert>
+        <RadzenTemplateForm TItem="GARCA.Models.Transactions" Data="@modelPage" Visible="@(modelPage != null)" Submit="@FormSubmit">
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Account" Component="Account" style="width: 100%" />
+                    <RadzenLabel Text="Cuenta" Component="Account" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@accountsForAccountsId" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                         Placeholder="Choose Account" style="display: block; width: 100%" @bind-Value="@transaction.AccountsId" Name="AccountsId"
+                         Placeholder="Elige una cuenta" style="display: block; width: 100%" @bind-Value="@modelPage.AccountsId" Name="AccountsId"
                            />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Amount In" Component="AmountIn" style="width: 100%" />
+                    <RadzenLabel Text="Entrada" Component="AmountIn" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transaction.AmountIn" Name="AmountIn" />
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.AmountIn" Name="AmountIn" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Amount Out" Component="AmountOut" style="width: 100%" />
+                    <RadzenLabel Text="Salida" Component="AmountOut" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transaction.AmountOut" Name="AmountOut" />
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.AmountOut" Name="AmountOut" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Category" Component="Category" style="width: 100%" />
+                    <RadzenLabel Text="Categoría" Component="Category" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@categoriesForCategoryid" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                                        Placeholder="Choose Category" style="display: block; width: 100%" @bind-Value="@transaction.CategoriesId" Name="CategoriesId" />
+                                        Placeholder="Elige una categoría" style="display: block; width: 100%" @bind-Value="@modelPage.CategoriesId" Name="CategoriesId" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="date" Component="date" style="width: 100%" />
+                    <RadzenLabel Text="Fecha" Component="date" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenDatePicker style="display: block; width: 100%" @bind-Value="@transaction.Date" Name="date" />
+                <RadzenDatePicker style="display: block; width: 100%" @bind-Value="@modelPage.Date" Name="date" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Investment Product" Component="InvestmentProduct" style="width: 100%" />
+                    <RadzenLabel Text="Producto de inversión" Component="InvestmentProduct" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@investmentProductsForInvestmentProductsid" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                                        Placeholder="Choose InvestmentProduct" style="display: block; width: 100%" @bind-Value="@transaction.InvestmentProductsId" Name="InvestmentProductsId" />
+                                        Placeholder="Elige un producto de inversión" style="display: block; width: 100%" @bind-Value="@modelPage.InvestmentProductsId" Name="InvestmentProductsId" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -62,26 +62,26 @@
                     <RadzenLabel Text="memo" Component="memo" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@transaction.Memo" Name="memo" />
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Memo" Name="memo" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Person" Component="Person" style="width: 100%" />
+                    <RadzenLabel Text="Persona" Component="Person" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@peopleForPersonsId" TextProperty="name" ValueProperty="Id" AllowClear=true
-                         Placeholder="Choose Person" style="display: block; width: 100%" @bind-Value="@transaction.PersonsId" Name="PersonsId"
+                         Placeholder="Elige una persona" style="display: block; width: 100%" @bind-Value="@modelPage.PersonsId" Name="PersonsId"
                            />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Tag" Component="Tag" style="width: 100%" />
+                    <RadzenLabelText="Etiqueta" Component="Tag" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@tagsForTagsId" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                         Placeholder="Choose Tag" style="display: block; width: 100%" @bind-Value="@transaction.TagsId" Name="TagsId"
+                         Placeholder="Elige una etiqueta" style="display: block; width: 100%" @bind-Value="@modelPage.TagsId" Name="TagsId"
                            />
                 </RadzenColumn>
             </RadzenRow>
@@ -90,7 +90,7 @@
                     <RadzenLabel Text="tranfer Splitid" Component="TranferSplitId" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transaction.TranferSplitId" Name="TranferSplitId" />
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.TranferSplitId" Name="TranferSplitId" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -98,7 +98,7 @@
                     <RadzenLabel Text="TranferId" Component="TranferId" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transaction.TranferId" Name="TranferId" />
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.TranferId" Name="TranferId" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -107,7 +107,7 @@
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@transactionsStatusesForTransactionsStatusId" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                         Placeholder="Choose TransactionsStatus" style="display: block; width: 100%" @bind-Value="@transaction.TransactionsStatusId" Name="TransactionsStatusId"
+                         Placeholder="Elige TransactionsStatus" style="display: block; width: 100%" @bind-Value="@modelPage.TransactionsStatusId" Name="TransactionsStatusId"
                            />
                 </RadzenColumn>
             </RadzenRow>
@@ -116,7 +116,7 @@
                     <RadzenLabel Text="num Shares" Component="NumShares" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transaction.NumShares" Name="NumShares" />
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.NumShares" Name="NumShares" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -124,7 +124,7 @@
                     <RadzenLabel Text="Prices Shares" Component="PricesShares" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transaction.PricesShares" Name="PricesShares" />
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.PricesShares" Name="PricesShares" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -132,7 +132,7 @@
                     <RadzenLabel Text="investment Category" Component="InvestmentCategory" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transaction.InvestmentCategory" Name="InvestmentCategory" />
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.InvestmentCategory" Name="InvestmentCategory" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -140,7 +140,7 @@
                     <RadzenLabel Text="balance" Component="balance" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transaction.Balance" Name="balance" />
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.Balance" Name="balance" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -148,7 +148,7 @@
                     <RadzenLabel Text="Orden" Component="Orden" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@transaction.Orden" Name="Orden" />
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.Orden" Name="Orden" />
                 </RadzenColumn>
             </RadzenRow>
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">

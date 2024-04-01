@@ -39,10 +39,10 @@ namespace GARCA.Web.Components.Data.Tags
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            tag = await repository.GetById(id);
+            modelPage = await repository.GetById(id);
         }
         protected bool errorVisible;
-        protected GARCA.Models.Tags tag;
+        protected GARCA.Models.Tags modelPage;
 
         protected async Task FormSubmit()
         {
@@ -50,14 +50,14 @@ namespace GARCA.Web.Components.Data.Tags
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(tag);
+                    await repository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(tag);
+                    await repository.Update(modelPage);
                 }
 
-                DialogService.Close(tag);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

@@ -1,53 +1,53 @@
 @page "/Split"
 
-<PageTitle>Edit Split</PageTitle>
+<PageTitle>Split</PageTitle>
 
     <RadzenColumn SizeMD=12>
-        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Split</RadzenAlert>
-        <RadzenTemplateForm TItem="GARCA.Models.Splits" Data="@split" Visible="@(split != null)" Submit="@FormSubmit">
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede grabar Split</RadzenAlert>
+        <RadzenTemplateForm TItem="GARCA.Models.Splits" Data="@modelPage" Visible="@(modelPage != null)" Submit="@FormSubmit">
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
                     <RadzenLabel Text="Transaction" Component="Transaction" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@transactionsForTransactionsId" TextProperty="AmountIn" ValueProperty="Id" AllowClear=true
-                         Placeholder="Choose Transaction" style="display: block; width: 100%" @bind-Value="@split.TransactionsId" Name="TransactionsId"
+                         Placeholder="Elige Transaction" style="display: block; width: 100%" @bind-Value="@modelPage.TransactionsId" Name="TransactionsId"
                            />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Tag" Component="Tag" style="width: 100%" />
+                    <RadzenLabelText="Etiqueta" Component="Tag" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@tagsForTagsId" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                         Placeholder="Choose Tag" style="display: block; width: 100%" @bind-Value="@split.TagsId" Name="TagsId"
+                         Placeholder="Elige una etiqueta" style="display: block; width: 100%" @bind-Value="@modelPage.TagsId" Name="TagsId"
                            />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Category" Component="Category" style="width: 100%" />
+                    <RadzenLabel Text="Categoría" Component="Category" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@categoriesForCategoryid" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                                        Placeholder="Choose Category" style="display: block; width: 100%" @bind-Value="@split.CategoriesId" Name="CategoriesId" />
+                                        Placeholder="Elige una categoría" style="display: block; width: 100%" @bind-Value="@modelPage.CategoriesId" Name="CategoriesId" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Amount In" Component="AmountIn" style="width: 100%" />
+                    <RadzenLabel Text="Entrada" Component="AmountIn" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@split.AmountIn" Name="AmountIn" />
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.AmountIn" Name="AmountIn" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Amount Out" Component="AmountOut" style="width: 100%" />
+                    <RadzenLabel Text="Salida" Component="AmountOut" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@split.AmountOut" Name="AmountOut" />
+                <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.AmountOut" Name="AmountOut" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -55,7 +55,7 @@
                     <RadzenLabel Text="memo" Component="memo" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@split.Memo" Name="memo" />
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Memo" Name="memo" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -63,7 +63,7 @@
                     <RadzenLabel Text="TranferId" Component="TranferId" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@split.TranferId" Name="TranferId" />
+                    <RadzenNumeric style="display: block; width: 100%" @bind-Value="@modelPage.TranferId" Name="TranferId" />
                 </RadzenColumn>
             </RadzenRow>
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">

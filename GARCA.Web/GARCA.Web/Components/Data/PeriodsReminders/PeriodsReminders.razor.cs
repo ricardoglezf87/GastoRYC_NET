@@ -34,13 +34,31 @@ namespace GARCA.Web.Components.Data.PeriodsReminders
         
         public PeriodsRemindersRepository repository { get; set; }
 
-        protected IEnumerable<GARCA.Models.PeriodsReminders> periodsReminders;
+        protected IEnumerable<GARCA.Models.PeriodsReminders> modelPage;
 
         protected RadzenDataGrid<GARCA.Models.PeriodsReminders> grid0;
+
+        protected int count;
+
         protected override async Task OnInitializedAsync()
         {
             repository = new();
-            periodsReminders = await repository.GetAll();
+        }
+
+        protected async Task Grid0LoadData(LoadDataArgs args)
+        {
+            try
+            {
+                var result = await repository.GetAll();
+                //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
+                //modelPage = result.Value.AsODataEnumerable();                
+                modelPage = result;
+                count = result.Count();
+            }
+            catch (Exception ex)
+            {
+                NotificationService.Notify(new NotificationMessage() { Severity = NotificationSeverity.Error, Summary = $"Error", Detail = $"No se ha podido cargar la lista:" + ex.Message });
+            }
         }
 
         protected async Task AddButtonClick(MouseEventArgs args)
@@ -52,13 +70,14 @@ namespace GARCA.Web.Components.Data.PeriodsReminders
         protected async Task EditRow(DataGridRowMouseEventArgs<GARCA.Models.PeriodsReminders> args)
         {
             await DialogService.OpenAsync<PeriodsReminder>("Editar PeriodsReminder", new Dictionary<string, object> { {"Id", args.Data.Id} });
+            await grid0.Reload();
         }
 
         protected async Task GridDeleteButtonClick(MouseEventArgs args, GARCA.Models.PeriodsReminders periodsReminder)
         {
             try
             {
-                if (await DialogService.Confirm("Are you sure you want to delete this record?") == true)
+                if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
                     await repository.Delete(periodsReminder.Id);
                     await grid0.Reload();
