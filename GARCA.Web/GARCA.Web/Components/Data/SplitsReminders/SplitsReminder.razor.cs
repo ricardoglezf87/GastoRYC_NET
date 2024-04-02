@@ -30,24 +30,15 @@ namespace GARCA.Web.Components.Data.SplitsReminders
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-        
-        public SplitsRemindersRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int id { get; set; }
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-            modelPage = await repository.GetById(id);
-
-            transactionsRemindersForTransactionsId = await new TransactionsRemindersRepository().GetAll();
-
-            tagsForTagsId = await new TagsRepository().GetAll();
-
-            categoriesForCategoryid = await new CategoriesRepository().GetAll();
-        }
         protected bool errorVisible;
+
         protected GARCA.Models.SplitsReminders modelPage;
 
         protected IEnumerable<GARCA.Models.TransactionsReminders> transactionsRemindersForTransactionsId;
@@ -56,17 +47,28 @@ namespace GARCA.Web.Components.Data.SplitsReminders
 
         protected IEnumerable<GARCA.Models.Categories> categoriesForCategoryid;
 
+        protected override async Task OnInitializedAsync()
+        {
+            modelPage = await dataRepository.SplitsRemindersRepository.GetById(id);
+
+            transactionsRemindersForTransactionsId = await dataRepository.TransactionsRemindersRepository.GetAll();
+
+            tagsForTagsId = await dataRepository.TagsRepository.GetAll();
+
+            categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+        }
+
         protected async Task FormSubmit()
         {
             try
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.SplitsRemindersRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.SplitsRemindersRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

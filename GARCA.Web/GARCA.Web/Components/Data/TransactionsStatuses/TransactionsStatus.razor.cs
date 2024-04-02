@@ -30,8 +30,9 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-        
-        public TransactionsStatusRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int id { get; set; }
@@ -42,8 +43,7 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
 
         protected override async Task OnInitializedAsync()
         {
-            repository = new();
-            modelPage = await repository.GetById(id);
+            modelPage = await dataRepository.TransactionsStatusRepository.GetById(id);
         }
        
         protected async Task FormSubmit()
@@ -52,11 +52,11 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.TransactionsStatusRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.TransactionsStatusRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

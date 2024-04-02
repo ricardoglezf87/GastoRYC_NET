@@ -30,23 +30,25 @@ namespace GARCA.Web.Components.Data.ExpirationsReminders
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-        
-        public ExpirationsRemindersRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int id { get; set; }
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-            modelPage = await repository.GetById(id);
-
-            transactionsRemindersForTransactionsRemindersId = await new TransactionsRemindersRepository().GetAll();
-        }
         protected bool errorVisible;
+
         protected GARCA.Models.ExpirationsReminders modelPage;
 
         protected IEnumerable<GARCA.Models.TransactionsReminders> transactionsRemindersForTransactionsRemindersId;
+
+        protected override async Task OnInitializedAsync()
+        {
+            modelPage = await dataRepository.ExpirationsRemindersRepository.GetById(id);
+
+            transactionsRemindersForTransactionsRemindersId = await dataRepository.TransactionsRemindersRepository.GetAll();
+        }
 
         protected async Task FormSubmit()
         {
@@ -54,11 +56,11 @@ namespace GARCA.Web.Components.Data.ExpirationsReminders
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.ExpirationsRemindersRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.ExpirationsRemindersRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

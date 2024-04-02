@@ -30,9 +30,9 @@ namespace GARCA.Web.Components.Data.Categories
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-
-        
-        public CategoriesRepository repository { get; set; }
+       
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         protected IEnumerable<GARCA.Models.Categories> modelPage;
 
@@ -40,16 +40,11 @@ namespace GARCA.Web.Components.Data.Categories
 
         protected int count;
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-        }
-
         protected async Task Grid0LoadData(LoadDataArgs args)
         {
             try
             {
-                var result = await repository.GetAll();
+                var result = await dataRepository.CategoriesRepository.GetAll();
                 //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 //modelPage = result.Value.AsODataEnumerable();                
                 modelPage = result;
@@ -79,7 +74,7 @@ namespace GARCA.Web.Components.Data.Categories
             {
                 if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
-                    await repository.Delete(category.Id);
+                    await dataRepository.CategoriesRepository.Delete(category.Id);
                     await grid0.Reload();
                 }
             }
@@ -98,7 +93,7 @@ namespace GARCA.Web.Components.Data.Categories
         {
 //            if (args?.Value == "csv")
 //            {
-//                await repository.ExportCategoriesToCSV(new Query
+//                await dataRepository.ExportCategoriesToCSV(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",
@@ -109,7 +104,7 @@ namespace GARCA.Web.Components.Data.Categories
 
 //            if (args == null || args.Value == "xlsx")
 //            {
-//                await repository.ExportCategoriesToExcel(new Query
+//                await dataRepository.ExportCategoriesToExcel(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",

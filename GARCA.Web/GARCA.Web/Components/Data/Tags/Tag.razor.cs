@@ -30,19 +30,21 @@ namespace GARCA.Web.Components.Data.Tags
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-        
-        public TagsRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int id { get; set; }
 
+        protected bool errorVisible;
+        
+        protected GARCA.Models.Tags modelPage;
+
         protected override async Task OnInitializedAsync()
         {
-            repository = new();
-            modelPage = await repository.GetById(id);
+            modelPage = await dataRepository.TagsRepository.GetById(id);
         }
-        protected bool errorVisible;
-        protected GARCA.Models.Tags modelPage;
 
         protected async Task FormSubmit()
         {
@@ -50,11 +52,11 @@ namespace GARCA.Web.Components.Data.Tags
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.TagsRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.TagsRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

@@ -30,30 +30,15 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-        
-        public TransactionsRemindersRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int id { get; set; }
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-            modelPage = await repository.GetById(id);
-
-            accountsForAccountsId = await new AccountsRepository().GetAll();
-
-            categoriesForCategoryid = await new CategoriesRepository().GetAll();
-
-            periodsRemindersForPeriodsRemindersId = await new PeriodsRemindersRepository().GetAll();
-
-            peopleForPersonsId = await new PersonsRepository().GetAll();
-
-            tagsForTagsId = await new TagsRepository().GetAll();
-
-            transactionsStatusesForTransactionsStatusId = await new TransactionsStatusRepository().GetAll();
-        }
         protected bool errorVisible;
+
         protected GARCA.Models.TransactionsReminders modelPage;
 
         protected IEnumerable<GARCA.Models.Accounts> accountsForAccountsId;
@@ -68,17 +53,34 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
 
         protected IEnumerable<GARCA.Models.TransactionsStatus> transactionsStatusesForTransactionsStatusId;
 
+        protected override async Task OnInitializedAsync()
+        {
+            modelPage = await dataRepository.TransactionsRemindersRepository.GetById(id);
+
+            accountsForAccountsId = await dataRepository.AccountsRepository.GetAll();
+
+            categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+
+            periodsRemindersForPeriodsRemindersId = await dataRepository.PeriodsRemindersRepository.GetAll();
+
+            peopleForPersonsId = await dataRepository.PersonsRepository.GetAll();
+
+            tagsForTagsId = await dataRepository.TagsRepository.GetAll();
+
+            transactionsStatusesForTransactionsStatusId = await dataRepository.TransactionsStatusRepository.GetAll();
+        }
+        
         protected async Task FormSubmit()
         {
             try
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.TransactionsRemindersRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.TransactionsRemindersRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

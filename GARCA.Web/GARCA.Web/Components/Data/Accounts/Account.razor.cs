@@ -30,27 +30,29 @@ namespace GARCA.Web.Components.Data.Accounts
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-       
-        public AccountsRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int id { get; set; }
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-            modelPage = await repository.GetById(id);
-
-            accountsTypesForAccountsTypesId = await new AccountsTypesRepository().GetAll();
-
-            categoriesForCategoryid = await new CategoriesRepository().GetAll();
-        }
         protected bool errorVisible;
+        
         protected GARCA.Models.Accounts modelPage;
 
         protected IEnumerable<GARCA.Models.AccountsTypes> accountsTypesForAccountsTypesId;
 
         protected IEnumerable<GARCA.Models.Categories> categoriesForCategoryid;
+
+        protected override async Task OnInitializedAsync()
+        {
+            modelPage = await dataRepository.AccountsRepository.GetById(id);
+
+            accountsTypesForAccountsTypesId = await dataRepository.AccountsTypesRepository.GetAll();
+
+            categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+        }
 
         protected async Task FormSubmit()
         {
@@ -58,11 +60,11 @@ namespace GARCA.Web.Components.Data.Accounts
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.AccountsRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.AccountsRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

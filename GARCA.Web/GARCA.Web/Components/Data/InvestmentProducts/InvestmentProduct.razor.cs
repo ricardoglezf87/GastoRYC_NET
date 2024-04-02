@@ -30,31 +30,33 @@ namespace GARCA.Web.Components.Data.InvestmentProducts
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-        
-        public InvestmentProductsRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int id { get; set; }
 
+        protected bool errorVisible;
+
+        protected GARCA.Models.InvestmentProducts modelPage;
+        
         protected override async Task OnInitializedAsync()
         {
-            repository = new();
-            modelPage = await repository.GetById(id);
+            modelPage = await dataRepository.InvestmentProductsRepository.GetById(id);
         }
-        protected bool errorVisible;
-        protected GARCA.Models.InvestmentProducts modelPage;
-
+        
         protected async Task FormSubmit()
         {
             try
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.InvestmentProductsRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.InvestmentProductsRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

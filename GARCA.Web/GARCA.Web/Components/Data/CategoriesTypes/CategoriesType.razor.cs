@@ -30,20 +30,24 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-        
-        public CategoriesTypesRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int? id { get; set; }
 
+        protected bool errorVisible;
+
+        protected GARCA.Models.CategoriesTypes modelPage;
+
         protected override async Task OnInitializedAsync()
         {
-            repository = new();
             try
             {
                 if (id != null && id != 0)
                 {
-                    modelPage = await repository.GetById(id.Value);
+                    modelPage = await dataRepository.CategoriesTypesRepository.GetById(id.Value);
                 }
                 else
                 {
@@ -55,8 +59,6 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
                 errorVisible = true;
             }
         }
-        protected bool errorVisible;
-        protected GARCA.Models.CategoriesTypes modelPage;
 
         protected async Task FormSubmit()
         {
@@ -64,11 +66,11 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.CategoriesTypesRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.CategoriesTypesRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

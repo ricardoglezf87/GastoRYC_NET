@@ -30,19 +30,21 @@ namespace GARCA.Web.Components.Data.PeriodsReminders
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-        
-        public PeriodsRemindersRepository repository { get; set; }
+
+        [Inject]
+        protected DataRepositories dataRepository { get; set; }
+
+        protected bool errorVisible;
+
+        protected GARCA.Models.PeriodsReminders modelPage;
 
         [Parameter]
         public int id { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            repository = new();
-            modelPage = await repository.GetById(id);
+            modelPage = await dataRepository.PeriodsRemindersRepository.GetById(id);
         }
-        protected bool errorVisible;
-        protected GARCA.Models.PeriodsReminders modelPage;
 
         protected async Task FormSubmit()
         {
@@ -50,11 +52,11 @@ namespace GARCA.Web.Components.Data.PeriodsReminders
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.PeriodsRemindersRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.PeriodsRemindersRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

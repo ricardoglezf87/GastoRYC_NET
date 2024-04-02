@@ -31,8 +31,8 @@ namespace GARCA.Web.Components.Data.InvestmentProductsPrices
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        
-        public InvestmentProductsPricesRepository repository { get; set; }
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         protected IEnumerable<GARCA.Models.InvestmentProductsPrices> modelPage;
 
@@ -40,16 +40,11 @@ namespace GARCA.Web.Components.Data.InvestmentProductsPrices
 
         protected int count;
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-        }
-
         protected async Task Grid0LoadData(LoadDataArgs args)
         {
             try
             {
-                var result = await repository.GetAll();
+                var result = await dataRepository.InvestmentProductsPricesRepository.GetAll();
                 //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 //modelPage = result.Value.AsODataEnumerable();                
                 modelPage = result;
@@ -79,7 +74,7 @@ namespace GARCA.Web.Components.Data.InvestmentProductsPrices
             {
                 if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
-                    await repository.Delete(investmentProductsPrice.Id);
+                    await dataRepository.InvestmentProductsPricesRepository.Delete(investmentProductsPrice.Id);
                     await grid0.Reload();
                 }
             }
@@ -98,7 +93,7 @@ namespace GARCA.Web.Components.Data.InvestmentProductsPrices
         {
 //            if (args?.Value == "csv")
 //            {
-//                await repository.ExportInvestmentProductsPricesToCSV(new Query
+//                await dataRepository.ExportInvestmentProductsPricesToCSV(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",
@@ -109,7 +104,7 @@ namespace GARCA.Web.Components.Data.InvestmentProductsPrices
 
 //            if (args == null || args.Value == "xlsx")
 //            {
-//                await repository.ExportInvestmentProductsPricesToExcel(new Query
+//                await dataRepository.ExportInvestmentProductsPricesToExcel(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",

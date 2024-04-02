@@ -31,8 +31,8 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        
-        public TransactionsRemindersRepository repository { get; set; }
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         protected IEnumerable<GARCA.Models.TransactionsReminders> modelPage;
 
@@ -40,16 +40,11 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
 
         protected int count;
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-        }
-
         protected async Task Grid0LoadData(LoadDataArgs args)
         {
             try
             {
-                var result = await repository.GetAll();
+                var result = await dataRepository.TransactionsRemindersRepository.GetAll();
                 //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 //modelPage = result.Value.AsODataEnumerable();                
                 modelPage = result;
@@ -79,7 +74,7 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
             {
                 if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
-                    await repository.Delete(transactionsReminder.Id);
+                    await dataRepository.TransactionsRemindersRepository.Delete(transactionsReminder.Id);
                     await grid0.Reload();
                 }
             }
@@ -98,7 +93,7 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
         {
 //            if (args?.Value == "csv")
 //            {
-//                await repository.ExportTransactionsRemindersToCSV(new Query
+//                await dataRepository.ExportTransactionsRemindersToCSV(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",
@@ -109,7 +104,7 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
 
 //            if (args == null || args.Value == "xlsx")
 //            {
-//                await repository.ExportTransactionsRemindersToExcel(new Query
+//                await dataRepository.ExportTransactionsRemindersToExcel(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",

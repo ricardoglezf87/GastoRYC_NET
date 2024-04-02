@@ -31,8 +31,8 @@ namespace GARCA.Web.Components.Data.SplitsReminders
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        
-        public SplitsRemindersRepository repository { get; set; }
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         protected IEnumerable<GARCA.Models.SplitsReminders> modelPage;
 
@@ -40,16 +40,11 @@ namespace GARCA.Web.Components.Data.SplitsReminders
 
         protected int count;
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-        }
-
         protected async Task Grid0LoadData(LoadDataArgs args)
         {
             try
             {
-                var result = await repository.GetAll();
+                var result = await dataRepository.SplitsRemindersRepository.GetAll();
                 //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 //modelPage = result.Value.AsODataEnumerable();                
                 modelPage = result;
@@ -79,7 +74,7 @@ namespace GARCA.Web.Components.Data.SplitsReminders
             {
                 if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
-                    await repository.Delete(splitsReminder.Id);
+                    await dataRepository.SplitsRemindersRepository.Delete(splitsReminder.Id);
                     await grid0.Reload();
                 }
             }
@@ -98,7 +93,7 @@ namespace GARCA.Web.Components.Data.SplitsReminders
         {
 //            if (args?.Value == "csv")
 //            {
-//                await repository.ExportSplitsRemindersToCSV(new Query
+//                await dataRepository.ExportSplitsRemindersToCSV(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",
@@ -109,7 +104,7 @@ namespace GARCA.Web.Components.Data.SplitsReminders
 
 //            if (args == null || args.Value == "xlsx")
 //            {
-//                await repository.ExportSplitsRemindersToExcel(new Query
+//                await dataRepository.ExportSplitsRemindersToExcel(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",

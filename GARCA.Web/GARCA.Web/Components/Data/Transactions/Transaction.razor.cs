@@ -30,30 +30,15 @@ namespace GARCA.Web.Components.Data.Transactions
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-    
-        public TransactionsRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int id { get; set; }
-
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-            modelPage = await repository.GetById(id);
-
-            accountsForAccountsId = await new AccountsRepository().GetAll();
-
-            categoriesForCategoryid = await new CategoriesRepository().GetAll();
-
-            investmentProductsForInvestmentProductsid = await new InvestmentProductsRepository().GetAll();
-
-            peopleForPersonsId = await new PersonsRepository().GetAll();
-
-            tagsForTagsId = await new TagsRepository().GetAll();
-
-            transactionsStatusesForTransactionsStatusId = await new TransactionsStatusRepository().GetAll();
-        }
+        
         protected bool errorVisible;
+        
         protected GARCA.Models.Transactions modelPage;
 
         protected IEnumerable<GARCA.Models.Accounts> accountsForAccountsId;
@@ -68,17 +53,34 @@ namespace GARCA.Web.Components.Data.Transactions
 
         protected IEnumerable<GARCA.Models.TransactionsStatus> transactionsStatusesForTransactionsStatusId;
 
+        protected override async Task OnInitializedAsync()
+        {
+            modelPage = await dataRepository.TransactionsRepository.GetById(id);
+
+            accountsForAccountsId = await dataRepository.AccountsRepository.GetAll();
+
+            categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+
+            investmentProductsForInvestmentProductsid = await dataRepository.InvestmentProductsRepository.GetAll();
+
+            peopleForPersonsId = await dataRepository.PersonsRepository.GetAll();
+
+            tagsForTagsId = await dataRepository.TagsRepository.GetAll();
+
+            transactionsStatusesForTransactionsStatusId = await dataRepository.TransactionsStatusRepository.GetAll();
+        }
+
         protected async Task FormSubmit()
         {
             try
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.TransactionsRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.TransactionsRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

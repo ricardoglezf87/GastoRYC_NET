@@ -30,24 +30,15 @@ namespace GARCA.Web.Components.Data.Splits
 
         [Inject]
         protected NotificationService NotificationService { get; set; }
-        
-        public SplitsRepository repository { get; set; }
+
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         [Parameter]
         public int id { get; set; }
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-            modelPage = await repository.GetById(id);
-
-            transactionsForTransactionsId = await new TransactionsRepository().GetAll();
-
-            tagsForTagsId = await new TagsRepository().GetAll();
-
-            categoriesForCategoryid = await new CategoriesRepository().GetAll();
-        }
         protected bool errorVisible;
+
         protected GARCA.Models.Splits modelPage;
 
         protected IEnumerable<GARCA.Models.Transactions> transactionsForTransactionsId;
@@ -56,17 +47,28 @@ namespace GARCA.Web.Components.Data.Splits
 
         protected IEnumerable<GARCA.Models.Categories> categoriesForCategoryid;
 
+        protected override async Task OnInitializedAsync()
+        {
+            modelPage = await dataRepository.SplitsRepository.GetById(id);
+
+            transactionsForTransactionsId = await dataRepository.TransactionsRepository.GetAll();
+
+            tagsForTagsId = await dataRepository.TagsRepository.GetAll();
+
+            categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+        }
+       
         protected async Task FormSubmit()
         {
             try
             {
                 if (id == null || id == 0)
                 {
-                    await repository.Create(modelPage);
+                    await dataRepository.SplitsRepository.Create(modelPage);
                 }
                 else
                 {
-                    await repository.Update(modelPage);
+                    await dataRepository.SplitsRepository.Update(modelPage);
                 }
 
                 DialogService.Close(modelPage);

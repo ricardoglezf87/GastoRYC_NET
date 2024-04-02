@@ -31,8 +31,8 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        
-        public CategoriesTypesRepository repository { get; set; }
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         protected IEnumerable<GARCA.Models.CategoriesTypes> modelPage;
 
@@ -40,15 +40,11 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
 
         protected int count;
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-        }
         protected async Task Grid0LoadData(LoadDataArgs args)
         {
             try
             {
-                var result = await repository.GetAll();
+                var result = await dataRepository.CategoriesTypesRepository.GetAll();
                 //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 //modelPage = result.Value.AsODataEnumerable();                
                 modelPage = result;
@@ -78,7 +74,7 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
             {
                 if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
-                    await repository.Delete(categoriesType.Id);
+                    await dataRepository.CategoriesTypesRepository.Delete(categoriesType.Id);
                     await grid0.Reload();
                 }
             }
@@ -97,7 +93,7 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
         {
 //            if (args?.Value == "csv")
 //            {
-//                await repository.ExportCategoriesTypesToCSV(new Query
+//                await dataRepository.ExportCategoriesTypesToCSV(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",
@@ -108,7 +104,7 @@ namespace GARCA.Web.Components.Data.CategoriesTypes
 
 //            if (args == null || args.Value == "xlsx")
 //            {
-//                await repository.ExportCategoriesTypesToExcel(new Query
+//                await dataRepository.ExportCategoriesTypesToExcel(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",

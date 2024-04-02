@@ -31,8 +31,8 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        
-        public TransactionsStatusRepository repository { get; set; }
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         protected IEnumerable<GARCA.Models.TransactionsStatus> modelPage;
 
@@ -40,16 +40,11 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
 
         protected int count;
 
-        protected override async Task OnInitializedAsync()
-        {
-            repository = new();
-        }
-
         protected async Task Grid0LoadData(LoadDataArgs args)
         {
             try
             {
-                var result = await repository.GetAll();
+                var result = await dataRepository.TransactionsStatusRepository.GetAll();
                 //(filter: $"{args.Filter}", orderby: $"{args.OrderBy}", top: args.Top, skip: args.Skip, count:args.Top != null && args.Skip != null);
                 //modelPage = result.Value.AsODataEnumerable();                
                 modelPage = result;
@@ -79,7 +74,7 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
             {
                 if (await DialogService.Confirm("¿Está seguro de querer borrar este registro?") == true)
                 {
-                    await repository.Delete(transactionsStatus.Id);
+                    await dataRepository.TransactionsStatusRepository.Delete(transactionsStatus.Id);
                     await grid0.Reload();
                 }
             }
@@ -98,7 +93,7 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
         {
 //            if (args?.Value == "csv")
 //            {
-//                await repository.ExportTransactionsStatusesToCSV(new Query
+//                await dataRepository.ExportTransactionsStatusesToCSV(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",
@@ -109,7 +104,7 @@ namespace GARCA.Web.Components.Data.TransactionsStatuses
 
 //            if (args == null || args.Value == "xlsx")
 //            {
-//                await repository.ExportTransactionsStatusesToExcel(new Query
+//                await dataRepository.ExportTransactionsStatusesToExcel(new Query
 //{
 //    Filter = $@"{(string.IsNullOrEmpty(grid0.Query.Filter)? "true" : grid0.Query.Filter)}",
 //    OrderBy = $"{grid0.Query.OrderBy}",

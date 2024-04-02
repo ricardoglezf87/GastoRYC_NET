@@ -31,7 +31,8 @@ namespace GARCA.Web.Components.Data.AccountsTypes
         [Inject]
         protected NotificationService NotificationService { get; set; }
 
-        protected AccountsTypesRepository repository { get; set; }
+        [Inject]
+        public DataRepositories dataRepository { get; set; }
 
         protected bool errorVisible;
 
@@ -42,12 +43,11 @@ namespace GARCA.Web.Components.Data.AccountsTypes
 
         protected override async Task OnInitializedAsync()
         {
-            repository = new();
             try
             {
                 if (id != null && id != 0)
                 {
-                    accountsTypes = await repository.GetById(id.Value);
+                    accountsTypes = await dataRepository.AccountsTypesRepository.GetById(id.Value);
                 }
                 else
                 {
@@ -66,11 +66,11 @@ namespace GARCA.Web.Components.Data.AccountsTypes
             {
                 if(id == null || id == 0)
                 {
-                    await repository.Create(accountsTypes);
+                    await dataRepository.AccountsTypesRepository.Create(accountsTypes);
                 }
                 else
                 {
-                    await repository.Update(accountsTypes);
+                    await dataRepository.AccountsTypesRepository.Update(accountsTypes);
                 }
 
                 DialogService.Close(accountsTypes);
