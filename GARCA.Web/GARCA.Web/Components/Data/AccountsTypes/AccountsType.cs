@@ -36,7 +36,7 @@ namespace GARCA.Web.Components.Data.AccountsTypes
 
         protected bool errorVisible;
 
-        protected GARCA.Models.AccountsTypes accountsTypes;
+        protected GARCA.Models.AccountsTypes modelPage;
 
         [Parameter]
         public int? id { get; set; }
@@ -47,11 +47,11 @@ namespace GARCA.Web.Components.Data.AccountsTypes
             {
                 if (id != null && id != 0)
                 {
-                    accountsTypes = await dataRepository.AccountsTypesRepository.GetById(id.Value);
+                    modelPage = await dataRepository.AccountsTypesRepository.GetById(id.Value);
                 }
                 else
                 {
-                    accountsTypes = new();
+                    modelPage = new();
                 }
             }
             catch (Exception ex)
@@ -66,14 +66,14 @@ namespace GARCA.Web.Components.Data.AccountsTypes
             {
                 if(id == null || id == 0)
                 {
-                    await dataRepository.AccountsTypesRepository.Create(accountsTypes);
+                    await dataRepository.AccountsTypesRepository.Create(modelPage);
                 }
                 else
                 {
-                    await dataRepository.AccountsTypesRepository.Update(accountsTypes);
+                    await dataRepository.AccountsTypesRepository.Update(modelPage);
                 }
 
-                DialogService.Close(accountsTypes);
+                DialogService.Close(modelPage);
             }
             catch (Exception ex)
             {

@@ -28,7 +28,7 @@ namespace GARCA.Models
         [NotMapped]
         public virtual Decimal? Balance { set; get; }
 
-        [NotMapped]
-        public String? AccountsTypesdescription => AccountsTypes.Description;
+        //[NotMapped]
+        //public String? AccountsTypesdescription => AccountsTypes.Description;
     }
 }

@@ -35,7 +35,7 @@ namespace GARCA.Web.Components.Data.Tags
         public DataRepositories dataRepository { get; set; }
 
         [Parameter]
-        public int id { get; set; }
+        public int? id { get; set; }
 
         protected bool errorVisible;
         
@@ -43,7 +43,21 @@ namespace GARCA.Web.Components.Data.Tags
 
         protected override async Task OnInitializedAsync()
         {
-            modelPage = await dataRepository.TagsRepository.GetById(id);
+            try
+            {
+                if (id != null && id != 0)
+                {
+                    modelPage = await dataRepository.TagsRepository.GetById(id.Value);
+                }
+                else
+                {
+                    modelPage = new();
+                }
+            }
+            catch (Exception ex)
+            {
+                errorVisible = true;
+            }
         }
 
         protected async Task FormSubmit()

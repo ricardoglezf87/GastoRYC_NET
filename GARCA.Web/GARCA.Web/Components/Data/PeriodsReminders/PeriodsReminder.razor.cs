@@ -39,11 +39,25 @@ namespace GARCA.Web.Components.Data.PeriodsReminders
         protected GARCA.Models.PeriodsReminders modelPage;
 
         [Parameter]
-        public int id { get; set; }
+        public int? id { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            modelPage = await dataRepository.PeriodsRemindersRepository.GetById(id);
+            try
+            {
+                if (id != null && id != 0)
+                {
+                    modelPage = await dataRepository.PeriodsRemindersRepository.GetById(id.Value);
+                }
+                else
+                {
+                    modelPage = new();
+                }
+            }
+            catch (Exception ex)
+            {
+                errorVisible = true;
+            }
         }
 
         protected async Task FormSubmit()

@@ -36,15 +36,29 @@ namespace GARCA.Web.Components.Data.InvestmentProductsPrices
         public DataRepositories dataRepository { get; set; }
 
         [Parameter]
-        public int id { get; set; }
+        public int? id { get; set; }
 
         protected bool errorVisible;
-        
+
         protected GARCA.Models.InvestmentProductsPrices modelPage;
 
         protected override async Task OnInitializedAsync()
         {
-            modelPage = await dataRepository.InvestmentProductsPricesRepository.GetById(id);
+            try
+            {
+                if (id != null && id != 0)
+                {
+                    modelPage = await dataRepository.InvestmentProductsPricesRepository.GetById(id.Value);
+                }
+                else
+                {
+                    modelPage = new();
+                }
+            }
+            catch (Exception ex)
+            {
+                errorVisible = true;
+            }
         }
 
         protected async Task FormSubmit()

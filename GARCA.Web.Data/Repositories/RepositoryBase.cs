@@ -68,7 +68,7 @@ namespace GARCA.Web.Data.Repositories
             }           
         }
 
-        public async Task Create(Q obj)
+        public async Task<Q> Create(Q obj)
         {
             try
             {
@@ -81,7 +81,12 @@ namespace GARCA.Web.Data.Repositories
                 if (response.IsSuccessStatusCode)
                 {
                     var result = JsonConvert.DeserializeObject<ResponseAPI>(responseContent);
-                    // Aquí puedes hacer lo que necesites con el resultado
+
+                    if (result.Result != null)
+                    {
+                        return JsonConvert.DeserializeObject<Q>(result.Result.ToString());
+                    }
+                    return null;
                 }
                 else
                 {
@@ -106,8 +111,7 @@ namespace GARCA.Web.Data.Repositories
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = JsonConvert.DeserializeObject<ResponseAPI>(responseContent);
-                    // Aquí puedes hacer lo que necesites con el resultado
+                    var result = JsonConvert.DeserializeObject<ResponseAPI>(responseContent);                    
                 }
                 else
                 {

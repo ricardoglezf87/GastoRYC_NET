@@ -35,7 +35,7 @@ namespace GARCA.Web.Components.Data.Splits
         public DataRepositories dataRepository { get; set; }
 
         [Parameter]
-        public int id { get; set; }
+        public int? id { get; set; }
 
         protected bool errorVisible;
 
@@ -49,15 +49,29 @@ namespace GARCA.Web.Components.Data.Splits
 
         protected override async Task OnInitializedAsync()
         {
-            modelPage = await dataRepository.SplitsRepository.GetById(id);
+            try
+            {
+                if (id != null && id != 0)
+                {
+                    modelPage = await dataRepository.SplitsRepository.GetById(id.Value);
+                }
+                else
+                {
+                    modelPage = new();
+                }
 
-            transactionsForTransactionsId = await dataRepository.TransactionsRepository.GetAll();
+                transactionsForTransactionsId = await dataRepository.TransactionsRepository.GetAll();
 
-            tagsForTagsId = await dataRepository.TagsRepository.GetAll();
+                tagsForTagsId = await dataRepository.TagsRepository.GetAll();
 
-            categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+                categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                errorVisible = true;
+            }
         }
-       
+
         protected async Task FormSubmit()
         {
             try

@@ -35,7 +35,7 @@ namespace GARCA.Web.Components.Data.SplitsReminders
         public DataRepositories dataRepository { get; set; }
 
         [Parameter]
-        public int id { get; set; }
+        public int? id { get; set; }
 
         protected bool errorVisible;
 
@@ -49,13 +49,27 @@ namespace GARCA.Web.Components.Data.SplitsReminders
 
         protected override async Task OnInitializedAsync()
         {
-            modelPage = await dataRepository.SplitsRemindersRepository.GetById(id);
+            try
+            {
+                if (id != null && id != 0)
+                {
+                    modelPage = await dataRepository.SplitsRemindersRepository.GetById(id.Value);
+                }
+                else
+                {
+                    modelPage = new();
+                }
 
-            transactionsRemindersForTransactionsId = await dataRepository.TransactionsRemindersRepository.GetAll();
+                transactionsRemindersForTransactionsId = await dataRepository.TransactionsRemindersRepository.GetAll();
 
-            tagsForTagsId = await dataRepository.TagsRepository.GetAll();
+                tagsForTagsId = await dataRepository.TagsRepository.GetAll();
 
-            categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+                categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                errorVisible = true;
+            }
         }
 
         protected async Task FormSubmit()

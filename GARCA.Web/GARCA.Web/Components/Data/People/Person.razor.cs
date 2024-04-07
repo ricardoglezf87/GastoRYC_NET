@@ -35,7 +35,7 @@ namespace GARCA.Web.Components.Data.People
         public DataRepositories dataRepository { get; set; }
 
         [Parameter]
-        public int id { get; set; }
+        public int? id { get; set; }
 
         protected bool errorVisible;
         
@@ -45,10 +45,24 @@ namespace GARCA.Web.Components.Data.People
 
         protected override async Task OnInitializedAsync()
         {
-            modelPage = await dataRepository.PersonsRepository.GetById(id);
+            try
+            {
+                if (id != null && id != 0)
+                {
+                    modelPage = await dataRepository.PersonsRepository.GetById(id.Value);
+                }
+                else
+                {
+                    modelPage = new();
+                }
 
-            categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+                categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
         }
+catch (Exception ex)
+{
+    errorVisible = true;
+}
+}
         
         protected async Task FormSubmit()
         {

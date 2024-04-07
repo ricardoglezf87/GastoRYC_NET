@@ -35,7 +35,7 @@ namespace GARCA.Web.Components.Data.Categories
         public DataRepositories dataRepository { get; set; }
 
         [Parameter]
-        public int id { get; set; }
+        public int? id { get; set; }
 
         protected bool errorVisible;
 
@@ -45,9 +45,23 @@ namespace GARCA.Web.Components.Data.Categories
 
         protected override async Task OnInitializedAsync()
         {
-            modelPage = await dataRepository.CategoriesRepository.GetById(id);
+            try
+            {
+                if (id != null && id != 0)
+                {
+                    modelPage = await dataRepository.CategoriesRepository.GetById(id.Value);
+                }
+                else
+                {
+                    modelPage = new();
+                }
 
-            categoriesTypesForCategoriesTypesId = await dataRepository.CategoriesTypesRepository.GetAll();
+                categoriesTypesForCategoriesTypesId = await dataRepository.CategoriesTypesRepository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                errorVisible = true;
+            }
         }
 
         protected async Task FormSubmit()

@@ -35,7 +35,7 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
         public DataRepositories dataRepository { get; set; }
 
         [Parameter]
-        public int id { get; set; }
+        public int? id { get; set; }
 
         protected bool errorVisible;
 
@@ -55,21 +55,35 @@ namespace GARCA.Web.Components.Data.TransactionsReminders
 
         protected override async Task OnInitializedAsync()
         {
-            modelPage = await dataRepository.TransactionsRemindersRepository.GetById(id);
+            try
+            {
+                if (id != null && id != 0)
+                {
+                    modelPage = await dataRepository.TransactionsRemindersRepository.GetById(id.Value);
+                }
+                else
+                {
+                    modelPage = new();
+                }
 
-            accountsForAccountsId = await dataRepository.AccountsRepository.GetAll();
+                accountsForAccountsId = await dataRepository.AccountsRepository.GetAll();
 
-            categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+                categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
 
-            periodsRemindersForPeriodsRemindersId = await dataRepository.PeriodsRemindersRepository.GetAll();
+                periodsRemindersForPeriodsRemindersId = await dataRepository.PeriodsRemindersRepository.GetAll();
 
-            peopleForPersonsId = await dataRepository.PersonsRepository.GetAll();
+                peopleForPersonsId = await dataRepository.PersonsRepository.GetAll();
 
-            tagsForTagsId = await dataRepository.TagsRepository.GetAll();
+                tagsForTagsId = await dataRepository.TagsRepository.GetAll();
 
-            transactionsStatusesForTransactionsStatusId = await dataRepository.TransactionsStatusRepository.GetAll();
+                transactionsStatusesForTransactionsStatusId = await dataRepository.TransactionsStatusRepository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                errorVisible = true;
+            }
         }
-        
+
         protected async Task FormSubmit()
         {
             try
