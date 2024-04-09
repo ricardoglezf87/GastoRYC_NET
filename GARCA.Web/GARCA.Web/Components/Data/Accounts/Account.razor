@@ -2,38 +2,40 @@
 
 <PageTitle>Account</PageTitle>
 
-    <RadzenColumn SizeMD=12>
-        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede grabar Account</RadzenAlert>
+<RadzenColumn SizeMD=12>
+    <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede grabar Account</RadzenAlert>
     <RadzenTemplateForm TItem="GARCA.Models.Accounts" Data="@modelPage" Visible="@(modelPage != null)" Submit="@FormSubmit">
-            <RadzenRow style="margin-bottom: 1rem">
-                <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Descripción" Component="Description" style="width: 100%" />
-                </RadzenColumn>
-                <RadzenColumn SizeMD="9">
+        <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="Descripción" Component="Description" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
                 <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Description" Name="Description" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow style="margin-bottom: 1rem">
-                <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Tipo de cuenta" Component="AccountsType" style="width: 100%" />
-                </RadzenColumn>
-                <RadzenColumn SizeMD="9">
-                    <RadzenDropDownDataGrid Data="@accountsTypesForAccountsTypesId" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                <RadzenRequiredValidator Component="Description" Text="La descripción es requerida" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="Tipo de cuenta" Component="AccountsType" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
+                <RadzenDropDownDataGrid Data="@accountsTypesForAccountsTypesId" TextProperty="Description" ValueProperty="Id" AllowClear=true
                                         Placeholder="Elige un tipo de cuenta" style="display: block; width: 100%" @bind-Value="@modelPage.AccountsTypesId" Name="AccountsTypesId" />
-                </RadzenColumn>
-            </RadzenRow>
-            <RadzenRow style="margin-bottom: 1rem">
-                <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="closed" Component="closed" style="width: 100%" />
-                </RadzenColumn>
-                <RadzenColumn SizeMD="9">
+                <RadzenRequiredValidator Component="AccountsTypesId" Text="El tipo de cuenta es requerido" />
+            </RadzenColumn>
+             </RadzenRow>
+        <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="closed" Component="closed" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
                 <RadzenCheckBox style="display: block; width: 100%" @bind-Value="@modelPage.Closed" Name="closed" />
-                </RadzenColumn>
-            </RadzenRow>
-          <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
-                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
-                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
-          </RadzenStack>
-        </RadzenTemplateForm>
-    </RadzenColumn>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+            <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+</RadzenColumn>
 
