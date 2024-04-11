@@ -10,7 +10,8 @@
                     <RadzenLabel Text="Descripción" Component="Description" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Description" Name="Description" />
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Description" Name="Description" />                 
+                    <RadzenRequiredValidator Component="Description" Text="La descripción es requerida" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -21,6 +22,7 @@
                     <RadzenDropDownDataGrid Data="@categoriesTypesForCategoriesTypesId" TextProperty="Description" ValueProperty="Id" AllowClear=true
                          Placeholder="Elige CategoriesType" style="display: block; width: 100%" @bind-Value="@modelPage.CategoriesTypesId" Name="CategoriesTypesId"
                            />
+                    <RadzenRequiredValidator Component="CategoriesTypesId" Text="El tipo de categoría es requerido" />
                 </RadzenColumn>
             </RadzenRow>
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
