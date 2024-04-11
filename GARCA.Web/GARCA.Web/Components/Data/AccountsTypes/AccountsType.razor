@@ -7,6 +7,7 @@
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
                     <RadzenLabel Text="Descripción" Component="Description" style="width: 100%" />
+                    <RadzenRequiredValidator Component="Description" Text="La descripción es requerida" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                 <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Description" Name="Description" />

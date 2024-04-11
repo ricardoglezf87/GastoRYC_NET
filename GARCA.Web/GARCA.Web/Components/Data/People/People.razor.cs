@@ -58,13 +58,13 @@ namespace GARCA.Web.Components.Data.People
 
         protected async Task AddButtonClick(MouseEventArgs args)
         {
-            await DialogService.OpenAsync<Person>("Nuevo Person", null);
+            await DialogService.OpenAsync<Person>("Nueva persona", null);
             await grid0.Reload();
         }
 
         protected async Task EditRow(DataGridRowMouseEventArgs<GARCA.Models.Persons> args)
         {
-            await DialogService.OpenAsync<Person>("Editar Person", new Dictionary<string, object> { {"Id", args.Data.Id} });
+            await DialogService.OpenAsync<Person>("Editar persona", new Dictionary<string, object> { {"Id", args.Data.Id} });
             await grid0.Reload();
         }
 

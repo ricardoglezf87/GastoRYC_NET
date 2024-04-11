@@ -1,28 +1,29 @@
 @page "/People/Edit"
 
-<PageTitle>Person</PageTitle>
+<PageTitle>Personas</PageTitle>
 
     <RadzenColumn SizeMD=12>
         <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede grabar Person</RadzenAlert>
         <RadzenTemplateForm TItem="GARCA.Models.Persons" Data="@modelPage" Visible="@(modelPage != null)" Submit="@FormSubmit">
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Categoría" Component="Category" style="width: 100%" />
+                    <RadzenLabel Text="Nombre" Component="name" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenDropDownDataGrid Data="@categoriesForCategoryid" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                         Placeholder="Elige una categoría" style="display: block; width: 100%" @bind-Value="@modelPage.Categoryid" Name="Categoryid"
-                           />
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Name" Name="Name" />
+                    <RadzenRequiredValidator Component="Name" Text="El nombre es requerido" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="name" Component="name" style="width: 100%" />
+                    <RadzenLabel Text="Categoría por defecto" Component="Category" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Name" Name="name" />
+                    <RadzenDropDownDataGrid Data="@categoriesForCategoryid" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                         Placeholder="Elige una categoría por defecto" style="display: block; width: 100%" @bind-Value="@modelPage.Categoryid" Name="Categoryid"
+                           />
                 </RadzenColumn>
-            </RadzenRow>
+            </RadzenRow>            
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
                     <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
                     <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />

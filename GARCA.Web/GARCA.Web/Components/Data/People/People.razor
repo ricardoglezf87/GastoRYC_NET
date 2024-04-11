@@ -1,10 +1,10 @@
 @page "/People"
 
-<PageTitle>People</PageTitle>
+<PageTitle>Personas</PageTitle>
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="People" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="Personas" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
@@ -23,13 +23,12 @@
             <Columns>
                 <RadzenDataGridColumn TItem="GARCA.Models.Persons" Property="Id" Title="#">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="GARCA.Models.Persons" Property="Category.Description" Title="Category">
+                <RadzenDataGridColumn TItem="GARCA.Models.Persons" Property="Name" Title="Nombre">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="GARCA.Models.Persons" Property="name" Title="name">
+                <RadzenDataGridColumn TItem="GARCA.Models.Persons" Property="Category.Description" Title="Category por defecto">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="GARCA.Models.Persons" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="person">
-
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
                             Shade="Shade.Lighter" Variant="Variant.Flat"
                             Click=@(args => GridDeleteButtonClick(args, person)) @onclick:stopPropagation="true" />
