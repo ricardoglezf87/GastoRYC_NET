@@ -147,9 +147,9 @@ namespace GARCA.View.Views
             if (cbPerson.SelectedItem != null)
             {
                 var p = (Persons)cbPerson.SelectedItem;
-                if (p?.Categoryid != null)
+                if (p?.CategoriesId != null)
                 {
-                    cbCategory.SelectedValue = p.Categoryid;
+                    cbCategory.SelectedValue = p.CategoriesId;
                 }
             }
         }

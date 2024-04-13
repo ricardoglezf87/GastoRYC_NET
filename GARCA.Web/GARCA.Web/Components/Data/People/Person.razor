@@ -9,23 +9,19 @@
                 <RadzenColumn SizeMD="3">
                     <RadzenLabel Text="Nombre" Component="name" style="width: 100%" />
                 </RadzenColumn>
-                <RadzenColumn SizeMD="9">
-                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Name" Name="name" />
-                    <RadzenRequiredValidator Component="Name" Text="El nombre es requerido" />
-                    <RadzenDropDownDataGrid Data="@categoriesForCategoryid" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                         Placeholder="Elige una categoría" style="display: block; width: 100%" @bind-Value="@modelPage.Categoryid" Name="Categoryid"
-                           />
-                </RadzenColumn>
+            <RadzenColumn SizeMD="9">
+                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Name" Name="Name" />
+                <RadzenRequiredValidator Component="Name" Text="El nombre es requerido" />
+            </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
-                    <RadzenLabel Text="Categoría" Component="Category" style="width: 100%" />
+                    <RadzenLabel Text="Categoría por defecto" Component="Category" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenDropDownDataGrid Data="@categoriesForCategoryid" TextProperty="Description" ValueProperty="Id" AllowClear=true
-                         Placeholder="Elige una categoría" style="display: block; width: 100%" @bind-Value="@modelPage.Categoryid" Name="Categoryid"
-                           />
-                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Name" Name="name" />
+                         Placeholder="Elige una categoría" style="display: block; width: 100%" @bind-Value="@modelPage.CategoriesId" Name="CategoriesId"
+                           />                    
                 </RadzenColumn>
             </RadzenRow>            
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">

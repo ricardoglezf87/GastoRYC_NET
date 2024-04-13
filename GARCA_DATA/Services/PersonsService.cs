@@ -27,7 +27,7 @@ namespace GARCA.Data.Services
                 if (categoryid != null)
                 {
                     Persons? persons = await iPersonsService.GetById(id);
-                    persons.Categoryid = categoryid;
+                    persons.CategoriesId = categoryid;
                     await Save(persons);
                 }
             }

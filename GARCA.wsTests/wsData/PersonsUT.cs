@@ -28,7 +28,7 @@ namespace GARCA.wsTests.wsData
             {
                 Id = int.MaxValue,
                 Name = "TestDescrip",
-                Categoryid = categoryid,
+                CategoriesId = categoryid,
             };
         }
     }

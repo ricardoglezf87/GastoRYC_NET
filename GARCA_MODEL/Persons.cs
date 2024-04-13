@@ -9,9 +9,9 @@ namespace GARCA.Models
         public virtual String? Name { set; get; }
 
         [Column("categoryid")]
-        public virtual int? Categoryid { set; get; }
+        public virtual int? CategoriesId { set; get; }
 
         [Column("category")]
-        public virtual Categories? Category { set; get; }
+        public virtual Categories? Categories { set; get; }
     }
 }

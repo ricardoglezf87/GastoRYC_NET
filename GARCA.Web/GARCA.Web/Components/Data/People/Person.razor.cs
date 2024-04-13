@@ -38,7 +38,7 @@ namespace GARCA.Web.Components.Data.People
         public int? id { get; set; }
 
         protected bool errorVisible;
-        
+
         protected GARCA.Models.Persons modelPage;
 
         protected IEnumerable<GARCA.Models.Categories> categoriesForCategoryid;
@@ -57,13 +57,13 @@ namespace GARCA.Web.Components.Data.People
                 }
 
                 categoriesForCategoryid = await dataRepository.CategoriesRepository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                errorVisible = true;
+            }
         }
-catch (Exception ex)
-{
-    errorVisible = true;
-}
-}
-        
+
         protected async Task FormSubmit()
         {
             try
