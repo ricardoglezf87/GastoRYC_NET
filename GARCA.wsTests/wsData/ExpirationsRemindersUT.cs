@@ -1,0 +1,35 @@
+using FluentValidation;
+using GARCA.Model;
+using GARCA.Models;
+using GARCA.Utils.Logging;
+using GARCA.wsData.Endpoints;
+using GARCA.wsData.Repositories;
+using GARCA.wsData.Validations;
+using Microsoft.AspNetCore.Http.HttpResults;
+
+using System.Net;
+
+namespace GARCA.wsTests.wsData
+{
+    [TestFixture]
+    public class ExpirationsRemindersUT : BaseUT<ExpirationsReminders,ExpirationsRemindersValidations>
+    {
+        public override ExpirationsReminders MakeChange(ExpirationsReminders obj)
+        {
+            obj.Done = true;
+            return obj;
+        }
+
+        public override ExpirationsReminders CreateObj()
+        {
+            var transid = new TransactionsRemindersRepository().Insert(new TransactionsRemindersUT().CreateObj()).Result;
+
+            return new ExpirationsReminders()
+            {
+                Id = int.MaxValue,
+                Date = DateTime.Now,
+                TransactionsRemindersId = transid,
+            };
+        }
+    }
+}

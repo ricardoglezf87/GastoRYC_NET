@@ -1,0 +1,30 @@
+using GARCA.Models;
+using GARCA.wsData.Repositories;
+using GARCA.wsData.Validations;
+
+namespace GARCA.wsTests.wsData
+{
+    [TestFixture]
+    public class AccountsUT : BaseUT<Accounts,AccountsValidations>
+    {
+        public override Accounts MakeChange(Accounts obj)
+        {
+            obj.Description = "TestDescripUpdate";
+            return obj;
+        }
+
+        public override Accounts CreateObj()
+        {
+            var accountsTypesId = new AccountsTypesRepository().Insert(new AccountsTypesUT().CreateObj()).Result;
+            var categoryid = new CategoriesRepository().Insert(new CategoriesUT().CreateObj()).Result;
+
+            return new Accounts()
+            {
+                Id = int.MaxValue,
+                Description = "TestDescrip",
+                AccountsTypesId = accountsTypesId,
+                Categoryid = categoryid,
+            };
+        }
+    }
+}
