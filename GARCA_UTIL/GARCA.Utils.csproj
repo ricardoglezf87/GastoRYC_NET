@@ -3,10 +3,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>4.1.0.48</AssemblyVersion>
+    <AssemblyVersion>4.1.0.93</AssemblyVersion>
     <FileVersion>4.1.0.0</FileVersion>
-    <InformationalVersion>4.1.0-alpha.48+Branch.develop.Sha.55a5964f2d6eb07b6e944e016ca9369f538c7dbe</InformationalVersion>
-    <Version>4.1.0-alpha0048</Version>
+    <InformationalVersion>4.1.0-alpha.93+Branch.develop.Sha.4c141eea3ea3ec6f1cec9e7af99406d17b6132dd</InformationalVersion>
+    <Version>4.1.0-alpha0093</Version>
     <AssemblyName>GARCA.Utils</AssemblyName>
     <Configurations>Debug;Release;TEST</Configurations>
   </PropertyGroup>
