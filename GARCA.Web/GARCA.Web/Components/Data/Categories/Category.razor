@@ -1,0 +1,34 @@
+@page "/Category"
+
+<PageTitle>Category</PageTitle>
+
+    <RadzenColumn SizeMD=12>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No se puede grabar Category</RadzenAlert>
+        <RadzenTemplateForm TItem="GARCA.Models.Categories" Data="@modelPage" Visible="@(modelPage != null)" Submit="@FormSubmit">
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Descripción" Component="Description" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenTextBox style="display: block; width: 100%" @bind-Value="@modelPage.Description" Name="Description" />                 
+                    <RadzenRequiredValidator Component="Description" Text="La descripción es requerida" />
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Categories Type" Component="CategoriesType" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDownDataGrid Data="@categoriesTypesForCategoriesTypesId" TextProperty="Description" ValueProperty="Id" AllowClear=true
+                         Placeholder="Elige CategoriesType" style="display: block; width: 100%" @bind-Value="@modelPage.CategoriesTypesId" Name="CategoriesTypesId"
+                           />
+                    <RadzenRequiredValidator Component="CategoriesTypesId" Text="El tipo de categoría es requerido" />
+                </RadzenColumn>
+            </RadzenRow>
+          <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                    <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Save" Variant="Variant.Flat" />
+                    <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancel" Variant="Variant.Flat" Click="@CancelButtonClick"  />
+          </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenColumn>
+

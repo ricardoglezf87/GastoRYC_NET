@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>GARCA.Data</AssemblyName>
+    <AssemblyVersion>4.1.0.93</AssemblyVersion>
+    <FileVersion>4.1.0.0</FileVersion>
+    <InformationalVersion>4.1.0-alpha.93+Branch.develop.Sha.4c141eea3ea3ec6f1cec9e7af99406d17b6132dd</InformationalVersion>
+    <Version>4.1.0-alpha0093</Version>
+    <Configurations>Debug;Release;TEST</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.21" />
+    <PackageReference Include="Dommel" Version="3.2.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.0" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
+    <ProjectReference Include="..\GARCA_UTIL\GARCA.Utils.csproj" />
+  </ItemGroup>
+</Project>

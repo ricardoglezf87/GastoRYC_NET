@@ -1,0 +1,82 @@
+﻿@* @page "/AccountsTypes/Edit/{Id:int?}"
+@rendermode InteractiveAuto
+@inject IJSRuntime JsRuntime
+@inject NavigationManager navigationManager
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-7">
+                <h4 class="card-title text-dark">Tipo de cuenta</h4>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <EditForm Model="obj" OnValidSubmit="@( () => Obj_Saved())" FormName="frmObj">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <div class="container">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Descripción:</label>
+                        </div>
+                        <div class="-col-6">
+                            <InputText @bind-Value="obj.Description" class="form-control" placeholder="Introduce la descripción"></InputText>
+                            <ValidationMessage For="() => obj.Description"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <button type="submit" class="btn btn-success"><i class="bi bi-gear-fill"></i>&nbsp; Guardar</button>
+                        </div>
+                        <div class="col-6">
+                            <NavLink href="AccountsTypes/List" class="btn btn-secondary"><i class="bi bi-arrow-left-circle-fill"></i>&nbsp; Cancelar</NavLink>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private AccountsTypes obj { get; set; } = new AccountsTypes();
+    private AccountsTypesRepository repository { get; set; } = new AccountsTypesRepository();
+    [Parameter]
+    public int? Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            obj = await repository.GetById(Id.Value);
+        }
+    }
+
+    private async Task Obj_Saved()
+    {
+        try
+        {
+            if (Id.HasValue)
+            {
+                await repository.Update(obj);
+            }
+            else
+            {
+                await repository.Create(obj);
+            }
+
+            await JsRuntime.SetSessionVariable("msgSucess", "Tipo cuenta guardado correctamente!");
+
+            navigationManager.NavigateTo("AccountsTypes/List");
+        }
+        catch (Exception e)
+        {
+            await JsRuntime.ToastrError(e.Message);
+        }
+    }
+} *@
