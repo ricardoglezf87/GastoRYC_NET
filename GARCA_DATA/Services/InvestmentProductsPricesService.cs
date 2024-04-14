@@ -64,7 +64,7 @@ namespace GARCA.Data.Services
             {
                 if (!await Exists(productsPrices.InvestmentProductsid ?? -99, productsPrices.Date ?? DateTime.MinValue))
                 {
-                    await manager.Update(productsPrices);
+                    await manager.Insert(productsPrices);
                 }
             }
         }

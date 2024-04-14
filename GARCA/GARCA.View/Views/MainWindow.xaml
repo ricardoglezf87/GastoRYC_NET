@@ -84,7 +84,6 @@
                     <GridView AllowsColumnReorder="False">
                         <GridViewColumn   DisplayMemberBinding="{Binding Description}"  />
                         <GridViewColumn   CellTemplate="{StaticResource BalanceTemplate}"  />
-
                     </GridView>
                 </ListView.View>
                 <ListView.GroupStyle>

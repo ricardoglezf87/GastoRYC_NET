@@ -11,8 +11,8 @@ namespace GARCA.Data.Managers
         {
             using (var connection = iRycContextService.getConnection())
             {
-                return await connection.SelectAsync<InvestmentProductsPrices>(
-                x => x.InvestmentProductsid == investmentProductId && x.Date == date) != null;
+                return await connection.AnyAsync<InvestmentProductsPrices>(
+                x => x.InvestmentProductsid == investmentProductId && x.Date == date);
             }
         }
 

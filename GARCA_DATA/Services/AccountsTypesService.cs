@@ -1,9 +1,10 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
+using GARCA_DATA.Managers;
 
 namespace GARCA.Data.Services
 {
-    public class AccountsTypesService : ServiceBaseWS<AccountsTypes>
+    public class AccountsTypesService : ServiceBase<AccountsTypesManager,AccountsTypes>
     {
         public enum EAccountsTypes
         {

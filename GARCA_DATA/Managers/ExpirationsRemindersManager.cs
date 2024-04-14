@@ -35,7 +35,7 @@ namespace GARCA.Data.Managers
         {
             using (var connection = iRycContextService.getConnection())
             {
-                return await connection.SelectAsync<ExpirationsReminders>(x => id.Equals(x.TransactionsRemindersId));
+                return await connection.SelectAsync<ExpirationsReminders>(x => id == x.TransactionsRemindersId);
             }
         }
     }

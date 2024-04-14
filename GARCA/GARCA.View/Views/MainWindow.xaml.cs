@@ -415,7 +415,7 @@ namespace GARCA
                 var accounts = await iAccountsService.GetAllOpened();
                 viewAccounts = CollectionViewSource.GetDefaultView(accounts);
                 lvAccounts.ItemsSource = viewAccounts;
-                viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("AccountsTypesdescription"));
+                viewAccounts.GroupDescriptions.Add(new PropertyGroupDescription("AccountsTypes.Description"));
                 viewAccounts.SortDescriptions.Add(new SortDescription("AccountsTypesId", ListSortDirection.Ascending));
                 await RefreshBalanceAccount();
 
