@@ -1,11 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyVersion>4.1.0.93</AssemblyVersion>
+    <FileVersion>4.1.0.0</FileVersion>
+    <InformationalVersion>4.1.0-alpha.93+Branch.develop.Sha.4c141eea3ea3ec6f1cec9e7af99406d17b6132dd</InformationalVersion>
+    <Version>4.1.0-alpha0093</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\GARCA.Web.Data\GARCA.Web.Data.csproj">
       <TreatAsUsed>true</TreatAsUsed>
@@ -14,7 +16,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
     <PackageReference Include="Radzen.Blazor" Version="4.29.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Update="wwwroot\images\Logo-60.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -23,16 +24,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="wwwroot\css\bootstrap\bootstrap.min.css" />
     <None Include="wwwroot\css\bootstrap\bootstrap.min.css.map" />
     <None Include="wwwroot\css\site.css" />
   </ItemGroup>
-
 </Project>

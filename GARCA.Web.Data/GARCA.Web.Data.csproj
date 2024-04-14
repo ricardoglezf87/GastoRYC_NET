@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyVersion>4.1.0.93</AssemblyVersion>
+    <FileVersion>4.1.0.0</FileVersion>
+    <InformationalVersion>4.1.0-alpha.93+Branch.develop.Sha.4c141eea3ea3ec6f1cec9e7af99406d17b6132dd</InformationalVersion>
+    <Version>4.1.0-alpha0093</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
   </ItemGroup>
-
 </Project>
