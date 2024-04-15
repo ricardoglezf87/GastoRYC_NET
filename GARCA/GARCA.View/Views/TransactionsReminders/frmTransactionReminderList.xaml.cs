@@ -27,6 +27,7 @@ namespace GARCA.View.Views
             {
                 await iTransactionsRemindersService.Delete(transactionsReminders);
             }
+            await LoadTransactions();
         }
 
         private void gvTransactionsReminders_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
