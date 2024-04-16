@@ -19,11 +19,9 @@ namespace GARCA.Web.Data.Repositories
         public InvestmentProductsTypesRepository InvestmentProductsTypesRepository { get;}
         public InvestmentProductsPricesRepository InvestmentProductsPricesRepository { get;}
         public PeriodsRemindersRepository PeriodsRemindersRepository { get;}
-        public PersonsRepository PersonsRepository { get;}  
-        public SplitsArchivedRepository SplitsArchivedRepository { get;}    
+        public PersonsRepository PersonsRepository { get;}    
         public SplitsRemindersRepository SplitsRemindersRepository { get;}  
         public SplitsRepository SplitsRepository { get;}
-        public TransactionsArchivedRepository TransactionsArchivedRepository { get;}
         public TransactionsRemindersRepository TransactionsRemindersRepository { get;}
         public TransactionsRepository TransactionsRepository { get;}
         public TagsRepository TagsRepository { get;}    
@@ -41,10 +39,8 @@ namespace GARCA.Web.Data.Repositories
             InvestmentProductsPricesRepository = new();
             InvestmentProductsTypesRepository = new();
             PersonsRepository = new();
-            SplitsArchivedRepository = new();
             SplitsRemindersRepository = new();
             SplitsRepository = new();
-            TransactionsArchivedRepository = new();
             TransactionsRemindersRepository = new();
             TransactionsRepository = new();
             TransactionsStatusRepository = new();

@@ -1,5 +1,6 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
+using static GARCA.Utils.Enums.EnumCategories;
 
 
 namespace GARCA.Data.Services
@@ -20,7 +21,7 @@ namespace GARCA.Data.Services
 
         public async Task<IEnumerable<VBalancebyCategory>?> GetExpensesbyYearMonth(int month, int year)
         {
-            return (await GetAll())?.Where(x => x.CategoriesTypesid == (int)CategoriesTypesService.ECategoriesTypes.Expenses && x.Year == year && x.Month == month).ToHashSet();
+            return (await GetAll())?.Where(x => x.CategoriesTypesid == (int)ECategoriesTypes.Expenses && x.Year == year && x.Month == month).ToHashSet();
         }
     }
 }

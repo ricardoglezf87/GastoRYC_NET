@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
+using static GARCA.Utils.Enums.EnumCategories;
 
 namespace GARCA.View.Views
 {
@@ -82,8 +83,7 @@ namespace GARCA.View.Views
                 categories = new Categories();
                 accounts.Categoryid = await iCategoriesService.GetNextId();
                 categories.Description = "[" + accounts.Description + "]";
-                categories.CategoriesTypesId = (int)CategoriesTypesService.ECategoriesTypes.Transfers;
-
+                categories.CategoriesTypesId = (int)ECategoriesTypes.Transfers;
             }
 
             if (categories != null)

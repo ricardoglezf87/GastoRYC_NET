@@ -18,7 +18,6 @@ namespace GARCA.Utils.Enums
 
         public enum ESpecialCategories
         {
-            Cierre = -2,
             Split = -1,
             WithoutCategory = 0
         }

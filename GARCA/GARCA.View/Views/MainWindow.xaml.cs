@@ -49,31 +49,6 @@ namespace GARCA
 
         #region Events
 
-        private async void btnArchiveTransactions_Click(object sender, RoutedEventArgs e)
-        {
-            String strDate = Microsoft.VisualBasic.Interaction.InputBox("Inserte la fecha(dd/mm/yyyy) a archivar:", "Archivar transacciones");
-            if (strDate == null || !strDate.Contains("/") || strDate.Split("/").Count() != 3)
-            {
-                MessageBox.Show("Debe colocar una fecha valida", "Archivar transacciones");
-            }
-            else
-            {
-                DateTime date = strDate.Length == 8
-                    ? DateTime.ParseExact(strDate, "dd/MM/yy", CultureInfo.InvariantCulture)
-                    : DateTime.ParseExact(strDate, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                Mouse.OverrideCursor = Cursors.Wait;
-
-                iRycContextService.MakeBackup();
-
-                await iTransactionsArchivedService.ArchiveTransactions(date);
-                await RefreshBalance();
-
-                Mouse.OverrideCursor = null;
-
-                MessageBox.Show("Transacciones archivadas!", "Archivar transacciones");
-            }
-        }
-
         private async void btnUpdateBalances_Click(object sender, RoutedEventArgs e)
         {
             await UpdateBalances();

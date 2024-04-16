@@ -1,6 +1,7 @@
 ﻿using GARCA.Data.Managers;
 using GARCA.Models;
 using static GARCA.Data.IOC.DependencyConfig;
+using static GARCA.Utils.Enums.EnumCategories;
 
 
 namespace GARCA.Data.Services
@@ -54,13 +55,13 @@ namespace GARCA.Data.Services
                     transactionsReminders.AmountOut += splitsReminders.AmountOut ?? 0;
                 }
 
-                transactionsReminders.CategoriesId = (int?)CategoriesService.ESpecialCategories.Split;
-                transactionsReminders.Categories = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
+                transactionsReminders.CategoriesId = (int?)ESpecialCategories.Split;
+                transactionsReminders.Categories = await iCategoriesService.GetById((int)ESpecialCategories.Split);
             }
-            else if (transactionsReminders.CategoriesId is ((int)CategoriesService.ESpecialCategories.Split))
+            else if (transactionsReminders.CategoriesId is ((int)ESpecialCategories.Split))
             {
-                transactionsReminders.CategoriesId = (int)CategoriesService.ESpecialCategories.WithoutCategory;
-                transactionsReminders.Categories = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
+                transactionsReminders.CategoriesId = (int)ESpecialCategories.WithoutCategory;
+                transactionsReminders.Categories = await iCategoriesService.GetById((int)ESpecialCategories.WithoutCategory);
             }
 
             if (transactionsReminders.Id == 0)
