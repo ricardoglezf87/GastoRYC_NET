@@ -3,6 +3,7 @@ using GARCA.Models;
 using System.Threading.Tasks;
 using System.Windows;
 using static GARCA.Data.IOC.DependencyConfig;
+using static GARCA.Utils.Enums.EnumCategories;
 
 namespace GARCA.View.Views
 {
@@ -61,7 +62,7 @@ namespace GARCA.View.Views
                 e.IsValid = false;
                 e.ErrorMessages.Add("CategoriesId", "Tiene que rellenar el tipo de categoría");
             }
-            else if (splits.CategoriesId == (int)CategoriesService.ESpecialCategories.Split)
+            else if (splits.CategoriesId == (int)ESpecialCategories.Split)
             {
                 e.IsValid = false;
                 e.ErrorMessages.Add("CategoriesId", "No se puede utilizar esta categoría en un split");
