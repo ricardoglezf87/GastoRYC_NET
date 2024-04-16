@@ -1,12 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Configurations>Debug;Release;TEST</Configurations>
+    <AssemblyVersion>4.2.0.54</AssemblyVersion>
+    <FileVersion>4.2.0.0</FileVersion>
+    <InformationalVersion>4.2.0-alpha.54+Branch.develop.Sha.0a2c727cb8aa996a4524642e3ac26e238dfc3c5a</InformationalVersion>
+    <Version>4.2.0-alpha0054</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Dommel" Version="3.3.0" />
     <PackageReference Include="FluentValidation" Version="11.9.0" />
@@ -16,10 +18,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.3.10" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
     <ProjectReference Include="..\GARCA_UTIL\GARCA.Utils.csproj" />
   </ItemGroup>
-
 </Project>

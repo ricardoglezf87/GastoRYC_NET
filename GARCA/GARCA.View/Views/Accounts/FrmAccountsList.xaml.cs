@@ -84,7 +84,6 @@ namespace GARCA.View.Views
                 accounts.Categoryid = await iCategoriesService.GetNextId();
                 categories.Description = "[" + accounts.Description + "]";
                 categories.CategoriesTypesId = (int)ECategoriesTypes.Transfers;
-
             }
 
             if (categories != null)
