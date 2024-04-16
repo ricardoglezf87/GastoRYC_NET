@@ -6,10 +6,10 @@
     <Configurations>Debug;Release;TEST</Configurations>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <AssemblyVersion>4.1.0.93</AssemblyVersion>
-    <FileVersion>4.1.0.0</FileVersion>
-    <InformationalVersion>4.1.0-alpha.93+Branch.develop.Sha.4c141eea3ea3ec6f1cec9e7af99406d17b6132dd</InformationalVersion>
-    <Version>4.1.0-alpha0093</Version>
+    <AssemblyVersion>4.2.0.54</AssemblyVersion>
+    <FileVersion>4.2.0.0</FileVersion>
+    <InformationalVersion>4.2.0-alpha.54+Branch.develop.Sha.0a2c727cb8aa996a4524642e3ac26e238dfc3c5a</InformationalVersion>
+    <Version>4.2.0-alpha0054</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.1">
