@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static GARCA.Data.IOC.DependencyConfig;
+using static GARCA.Utils.Enums.EnumCategories;
 
 namespace GARCA.View.Views
 {
@@ -81,7 +82,7 @@ namespace GARCA.View.Views
             {
                 if (MessageBox.Show("Para hacer una división se tiene que asignar una categoría especial, ¿Esta de acuerdo?", "inserción movimiento", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    cbCategory.SelectedValue = (int)CategoriesService.ESpecialCategories.Split;
+                    cbCategory.SelectedValue = (int)ESpecialCategories.Split;
                     txtAmount.Value = 0;
                 }
                 else

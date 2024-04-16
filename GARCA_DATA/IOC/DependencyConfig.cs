@@ -21,11 +21,9 @@ namespace GARCA.Data.IOC
         public static RycContextService iRycContextService => Container.GetInstance<RycContextService>();
         public static SplitsRemindersService iSplitsRemindersService => Container.GetInstance<SplitsRemindersService>();
         public static SplitsService iSplitsService => Container.GetInstance<SplitsService>();
-        public static SplitsArchivedService iSplitsArchivedService => Container.GetInstance<SplitsArchivedService>();
         public static TagsService iTagsService => Container.GetInstance<TagsService>();
         public static TransactionsRemindersService iTransactionsRemindersService => Container.GetInstance<TransactionsRemindersService>();
         public static TransactionsService iTransactionsService => Container.GetInstance<TransactionsService>();
-        public static TransactionsArchivedService iTransactionsArchivedService => Container.GetInstance<TransactionsArchivedService>();
         public static TransactionsStatusService iTransactionsStatusService => Container.GetInstance<TransactionsStatusService>();
         public static VBalancebyCategoryService iVBalancebyCategoryService => Container.GetInstance<VBalancebyCategoryService>();
         public static VPortfolioService iVPortfolioService => Container.GetInstance<VPortfolioService>();
@@ -54,11 +52,9 @@ namespace GARCA.Data.IOC
             Container.Register<RycContextService>(Lifestyle.Singleton);
             Container.Register<SplitsRemindersService>(Lifestyle.Singleton);
             Container.Register<SplitsService>(Lifestyle.Singleton);
-            Container.Register<SplitsArchivedService>(Lifestyle.Singleton);
             Container.Register<TagsService>(Lifestyle.Singleton);
             Container.Register<TransactionsRemindersService>(Lifestyle.Singleton);
             Container.Register<TransactionsService>(Lifestyle.Singleton);
-            Container.Register<TransactionsArchivedService>(Lifestyle.Singleton);
             Container.Register<TransactionsStatusService>(Lifestyle.Singleton);
             Container.Register<VBalancebyCategoryService>(Lifestyle.Singleton);
             Container.Register<VPortfolioService>(Lifestyle.Singleton);

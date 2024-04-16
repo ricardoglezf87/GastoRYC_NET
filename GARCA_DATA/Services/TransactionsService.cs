@@ -2,6 +2,7 @@
 using GARCA.Models;
 using GARCA.Utils.Extensions;
 using static GARCA.Data.IOC.DependencyConfig;
+using static GARCA.Utils.Enums.EnumCategories;
 
 namespace GARCA.Data.Services
 {
@@ -210,13 +211,13 @@ namespace GARCA.Data.Services
                     transactions.AmountOut += splits.AmountOut ?? 0;
                 }
 
-                transactions.CategoriesId = (int)CategoriesService.ESpecialCategories.Split;
-                transactions.Categories = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.Split);
+                transactions.CategoriesId = (int)ESpecialCategories.Split;
+                transactions.Categories = await iCategoriesService.GetById((int)ESpecialCategories.Split);
             }
-            else if (transactions.CategoriesId is (int)CategoriesService.ESpecialCategories.Split)
+            else if (transactions.CategoriesId is (int)ESpecialCategories.Split)
             {
-                transactions.CategoriesId = (int)CategoriesService.ESpecialCategories.WithoutCategory;
-                transactions.Categories = await iCategoriesService.GetById((int)CategoriesService.ESpecialCategories.WithoutCategory);
+                transactions.CategoriesId = (int)ESpecialCategories.WithoutCategory;
+                transactions.Categories = await iCategoriesService.GetById((int)ESpecialCategories.WithoutCategory);
             }
 
             if (transactions.Id == 0)
