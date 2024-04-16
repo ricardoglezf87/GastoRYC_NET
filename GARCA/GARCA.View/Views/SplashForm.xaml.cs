@@ -17,15 +17,14 @@ namespace GARCA.View.Views
             lblVersion.Content = "Version: " + Assembly.GetExecutingAssembly().GetName().Version;
         }
 
-        private async Task ComprobateDataBase()
+        private void ComprobateDataBase()
         {
             iRycContextService.MakeBackup();
-            await iMigrationService.Migrate();
         }
 
-        private async void Window_ContentRendered(object sender, EventArgs e)
+        private void Window_ContentRendered(object sender, EventArgs e)
         {
-            await ComprobateDataBase();
+            ComprobateDataBase();
             new MainWindow().Show();
             Close();
         }
