@@ -16,8 +16,6 @@ namespace GARCA.Data.Services
                     SELECT categoryid, COUNT(categoryid) AS repetition_count
                     FROM (
                         SELECT categoryid FROM transactions WHERE personid = {id}
-                        UNION ALL
-                        SELECT categoryid FROM TransactionsArchived WHERE personid = {id}
                     ) AS A
                     GROUP BY categoryid
                     ORDER BY repetition_count DESC
