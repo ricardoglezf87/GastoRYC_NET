@@ -120,7 +120,6 @@ namespace GARCA
                     switch (actualPrincipalContent)
                     {
                         case PartialHome home:
-                            await home.LoadCharts();
                             break;
                         case PartialTransactions:
                             await RefreshBalance();
@@ -196,7 +195,6 @@ namespace GARCA
                     transactions.LoadTransactions();
                     break;
                 case PartialHome home:
-                    await home.LoadCharts();
                     break;
             }
         }
@@ -239,7 +237,6 @@ namespace GARCA
                     transactions.LoadTransactions();
                     break;
                 case PartialHome home:
-                    await home.LoadCharts();
                     break;
             }
         }

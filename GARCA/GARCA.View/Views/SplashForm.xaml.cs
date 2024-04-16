@@ -17,14 +17,8 @@ namespace GARCA.View.Views
             lblVersion.Content = "Version: " + Assembly.GetExecutingAssembly().GetName().Version;
         }
 
-        private void ComprobateDataBase()
-        {
-            iRycContextService.MakeBackup();
-        }
-
         private void Window_ContentRendered(object sender, EventArgs e)
         {
-            ComprobateDataBase();
             new MainWindow().Show();
             Close();
         }

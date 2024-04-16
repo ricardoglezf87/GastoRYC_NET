@@ -1,47 +1,21 @@
-﻿using Microsoft.Data.Sqlite;
-using SQLitePCL;
+﻿using MySqlConnector;
 
 namespace GARCA.Data.Services
 {
     public class RycContextService
     {
-        public SqliteConnection getConnection()
+        public MySqlConnection getConnection()
         {
-            var nameDdbb = string.Empty;
+            MySqlConnection connection;
 
 #if DEBUG
-            nameDdbb = "rycBBDD_PRE.db";
+                connection = new MySqlConnection("Server=192.168.1.142;Database=GARCA_PRE;User Id=arcarw;Password=3DWw^3PUuW$B@E8B$Z");
 #else
-            nameDdbb = "rycBBDD.db";
+                connection = new MySqlConnection("Server=192.168.1.142;Database=GARCA;User Id=arcarw;Password=3DWw^3PUuW$B@E8B$Z");
 #endif
 
-            Batteries.Init();
-            return new SqliteConnection($"Data Source=Data\\{nameDdbb}");
-        }
-
-        public void MakeBackup()
-        {
-            var path = string.Empty;
-            var nameDdbb = string.Empty;
-
-            path = "Data\\";
-
-            if (!Directory.Exists(path + "Backup\\"))
-            {
-                Directory.CreateDirectory(path + "Backup\\");
-            }
-
-#if DEBUG
-            nameDdbb = "rycBBDD_PRE.db";
-#else
-            nameDdbb = "rycBBDD.db";
-#endif
-
-            if (File.Exists(path + nameDdbb))
-            {
-                File.Copy(path + nameDdbb, path + "Backup\\" +
-                    nameDdbb + "." + DateTime.Now.Ticks + ".bk", true);
-            }
+            connection.Open();
+            return connection;
         }
     }
 }
