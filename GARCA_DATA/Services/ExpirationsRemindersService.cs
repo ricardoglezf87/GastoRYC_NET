@@ -2,6 +2,7 @@
 using GARCA.Models;
 using GARCA.Utils.Extensions;
 using static GARCA.Data.IOC.DependencyConfig;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace GARCA.Data.Services
@@ -17,6 +18,11 @@ namespace GARCA.Data.Services
         private async Task<bool> ExistsExpiration(TransactionsReminders transactionsReminder, DateTime date)
         {
             return await manager.ExistsExpiration(transactionsReminder, date);
+        }
+
+        public async Task<DateTime?> MaxExpiration(TransactionsReminders transactionsReminder)
+        {
+            return await manager.MaxExpiration(transactionsReminder);
         }
 
         private async Task<IEnumerable<ExpirationsReminders>?> GetAllPendingWithGeneration()
@@ -54,7 +60,7 @@ namespace GARCA.Data.Services
         {
             if (transactionsReminders != null)
             {
-                var date = transactionsReminders.Date;
+                var date = await MaxExpiration(transactionsReminders) ?? transactionsReminders.Date;
 
                 while (date <= DateTime.Now.AddYears(1))
                 {

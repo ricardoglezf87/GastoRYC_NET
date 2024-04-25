@@ -1,4 +1,5 @@
 ﻿
+using Dapper;
 using Dommel;
 using GARCA.Models;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -28,7 +29,16 @@ namespace GARCA.Data.Managers
                 return await connection.SelectAsync<ExpirationsReminders>(
                 x => x.TransactionsRemindersId == transactionsReminder.Id && x.Date == date) != null;
             }
+        }
 
+        public async Task<DateTime?> MaxExpiration(TransactionsReminders transactionsReminder)
+        {
+            using (var connection = iRycContextService.getConnection())
+            {
+                return (await connection.QueryAsync<DateTime>(
+                    $"select max(date) from ExpirationsReminders where transactionsRemindersId={transactionsReminder.Id}")
+                    ).FirstOrDefault();
+            }
         }
 
         public async Task<IEnumerable<ExpirationsReminders>?> GetByTransactionReminderid(int id)
