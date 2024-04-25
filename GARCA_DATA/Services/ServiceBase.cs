@@ -24,11 +24,6 @@ namespace GARCA.Data.Services
             return await manager.GetById(id);
         }
 
-        public virtual async Task<Q?> GetById(DateTime id)
-        {
-            return await manager.GetById(id);
-        }
-
         public virtual async Task<bool> Delete(Q? obj)
         {
             return obj != null && await manager.Delete(obj);

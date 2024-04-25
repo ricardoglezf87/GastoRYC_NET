@@ -9,10 +9,8 @@ namespace GARCA.Data.IOC
         public static AccountsService iAccountsService => Container.GetInstance<AccountsService>();
         public static AccountsTypesService iAccountsTypesService => Container.GetInstance<AccountsTypesService>();
         public static CategoriesService iCategoriesService => Container.GetInstance<CategoriesService>();
-        public static CategoriesTypesService iCategoriesTypesService => Container.GetInstance<CategoriesTypesService>();
-        public static DateCalendarService iDateCalendarService => Container.GetInstance<DateCalendarService>();
-        public static ExpirationsRemindersService iExpirationsRemindersService => Container.GetInstance<ExpirationsRemindersService>();
-        public static ForecastsChartService iForecastsChartService => Container.GetInstance<ForecastsChartService>();
+        public static CategoriesTypesService iCategoriesTypesService => Container.GetInstance<CategoriesTypesService>();        
+        public static ExpirationsRemindersService iExpirationsRemindersService => Container.GetInstance<ExpirationsRemindersService>();        
         public static InvestmentProductsPricesService iInvestmentProductsPricesService => Container.GetInstance<InvestmentProductsPricesService>();
         public static InvestmentProductsService iInvestmentProductsService => Container.GetInstance<InvestmentProductsService>();
         public static InvestmentProductsTypesService iInvestmentProductsTypesService => Container.GetInstance<InvestmentProductsTypesService>();
@@ -38,10 +36,8 @@ namespace GARCA.Data.IOC
             Container.Register<AccountsService>(Lifestyle.Singleton);
             Container.Register<AccountsTypesService>(Lifestyle.Singleton);
             Container.Register<CategoriesService>(Lifestyle.Singleton);
-            Container.Register<CategoriesTypesService>(Lifestyle.Singleton);
-            Container.Register<DateCalendarService>(Lifestyle.Singleton);
-            Container.Register<ExpirationsRemindersService>(Lifestyle.Singleton);
-            Container.Register<ForecastsChartService>(Lifestyle.Singleton);
+            Container.Register<CategoriesTypesService>(Lifestyle.Singleton);            
+            Container.Register<ExpirationsRemindersService>(Lifestyle.Singleton);            
             Container.Register<InvestmentProductsPricesService>(Lifestyle.Singleton);
             Container.Register<InvestmentProductsService>(Lifestyle.Singleton);
             Container.Register<InvestmentProductsTypesService>(Lifestyle.Singleton);

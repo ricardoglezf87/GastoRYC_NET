@@ -23,14 +23,6 @@ namespace GARCA.Data.Managers
             }
         }
 
-        public virtual async Task<Q?> GetById(DateTime id)
-        {
-            using (var connection = iRycContextService.getConnection())
-            {
-                return await connection.GetAsync<Q>(id);
-            }
-        }
-
         public virtual async Task<Q> Save(Q obj)
         {
             if (obj.Id != 0)

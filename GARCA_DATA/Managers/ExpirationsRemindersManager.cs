@@ -1,7 +1,9 @@
 ﻿
+using Dapper;
 using Dommel;
 using GARCA.Models;
 using static GARCA.Data.IOC.DependencyConfig;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GARCA.Data.Managers
 {
@@ -28,7 +30,38 @@ namespace GARCA.Data.Managers
                 return await connection.SelectAsync<ExpirationsReminders>(
                 x => x.TransactionsRemindersId == transactionsReminder.Id && x.Date == date) != null;
             }
+        }
 
+        public async Task<IEnumerable<ExpirationsReminders>?> GetAllExpirationReadyToAutoregister()
+        {
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.QueryAsync<ExpirationsReminders>(
+                    @"select er.* 
+                    from ExpirationsReminders er 
+	                    join TransactionsReminders tr on tr.id = er.transactionsRemindersid 
+		                    and (done is null or done=false) and er.date <= now()
+		                    and tr.autoRegister = true"
+                    );
+            }
+        }
+
+        public async Task<IEnumerable<ExpirationsReminders>?> GetAllPending()
+        {
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.SelectAsync<ExpirationsReminders,TransactionsReminders,ExpirationsReminders>(x => (x.Done == null || x.Done != true) && x.Date <= DateTime.Now);
+            }
+        }
+
+        public async Task<DateTime?> MaxExpiration(TransactionsReminders transactionsReminder)
+        {
+            using (var connection = iRycContextService.getConnection())
+            {
+                return (await connection.QueryAsync<DateTime>(
+                    $"select max(date) from ExpirationsReminders where transactionsRemindersId={transactionsReminder.Id}")
+                    ).FirstOrDefault();
+            }
         }
 
         public async Task<IEnumerable<ExpirationsReminders>?> GetByTransactionReminderid(int id)
