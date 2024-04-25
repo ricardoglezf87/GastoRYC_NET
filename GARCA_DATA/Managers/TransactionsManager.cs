@@ -15,6 +15,15 @@ namespace GARCA.Data.Managers
             }
         }
 
+        public async Task<IEnumerable<Transactions>?> GetByAccount(int accountId)
+        {
+            using (var connection = iRycContextService.getConnection())
+            {
+                return await connection.SelectAsync<Transactions, Accounts, Categories, TransactionsStatus, Persons, Tags, InvestmentProducts, Transactions>
+                    (x=>x.AccountsId == accountId);
+            }
+        }
+
         public async Task<int> GetNextId()
         {
             using (var connection = iRycContextService.getConnection())

@@ -140,7 +140,6 @@ namespace GARCA
 
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadCalendar();
             await iExpirationsRemindersService.GenerateAutoregister();
             await LoadAccounts();
             ToggleViews(EViews.Home);
@@ -306,11 +305,6 @@ namespace GARCA
             {
                 await transactions.RefreshData();
             }
-        }
-
-        private async Task LoadCalendar()
-        {
-            await iDateCalendarService.FillCalendar();
         }
 
         private bool isSameView(EViews views)

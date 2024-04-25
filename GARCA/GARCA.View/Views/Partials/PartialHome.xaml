@@ -18,14 +18,6 @@
             <RowDefinition />
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <syncfusion:SfChart x:Name="chForecast" Grid.Row="0" Grid.ColumnSpan="2"/>
-        <syncfusion:SfChart  x:Name="chExpenses" Margin="0,0,0,0" Grid.Row="1" Grid.Column="0" />
-        <syncfusion:SfDataGrid x:Name="gvExpenses"  Margin="0,0,0,0" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="1" ColumnSizer="Star">
-            <syncfusion:SfDataGrid.Columns >
-                <syncfusion:GridTextColumn MappingName="Category" HeaderText="Categoría"/>
-                <syncfusion:GridCurrencyColumn MappingName="NegAmount" HeaderText="Importe"/>
-            </syncfusion:SfDataGrid.Columns>
-        </syncfusion:SfDataGrid>
-
+        <Image x:Name="pbLogo" HorizontalAlignment="Center" Height="336" Margin="0,30,30,0" VerticalAlignment="Center" Width="336" Source="/Resources/logo-100.png"/>
     </Grid>
 </Page>
