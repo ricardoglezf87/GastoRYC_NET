@@ -15,7 +15,7 @@ namespace GARCA.Data.Services
             return await manager.ExistsExpiration(transactionsReminder, date);
         }
 
-        public async Task<DateTime?> MaxExpiration(TransactionsReminders transactionsReminder)
+        private async Task<IEnumerable<ExpirationsReminders>?> GetAllPendingWithGeneration()
         {
             return await manager.MaxExpiration(transactionsReminder);
         }
