@@ -32,7 +32,7 @@ namespace GARCA.Data.Managers
             }
         }
 
-        public async Task<IEnumerable<ExpirationsReminders>?> GetAllExpirationReadyToAutoregister()
+        public async Task<IEnumerable<ExpirationsReminders>?> GetAllReadyToAutoregister()
         {
             using (var connection = iRycContextService.getConnection())
             {
