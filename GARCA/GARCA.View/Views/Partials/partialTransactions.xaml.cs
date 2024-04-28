@@ -57,8 +57,7 @@ namespace GARCA.View.Views
             var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
             frm.ShowDialog();
-            await iTransactionsService.UpdateTransactionAfterSplits(transactions);
-            await iTransactionsService.RefreshBalanceAllTransactions();
+            await iTransactionsService.UpdateTransactionAfterSplits(transactions);            
             await RefreshData();
             await parentForm.LoadAccounts();
         }
@@ -163,7 +162,6 @@ namespace GARCA.View.Views
                     await RemoveTransaction(transactions);
                 }
 
-                await iTransactionsService.RefreshBalanceAllTransactions();
                 await parentForm.RefreshBalance();
             }
             else
@@ -187,7 +185,6 @@ namespace GARCA.View.Views
                     await RemoveTransaction(transactions);
                 }
 
-                await iTransactionsService.RefreshBalanceAllTransactions();
                 await parentForm.RefreshBalance();
             }
             else

@@ -7,6 +7,14 @@ namespace GARCA.Data.Managers
     public class ManagerBase<Q>
         where Q : ModelBase, new()
     {
+#if DEBUG
+        protected const string DATABASE_NAME = "GARCA_PRE";
+#elif TEST
+        protected const string DATABASE_NAME = "GARCA_TEST";
+#else
+        protected const string DATABASE_NAME = "GARCA";
+#endif
+
         public virtual async Task<IEnumerable<Q>?> GetAll()
         {
             using (var connection = iRycContextService.getConnection())
@@ -57,7 +65,7 @@ namespace GARCA.Data.Managers
             return await Delete(obj.Id);
         }
 
-        public virtual async Task<bool> Delete(int id)
+        protected virtual async Task<bool> Delete(int id)
         {
             using (var connection = iRycContextService.getConnection())
             {

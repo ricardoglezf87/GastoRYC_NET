@@ -35,7 +35,7 @@ namespace GARCA.Data.Services
 
         public async Task DoAutoregister()
         {
-            foreach (var exp in await manager.GetAllReadyToAutoregister())
+            foreach (var exp in await manager.GetAllExpirationReadyToAutoregister())
             {                
                 await RegisterTransactionfromReminder(exp.Id);
                 exp.Done = true;
@@ -108,8 +108,6 @@ namespace GARCA.Data.Services
                         splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
                         await iSplitsService.SaveChanges(splits);
                     }
-
-                    await iTransactionsService.RefreshBalanceAllTransactions();
 
                     return transactions;
                 }

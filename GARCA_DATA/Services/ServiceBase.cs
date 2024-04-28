@@ -29,11 +29,6 @@ namespace GARCA.Data.Services
             return obj != null && await manager.Delete(obj);
         }
 
-        public virtual async Task<bool> Delete(int i)
-        {
-            return await manager.Delete(i);
-        }
-
         public virtual async Task<Q> Save(Q obj)
         {
             return await manager.Save(obj);

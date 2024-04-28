@@ -32,7 +32,7 @@ namespace GARCA.Data.Managers
             }
         }
 
-        public async Task<IEnumerable<ExpirationsReminders>?> GetAllReadyToAutoregister()
+        public async Task<IEnumerable<ExpirationsReminders>?> GetAllExpirationReadyToAutoregister()
         {
             using (var connection = iRycContextService.getConnection())
             {
@@ -48,9 +48,21 @@ namespace GARCA.Data.Managers
 
         public async Task<IEnumerable<ExpirationsReminders>?> GetAllPending()
         {
+            DateTime futuro = DateTime.Now.AddMonths(1);
+
             using (var connection = iRycContextService.getConnection())
             {
-                return await connection.SelectAsync<ExpirationsReminders,TransactionsReminders,ExpirationsReminders>(x => (x.Done == null || x.Done != true) && x.Date <= DateTime.Now);
+                IEnumerable<ExpirationsReminders> list = await connection.SelectAsync<ExpirationsReminders>(
+                    x => (x.Done == null || x.Done != true) && x.Date <= futuro);
+                
+                foreach(var item in list)
+                {
+                    item.TransactionsReminders = await connection
+                        .GetAsync<TransactionsReminders,Categories,Persons,TransactionsReminders>(
+                            item.TransactionsRemindersId ?? -99);
+                }
+
+                return list;
             }
         }
 

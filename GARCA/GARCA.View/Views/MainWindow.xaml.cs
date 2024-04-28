@@ -424,7 +424,7 @@ namespace GARCA
 
                     foreach (var accounts in laccounts)
                     {
-                        await iTransactionsService.RefreshBalanceTransactions(accounts);
+                        //TODO: Realizar llamada a procedimiento desde 1/1/1987
                         loadDialog.PerformeStep();
                     }
 
