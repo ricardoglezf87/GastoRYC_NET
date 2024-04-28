@@ -34,7 +34,7 @@ namespace GARCA.Data.Managers
         private async Task postChange(Transactions obj)
         {
             await UpdateBalance(obj.Date ?? DateTime.Now);
-            await UpdateDefaultPerson(obj.PersonsId ?? -99);
+            _ = UpdateDefaultPerson(obj.PersonsId ?? -99);
         }
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(int accountId)
