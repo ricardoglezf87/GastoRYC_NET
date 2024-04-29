@@ -86,11 +86,6 @@ namespace GARCA.Data.Services
             return transactions;
         }
 
-        public async Task UpdateBalance(DateTime date)
-        {
-            await manager.UpdateBalance(date);
-        }
-
         private async Task UpdateTranfer(Transactions transactions)
         {
             if (transactions.TranferId != null &&
