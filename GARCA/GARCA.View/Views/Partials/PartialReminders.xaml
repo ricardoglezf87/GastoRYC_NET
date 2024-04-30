@@ -14,7 +14,7 @@
             <syncfusion:CardView.HeaderTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Text="{Binding TransactionsReminders.PersonDescripGrid}"/>
+                        <TextBlock Text="{Binding TransactionsReminders.Persons.Name}"/>
                         <TextBlock Text="{Binding TransactionsReminders.Memo}"/>
                     </StackPanel>
                 </DataTemplate>

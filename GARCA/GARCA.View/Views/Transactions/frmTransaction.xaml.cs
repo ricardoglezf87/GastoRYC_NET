@@ -100,8 +100,7 @@ namespace GARCA.View.Views
 
             FrmSplitsList frm = new(transaction);
             frm.ShowDialog();
-            await iTransactionsService.UpdateTransactionAfterSplits(transaction);
-            await iTransactionsService.RefreshBalanceAllTransactions();
+            await iTransactionsService.UpdateTransactionAfterSplits(transaction);            
             LoadTransaction();
         }
 
@@ -450,8 +449,7 @@ namespace GARCA.View.Views
                     await UpdateTransaction();
                     if (transaction != null)
                     {
-                        transaction = await iTransactionsService.SaveChanges(transaction);
-                        await iTransactionsService.RefreshBalanceAllTransactions();
+                        transaction = await iTransactionsService.SaveChanges(transaction);                        
                     }
                     return true;
                 }

@@ -7,7 +7,7 @@ namespace wsData.Migrations
 {
     public class Migration_202403030901
     {
-        public  void Do()
+        public void Do()
         {
             try
             {
@@ -180,31 +180,6 @@ namespace wsData.Migrations
                 ");
 
                     connection.Execute(@"
-                -- TransactionsArchived definition
-                    CREATE TABLE TransactionsArchived (
-                        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                        date TEXT NULL,
-                        accountid INT NULL,
-                        personid INT NULL,
-                        tagid INT NULL,
-                        categoryid INT NULL,
-                        amountIn TEXT NULL,
-                        amountOut TEXT NULL,
-                        tranferid INT NULL,
-                        tranferSplitid INT NULL,
-                        memo TEXT NULL,
-                        transactionStatusid INT NULL,
-                        investmentProductsid INT NULL,
-                        numShares TEXT NULL,
-                        pricesShares TEXT NULL,
-                        investmentCategory INT NULL,
-                        balance TEXT NULL,
-                        orden REAL NULL,
-                        idOriginal INT NULL
-                    );
-                ");
-
-                    connection.Execute(@"
                 -- splitsReminders definition
                     CREATE TABLE SplitsReminders (
                         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -215,21 +190,6 @@ namespace wsData.Migrations
                         amountOut TEXT NULL,
                         memo TEXT NULL,
                         tranferid INT NULL
-                    );
-                ");
-
-                    connection.Execute(@"
-                -- SplitsArchived definition
-                    CREATE TABLE SplitsArchived (
-                        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                        transactionid INT NULL,
-                        tagid INT NULL,
-                        categoryid INT NULL,
-                        amountIn TEXT NULL,
-                        amountOut TEXT NULL,
-                        memo TEXT NULL,
-                        tranferid INT NULL,
-                        idOriginal INT NULL
                     );
                 ");
 
@@ -251,7 +211,7 @@ namespace wsData.Migrations
                 ");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.LogError(ex.Message);
             }

@@ -193,42 +193,6 @@ CREATE INDEX "IX_TransactionsReminders_personid" ON "TransactionsReminders" ("pe
 CREATE INDEX "IX_TransactionsReminders_tagid" ON "TransactionsReminders" ("tagid");
 CREATE INDEX "IX_TransactionsReminders_transactionStatusid" ON "TransactionsReminders" ("transactionStatusid");
 
--- TransactionsArchived definition
-
-CREATE TABLE "TransactionsArchived" (
-    "id" INTEGER NOT NULL CONSTRAINT "PK_TransactionsArchived" PRIMARY KEY AUTOINCREMENT,
-    "date" TEXT NULL,
-    "accountid" INTEGER NULL,
-    "personid" INTEGER NULL,
-    "tagid" INTEGER NULL,
-    "categoryid" INTEGER NULL,
-    "amountIn" TEXT NULL,
-    "amountOut" TEXT NULL,
-    "tranferid" INTEGER NULL,
-    "tranferSplitid" INTEGER NULL,
-    "memo" TEXT NULL,
-    "transactionStatusid" INTEGER NULL,
-    "investmentProductsid" INTEGER NULL,
-    "numShares" TEXT NULL,
-    "pricesShares" TEXT NULL,
-    "investmentCategory" INTEGER NULL,
-    "balance" TEXT NULL,
-    "orden" REAL NULL, "idOriginal" INTEGER NULL,
-    CONSTRAINT "FK_TransactionsArchived_Accounts_accountid" FOREIGN KEY ("accountid") REFERENCES "Accounts" ("id"),
-    CONSTRAINT "FK_TransactionsArchived_Categories_categoryid" FOREIGN KEY ("categoryid") REFERENCES "Categories" ("id"),
-    CONSTRAINT "FK_TransactionsArchived_InvestmentProducts_investmentProductsid" FOREIGN KEY ("investmentProductsid") REFERENCES "InvestmentProducts" ("id"),
-    CONSTRAINT "FK_TransactionsArchived_Persons_personid" FOREIGN KEY ("personid") REFERENCES "Persons" ("id"),
-    CONSTRAINT "FK_TransactionsArchived_Tags_tagid" FOREIGN KEY ("tagid") REFERENCES "Tags" ("id"),
-    CONSTRAINT "FK_TransactionsArchived_TransactionsStatus_transactionStatusid" FOREIGN KEY ("transactionStatusid") REFERENCES "TransactionsStatus" ("id")
-);
-
-CREATE INDEX "IX_TransactionsArchived_accountid" ON "TransactionsArchived" ("accountid");
-CREATE INDEX "IX_TransactionsArchived_categoryid" ON "TransactionsArchived" ("categoryid");
-CREATE INDEX "IX_TransactionsArchived_investmentProductsid" ON "TransactionsArchived" ("investmentProductsid");
-CREATE INDEX "IX_TransactionsArchived_personid" ON "TransactionsArchived" ("personid");
-CREATE INDEX "IX_TransactionsArchived_tagid" ON "TransactionsArchived" ("tagid");
-CREATE INDEX "IX_TransactionsArchived_transactionStatusid" ON "TransactionsArchived" ("transactionStatusid");
-
 -- splitsReminders definition
 
 CREATE TABLE "splitsReminders" (
@@ -248,26 +212,6 @@ CREATE TABLE "splitsReminders" (
 CREATE INDEX "IX_splitsReminders_categoryid" ON "splitsReminders" ("categoryid");
 CREATE INDEX "IX_splitsReminders_tagid" ON "splitsReminders" ("tagid");
 CREATE INDEX "IX_splitsReminders_transactionid" ON "splitsReminders" ("transactionid");
-
--- SplitsArchived definition
-
-CREATE TABLE "SplitsArchived" (
-    "id" INTEGER NOT NULL CONSTRAINT "PK_SplitsArchived" PRIMARY KEY AUTOINCREMENT,
-    "transactionid" INTEGER NULL,
-    "tagid" INTEGER NULL,
-    "categoryid" INTEGER NULL,
-    "amountIn" TEXT NULL,
-    "amountOut" TEXT NULL,
-    "memo" TEXT NULL,
-    "tranferid" INTEGER NULL, "idOriginal" INTEGER NULL,
-    CONSTRAINT "FK_SplitsArchived_Categories_categoryid" FOREIGN KEY ("categoryid") REFERENCES "Categories" ("id"),
-    CONSTRAINT "FK_SplitsArchived_Tags_tagid" FOREIGN KEY ("tagid") REFERENCES "Tags" ("id"),
-    CONSTRAINT "FK_SplitsArchived_TransactionsArchived_transactionid" FOREIGN KEY ("transactionid") REFERENCES "TransactionsArchived" ("id")
-);
-
-CREATE INDEX "IX_SplitsArchived_categoryid" ON "SplitsArchived" ("categoryid");
-CREATE INDEX "IX_SplitsArchived_tagid" ON "SplitsArchived" ("tagid");
-CREATE INDEX "IX_SplitsArchived_transactionid" ON "SplitsArchived" ("transactionid");
 
 -- expirationsReminders definition
 

@@ -120,14 +120,13 @@ namespace GARCA
                     switch (actualPrincipalContent)
                     {
                         case PartialHome home:
-                            await home.LoadCharts();
                             break;
                         case PartialTransactions:
                             await RefreshBalance();
                             break;
                         case PartialReminders reminders:
                             await reminders.LoadReminders();
-                            await iExpirationsRemindersService.GenerateAutoregister();
+                            await iExpirationsRemindersService.DoAutoregister();
                             await LoadAccounts();
                             break;
                         case PartialPortfolio portfolio:
@@ -141,8 +140,8 @@ namespace GARCA
 
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            await LoadCalendar();
-            await iExpirationsRemindersService.GenerateAutoregister();
+            await iExpirationsRemindersService.GenerateAllExpirations();
+            await iExpirationsRemindersService.DoAutoregister();
             await LoadAccounts();
             ToggleViews(EViews.Home);
         }
@@ -196,7 +195,6 @@ namespace GARCA
                     transactions.LoadTransactions();
                     break;
                 case PartialHome home:
-                    await home.LoadCharts();
                     break;
             }
         }
@@ -239,7 +237,6 @@ namespace GARCA
                     transactions.LoadTransactions();
                     break;
                 case PartialHome home:
-                    await home.LoadCharts();
                     break;
             }
         }
@@ -265,7 +262,7 @@ namespace GARCA
                 await reminders.LoadReminders();
             }
 
-            await iExpirationsRemindersService.GenerateAutoregister();
+            await iExpirationsRemindersService.DoAutoregister();
             await LoadAccounts();
         }
 
@@ -309,11 +306,6 @@ namespace GARCA
             {
                 await transactions.RefreshData();
             }
-        }
-
-        private async Task LoadCalendar()
-        {
-            await iDateCalendarService.FillCalendar();
         }
 
         private bool isSameView(EViews views)
@@ -432,7 +424,7 @@ namespace GARCA
 
                     foreach (var accounts in laccounts)
                     {
-                        await iTransactionsService.RefreshBalanceTransactions(accounts);
+                        //TODO: Realizar llamada a procedimiento desde 1/1/1987
                         loadDialog.PerformeStep();
                     }
 
