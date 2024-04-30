@@ -14,6 +14,7 @@ namespace GARCA.Data.Services
         public override async Task<TransactionsReminders> Save(TransactionsReminders transactionsReminders)
         {
             await iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
+            await iExpirationsRemindersService.GenerateAllExpirations();
             return await base.Save(transactionsReminders);
         }
 

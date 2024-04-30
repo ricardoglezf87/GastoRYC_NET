@@ -28,8 +28,7 @@ namespace GARCA.Data.Services
 
         public override async Task<Transactions> Save(Transactions obj)
         {
-            obj.Date = obj.Date.RemoveTime();
-            obj.Orden = await CreateOrden(obj);
+            obj.Date = obj.Date.RemoveTime();            
             return await base.Save(obj);
         }
 
@@ -56,7 +55,7 @@ namespace GARCA.Data.Services
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(int? id)
         {
-            return (await GetAll())?.Where(x => id.Equals(x.AccountsId));
+            return (await manager.GetByAccount(id ?? -99));
         }
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(Accounts? accounts)
@@ -79,41 +78,12 @@ namespace GARCA.Data.Services
             return await manager.GetNextId();
         }
 
-        private async Task<double> CreateOrden(Transactions transactions)
-        {
-            int id = (transactions.Id == 0 ? await GetNextId() : transactions.Id);
-
-            return Convert.ToDouble(
-                    transactions.Date?.Year.ToString("0000")
-                    + transactions.Date?.Month.ToString("00")
-                    + transactions.Date?.Day.ToString("00")
-                    + id.ToString("000000")
-                    + (transactions.AmountIn != 0 ? "1" : "0"));
-        }
-
         public async Task<Transactions?> SaveChanges(Transactions? transactions)
         {
-            transactions.AmountIn ??= 0;
-            transactions.AmountOut ??= 0;
-
             await UpdateTranfer(transactions);
             await UpdateTranferFromSplit(transactions);
-            transactions = await Save(transactions);
-            await iPersonsService.SetCategoryDefault(transactions.PersonsId ?? -1);
+            transactions = await Save(transactions);            
             return transactions;
-        }
-
-        public async Task RefreshBalanceTransactions(Accounts? acc)
-        {
-            await manager.UpdateBalance(acc.Id);
-        }
-
-        public async Task RefreshBalanceAllTransactions()
-        {
-            foreach (var acc in await iAccountsService.GetAll())
-            {
-                await RefreshBalanceTransactions(acc);
-            }
         }
 
         private async Task UpdateTranfer(Transactions transactions)
@@ -166,7 +136,6 @@ namespace GARCA.Data.Services
                     tContraria.AmountOut = transactions.AmountIn;
                     tContraria.TransactionsStatusId = transactions.TransactionsStatusId;
                     await Save(tContraria);
-                    await RefreshBalanceAllTransactions();
                 }
             }
         }

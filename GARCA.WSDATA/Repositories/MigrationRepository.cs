@@ -18,13 +18,11 @@ namespace GARCA.wsData.Repositories
                 {
                    connection.Execute(@"
                         DROP TABLE GARCA_TEST.ExpirationsReminders;
-                        DROP TABLE GARCA_TEST.SplitsArchived;
                         DROP TABLE GARCA_TEST.SplitsReminders;
                         DROP TABLE GARCA_TEST.TransactionsReminders;
                         DROP TABLE GARCA_TEST.Splits;
                         DROP TABLE GARCA_TEST.Transactions;
                         DROP TABLE GARCA_TEST.InvestmentProductsPrices;
-                        DROP TABLE GARCA_TEST.TransactionsArchived;
                         DROP TABLE GARCA_TEST.Accounts;
                         DROP TABLE GARCA_TEST.AccountsTypes;
                         DROP TABLE GARCA_TEST.DateCalendar;
