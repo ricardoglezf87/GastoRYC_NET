@@ -8,12 +8,12 @@ namespace GARCA.Data.Services
     {
         public async Task<IEnumerable<Accounts>?> GetAllOpened()
         {
-            return (await GetAll())?.Where(x => x.Closed is null or false).ToHashSet();
+            return await manager.GetAllOpened();
         }
 
         public async Task<Accounts?> GetByCategoryId(int id)
         {
-            return (await GetAll())?.First(x => x.Categoryid == id);
+            return await manager.GetByCategoryId(id);
         }
 
         public async Task<Decimal> GetBalanceByAccount(int? id)
