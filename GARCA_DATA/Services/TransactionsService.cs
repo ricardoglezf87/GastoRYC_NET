@@ -55,7 +55,7 @@ namespace GARCA.Data.Services
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(int? id)
         {
-            return (await manager.GetByAccount(id ?? -99));
+            return await manager.GetByAccount(id ?? -99);
         }
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(Accounts? accounts)

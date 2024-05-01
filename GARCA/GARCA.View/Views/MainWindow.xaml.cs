@@ -1,7 +1,6 @@
 ﻿using GARCA.Models;
 using GARCA.View.Views;
 using GARCA.View.Views.Common;
-using GARCA.WebReport;
 using Syncfusion.SfSkinManager;
 using Syncfusion.Windows.Tools.Controls;
 using System;
@@ -49,12 +48,6 @@ namespace GARCA
 
         #region Events
 
-        private async void btnUpdateBalances_Click(object sender, RoutedEventArgs e)
-        {
-            await UpdateBalances();
-            await RefreshBalance();
-        }
-
         private async void btnUpdatePrices_Click(object sender, RoutedEventArgs e)
         {
             await UpdatePrices();
@@ -63,24 +56,6 @@ namespace GARCA
             {
                 await portfolio.LoadPortfolio();
                 await LoadAccounts();
-            }
-        }
-
-
-        private async void btnUpdateReportWeb_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Mouse.OverrideCursor = Cursors.Wait;
-                GoogleSheetsUpdater googleSheetsUpdater = new();
-                await googleSheetsUpdater.UpdateSheet();
-                Mouse.OverrideCursor = null;
-                MessageBox.Show("Proceso completado", "Actualizar ReportWeb");
-            }
-            catch (Exception ex)
-            {
-                Mouse.OverrideCursor = null;
-                MessageBox.Show("Error mientras actualizaba ReportWeb: " + ex.Message, "Actualizar ReportWeb");
             }
         }
 
@@ -97,11 +72,6 @@ namespace GARCA
         private void btnHome_Click(object sender, RoutedEventArgs e)
         {
             ToggleViews(EViews.Home);
-        }
-
-        private async void btnNewTransaction_Click(object sender, RoutedEventArgs e)
-        {
-            await OpenNewTransaction();
         }
 
         private async void btnAddTransaction_Click(object sender, RoutedEventArgs e)
@@ -290,7 +260,6 @@ namespace GARCA
             }
         }
 
-
         private async Task OpenNewTransaction()
         {
             var frm = lvAccounts.SelectedItem == null ? new FrmTransaction() : new FrmTransaction(((Accounts)lvAccounts.SelectedItem).Id);
@@ -473,7 +442,6 @@ namespace GARCA
                 MessageBox.Show("Ha un ocurrido un error: " + ex.Message, "Actualización de precios");
             }
         }
-
 
         #endregion
     }
