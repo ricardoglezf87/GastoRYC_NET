@@ -304,18 +304,16 @@ namespace GARCA.View.Views
             }
         }
 
-        private async Task UpdateTransaction()
+        private void FillTransactionVar()
         {
             transaction ??= new Transactions();
 
             transaction.Date = dtpDate.SelectedDate;
             transaction.AccountsId = (int)cbAccount.SelectedValue;
-            transaction.Accounts = await iAccountsService.GetById(transaction.AccountsId ?? -99);
 
             if (cbPerson.SelectedValue != null)
             {
                 transaction.PersonsId = (int)cbPerson.SelectedValue;
-                transaction.Persons = await iPersonsService.GetById(transaction.PersonsId ?? -99);
             }
 
             transaction.Memo = txtMemo.Text;
@@ -328,13 +326,11 @@ namespace GARCA.View.Views
             if (cbCategory.SelectedValue != null)
             {
                 transaction.CategoriesId = (int)cbCategory.SelectedValue;
-                transaction.Categories = await iCategoriesService.GetById(transaction.CategoriesId ?? -99);
             }
 
             if (cbInvestmentProduct.SelectedValue != null)
             {
                 transaction.InvestmentProductsId = (int)cbInvestmentProduct.SelectedValue;
-                transaction.InvestmentProducts = await iInvestmentProductsService.GetById(transaction.InvestmentProductsId ?? -99);
             }
 
             transaction.NumShares = (decimal)Convert.ToDouble(txtNumShares.Value);
@@ -354,11 +350,9 @@ namespace GARCA.View.Views
             if (cbTag.SelectedValue != null)
             {
                 transaction.TagsId = (int)cbTag.SelectedValue;
-                transaction.Tags = await iTagsService.GetById(transaction.TagsId ?? -99);
             }
 
             transaction.TransactionsStatusId = (int)cbTransactionStatus.SelectedValue;
-            transaction.TransactionsStatus = await iTransactionsStatusService.GetById(transaction.TransactionsStatusId ?? -99);
         }
 
         private async Task LoadComboBox()
@@ -446,7 +440,7 @@ namespace GARCA.View.Views
                 if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
                         MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    await UpdateTransaction();
+                    FillTransactionVar();
                     if (transaction != null)
                     {
                         transaction = await iTransactionsService.SaveChanges(transaction);                        

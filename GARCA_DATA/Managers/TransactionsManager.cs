@@ -33,6 +33,7 @@ namespace GARCA.Data.Managers
 
         private async Task postChange(Transactions obj)
         {
+            await UpdateTranfer(obj.Id);
             await UpdateBalance(obj.Date ?? DateTime.Now);
             _ = UpdateDefaultPerson(obj.PersonsId ?? -99);
         }
@@ -55,6 +56,14 @@ namespace GARCA.Data.Managers
                         FROM information_schema.TABLES 
                         WHERE TABLE_SCHEMA = '{DATABASE_NAME}' 
                         AND TABLE_NAME = 'Transactions';");
+            }
+        }
+
+        public async Task UpdateTranfer(int id)
+        {
+            using (var connection = iRycContextService.getConnection())
+            {
+                await connection.ExecuteAsync("UpdateTranfer", new { Tid = id }, commandType: CommandType.StoredProcedure);
             }
         }
 
