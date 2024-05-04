@@ -6,7 +6,7 @@ using GARCA.wsData.Repositories;
 
 namespace wsData.Migrations
 {
-    public class Migration_202405030128
+    public class Migration_202405040158
     {
         public  void Do()
         {
@@ -15,7 +15,7 @@ namespace wsData.Migrations
                 using (var connection = dbContext.OpenConnection(true))
                 {
                     connection.Execute(@"
-                        CREATE PROCEDURE UpdateTranfer(IN Tid INT)
+                        CREATE PROCEDURE UpdateTranferSplit(IN Sid INT)
                         BEGIN
    
                             START TRANSACTION;
@@ -23,61 +23,62 @@ namespace wsData.Migrations
    
                             -- Borra cuando no se selecciona cuenta de transferencia
                             delete tt 
-                            from Transactions t
+                            from Splits t
     	                        inner join Transactions tt on t.tranferid = tt.id 
     	                        inner join Categories c on t.categoryid = c.id     	
-                            where t.id = Tid and c.categoriesTypesid != 3;    
+                            where t.id = Sid and c.categoriesTypesid != 3;    
    
    
-   	                        UPDATE Transactions t
-		                        LEFT JOIN Transactions tt ON t.tranferid = tt.id 
+   	                        UPDATE Splits t
+		                        LEFT JOIN Transactions tt ON t.tranferid  = tt.id 
 		                        INNER JOIN Categories c ON t.categoryid = c.id
 	                        SET 
 		                        t.tranferid = NULL
-	                        WHERE t.id = Tid AND t.tranferid IS NOT NULL AND tt.id IS NULL AND c.categoriesTypesid != 3;
+	                        WHERE t.id = Sid AND t.tranferid IS NOT NULL AND tt.id IS NULL AND c.categoriesTypesid != 3;
 	    
                             -- Actualiza cuando existe transacción y se ha seleccionado cuenta de transferencia
     
                             UPDATE Transactions tt
-	                        INNER JOIN Transactions t ON t.tranferid = tt.id
+	                        INNER JOIN Splits s ON s.tranferid = tt.id
+	                        inner join Transactions t on t.id = s.transactionid 
 		                        inner join Accounts ac on t.accountid = ac.id 
-	                        INNER JOIN Categories c ON t.categoryid = c.id
+	                        INNER JOIN Categories c ON s.categoryid = c.id
 		                        inner join Accounts ca on ca.categoryid = c.id 
 	                        SET 
 		                        tt.date = t.date,
 		                        tt.accountid = ca.id, 
 		                        tt.personid = t.personid,
 		                        tt.categoryid = ac.categoryid,
-		                        tt.amountIn = t.amountOut,
-		                        tt.amountOut = t.amountIn,
-		                        tt.memo = t.memo,
-		                        tt.tagid = t.tagid,
+		                        tt.amountIn = s.amountOut,
+		                        tt.amountOut = s.amountIn,
+		                        tt.memo = s.memo,
+		                        tt.tagid = s.tagid,
 		                        tt.transactionStatusid = t.transactionStatusid 
-	                        WHERE t.id = Tid AND c.categoriesTypesid = 3;
+	                        WHERE s.id = Sid AND c.categoriesTypesid = 3;
 
 	                        -- Crea cuando no existe transacción y se ha seleccionado cuenta de transferencia
     
-                            insert into Transactions (date,accountid,personid,categoryid,amountIn,amountOut,memo,tagid,transactionStatusid, tranferid)
-	                        SELECT t.date,ca.id, t.personid,ac.categoryid, t.amountOut,t.amountIn,t.memo,t.tagid, t.transactionStatusid, t.id  
+                            insert into Transactions (date,accountid,personid,categoryid,amountIn,amountOut,memo,tagid,transactionStatusid, tranferSplitid)
+	                        SELECT t.date,ca.id, t.personid,ac.categoryid, s.amountOut,s.amountIn,s.memo,s.tagid, t.transactionStatusid, s.id  
 	                        from Transactions t
+			                        inner join Splits s on s.transactionid = t.id 
 			                        inner join Accounts ac on t.accountid = ac.id 
-		                        INNER JOIN Categories c ON t.categoryid = c.id
+		                        INNER JOIN Categories c ON s.categoryid = c.id
 			                        inner join Accounts ca on ca.categoryid = c.id 
-	                            left join Splits s on s.tranferid = t.id
-	                        WHERE t.id = Tid AND c.categoriesTypesid = 3 and t.tranferid is null and s.id is null;		
+	                        WHERE s.id = Sid AND c.categoriesTypesid = 3 and s.tranferid is null;	
 
-	                        update Transactions t 
-	                        inner join Transactions tt on t.id = tt.tranferid 
+	                        update Splits  s 
+		                        inner join Transactions t on t.tranferSplitid = s.id 
 	                        set
-		                        t.tranferid = tt.id 
-	                        where t.id = Tid and t.tranferid is null;
+		                        s.tranferid = t.id 
+	                        where s.id = Sid and s.tranferid is null;
         
                             COMMIT;
                         END
                     ");
 
                     connection.Execute(@"
-                        INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202405030128', '5.0');
+                        INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202405040158', '5.0');
                     ");
                 }
             }
