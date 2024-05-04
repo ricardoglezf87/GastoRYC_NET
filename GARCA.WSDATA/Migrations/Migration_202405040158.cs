@@ -1,4 +1,4 @@
-ï»¿using Dapper;
+using Dapper;
 using GARCA.Utils.Logging;
 using GARCA.wsData.Migrations.Seeder;
 using GARCA.wsData.Repositories;
@@ -36,7 +36,7 @@ namespace wsData.Migrations
 		                        t.tranferid = NULL
 	                        WHERE t.id = Sid AND t.tranferid IS NOT NULL AND tt.id IS NULL AND c.categoriesTypesid != 3;
 	    
-                            -- Actualiza cuando existe transacciÃ³n y se ha seleccionado cuenta de transferencia
+                            -- Actualiza cuando existe transacción y se ha seleccionado cuenta de transferencia
     
                             UPDATE Transactions tt
 	                        INNER JOIN Splits s ON s.tranferid = tt.id
@@ -56,7 +56,7 @@ namespace wsData.Migrations
 		                        tt.transactionStatusid = t.transactionStatusid 
 	                        WHERE s.id = Sid AND c.categoriesTypesid = 3;
 
-	                        -- Crea cuando no existe transacciÃ³n y se ha seleccionado cuenta de transferencia
+	                        -- Crea cuando no existe transacción y se ha seleccionado cuenta de transferencia
     
                             insert into Transactions (date,accountid,personid,categoryid,amountIn,amountOut,memo,tagid,transactionStatusid, tranferSplitid)
 	                        SELECT t.date,ca.id, t.personid,ac.categoryid, s.amountOut,s.amountIn,s.memo,s.tagid, t.transactionStatusid, s.id  
