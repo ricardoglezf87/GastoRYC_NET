@@ -105,7 +105,8 @@ namespace GARCA.Data.Services
                         splits.AmountOut = splitsReminders.AmountOut;
                         splits.TagsId = splitsReminders.TagsId;
 
-                        splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
+                        //TODO: Revisar esto
+                        //splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
                         await iSplitsService.SaveChanges(splits);
                     }
 

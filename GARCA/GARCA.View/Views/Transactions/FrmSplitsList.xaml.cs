@@ -79,8 +79,6 @@ namespace GARCA.View.Views
         private async void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var splits = (Splits)e.RowData;
-
-            splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
             await iSplitsService.SaveChanges(splits);
         }
 

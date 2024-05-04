@@ -118,62 +118,6 @@ namespace GARCA.Data.Services
             }
         }
 
-        public async Task<Splits> UpdateTranferSplits(Transactions? transactions, Splits splits)
-        {
-            if (splits.TranferId != null &&
-                !await iCategoriesService.IsTranfer(splits.CategoriesId ?? -99))
-            {
-                var tContraria = await GetById(splits.TranferId ?? -99);
-                if (tContraria != null)
-                {
-                    await Delete(tContraria);
-                }
-                splits.TranferId = null;
-            }
-            else if (splits.TranferId == null &&
-                await iCategoriesService.IsTranfer(splits.CategoriesId ?? -99))
-            {
-                splits.TranferId = await GetNextId();
-
-                Transactions tContraria = new()
-                {
-                    Date = transactions.Date,
-                    AccountsId = (await iAccountsService.GetByCategoryId(splits.CategoriesId ?? -99))?.Id,
-                    PersonsId = transactions.PersonsId,
-                    CategoriesId = (await iAccountsService.GetById(transactions.AccountsId ?? -99)).Categoryid,
-                    Memo = splits.Memo,
-                    TagsId = transactions.TagsId,
-                    AmountIn = splits.AmountOut,
-                    AmountOut = splits.AmountIn,
-                    TranferSplitId = splits.Id != 0 ? splits.Id : await GetNextId() + 1,
-                    TransactionsStatusId = transactions.TransactionsStatusId
-                };
-
-                await Save(tContraria);
-
-            }
-            else if (splits.TranferId != null &&
-                await iCategoriesService.IsTranfer(splits.CategoriesId ?? -99))
-            {
-                var tContraria = await GetById(splits.TranferId ?? -99);
-                if (tContraria != null)
-                {
-                    tContraria.Date = transactions.Date;
-                    tContraria.AccountsId = (await iAccountsService.GetByCategoryId(splits.CategoriesId ?? -99))?.Id;
-                    tContraria.PersonsId = transactions.PersonsId;
-                    tContraria.CategoriesId = (await iAccountsService.GetById(transactions.AccountsId ?? -99)).Categoryid;
-                    tContraria.Memo = splits.Memo;
-                    tContraria.TagsId = transactions.TagsId;
-                    tContraria.AmountIn = splits.AmountOut ?? 0;
-                    tContraria.AmountOut = splits.AmountIn ?? 0;
-                    tContraria.TransactionsStatusId = transactions.TransactionsStatusId;
-                    await Save(tContraria);
-                }
-            }
-
-            return splits;
-        }
-
         #endregion
 
     }
