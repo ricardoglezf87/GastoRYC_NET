@@ -30,8 +30,8 @@ namespace GARCA.wsTests.wsData
                 Id = int.MaxValue,
                 CategoriesId = categoryid,
                 TransactionsId = transid,
-                AmountIn = decimal.MaxValue,
-                AmountOut = decimal.MaxValue
+                AmountIn = new decimal(9999.9999),
+                AmountOut = new decimal(9999.9999)
             };
         }
     }

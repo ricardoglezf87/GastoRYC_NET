@@ -29,8 +29,8 @@ namespace GARCA.wsTests.wsData
                 AccountsId = accountid,
                 PersonsId = perssonid,
                 CategoriesId = categoryid,
-                AmountIn = decimal.MaxValue,
-                AmountOut = decimal.MaxValue,
+                AmountIn = new decimal(9999.9999),
+                AmountOut = new decimal(9999.9999),
                 TransactionsStatusId = statustid,
             };
         }

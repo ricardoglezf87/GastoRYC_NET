@@ -6,15 +6,18 @@ using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
 using GARCA.wsData.Validations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System;
 using System.Net;
 
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
     [Ignore("Ignorando pruebas en BaseUT<Q>")]
-    public class BaseUT<Q,T>
+    public class BaseUT<Q, T>
         where Q : ModelBase, new()
         where T : AbstractValidator<Q>, new()
     {
@@ -33,14 +36,12 @@ namespace GARCA.wsTests.wsData
         {
             try
             {
-                // Act
+                var result = BaseAPI<Q>.GetAll(repository).Result;
 
-                var result = (Ok<ResponseAPI>)BaseAPI<Q>.GetAll(repository).Result;
+                var okResult = getOkResult(result);
 
-                // Assert
-
-                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
+                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                
             }
             catch (Exception ex)
             {
@@ -53,16 +54,14 @@ namespace GARCA.wsTests.wsData
         public void GetById_NotFound()
         {
             try
-            { 
+            {
                 var invalidId = int.MaxValue.ToString();
 
-                // Act
+                var result = BaseAPI<Q>.GetById(invalidId, repository).Result;
 
-                var result = (NotFound<ResponseAPI>)BaseAPI<Q>.GetById(invalidId, repository).Result;
-
-                // Assert
-
-                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                var notFoundResult = getNotFoundResult(result);
+                
+                Assert.That((HttpStatusCode)notFoundResult.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));               
             }
             catch (Exception ex)
             {
@@ -77,7 +76,6 @@ namespace GARCA.wsTests.wsData
         {
             try
             {
-                // Act
                 var obj = CreateObj();
 
                 var val = validator.Validate(obj);
@@ -87,12 +85,11 @@ namespace GARCA.wsTests.wsData
                     throw new Exception(val.Errors[0].ErrorMessage);
                 }
 
-                var result = (Ok<ResponseAPI>)BaseAPI<Q>.Create(obj,repository, validator).Result;
+                var result = BaseAPI<Q>.Create(obj, repository, validator).Result;
 
-                // Assert
-
-                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
+                var okResult = getOkResult(result);
+                
+                    Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));                
             }
             catch (Exception ex)
             {
@@ -116,17 +113,19 @@ namespace GARCA.wsTests.wsData
                     throw new Exception(val.Errors[0].ErrorMessage);
                 }
 
-                var result = (Ok<ResponseAPI>)BaseAPI<Q>.Create(obj, repository, validator).Result;
+                var result = BaseAPI<Q>.Create(obj, repository, validator).Result;
 
-                // Assert
+                var okResult = getOkResult(result);
 
-                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-                obj = (Q)result.Value.Result;
+                obj = (Q)okResult.Value.Result;
 
-                result = (Ok<ResponseAPI>)BaseAPI<Q>.Delete(obj.Id.ToString(), repository).Result;
+                result = BaseAPI<Q>.Delete(obj.Id.ToString(), repository).Result;
 
-                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                okResult = getOkResult(result);
+
+                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             catch (Exception ex)
             {
@@ -140,7 +139,6 @@ namespace GARCA.wsTests.wsData
         {
             try
             {
-                // Act
                 Q obj = CreateObj();
 
                 var val = validator.Validate(obj);
@@ -150,24 +148,58 @@ namespace GARCA.wsTests.wsData
                     throw new Exception(val.Errors[0].ErrorMessage);
                 }
 
-                var result = (Ok<ResponseAPI>)BaseAPI<Q>.Create(obj, repository, validator).Result;
+                var result = BaseAPI<Q>.Create(obj, repository, validator).Result;
 
-                // Assert
+                var okResult = getOkResult(result);
 
-                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-                obj = (Q)result.Value.Result;
+                obj = (Q)okResult.Value.Result;
 
                 obj = MakeChange(obj);
 
-                result = (Ok<ResponseAPI>)BaseAPI<Q>.Update(obj, repository,validator).Result;
+                result = BaseAPI<Q>.Update(obj, repository, validator).Result;
 
-                Assert.That((HttpStatusCode)result.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                okResult = getOkResult(result);
+
+                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             catch (Exception ex)
             {
                 Log.LogError(ex.Message);
                 Assert.Fail(ex.Message);
+            }
+        }
+
+        protected Ok<ResponseAPI> getOkResult(IResult result)
+        {
+            if (result is Ok<ResponseAPI> okResult)
+            {
+                return okResult;
+            }
+            else if (result is ProblemHttpResult problemResult)
+            {
+                throw new Exception(problemResult.ProblemDetails.Detail ?? "Error desconocido");
+            }
+            else
+            {
+                throw new Exception("Error con tipo de resultado no esperado.");
+            }
+        }
+
+        protected NotFound<ResponseAPI> getNotFoundResult(IResult result)
+        {
+            if (result is NotFound<ResponseAPI> notFoundResult)
+            {
+                return notFoundResult;
+            }
+            else if (result is ProblemHttpResult problemResult)
+            {
+                throw new Exception(problemResult.ProblemDetails.Detail ?? "Error desconocido");
+            }
+            else
+            {
+                throw new Exception("Error con tipo de resultado no esperado.");
             }
         }
 
