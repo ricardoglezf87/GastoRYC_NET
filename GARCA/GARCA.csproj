@@ -130,13 +130,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SimpleInjector" Version="5.4.2" />
-    <PackageReference Include="Syncfusion.SfChart.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.Tools.WPF" Version="23.1.44" />
+    <PackageReference Include="SimpleInjector" Version="5.4.5" />
+    <PackageReference Include="Syncfusion.SfChart.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="25.1.42" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\options.png">

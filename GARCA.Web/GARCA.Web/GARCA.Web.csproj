@@ -20,7 +20,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\GARCA_MODEL\GARCA.Model.csproj" />
     <ProjectReference Include="..\..\GARCA_UTIL\GARCA.Utils.csproj" />
-    <PackageReference Include="Radzen.Blazor" Version="4.29.1" />
+    <PackageReference Include="Radzen.Blazor" Version="4.31.1" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="wwwroot\images\Logo-60.png">

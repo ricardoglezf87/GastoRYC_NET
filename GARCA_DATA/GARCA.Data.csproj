@@ -11,10 +11,10 @@
     <Configurations>Debug;Release;TEST</Configurations>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.21" />
-    <PackageReference Include="Dommel" Version="3.2.0" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Dommel" Version="3.3.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.1" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GARCA_MODEL\GARCA.Model.csproj" />
