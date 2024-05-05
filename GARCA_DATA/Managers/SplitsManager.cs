@@ -12,6 +12,7 @@ namespace GARCA.Data.Managers
         public override async Task<Splits> Save(Splits obj)
         {
             Splits transaction = await base.Save(obj);
+            
             await postChange(obj);
             return transaction;
         }
@@ -25,13 +26,22 @@ namespace GARCA.Data.Managers
         private async Task postChange(Splits obj)
         {
             await UpdateTranferSplit(obj.Id);
+            await UpdateTransactionBalance(obj.Id);
         }
 
         public async Task UpdateTranferSplit(int id)
         {
             using (var connection = iRycContextService.getConnection())
             {
-                await connection.ExecuteAsync("UpdateTranferSplit", new { Tid = id }, commandType: CommandType.StoredProcedure);
+                await connection.ExecuteAsync("UpdateTranferSplit", new { Sid = id }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        private async Task UpdateTransactionBalance(int id)
+        {
+            using (var connection = iRycContextService.getConnection())
+            {
+                await connection.ExecuteAsync("UpdateBalancebyId", new { Tid = id }, commandType: CommandType.StoredProcedure);
             }
         }
 

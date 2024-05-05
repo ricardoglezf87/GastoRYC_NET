@@ -99,8 +99,8 @@ namespace GARCA.View.Views
             }
 
             FrmSplitsList frm = new(transaction);
-            frm.ShowDialog();
-            await iTransactionsService.UpdateTransactionAfterSplits(transaction);            
+            frm.ShowDialog();  
+            transaction = await iTransactionsService.GetById(transaction.Id);
             LoadTransaction();
         }
 

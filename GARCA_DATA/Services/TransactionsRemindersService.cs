@@ -47,14 +47,6 @@ namespace GARCA.Data.Services
 
             if (lSplitsReminders != null && lSplitsReminders.Any())
             {
-                transactionsReminders.AmountIn = 0;
-                transactionsReminders.AmountOut = 0;
-
-                foreach (var splitsReminders in lSplitsReminders)
-                {
-                    transactionsReminders.AmountIn += splitsReminders.AmountIn ?? 0;
-                    transactionsReminders.AmountOut += splitsReminders.AmountOut ?? 0;
-                }
 
                 transactionsReminders.CategoriesId = (int?)ESpecialCategories.Split;
                 transactionsReminders.Categories = await iCategoriesService.GetById((int)ESpecialCategories.Split);

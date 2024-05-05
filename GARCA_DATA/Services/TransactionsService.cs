@@ -73,51 +73,6 @@ namespace GARCA.Data.Services
             }
         }
 
-        public async Task UpdateTransactionAfterSplits(Transactions? transactions)
-        {
-            var lSplits = transactions.Splits ?? await iSplitsService.GetbyTransactionid(transactions.Id);
-
-            if (lSplits != null && lSplits.Any())
-            {
-                transactions.AmountIn = 0;
-                transactions.AmountOut = 0;
-
-                foreach (var splits in lSplits)
-                {
-                    transactions.AmountIn += splits.AmountIn ?? 0;
-                    transactions.AmountOut += splits.AmountOut ?? 0;
-                }
-
-                transactions.CategoriesId = (int)ESpecialCategories.Split;
-                transactions.Categories = await iCategoriesService.GetById((int)ESpecialCategories.Split);
-            }
-            else if (transactions.CategoriesId is (int)ESpecialCategories.Split)
-            {
-                transactions.CategoriesId = (int)ESpecialCategories.WithoutCategory;
-                transactions.Categories = await iCategoriesService.GetById((int)ESpecialCategories.WithoutCategory);
-            }
-
-            if (transactions.Id == 0)
-            {
-                await Save(transactions);
-
-                if (lSplits == null)
-                {
-                    return;
-                }
-
-                foreach (var splits in lSplits)
-                {
-                    splits.TransactionsId = transactions.Id;
-                    await iSplitsService.Save(splits);
-                }
-            }
-            else
-            {
-                await Save(transactions);
-            }
-        }
-
         #endregion
 
     }
