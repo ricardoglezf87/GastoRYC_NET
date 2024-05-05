@@ -215,7 +215,7 @@ namespace wsData.Migrations
 	                            WHERE t.id = OLD.transactionid;
 	
                             END
-                    ");
+                        ");
 
                     connection.Execute(@"
                         INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202405042356', '5.0');

@@ -17,24 +17,42 @@ namespace GARCA.wsData.Repositories
                 using (var connection = dbContext.OpenConnection(true))
                 {
                    connection.Execute(@"
-                        DROP TABLE GARCA_TEST.ExpirationsReminders;
-                        DROP TABLE GARCA_TEST.SplitsReminders;
-                        DROP TABLE GARCA_TEST.TransactionsReminders;
-                        DROP TABLE GARCA_TEST.Splits;
-                        DROP TABLE GARCA_TEST.Transactions;
-                        DROP TABLE GARCA_TEST.InvestmentProductsPrices;
-                        DROP TABLE GARCA_TEST.Accounts;
-                        DROP TABLE GARCA_TEST.AccountsTypes;
-                        DROP TABLE GARCA_TEST.DateCalendar;
-                        DROP TABLE GARCA_TEST.InvestmentProducts;
-                        DROP TABLE GARCA_TEST.InvestmentProductsTypes;
-                        DROP TABLE GARCA_TEST.MigrationsHistory;
-                        DROP TABLE GARCA_TEST.PeriodsReminders;
-                        DROP TABLE GARCA_TEST.Persons;
-                        DROP TABLE GARCA_TEST.Tags;
-                        DROP TABLE GARCA_TEST.TransactionsStatus;
-                        DROP TABLE GARCA_TEST.Categories;
-                        DROP TABLE GARCA_TEST.CategoriesTypes;
+                        DROP TABLE IF EXISTS GARCA_TEST.ExpirationsReminders;
+                        DROP TABLE IF EXISTS GARCA_TEST.SplitsReminders;
+                        DROP TABLE IF EXISTS GARCA_TEST.TransactionsReminders;
+                        DROP TABLE IF EXISTS GARCA_TEST.Splits;
+                        DROP TABLE IF EXISTS GARCA_TEST.Transactions;
+                        DROP TABLE IF EXISTS GARCA_TEST.InvestmentProductsPrices;
+                        DROP TABLE IF EXISTS GARCA_TEST.Accounts;
+                        DROP TABLE IF EXISTS GARCA_TEST.AccountsTypes;
+                        DROP TABLE IF EXISTS GARCA_TEST.DateCalendar;
+                        DROP TABLE IF EXISTS GARCA_TEST.InvestmentProducts;
+                        DROP TABLE IF EXISTS GARCA_TEST.InvestmentProductsTypes;
+                        DROP TABLE IF EXISTS GARCA_TEST.MigrationsHistory;
+                        DROP TABLE IF EXISTS GARCA_TEST.PeriodsReminders;
+                        DROP TABLE IF EXISTS GARCA_TEST.Persons;
+                        DROP TABLE IF EXISTS GARCA_TEST.Tags;
+                        DROP TABLE IF EXISTS GARCA_TEST.TransactionsStatus;
+                        DROP TABLE IF EXISTS GARCA_TEST.Categories;
+                        DROP TABLE IF EXISTS GARCA_TEST.CategoriesTypes;
+
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateBalancebyDate;
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateBalancebyId;
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.UpdatePersonsCategoriesId;
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateTranfer;
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateTranferSplit;
+
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Splits_IT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Splits_Update_Transaction_IT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Splits_UT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Splits_Update_Transaction_UT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.SplitsReminders_IT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.SplitsReminders_UT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.TransactionsReminders_IT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.TransactionsReminders_UT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Splits_Update_Transaction_DT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Transactions_IT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Transactions_UT;
                     ");
 
                 }                
