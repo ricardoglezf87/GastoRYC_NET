@@ -42,7 +42,7 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<Q> Save(Q obj)
         {
-            if (obj.Id != 0)
+            if (obj.Id != 0 && obj.Id != int.MinValue && obj.Id != int.MaxValue)
             {
                 await Update(obj);
             }
