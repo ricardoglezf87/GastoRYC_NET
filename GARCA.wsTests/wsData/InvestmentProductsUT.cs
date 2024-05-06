@@ -27,7 +27,7 @@ namespace GARCA.wsTests.wsData
 
             return new InvestmentProducts()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Description = "TestDescrip",
                 InvestmentProductsTypesId = investmentProductsTypesId,
             };

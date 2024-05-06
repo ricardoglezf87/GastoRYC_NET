@@ -27,7 +27,7 @@ namespace GARCA.wsTests.wsData
 
             return new InvestmentProductsPrices()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Date = DateTime.Now,
                 InvestmentProductsid = investmentProductsId,
                 Prices = decimal.MaxValue,

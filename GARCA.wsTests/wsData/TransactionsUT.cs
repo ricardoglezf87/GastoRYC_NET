@@ -24,7 +24,7 @@ namespace GARCA.wsTests.wsData
 
             return new Transactions()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Date = DateTime.Now,
                 AccountsId = accountid,
                 PersonsId = perssonid,

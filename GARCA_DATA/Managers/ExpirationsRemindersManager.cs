@@ -17,7 +17,7 @@ namespace GARCA.Data.Managers
                 (expirationsReminders, transactionsReminders) =>
                 {
                     expirationsReminders.TransactionsReminders = transactionsReminders;
-                    expirationsReminders.TransactionsReminders.Categories = iCategoriesService.GetById(transactionsReminders.CategoriesId ?? -99).Result;
+                    expirationsReminders.TransactionsReminders.Categories = connection.Get<Categories>(transactionsReminders.CategoriesId ?? -99);
                     return expirationsReminders;
                 });
             }

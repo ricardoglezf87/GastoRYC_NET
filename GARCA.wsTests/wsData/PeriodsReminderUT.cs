@@ -24,7 +24,7 @@ namespace GARCA.wsTests.wsData
         {
             return new PeriodsReminders()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Description = "TestDescrip"
             };
         }

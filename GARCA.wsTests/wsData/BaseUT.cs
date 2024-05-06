@@ -55,7 +55,7 @@ namespace GARCA.wsTests.wsData
         {
             try
             {
-                var invalidId = int.MaxValue.ToString();
+                var invalidId = "99999";
 
                 var result = BaseAPI<Q>.GetById(invalidId, repository).Result;
 

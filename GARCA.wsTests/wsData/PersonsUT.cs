@@ -26,7 +26,7 @@ namespace GARCA.wsTests.wsData
 
             return new Persons()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Name = "TestDescrip",
                 CategoriesId = categoryid,
             };

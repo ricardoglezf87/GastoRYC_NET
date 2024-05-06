@@ -24,7 +24,7 @@ namespace GARCA.wsTests.wsData
         {
             return new Tags()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Description = "TestDescrip"
             };
         }

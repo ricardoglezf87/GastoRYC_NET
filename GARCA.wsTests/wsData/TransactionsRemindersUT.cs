@@ -25,7 +25,7 @@ namespace GARCA.wsTests.wsData
 
             return new TransactionsReminders()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Date = DateTime.Now,
                 PeriodsRemindersId = periodid,
                 AccountsId = accountid,

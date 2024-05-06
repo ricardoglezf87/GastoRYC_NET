@@ -26,7 +26,7 @@ namespace GARCA.wsTests.wsData
 
             return new ExpirationsReminders()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Date = DateTime.Now,
                 TransactionsRemindersId = transid,
             };

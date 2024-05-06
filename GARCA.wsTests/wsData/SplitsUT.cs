@@ -27,7 +27,7 @@ namespace GARCA.wsTests.wsData
 
             return new Splits()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 CategoriesId = categoryid,
                 TransactionsId = transid,
                 AmountIn = new decimal(9999.9999),

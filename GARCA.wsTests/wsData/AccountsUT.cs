@@ -20,7 +20,7 @@ namespace GARCA.wsTests.wsData
 
             return new Accounts()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Description = "TestDescrip",
                 AccountsTypesId = accountsTypesId,
                 Categoryid = categoryid,
