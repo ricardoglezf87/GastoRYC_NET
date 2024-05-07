@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Dommel;
 using GARCA.Models;
+using GARCA.Utils.Extensions;
 using System.Data;
 
 
@@ -18,6 +19,7 @@ namespace GARCA.wsData.Repositories
 
         public override async Task<Transactions> Save(Transactions obj)
         {
+            obj.Date.RemoveTime();
             Transactions transaction = await base.Save(obj);
             await postChange(obj);
             return transaction;
