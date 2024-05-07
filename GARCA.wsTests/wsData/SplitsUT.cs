@@ -12,7 +12,7 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class SplitsUT : BaseUT<Splits, SplitsValidations>
+    public class SplitsUT : BaseUT<Splits, SplitsValidations,SplitsRepository>
     {
         public override Splits MakeChange(Splits obj)
         {

@@ -17,17 +17,18 @@ namespace GARCA.wsTests.wsData
 {
     [TestFixture]
     [Ignore("Ignorando pruebas en BaseUT<Q>")]
-    public class BaseUT<Q, T>
+    public class BaseUT<Q, T, Z>
         where Q : ModelBase, new()
         where T : AbstractValidator<Q>, new()
+        where Z : RepositoryBase<Q>, new()
     {
-        private IRepositoryBase<Q> repository;
+        private Z repository;
         private T validator;
 
         [SetUp]
         public void Setup()
-        {
-            repository = new RepositoryBase<Q>();
+        {            
+            repository = new Z();           
             validator = new T();
         }
 

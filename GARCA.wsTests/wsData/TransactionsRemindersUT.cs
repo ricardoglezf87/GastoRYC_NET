@@ -7,7 +7,7 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class TransactionsRemindersUT : BaseUT<TransactionsReminders,TransactionsRemindersValidations>
+    public class TransactionsRemindersUT : BaseUT<TransactionsReminders,TransactionsRemindersValidations,TransactionsRemindersRepository>
     {
         public override TransactionsReminders MakeChange(TransactionsReminders obj)
         {

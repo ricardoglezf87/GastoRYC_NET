@@ -12,7 +12,7 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class InvestmentProductsUT : BaseUT<InvestmentProducts, InvestmentProductsValidations>
+    public class InvestmentProductsUT : BaseUT<InvestmentProducts, InvestmentProductsValidations,InvestmentProductsRepository>
     {
         public override InvestmentProducts MakeChange(InvestmentProducts obj)
         {

@@ -12,7 +12,7 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class TransactionsStatusUT : BaseUT<TransactionsStatus,TransactionsStatusValidations>
+    public class TransactionsStatusUT : BaseUT<TransactionsStatus,TransactionsStatusValidations,TransactionsStatusRepository>
     {
         public override TransactionsStatus MakeChange(TransactionsStatus obj)
         {

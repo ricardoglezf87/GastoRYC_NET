@@ -5,7 +5,7 @@ using GARCA.wsData.Validations;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class AccountsUT : BaseUT<Accounts,AccountsValidations>
+    public class AccountsUT : BaseUT<Accounts,AccountsValidations, AccountsRepository>
     {
         public override Accounts MakeChange(Accounts obj)
         {

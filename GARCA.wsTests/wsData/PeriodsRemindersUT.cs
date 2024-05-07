@@ -12,7 +12,7 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class PeriodsReminderUT : BaseUT<PeriodsReminders,PeriodsRemindersValidations>
+    public class PeriodsRemindersUT : BaseUT<PeriodsReminders,PeriodsRemindersValidations,PeriodsRemindersRepository>
     {
         public override PeriodsReminders MakeChange(PeriodsReminders obj)
         {

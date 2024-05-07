@@ -7,7 +7,7 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class TransactionsUT : BaseUT<Transactions,TransactionsValidations>
+    public class TransactionsUT : BaseUT<Transactions,TransactionsValidations,TransactionsRepository>
     {
         public override Transactions MakeChange(Transactions obj)
         {

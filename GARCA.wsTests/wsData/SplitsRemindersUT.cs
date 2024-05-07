@@ -12,7 +12,7 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class SplitsRemindersUT : BaseUT<SplitsReminders,SplitsRemindersValidations>
+    public class SplitsRemindersUT : BaseUT<SplitsReminders, SplitsRemindersValidations, SplitsRemindersRepository>
     {
         public override SplitsReminders MakeChange(SplitsReminders obj)
         {
