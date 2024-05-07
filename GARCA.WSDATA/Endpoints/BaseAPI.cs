@@ -157,7 +157,7 @@ namespace GARCA.wsData.Endpoints
                     return Results.BadRequest(response);
                 }
 
-                await repository.Update(obj);
+                await repository.Save(obj);
 
                 response.Result = obj;
                 response.Success = true;
@@ -200,7 +200,7 @@ namespace GARCA.wsData.Endpoints
 
                 obj = await repository.Save(obj);
 
-                response.Result = await repository.GetById(obj.Id);
+                response.Result = obj;
                 response.Success = true;
                 response.StatusCode = HttpStatusCode.OK;
                 return Results.Ok(response);

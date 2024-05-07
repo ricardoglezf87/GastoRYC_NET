@@ -11,8 +11,6 @@ namespace GARCA.wsData.Repositories
 
         public Task<Q?> GetById(int id);
 
-        public Task<Q?> GetById(DateTime id);
-
         public Task<IEnumerable<Q>?> Get(Expression<Func<Q, bool>> predicate);
 
         public Task<Q> Save(Q obj);

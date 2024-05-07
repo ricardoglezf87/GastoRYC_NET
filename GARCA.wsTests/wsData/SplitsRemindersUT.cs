@@ -30,8 +30,8 @@ namespace GARCA.wsTests.wsData
                 Id = 0,
                 CategoriesId = categoryid,
                 TransactionsId = transid,
-                AmountIn = new decimal(9999.9999),
-                AmountOut = new decimal(9999.9999)
+                AmountIn = getNextDecimal(),
+                AmountOut = getNextDecimal()
             };
         }
     }

@@ -21,7 +21,7 @@ namespace GARCA.wsTests.wsData
         where Q : ModelBase, new()
         where T : AbstractValidator<Q>, new()
     {
-        private RepositoryBase<Q> repository;
+        private IRepositoryBase<Q> repository;
         private T validator;
 
         [SetUp]
@@ -41,7 +41,7 @@ namespace GARCA.wsTests.wsData
                 var okResult = getOkResult(result);
 
                 Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                
+
             }
             catch (Exception ex)
             {
@@ -60,8 +60,8 @@ namespace GARCA.wsTests.wsData
                 var result = BaseAPI<Q>.GetById(invalidId, repository).Result;
 
                 var notFoundResult = getNotFoundResult(result);
-                
-                Assert.That((HttpStatusCode)notFoundResult.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));               
+
+                Assert.That((HttpStatusCode)notFoundResult.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             }
             catch (Exception ex)
             {
@@ -88,8 +88,8 @@ namespace GARCA.wsTests.wsData
                 var result = BaseAPI<Q>.Create(obj, repository, validator).Result;
 
                 var okResult = getOkResult(result);
-                
-                    Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));                
+
+                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             catch (Exception ex)
             {
@@ -169,6 +169,11 @@ namespace GARCA.wsTests.wsData
                 Log.LogError(ex.Message);
                 Assert.Fail(ex.Message);
             }
+        }
+
+        protected Decimal? getNextDecimal()
+        {
+            return (decimal?)Math.Round(new Random().Next(0, 1000) * new Random().NextDouble(),2);
         }
 
         protected Ok<ResponseAPI> getOkResult(IResult result)

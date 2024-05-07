@@ -17,7 +17,7 @@ namespace GARCA.wsTests.wsData
 
         public override TransactionsReminders CreateObj()
         {
-            var periodid = new PeriodsRemindersRepository().Insert(new PeriodsReminderUT().CreateObj()).Result;
+            var periodid = new PeriodsRemindersRepository().Insert(new PeriodsRemindersUT().CreateObj()).Result;
             var perssonid = new PersonsRepository().Insert(new PersonsUT().CreateObj()).Result;
             var categoryid = new CategoriesRepository().Insert(new CategoriesUT().CreateObj()).Result;
             var accountid = new AccountsRepository().Insert(new AccountsUT().CreateObj()).Result;
@@ -31,8 +31,8 @@ namespace GARCA.wsTests.wsData
                 AccountsId = accountid,
                 PersonsId = perssonid,
                 CategoriesId = categoryid,
-                AmountIn = new decimal(9999.9999),
-                AmountOut = new decimal(9999.9999),
+                AmountIn = getNextDecimal(),
+                AmountOut = getNextDecimal(),
                 TransactionsStatusId = statustid,
             };
         }
