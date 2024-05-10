@@ -19,7 +19,7 @@ namespace GARCA.wsData.Repositories
 
         public override async Task<Transactions> Save(Transactions obj)
         {
-            obj.Date.RemoveTime();
+            obj.Date = obj.Date.RemoveTime();
             Transactions transaction = await base.Save(obj);
             await postChange(obj);
             return transaction;
