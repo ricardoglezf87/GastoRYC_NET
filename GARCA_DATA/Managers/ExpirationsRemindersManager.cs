@@ -13,13 +13,14 @@ namespace GARCA.Data.Managers
         {
             using (var connection = iRycContextService.getConnection())
             {
-                return await connection.GetAllAsync<ExpirationsReminders, TransactionsReminders, ExpirationsReminders>(
-                (expirationsReminders, transactionsReminders) =>
+                var expirationsRemindersList = await connection.GetAllAsync<ExpirationsReminders, TransactionsReminders, ExpirationsReminders>();
+
+                foreach (var expirationsReminders in expirationsRemindersList)
                 {
-                    expirationsReminders.TransactionsReminders = transactionsReminders;
-                    expirationsReminders.TransactionsReminders.Categories = connection.Get<Categories>(transactionsReminders.CategoriesId ?? -99);
-                    return expirationsReminders;
-                });
+                    expirationsReminders.TransactionsReminders.Categories = await connection.GetAsync<Categories>(expirationsReminders.TransactionsReminders.CategoriesId ?? -99);
+                }
+
+                return expirationsRemindersList;
             }
         }
 
