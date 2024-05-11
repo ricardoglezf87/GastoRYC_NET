@@ -67,8 +67,7 @@ namespace GARCA.wsTests.wsData
                 // Actualizar la descripción
                 accounts.Description = "Cambio";
                 result = AcountsAPI.Update(accounts, repository, validator).Result;
-                var updateResult = getOkResult(result);
-                Assert.That((HttpStatusCode)updateResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That((HttpStatusCode)getOkResult(result).StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
                 // Verificar que la descripción se haya actualizado correctamente
                 result = CategoriesAPI.GetById(categoryId, new CategoriesRepository()).Result;
@@ -100,8 +99,7 @@ namespace GARCA.wsTests.wsData
 
                 // Eliminar la cuenta
                 result = AcountsAPI.Delete(accounts.Id.ToString(), repository).Result;
-                var deleteResult = getOkResult(result);
-                Assert.That((HttpStatusCode)deleteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That((HttpStatusCode)getOkResult(result).StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
                 // Verificar que la categoría ya no existe
                 result = CategoriesAPI.GetById(categoryId, new CategoriesRepository()).Result;
