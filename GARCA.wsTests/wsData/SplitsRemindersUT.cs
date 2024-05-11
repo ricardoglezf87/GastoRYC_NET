@@ -22,14 +22,14 @@ namespace GARCA.wsTests.wsData
 
         public override SplitsReminders CreateObj()
         {
-            var categoryid = new CategoriesRepository().Insert(new CategoriesUT().CreateObj()).Result;
-            var transid = new TransactionsRemindersRepository().Insert(new TransactionsRemindersUT().CreateObj()).Result;
+            var category = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result;
+            var trans = new TransactionsRemindersRepository().Save(new TransactionsRemindersUT().CreateObj()).Result;
 
             return new SplitsReminders()
             {
                 Id = 0,
-                CategoriesId = categoryid,
-                TransactionsId = transid,
+                CategoriesId = category.Id,
+                TransactionsId = trans.Id,
                 AmountIn = getNextDecimal(),
                 AmountOut = getNextDecimal()
             };

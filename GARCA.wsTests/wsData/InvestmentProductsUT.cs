@@ -22,14 +22,14 @@ namespace GARCA.wsTests.wsData
 
         public override InvestmentProducts CreateObj()
         {
-            var investmentProductsTypesId = new InvestmentProductsTypesRepository().
-                    Insert(new InvestmentProductsTypesUT().CreateObj()).Result;
+            var investmentProductsTypes = new InvestmentProductsTypesRepository().
+                    Save(new InvestmentProductsTypesUT().CreateObj()).Result;
 
             return new InvestmentProducts()
             {
                 Id = 0,
                 Description = "TestDescrip",
-                InvestmentProductsTypesId = investmentProductsTypesId,
+                InvestmentProductsTypesId = investmentProductsTypes.Id,
             };
         }
     }

@@ -115,13 +115,13 @@ namespace GARCA.wsTests.wsData
 
         public override Accounts CreateObj()
         {
-            var accountsTypesId = new AccountsTypesRepository().Insert(new AccountsTypesUT().CreateObj()).Result;
+            var accountsTypes = new AccountsTypesRepository().Save(new AccountsTypesUT().CreateObj()).Result;
 
             return new Accounts()
             {
                 Id = 0,
                 Description = "TestDescrip",
-                AccountsTypesId = accountsTypesId,
+                AccountsTypesId = accountsTypes.Id,
             };
         }
     }

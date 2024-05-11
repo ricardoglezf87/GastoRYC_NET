@@ -22,15 +22,15 @@ namespace GARCA.wsTests.wsData
 
         public override InvestmentProductsPrices CreateObj()
         {
-            var investmentProductsId = new InvestmentProductsRepository().
-                   Insert(new InvestmentProductsUT().CreateObj()).Result;
+            var investmentProducts = new InvestmentProductsRepository().
+                   Save(new InvestmentProductsUT().CreateObj()).Result;
 
             return new InvestmentProductsPrices()
             {
                 Id = 0,
-                Date = DateTime.Now,
-                InvestmentProductsid = investmentProductsId,
-                Prices = decimal.MaxValue,
+                Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
+                InvestmentProductsid = investmentProducts.Id,
+                Prices = getNextDecimal(),
             };
         }
     }

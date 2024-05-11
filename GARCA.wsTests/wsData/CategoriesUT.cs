@@ -22,13 +22,13 @@ namespace GARCA.wsTests.wsData
 
         public override Categories CreateObj()
         {
-            var categoriesTypesId = new CategoriesTypesRepository().Insert(new CategoriesTypesUT().CreateObj()).Result;
+            var categoriesTypes = new CategoriesTypesRepository().Save(new CategoriesTypesUT().CreateObj()).Result;
 
             return new Categories()
             {
                 Id = int.MaxValue,
                 Description = "TestDescrip",
-                CategoriesTypesId = categoriesTypesId,
+                CategoriesTypesId = categoriesTypes.Id,
             };
         }
     }

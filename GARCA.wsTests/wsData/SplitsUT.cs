@@ -22,14 +22,14 @@ namespace GARCA.wsTests.wsData
 
         public override Splits CreateObj()
         {
-            var categoryid = new CategoriesRepository().Insert(new CategoriesUT().CreateObj()).Result;
-            var transid = new TransactionsRepository().Insert(new TransactionsUT().CreateObj()).Result;
+            var category = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result;
+            var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
 
             return new Splits()
             {
                 Id = 0,
-                CategoriesId = categoryid,
-                TransactionsId = transid,
+                CategoriesId = category.Id,
+                TransactionsId = trans.Id,
                 AmountIn = getNextDecimal(),
                 AmountOut = getNextDecimal()
             };
