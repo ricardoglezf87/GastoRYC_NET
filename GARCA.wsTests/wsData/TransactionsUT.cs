@@ -1,9 +1,10 @@
+using GARCA.Model;
 using GARCA.Models;
 using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
 using GARCA.wsData.Validations;
-
+using Microsoft.AspNetCore.Http.HttpResults;
 using System.Net;
 
 namespace GARCA.wsTests.wsData
@@ -26,7 +27,6 @@ namespace GARCA.wsTests.wsData
                 var lCategories = new List<Categories>();
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
-                var lTransactions = new List<Transactions>();
 
                 for(int i=0;i<5;i++)
                 {
@@ -43,7 +43,7 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 100; i++)
                 {
                     Transactions transaction = new Transactions(){
                         Id = 0,
@@ -62,11 +62,23 @@ namespace GARCA.wsTests.wsData
                         throw new Exception(val.Errors[0].ErrorMessage);
 
                     var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    transaction = (Transactions?)getOkResult(result).Value.Result;
-                    lTransactions.Add(transaction);
+                    getOkResult(result);
                 }
 
-                Assert.That(true);
+                foreach (var acc in lAccounts)
+                {
+                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
+
+                    if (result is Ok<ResponseAPI> okResult)
+                    {
+                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
+
+                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
+                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
+
+                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
+                    }
+                }
 
             }
             catch (Exception ex)
