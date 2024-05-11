@@ -45,12 +45,13 @@ namespace GARCA.wsData.Repositories
             if (obj.Id != 0 && obj.Id != int.MinValue && obj.Id != int.MaxValue)
             {
                 await Update(obj);
+                return obj;
             }
             else
             {
-                obj.Id = await Insert(obj);
+                return await GetById(await Insert(obj)) ?? obj;
+
             }
-            return obj;
         }
 
         public virtual async Task<bool> Update(Q obj)

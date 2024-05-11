@@ -53,6 +53,9 @@ namespace GARCA.wsData.Repositories
                         DROP TRIGGER IF EXISTS GARCA_TEST.Splits_Update_Transaction_DT;
                         DROP TRIGGER IF EXISTS GARCA_TEST.Transactions_IT;
                         DROP TRIGGER IF EXISTS GARCA_TEST.Transactions_UT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Accounts_Categories_IT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Accounts_Categories_UT;
+                        DROP TRIGGER IF EXISTS GARCA_TEST.Accounts_Categories_DT;
                     ");
 
                 }                

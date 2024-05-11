@@ -22,8 +22,8 @@ namespace GARCA.wsTests.wsData
         where T : AbstractValidator<Q>, new()
         where Z : RepositoryBase<Q>, new()
     {
-        private Z repository;
-        private T validator;
+        protected Z repository;
+        protected T validator;
 
         [SetUp]
         public void Setup()
@@ -38,10 +38,7 @@ namespace GARCA.wsTests.wsData
             try
             {
                 var result = BaseAPI<Q>.GetAll(repository).Result;
-
-                var okResult = getOkResult(result);
-
-                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That((HttpStatusCode)getOkResult(result).StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
             }
             catch (Exception ex)
@@ -60,9 +57,7 @@ namespace GARCA.wsTests.wsData
 
                 var result = BaseAPI<Q>.GetById(invalidId, repository).Result;
 
-                var notFoundResult = getNotFoundResult(result);
-
-                Assert.That((HttpStatusCode)notFoundResult.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                Assert.That((HttpStatusCode)getNotFoundResult(result).StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             }
             catch (Exception ex)
             {
@@ -88,9 +83,7 @@ namespace GARCA.wsTests.wsData
 
                 var result = BaseAPI<Q>.Create(obj, repository, validator).Result;
 
-                var okResult = getOkResult(result);
-
-                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That((HttpStatusCode)getOkResult(result).StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             catch (Exception ex)
             {
@@ -122,11 +115,9 @@ namespace GARCA.wsTests.wsData
 
                 obj = (Q)okResult.Value.Result;
 
-                result = BaseAPI<Q>.Delete(obj.Id.ToString(), repository).Result;
+                result = BaseAPI<Q>.Delete(obj.Id.ToString(), repository).Result;                
 
-                okResult = getOkResult(result);
-
-                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That((HttpStatusCode)getOkResult(result).StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             catch (Exception ex)
             {
@@ -161,9 +152,7 @@ namespace GARCA.wsTests.wsData
 
                 result = BaseAPI<Q>.Update(obj, repository, validator).Result;
 
-                okResult = getOkResult(result);
-
-                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That((HttpStatusCode)getOkResult(result).StatusCode, Is.EqualTo(HttpStatusCode.OK));
             }
             catch (Exception ex)
             {
