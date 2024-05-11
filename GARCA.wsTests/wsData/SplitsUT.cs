@@ -5,6 +5,7 @@ using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
 using GARCA.wsData.Validations;
+
 using Microsoft.AspNetCore.Http.HttpResults;
 
 using System.Net;
@@ -16,7 +17,7 @@ namespace GARCA.wsTests.wsData
     {
         public override Splits MakeChange(Splits obj)
         {
-            obj.Memo = "TestDescripUpdate";
+            obj.Memo = getNextWord();
             return obj;
         }
 

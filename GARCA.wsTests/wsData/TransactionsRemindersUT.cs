@@ -11,7 +11,7 @@ namespace GARCA.wsTests.wsData
     {
         public override TransactionsReminders MakeChange(TransactionsReminders obj)
         {
-            obj.Memo = "TestDescripUpdate";
+            obj.Memo = getNextWord();
             return obj;
         }
 

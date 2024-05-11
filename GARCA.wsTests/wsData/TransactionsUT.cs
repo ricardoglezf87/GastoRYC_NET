@@ -13,12 +13,12 @@ namespace GARCA.wsTests.wsData
     {
         public override Transactions MakeChange(Transactions obj)
         {
-            obj.Memo = "TestDescripUpdate";
+            obj.Memo = getNextWord();
             return obj;
         }
 
         [Test]
-        public void ValideBalance_Ok()
+        public void ValidarCalculoBalance_Ok()
         {
             try
             {

@@ -4,6 +4,7 @@ using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
 using GARCA.wsData.Validations;
+
 using System.Net;
 
 namespace GARCA.wsTests.wsData
@@ -13,7 +14,7 @@ namespace GARCA.wsTests.wsData
     {
         public override Accounts MakeChange(Accounts obj)
         {
-            obj.Description = "TestDescripUpdate";
+            obj.Description = getNextWord();
             return obj;
         }
 
@@ -120,7 +121,7 @@ namespace GARCA.wsTests.wsData
             return new Accounts()
             {
                 Id = 0,
-                Description = "TestDescrip",
+                Description = getNextWord(),
                 AccountsTypesId = accountsTypes.Id,
             };
         }

@@ -166,6 +166,20 @@ namespace GARCA.wsTests.wsData
             return (decimal?)Math.Round(new Random().Next(0, 1000) * new Random().NextDouble(),2);
         }
 
+        protected string getNextWord()
+        {
+            string word = string.Empty;
+            Random rand = new Random();
+            string caracteres = "abcdefghijklmnopqrstuvwxyz";
+
+            for (int i=0;i<rand.Next(5,20);i++)
+            {
+                word += caracteres[rand.Next(caracteres.Length)]; 
+            }
+
+            return word;
+        }
+
         protected Ok<ResponseAPI> getOkResult(IResult result)
         {
             if (result is Ok<ResponseAPI> okResult)
@@ -207,5 +221,6 @@ namespace GARCA.wsTests.wsData
         {
             return new Q() { Id = 99 };
         }
+
     }
 }

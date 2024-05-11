@@ -5,6 +5,7 @@ using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
 using GARCA.wsData.Validations;
+
 using Microsoft.AspNetCore.Http.HttpResults;
 
 using System.Net;
@@ -16,7 +17,7 @@ namespace GARCA.wsTests.wsData
     {
         public override InvestmentProductsTypes MakeChange(InvestmentProductsTypes obj)
         {
-            obj.Description = "TestDescripUpdate";
+            obj.Description = getNextWord();
             return obj;
         }
 
@@ -25,7 +26,7 @@ namespace GARCA.wsTests.wsData
             return new InvestmentProductsTypes()
             {
                 Id = 0,
-                Description = "TestDescrip"
+                Description = getNextWord()
             };
         }
     }

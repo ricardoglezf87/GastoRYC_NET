@@ -5,6 +5,7 @@ using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
 using GARCA.wsData.Validations;
+
 using Microsoft.AspNetCore.Http.HttpResults;
 
 using System.Net;
@@ -16,7 +17,7 @@ namespace GARCA.wsTests.wsData
     {
         public override Categories MakeChange(Categories obj)
         {
-            obj.Description = "TestDescripUpdate";
+            obj.Description = getNextWord();
             return obj;
         }
 
@@ -27,7 +28,7 @@ namespace GARCA.wsTests.wsData
             return new Categories()
             {
                 Id = int.MaxValue,
-                Description = "TestDescrip",
+                Description = getNextWord(),
                 CategoriesTypesId = categoriesTypes.Id,
             };
         }
