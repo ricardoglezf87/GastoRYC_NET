@@ -23,33 +23,19 @@ namespace GARCA.wsTests.wsData
             try
             {
                 var obj = CreateObj();
-
                 var val = validator.Validate(obj);
-
                 if (!val.IsValid)
-                {
                     throw new Exception(val.Errors[0].ErrorMessage);
-                }
 
                 var result = AcountsAPI.Create(obj, repository, validator).Result;
+                var accounts = (Accounts?)getOkResult(result).Value.Result;
+                Assert.That(accounts != null && accounts.Categoryid != null);
 
-                var okResult = getOkResult(result);
+                var categoryId = accounts.Categoryid.ToString() ?? throw new Exception("No se ha creado la categoría correctamente");
+                result = CategoriesAPI.GetById(categoryId, new CategoriesRepository()).Result;
+                var categories = (Categories?)getOkResult(result).Value.Result;
 
-                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-                Accounts? accounts = (Accounts?)okResult.Value.Result;
-
-                Assert.That(accounts != null);
-
-                Assert.That(accounts.Categoryid != null);
-
-                result = CategoriesAPI.GetById(accounts.Categoryid.ToString() ?? "-99", new CategoriesRepository()).Result;
-
-                okResult = getOkResult(result);
-
-                Categories? categories = (Categories?)okResult.Value.Result;
-
-                Assert.That(categories.Description == "[" + accounts.Description + "]");
+                Assert.That(categories?.Description == $"[{accounts.Description}]");
             }
             catch (Exception ex)
             {
@@ -64,47 +50,30 @@ namespace GARCA.wsTests.wsData
             try
             {
                 var obj = CreateObj();
-
                 var val = validator.Validate(obj);
-
                 if (!val.IsValid)
-                {
                     throw new Exception(val.Errors[0].ErrorMessage);
-                }
 
                 var result = AcountsAPI.Create(obj, repository, validator).Result;
+                var accounts = (Accounts?)getOkResult(result).Value.Result;
+                Assert.That(accounts != null && accounts.Categoryid != null);
 
-                var okResult = getOkResult(result);
+                var categoryId = accounts.Categoryid.ToString() ?? throw new Exception("No se ha creado la categoría correctamente");
+                result = CategoriesAPI.GetById(categoryId, new CategoriesRepository()).Result;
+                var categories = (Categories?)getOkResult(result).Value.Result;
 
-                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                Assert.That(categories?.Description == $"[{accounts.Description}]");
 
-                Accounts? accounts = (Accounts?)okResult.Value.Result;
-
-                Assert.That(accounts != null);
-
-                Assert.That(accounts.Categoryid != null);
-
-                result = CategoriesAPI.GetById(accounts.Categoryid.ToString() ?? "-99", new CategoriesRepository()).Result;
-
-                okResult = getOkResult(result);
-
-                Categories? categories = (Categories?)okResult.Value.Result;
-
-                Assert.That(categories.Description == "[" + accounts.Description + "]");
-
+                // Actualizar la descripción
                 accounts.Description = "Cambio";
-
                 result = AcountsAPI.Update(accounts, repository, validator).Result;
+                var updateResult = getOkResult(result);
+                Assert.That((HttpStatusCode)updateResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-                okResult = getOkResult(result);
-
-                result = CategoriesAPI.GetById(accounts.Categoryid.ToString() ?? "-99", new CategoriesRepository()).Result;
-
-                okResult = getOkResult(result);
-
-                categories = (Categories?)okResult.Value.Result;
-
-                Assert.That(categories.Description == "[" + accounts.Description + "]");
+                // Verificar que la descripción se haya actualizado correctamente
+                result = CategoriesAPI.GetById(categoryId, new CategoriesRepository()).Result;
+                categories = (Categories?)getOkResult(result).Value.Result;
+                Assert.That(categories?.Description == $"[{accounts.Description}]");
             }
             catch (Exception ex)
             {
@@ -119,36 +88,23 @@ namespace GARCA.wsTests.wsData
             try
             {
                 var obj = CreateObj();
-
                 var val = validator.Validate(obj);
-
                 if (!val.IsValid)
-                {
                     throw new Exception(val.Errors[0].ErrorMessage);
-                }
 
                 var result = AcountsAPI.Create(obj, repository, validator).Result;
+                var accounts = (Accounts?)getOkResult(result).Value.Result;
+                Assert.That(accounts != null && accounts.Categoryid != null);
 
-                var okResult = getOkResult(result);
+                string categoryId = accounts.Categoryid.ToString() ?? throw new Exception("No se ha creado la categoría correctamente");
 
-                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-                Accounts? accounts = (Accounts?)okResult.Value.Result;
-
-                Assert.That(accounts != null);
-
-                Assert.That(accounts.Categoryid != null);
-
-                string categoryid = accounts.Categoryid.ToString() ?? "-99";
-
+                // Eliminar la cuenta
                 result = AcountsAPI.Delete(accounts.Id.ToString(), repository).Result;
+                var deleteResult = getOkResult(result);
+                Assert.That((HttpStatusCode)deleteResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
-                okResult = getOkResult(result);
-
-                Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-
-                result = CategoriesAPI.GetById(categoryid, new CategoriesRepository()).Result;
-
+                // Verificar que la categoría ya no existe
+                result = CategoriesAPI.GetById(categoryId, new CategoriesRepository()).Result;
                 Assert.That((HttpStatusCode)getNotFoundResult(result).StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             }
             catch (Exception ex)
