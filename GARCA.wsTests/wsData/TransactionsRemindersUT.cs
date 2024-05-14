@@ -18,7 +18,7 @@ namespace GARCA.wsTests.wsData
         public override TransactionsReminders CreateObj()
         {
             var period = new PeriodsRemindersRepository().Save(new PeriodsRemindersUT().CreateObj()).Result;
-            var persson = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
+            var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
             var category = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result;
             var account = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
             var statust = new TransactionsStatusRepository().Save(new TransactionsStatusUT().CreateObj()).Result;
@@ -29,7 +29,7 @@ namespace GARCA.wsTests.wsData
                 Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
                 PeriodsRemindersId = period.Id,
                 AccountsId = account.Id,
-                PersonsId = persson.Id,
+                PersonsId = person.Id,
                 CategoriesId = category.Id,
                 AmountIn = getNextDecimal(),
                 AmountOut = getNextDecimal(),
