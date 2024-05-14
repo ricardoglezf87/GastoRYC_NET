@@ -74,7 +74,7 @@ namespace GARCA.wsData.Repositories
             return await Delete(obj.Id);
         }
 
-        public virtual async Task<bool> Delete(int id)
+        private async Task<bool> Delete(int id)
         {
             using (var connection = dbContext.OpenConnection())
             {

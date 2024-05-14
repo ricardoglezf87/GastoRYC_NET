@@ -20,7 +20,5 @@ namespace GARCA.wsData.Repositories
         public Task<int> Insert(Q obj);
 
         public Task<bool> Delete(Q obj);
-
-        public Task<bool> Delete(int id);
     }
 }

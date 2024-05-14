@@ -27,11 +27,10 @@ namespace GARCA.wsData.Repositories
 
         public override async Task<bool> Delete(Transactions obj)
         {
-            bool result = await Delete(obj.Id);
+            bool result = await base.Delete(obj);
             await postChange(obj);           
             return result;
         }
-
 
         private async Task postChange(Transactions obj)
         {

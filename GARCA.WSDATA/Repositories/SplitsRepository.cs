@@ -17,7 +17,7 @@ namespace GARCA.wsData.Repositories
 
         public override async Task<bool> Delete(Splits obj)
         {
-            bool result = await Delete(obj.Id);
+            bool result = await Delete(obj);
             await postChange(obj);
             return result;
         }
