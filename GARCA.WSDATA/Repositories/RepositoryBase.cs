@@ -49,7 +49,8 @@ namespace GARCA.wsData.Repositories
             }
             else
             {
-                return await GetById(await Insert(obj)) ?? obj;
+                obj.Id = await Insert(obj);
+                return obj;
             }
         }
 

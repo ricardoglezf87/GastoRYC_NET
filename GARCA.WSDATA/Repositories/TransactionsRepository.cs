@@ -22,7 +22,7 @@ namespace GARCA.wsData.Repositories
             obj.Date = obj.Date.RemoveTime();
             obj = await base.Save(obj);
             await postChange(obj);
-            return obj;
+            return await GetById(obj.Id) ?? obj;
         }
 
         public override async Task<bool> Delete(Transactions obj)
@@ -69,6 +69,7 @@ namespace GARCA.wsData.Repositories
             using (var connection = dbContext.OpenConnection())
             {
                 await connection.ExecuteAsync("UpdatePersonsCategoriesId", new { person_id = personId }, commandType: CommandType.StoredProcedure);
+                connection.Close();
             }
         }        
     }

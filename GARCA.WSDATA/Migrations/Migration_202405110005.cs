@@ -52,7 +52,7 @@ namespace wsData.Migrations
 
                         connection.Execute(@"
 
-                        ALTER TABLE GARCA_TEST.Accounts DROP FOREIGN KEY FK_Accounts_Categories_Categoryid;
+                        ALTER TABLE Accounts DROP FOREIGN KEY FK_Accounts_Categories_Categoryid;
                         
                         ");                        
 

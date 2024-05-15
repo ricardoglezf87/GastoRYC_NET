@@ -628,11 +628,13 @@ namespace GARCA.wsTests.wsData
                 var okResult = getOkResult(result);
                 transaction = (Transactions?)okResult.Value.Result;
 
+                var tranferID = transaction.TranferId.ToString();
+
                 transaction.CategoriesId = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result.Id;
                 result = TransactionsAPI.Update(transaction, repository, validator).Result;
                 getOkResult(result);
 
-                result = TransactionsAPI.GetById(transaction.TranferId.ToString(),repository).Result;
+                result = TransactionsAPI.GetById(tranferID,repository).Result;
                 Assert.That((HttpStatusCode)getNotFoundResult(result).StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             }
             catch (Exception ex)
