@@ -66,6 +66,37 @@ namespace GARCA.wsTests.wsData
             }
         }
 
+        [Test]
+        public void GetById_OK()
+        {
+            try
+            {
+                var obj = CreateObj();
+
+                var val = validator.Validate(obj);
+
+                if (!val.IsValid)
+                {
+                    throw new Exception(val.Errors[0].ErrorMessage);
+                }
+
+                var result = BaseAPI<Q>.Create(obj, repository, validator).Result;
+
+                var okResul = getOkResult(result);
+
+                obj = (Q)okResul.Value.Result;
+
+                result = BaseAPI<Q>.GetById(obj.Id.ToString(), repository).Result;
+
+                Assert.That((HttpStatusCode)getOkResult(result).StatusCode, Is.EqualTo(HttpStatusCode.OK));
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex.Message);
+                Assert.Fail(ex.Message);
+            }
+        }
+
 
         [Test]
         public void Create_Ok()
