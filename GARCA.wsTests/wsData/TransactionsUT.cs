@@ -291,6 +291,8 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
+                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+
                 for (int i = 0; i < 100; i++)
                 {
                     Transactions transaction = new Transactions()
@@ -313,6 +315,10 @@ namespace GARCA.wsTests.wsData
                     var result = TransactionsAPI.Create(transaction, repository, validator).Result;
                     getOkResult(result);
                 }
+
+                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+
+                Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
                 foreach (var acc in lAccounts)
                 {
@@ -358,6 +364,8 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
+                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+
                 for (int i = 0; i < 100; i++)
                 {
                     Transactions transaction = new Transactions()
@@ -380,6 +388,10 @@ namespace GARCA.wsTests.wsData
                     var result = TransactionsAPI.Create(transaction, repository, validator).Result;
                     getOkResult(result);
                 }
+
+                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+
+                Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
                 for (int i = 0; i < 50; i++)
                 {
@@ -407,6 +419,9 @@ namespace GARCA.wsTests.wsData
                     }
                 }
 
+                rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+
                 foreach (var acc in lAccounts)
                 {
                     var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
@@ -431,13 +446,14 @@ namespace GARCA.wsTests.wsData
         }
 
         [Test]
-        public void ValidarCalculoBalanceTranfWithRemoveTransfer_Ok()
+        public void ValidarCalculoBalanceTranfWithRemoveCategoryTransfer_Ok()
         {
             try
             {
                 var lAccounts = new List<Accounts>();
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
+                var lTransactions = new List<Transactions>();
 
                 for (int i = 0; i < 5; i++)
                 {
@@ -450,6 +466,8 @@ namespace GARCA.wsTests.wsData
                     var transactionsStatus = new TransactionsStatusRepository().Save(new TransactionsStatusUT().CreateObj()).Result;
                     lTransactionsStatus.Add(transactionsStatus);
                 }
+
+                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
 
                 for (int i = 0; i < 100; i++)
                 {
@@ -471,33 +489,31 @@ namespace GARCA.wsTests.wsData
                         throw new Exception(val.Errors[0].ErrorMessage);
 
                     var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    getOkResult(result);
+                    var okResult = getOkResult(result);
+
+                    lTransactions.Add((Transactions?)okResult.Value.Result);
                 }
+
+                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
                 for (int i = 0; i < 50; i++)
                 {
-                    var accountsId = lAccounts[new Random().Next(0, 5)].Id;
-                    var result = TransactionsAPI.Get($"AccountsId={accountsId}", repository).Result;
+                    int id = new Random().Next(0, lTransactions.Count - 1);
+                    var transactions = lTransactions[id];
+                    transactions.CategoriesId = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result.Id;
 
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
+                     var result = TransactionsAPI.Update(transactions, repository, validator).Result;
+                    getOkResult(result);
 
-                        if (lTransactions.Count > 0)
-                        {
-                            var transaction = lTransactions[new Random().Next(0, lTransactions.Count - 1)] ?? new Transactions();
+                    result = TransactionsAPI.GetById(transactions.TranferId.ToString() ?? "-99", repository).Result;
+                    Assert.That((HttpStatusCode)getNotFoundResult(result).StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
 
-                            var val = validator.Validate(transaction);
-                            if (!val.IsValid)
-                                throw new Exception(val.Errors[0].ErrorMessage);
-
-                            transaction.CategoriesId = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result.Id;
-
-                            result = TransactionsAPI.Update(transaction, repository, validator).Result;
-                            getOkResult(result);
-                        }
-                    }
+                    lTransactions.RemoveAt(id);
                 }
+
+                rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 150, Is.EqualTo(rActual));
 
                 foreach (var acc in lAccounts)
                 {
@@ -505,7 +521,7 @@ namespace GARCA.wsTests.wsData
 
                     if (result is Ok<ResponseAPI> okResult)
                     {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
+                        lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
 
                         Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
                         Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
@@ -545,6 +561,8 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
+                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+
                 for (int i = 0; i < 100; i++)
                 {
                     Transactions transaction = new Transactions()
@@ -570,6 +588,9 @@ namespace GARCA.wsTests.wsData
                     lTransactions.Add((Transactions?)okResult.Value.Result);
                 }
 
+                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+
                 for (int i = 0; i < 50; i++)
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
@@ -578,6 +599,9 @@ namespace GARCA.wsTests.wsData
                     getOkResult(result);
                     lTransactions.RemoveAt(id);
                 }
+
+                rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 100, Is.EqualTo(rActual));
 
                 foreach (var acc in lAccounts)
                 {
@@ -594,48 +618,6 @@ namespace GARCA.wsTests.wsData
                     }
                 }
 
-            }
-            catch (Exception ex)
-            {
-                Log.LogError(ex.Message);
-                Assert.Fail(ex.Message);
-            }
-        }
-
-        [Test]
-        public void RemoveTransferCategory_Ok()
-        {
-            try
-            {
-                var accounts = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
-                Transactions transaction = new Transactions()
-                {
-                    Id = 0,
-                    Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                    AccountsId = accounts.Id,
-                    PersonsId = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result.Id,
-                    CategoriesId = accounts.Categoryid,
-                    AmountIn = getNextDecimal(),
-                    AmountOut = getNextDecimal(),
-                    TransactionsStatusId = new TransactionsStatusRepository().Save(new TransactionsStatusUT().CreateObj()).Result.Id,
-                };
-
-                var val = validator.Validate(transaction);
-                if (!val.IsValid)
-                    throw new Exception(val.Errors[0].ErrorMessage);
-
-                var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                var okResult = getOkResult(result);
-                transaction = (Transactions?)okResult.Value.Result;
-
-                var tranferID = transaction.TranferId.ToString();
-
-                transaction.CategoriesId = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result.Id;
-                result = TransactionsAPI.Update(transaction, repository, validator).Result;
-                getOkResult(result);
-
-                result = TransactionsAPI.GetById(tranferID,repository).Result;
-                Assert.That((HttpStatusCode)getNotFoundResult(result).StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
             }
             catch (Exception ex)
             {

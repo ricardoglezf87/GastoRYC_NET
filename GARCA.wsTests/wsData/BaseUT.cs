@@ -163,7 +163,7 @@ namespace GARCA.wsTests.wsData
 
         protected Decimal? getNextDecimal()
         {
-            return (decimal?)Math.Round(new Random().Next(0, 1000) * new Random().NextDouble(),2);
+            return (decimal?)Math.Round(new Random().Next(1, 1000) * new Random().NextDouble(),2);
         }
 
         protected string getNextWord()
