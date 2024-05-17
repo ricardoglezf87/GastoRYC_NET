@@ -41,6 +41,7 @@ namespace GARCA.wsData.Repositories
                         DROP PROCEDURE IF EXISTS GARCA_TEST.UpdatePersonsCategoriesId;
                         DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateTranfer;
                         DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateTranferSplit;
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateTransactionWithSplit;
 
                         DROP TRIGGER IF EXISTS GARCA_TEST.Splits_IT;
                         DROP TRIGGER IF EXISTS GARCA_TEST.Splits_Update_Transaction_IT;

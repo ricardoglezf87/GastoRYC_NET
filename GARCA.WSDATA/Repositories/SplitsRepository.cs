@@ -24,8 +24,9 @@ namespace GARCA.wsData.Repositories
 
         private async Task postChange(Splits obj)
         {
-            await UpdateTranferSplit(obj.Id);
-            await UpdateTransactionBalance(obj.Id);
+            await UpdateTransactionWithSplits(obj.TransactionsId ?? -99);
+            await UpdateTranferSplit(obj.Id);            
+            await UpdateTransactionBalance(obj.TransactionsId ?? -99);
         }
 
         public async Task UpdateTranferSplit(int id)
@@ -33,6 +34,14 @@ namespace GARCA.wsData.Repositories
             using (var connection = dbContext.OpenConnection())
             {
                 await connection.ExecuteAsync("UpdateTranferSplit", new { Sid = id }, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public async Task UpdateTransactionWithSplits(int id)
+        {
+            using (var connection = dbContext.OpenConnection())
+            {
+                await connection.ExecuteAsync("UpdateTransactionWithSplit", new { Tid = id }, commandType: CommandType.StoredProcedure);
             }
         }
 
