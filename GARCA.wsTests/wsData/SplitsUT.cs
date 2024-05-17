@@ -22,7 +22,6 @@ namespace GARCA.wsTests.wsData
             return obj;
         }
 
-
         [Test]
         public void ValidarCalculoTotalTrans_Ok()
         {
@@ -55,8 +54,7 @@ namespace GARCA.wsTests.wsData
                     if (!val.IsValid)
                         throw new Exception(val.Errors[0].ErrorMessage);
 
-                    var result = SplitsAPI.Create(splits, repository, validator).Result;
-                    Assert.That((HttpStatusCode)getOkResult(result).StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    _ = repository.Save(splits).Result;
                 }
 
                 foreach (var t in lTransactions)
@@ -65,14 +63,9 @@ namespace GARCA.wsTests.wsData
 
                     Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
 
-                    var result = SplitsAPI.Get($"TransactionsId={transaction.Id}", repository).Result;                    
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lSplits = (List<Splits?>?)okResult.Value.Result ?? new List<Splits?>();
-                        Decimal total = lSplits.Sum(x => x.Amount) ?? 0;                        
-                        Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                    }
+                    var lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
+                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
+                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
                 }
             }
             catch (Exception ex)
@@ -110,15 +103,8 @@ namespace GARCA.wsTests.wsData
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
                     };
-
-                    var val = validator.Validate(splits);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = SplitsAPI.Create(splits, repository, validator).Result;
-                    var okResult = getOkResult(result);
-                    lSplits.Add((Splits)okResult.Value.Result);
-                    Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    
+                    lSplits.Add(repository.Save(splits).Result);                    
                 }
 
                 for (int i = 0; i < 50; i++)
@@ -129,8 +115,7 @@ namespace GARCA.wsTests.wsData
                     splits.AmountIn = getNextDecimal();
                     splits.AmountOut = getNextDecimal();
 
-                    var result = SplitsAPI.Update(splits, repository, validator).Result;
-                    getOkResult(result);
+                    _ = repository.Save(splits).Result;                    
                     
                     lSplits.RemoveAt(id);
                 }
@@ -141,14 +126,9 @@ namespace GARCA.wsTests.wsData
 
                     Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
 
-                    var result = SplitsAPI.Get($"TransactionsId={transaction.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        lSplits = (List<Splits?>?)okResult.Value.Result ?? new List<Splits?>();
-                        Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
-                        Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                    }
+                    lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
+                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
+                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
                 }
             }
             catch (Exception ex)
@@ -187,14 +167,7 @@ namespace GARCA.wsTests.wsData
                         AmountOut = getNextDecimal(),
                     };
 
-                    var val = validator.Validate(splits);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = SplitsAPI.Create(splits, repository, validator).Result;
-                    var okResult = getOkResult(result);
-                    lSplits.Add((Splits)okResult.Value.Result);
-                    Assert.That((HttpStatusCode)okResult.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    lSplits.Add(repository.Save(splits).Result);
                 }
 
                 for (int i = 0; i < 50; i++)
@@ -202,8 +175,7 @@ namespace GARCA.wsTests.wsData
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var splits = lSplits[id];
 
-                    var result = SplitsAPI.Delete(splits.Id.ToString(), repository).Result;
-                    getOkResult(result);
+                    _ = repository.Delete(splits).Result;
 
                     lSplits.RemoveAt(id);
                 }
@@ -214,14 +186,9 @@ namespace GARCA.wsTests.wsData
 
                     Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
 
-                    var result = SplitsAPI.Get($"TransactionsId={transaction.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        lSplits = (List<Splits?>?)okResult.Value.Result ?? new List<Splits?>();
-                        Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
-                        Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                    }
+                    lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
+                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
+                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
                 }
             }
             catch (Exception ex)
