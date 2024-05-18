@@ -29,10 +29,13 @@ namespace GARCA.wsTests.wsData
             {
                 var lAccounts = new List<Accounts>();
                 var lTransactions = new List<Transactions>();
+                var account = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
 
                 for (int i = 0; i < 5; i++)
                 {
-                    var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
+                    var trans = new TransactionsUT().CreateObj();
+                    trans.AccountsId = account.Id;
+                    trans = new TransactionsRepository().Save(trans).Result;
                     lTransactions.Add(trans);
 
                     var accounts = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
@@ -67,6 +70,13 @@ namespace GARCA.wsTests.wsData
                     Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
                     Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
                 }
+
+                TestBalanceAccount(account);
+
+                foreach (var acc in lAccounts)
+                {
+                    TestBalanceAccount(acc);
+                }
             }
             catch (Exception ex)
             {
@@ -83,10 +93,13 @@ namespace GARCA.wsTests.wsData
                 var lAccounts = new List<Accounts>();
                 var lTransactions = new List<Transactions>();
                 var lSplits = new List<Splits>();
+                var account = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
 
                 for (int i = 0; i < 5; i++)
                 {
-                    var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
+                    var trans = new TransactionsUT().CreateObj();
+                    trans.AccountsId = account.Id;
+                    trans = new TransactionsRepository().Save(trans).Result;
                     lTransactions.Add(trans);
 
                     var accounts = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
@@ -134,6 +147,13 @@ namespace GARCA.wsTests.wsData
                     Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
                     Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
                 }
+
+                TestBalanceAccount(account);
+
+                foreach (var acc in lAccounts)
+                {
+                    TestBalanceAccount(acc);
+                }
             }
             catch (Exception ex)
             {
@@ -150,10 +170,13 @@ namespace GARCA.wsTests.wsData
                 var lAccounts = new List<Accounts>();
                 var lTransactions = new List<Transactions>();
                 var lSplits = new List<Splits>();
+                var account = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
 
                 for (int i = 0; i < 5; i++)
                 {
-                    var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
+                    var trans = new TransactionsUT().CreateObj();
+                    trans.AccountsId = account.Id;
+                    trans = new TransactionsRepository().Save(trans).Result;
                     lTransactions.Add(trans);
 
                     var accounts = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
@@ -202,6 +225,13 @@ namespace GARCA.wsTests.wsData
                     Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
                     Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
                 }
+
+                TestBalanceAccount(account);
+
+                foreach (var acc in lAccounts)
+                {
+                    TestBalanceAccount(acc);
+                }
             }
             catch (Exception ex)
             {
@@ -217,10 +247,13 @@ namespace GARCA.wsTests.wsData
             {
                 var lCategories = new List<Categories>();
                 var lTransactions = new List<Transactions>();
+                var account = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
 
                 for (int i = 0; i < 5; i++)
                 {
-                    var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
+                    var trans = new TransactionsUT().CreateObj();
+                    trans.AccountsId = account.Id;
+                    trans = new TransactionsRepository().Save(trans).Result;
                     lTransactions.Add(trans);
 
                     var category = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result;
@@ -250,6 +283,8 @@ namespace GARCA.wsTests.wsData
                     Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
                     Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
                 }
+
+                TestBalanceAccount(account);
             }
             catch (Exception ex)
             {
@@ -266,10 +301,13 @@ namespace GARCA.wsTests.wsData
                 var lCategories = new List<Categories>();
                 var lTransactions = new List<Transactions>();
                 var lSplits = new List<Splits>();
+                var account = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
 
                 for (int i = 0; i < 5; i++)
                 {
-                    var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
+                    var trans = new TransactionsUT().CreateObj();
+                    trans.AccountsId = account.Id;
+                    trans = new TransactionsRepository().Save(trans).Result;
                     lTransactions.Add(trans);
 
                     var category = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result;
@@ -313,6 +351,8 @@ namespace GARCA.wsTests.wsData
                     Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
                     Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
                 }
+
+                TestBalanceAccount(account);
             }
             catch (Exception ex)
             {
@@ -326,13 +366,17 @@ namespace GARCA.wsTests.wsData
         {
             try
             {
-                var lCategories = new List<Categories>();
+                var lCategories = new List<Categories>();                
                 var lTransactions = new List<Transactions>();
                 var lSplits = new List<Splits>();
 
+                var account = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
+
                 for (int i = 0; i < 5; i++)
                 {
-                    var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
+                    var trans = new TransactionsUT().CreateObj();
+                    trans.AccountsId = account.Id;
+                    trans = new TransactionsRepository().Save(trans).Result;
                     lTransactions.Add(trans);
 
                     var category = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result;
@@ -373,12 +417,25 @@ namespace GARCA.wsTests.wsData
                     Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
                     Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
                 }
+                
+                TestBalanceAccount(account);
+
             }
             catch (Exception ex)
             {
                 Log.LogError(ex.Message);
                 Assert.Fail(ex.Message);
             }
+        }
+
+        private void TestBalanceAccount(Accounts accounts)
+        {
+            var lTransactions = new TransactionsRepository().GetByAccount(accounts.Id).Result?.ToList() ?? new List<Transactions>();
+
+            Decimal totalT = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
+            Decimal lastT = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
+
+            Assert.That(totalT, Is.EqualTo(lastT), $"TestAccount: {accounts.Id}");
         }
 
         public override Splits CreateObj()

@@ -129,8 +129,7 @@ namespace wsData.Migrations
 
                             SELECT date INTO Tdate
 	                        FROM Transactions t 
-		                        INNER JOIN Splits s on s.transactionid = t.id 
-	                        where s.id = Tid;
+	                        where t.id = Tid;
 
 	                        call UpdateBalancebyDate(Tdate);
 
