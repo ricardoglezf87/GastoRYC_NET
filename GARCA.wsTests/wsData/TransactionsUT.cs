@@ -291,7 +291,7 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
                 for (int i = 0; i < 100; i++)
                 {
@@ -316,7 +316,7 @@ namespace GARCA.wsTests.wsData
                     getOkResult(result);
                 }
 
-                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                int rActual = repository.GetAll()?.Result?.Count() ?? 0;
 
                 Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
@@ -364,7 +364,7 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
                 for (int i = 0; i < 100; i++)
                 {
@@ -389,7 +389,7 @@ namespace GARCA.wsTests.wsData
                     getOkResult(result);
                 }
 
-                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                int rActual = repository.GetAll()?.Result?.Count() ?? 0;
 
                 Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
@@ -419,7 +419,7 @@ namespace GARCA.wsTests.wsData
                     }
                 }
 
-                rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                rActual = repository.GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
                 foreach (var acc in lAccounts)
@@ -467,7 +467,7 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
                 for (int i = 0; i < 100; i++)
                 {
@@ -494,7 +494,7 @@ namespace GARCA.wsTests.wsData
                     lTransactions.Add((Transactions?)okResult.Value.Result);
                 }
 
-                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                int rActual = repository.GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
                 for (int i = 0; i < 50; i++)
@@ -512,7 +512,7 @@ namespace GARCA.wsTests.wsData
                     lTransactions.RemoveAt(id);
                 }
 
-                rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                rActual = repository.GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + 150, Is.EqualTo(rActual));
 
                 foreach (var acc in lAccounts)
@@ -561,7 +561,7 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
                 for (int i = 0; i < 100; i++)
                 {
@@ -588,7 +588,7 @@ namespace GARCA.wsTests.wsData
                     lTransactions.Add((Transactions?)okResult.Value.Result);
                 }
 
-                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                int rActual = repository.GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
                 for (int i = 0; i < 50; i++)
@@ -600,7 +600,7 @@ namespace GARCA.wsTests.wsData
                     lTransactions.RemoveAt(id);
                 }
 
-                rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                rActual = repository.GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + 100, Is.EqualTo(rActual));
 
                 foreach (var acc in lAccounts)

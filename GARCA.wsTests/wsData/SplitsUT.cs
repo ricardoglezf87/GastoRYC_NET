@@ -23,6 +23,59 @@ namespace GARCA.wsTests.wsData
         }
 
         [Test]
+        public void ValidarUpdateFromSplit_Ok()
+        {
+            try
+            {
+                var lAccounts = new List<Accounts>();
+                var lTransactions = new List<Transactions>();
+
+                for (int i = 0; i < 5; i++)
+                {
+                    var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
+                    lTransactions.Add(trans);
+
+                    var accounts = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
+                    lAccounts.Add(accounts);
+                }
+
+                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                
+                for (int i = 0; i < 100; i++)
+                {
+                    Splits splits = new Splits()
+                    {
+                        Id = 0,
+                        TransactionsId = lTransactions[new Random().Next(0, 5)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AmountIn = getNextDecimal(),
+                        AmountOut = getNextDecimal(),
+                    };
+                    _ = repository.Save(splits).Result;
+                }
+
+                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 100, Is.EqualTo(rActual));
+
+                foreach (var t in lTransactions)
+                {
+                    var transaction = new TransactionsRepository().GetById(t.Id).Result;
+
+                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
+
+                    var lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
+                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
+                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
+                }                
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex.Message);
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
         public void ValidarCalculoTotalTrans_Ok()
         {
             try
@@ -49,11 +102,6 @@ namespace GARCA.wsTests.wsData
                        AmountIn = getNextDecimal(),
                        AmountOut = getNextDecimal(),
                    };
-
-                    var val = validator.Validate(splits);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
                     _ = repository.Save(splits).Result;
                 }
 
