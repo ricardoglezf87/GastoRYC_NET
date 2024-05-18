@@ -14,7 +14,7 @@ using static GARCA.Utils.Enums.EnumCategories;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class SplitsUT : BaseUT<Splits, SplitsValidations,SplitsRepository>
+    public class SplitsUT : BaseUT<Splits, SplitsValidations, SplitsRepository>
     {
         public override Splits MakeChange(Splits obj)
         {
@@ -23,7 +23,7 @@ namespace GARCA.wsTests.wsData
         }
 
         [Test]
-        public void ValidarUpdateFromSplit_Ok()
+        public void ValidarTranferSplit_Ok()
         {
             try
             {
@@ -40,7 +40,7 @@ namespace GARCA.wsTests.wsData
                 }
 
                 int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
-                
+
                 for (int i = 0; i < 100; i++)
                 {
                     Splits splits = new Splits()
@@ -66,7 +66,142 @@ namespace GARCA.wsTests.wsData
                     var lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
                     Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
                     Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                }                
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex.Message);
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
+        public void ValidarTranferSplitWithUpdate_Ok()
+        {
+            try
+            {
+                var lAccounts = new List<Accounts>();
+                var lTransactions = new List<Transactions>();
+                var lSplits = new List<Splits>();
+
+                for (int i = 0; i < 5; i++)
+                {
+                    var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
+                    lTransactions.Add(trans);
+
+                    var accounts = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
+                    lAccounts.Add(accounts);
+                }
+
+                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+
+                for (int i = 0; i < 100; i++)
+                {
+                    Splits splits = new Splits()
+                    {
+                        Id = 0,
+                        TransactionsId = lTransactions[new Random().Next(0, 5)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AmountIn = getNextDecimal(),
+                        AmountOut = getNextDecimal(),
+                    };
+                    lSplits.Add(repository.Save(splits).Result);
+                }
+
+                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 100, Is.EqualTo(rActual));
+
+                for (int i = 0; i < 50; i++)
+                {
+                    int id = new Random().Next(0, lTransactions.Count - 1);
+                    var splits = lSplits[id];
+                    splits.AmountIn = getNextDecimal();
+                    splits.AmountOut = getNextDecimal();
+                    _ = repository.Save(splits).Result;
+                    lSplits.RemoveAt(id);
+                }
+
+                rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 100, Is.EqualTo(rActual));
+
+                foreach (var t in lTransactions)
+                {
+                    var transaction = new TransactionsRepository().GetById(t.Id).Result;
+
+                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
+
+                    lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
+                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
+                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex.Message);
+                Assert.Fail(ex.Message);
+            }
+        }
+
+        [Test]
+        public void ValidarTranferSplitWithDelete_Ok()
+        {
+            try
+            {
+                var lAccounts = new List<Accounts>();
+                var lTransactions = new List<Transactions>();
+                var lSplits = new List<Splits>();
+
+                for (int i = 0; i < 5; i++)
+                {
+                    var trans = new TransactionsRepository().Save(new TransactionsUT().CreateObj()).Result;
+                    lTransactions.Add(trans);
+
+                    var accounts = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
+                    lAccounts.Add(accounts);
+                }
+
+                int rTotal = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+
+                for (int i = 0; i < 100; i++)
+                {
+                    Splits splits = new Splits()
+                    {
+                        Id = 0,
+                        TransactionsId = lTransactions[new Random().Next(0, 5)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AmountIn = getNextDecimal(),
+                        AmountOut = getNextDecimal(),
+                    };
+                    lSplits.Add(repository.Save(splits).Result);
+                }
+
+                int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 100, Is.EqualTo(rActual));
+
+                for (int i = 0; i < 50; i++)
+                {
+                    int id = new Random().Next(0, lTransactions.Count - 1);
+                    var splits = lSplits[id];
+                    _ = repository.Delete(splits).Result;
+
+                    Assert.That(new TransactionsRepository().GetById(splits.TranferId ?? -99).Result, Is.Null);
+
+                    lSplits.RemoveAt(id);
+                }
+
+                rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
+                Assert.That(rTotal + 50, Is.EqualTo(rActual));
+
+                foreach (var t in lTransactions)
+                {
+                    var transaction = new TransactionsRepository().GetById(t.Id).Result;
+
+                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
+
+                    lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
+                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
+                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
+                }
             }
             catch (Exception ex)
             {
@@ -89,19 +224,19 @@ namespace GARCA.wsTests.wsData
                     lTransactions.Add(trans);
 
                     var category = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result;
-                    lCategories.Add(category);                  
+                    lCategories.Add(category);
                 }
 
                 for (int i = 0; i < 100; i++)
                 {
-                   Splits splits = new Splits()
-                   {
-                       Id = 0,
-                       TransactionsId = lTransactions[new Random().Next(0, 5)].Id,
-                       CategoriesId = lCategories[new Random().Next(0, 5)].Id,
-                       AmountIn = getNextDecimal(),
-                       AmountOut = getNextDecimal(),
-                   };
+                    Splits splits = new Splits()
+                    {
+                        Id = 0,
+                        TransactionsId = lTransactions[new Random().Next(0, 5)].Id,
+                        CategoriesId = lCategories[new Random().Next(0, 5)].Id,
+                        AmountIn = getNextDecimal(),
+                        AmountOut = getNextDecimal(),
+                    };
                     _ = repository.Save(splits).Result;
                 }
 
@@ -151,20 +286,20 @@ namespace GARCA.wsTests.wsData
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
                     };
-                    
-                    lSplits.Add(repository.Save(splits).Result);                    
+
+                    lSplits.Add(repository.Save(splits).Result);
                 }
 
                 for (int i = 0; i < 50; i++)
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var splits = lSplits[id];
-                    
+
                     splits.AmountIn = getNextDecimal();
                     splits.AmountOut = getNextDecimal();
 
-                    _ = repository.Save(splits).Result;                    
-                    
+                    _ = repository.Save(splits).Result;
+
                     lSplits.RemoveAt(id);
                 }
 

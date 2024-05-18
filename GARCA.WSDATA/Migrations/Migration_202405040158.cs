@@ -71,6 +71,11 @@ namespace wsData.Migrations
 	                    set
 		                    s.tranferid = t.id 
 	                    where s.id = Sid and s.tranferid is null;
+
+                        -- Borra las transacciones cundo han sido borradas las transacciones en el otro lado
+                        delete
+                        from Transactions 
+                        where tranferSplitid = Sid and not exists(select * from Splits s where s.id = Sid);
         
                         COMMIT;
                         END

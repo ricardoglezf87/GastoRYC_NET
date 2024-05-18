@@ -9,10 +9,9 @@ namespace GARCA.wsData.Repositories
     {
         public override async Task<Splits> Save(Splits obj)
         {
-            Splits transaction = await base.Save(obj);
-
+            obj = await base.Save(obj);
             await postChange(obj);
-            return transaction;
+            return await GetById(obj.Id) ?? obj;
         }
 
         public override async Task<bool> Delete(Splits obj)
