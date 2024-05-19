@@ -1,3 +1,8 @@
+//TODO: Categoria por defecto en persona
+//TODO: Splits de una transferencia duplica
+//TODO: Duplica al añadir lineas de transferencia en splits
+//TODO: Conciliar falla
+
 using FluentValidation;
 using FluentValidation.Results;
 using GARCA.Model;
