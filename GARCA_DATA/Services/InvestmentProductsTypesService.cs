@@ -1,10 +1,10 @@
-﻿using GARCA.Data.Managers;
+﻿using GARCA.wsData.Repositories;
 using GARCA.Models;
 
 
 namespace GARCA.Data.Services
 {
-    public class InvestmentProductsTypesService : ServiceBase<InvestmentProductsTypesManager, InvestmentProductsTypes>
+    public class InvestmentProductsTypesService : ServiceBase<InvestmentProductsTypesRepository, InvestmentProductsTypes>
     {
     }
 }

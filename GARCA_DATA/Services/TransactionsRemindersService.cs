@@ -1,4 +1,4 @@
-﻿using GARCA.Data.Managers;
+﻿using GARCA.wsData.Repositories;
 using GARCA.Models;
 using static GARCA.Data.IOC.DependencyConfig;
 using static GARCA.Utils.Enums.EnumCategories;
@@ -6,7 +6,7 @@ using static GARCA.Utils.Enums.EnumCategories;
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsRemindersService : ServiceBase<TransactionsRemindersManager, TransactionsReminders>
+    public class TransactionsRemindersService : ServiceBase<TransactionsRemindersRepository, TransactionsReminders>
     {
 
         #region TransactionsRemindersActions        
@@ -23,7 +23,7 @@ namespace GARCA.Data.Services
             if (transactionsReminders != null)
             {
                 await iExpirationsRemindersService.DeleteByTransactionReminderid(transactionsReminders.Id);
-                return await manager.Delete(transactionsReminders);
+                return await repository.Delete(transactionsReminders);
             }
             return false;
         }

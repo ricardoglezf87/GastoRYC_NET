@@ -1,10 +1,10 @@
-﻿using GARCA.Data.Managers;
+﻿using GARCA.wsData.Repositories;
 using GARCA.Models;
 
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsStatusService : ServiceBase<TransactionsStatusManager, TransactionsStatus>
+    public class TransactionsStatusService : ServiceBase<TransactionsStatusRepository, TransactionsStatus>
     {
         public enum ETransactionsTypes
         {

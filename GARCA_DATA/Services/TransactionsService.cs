@@ -1,4 +1,4 @@
-﻿using GARCA.Data.Managers;
+﻿using GARCA.wsData.Repositories;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -6,10 +6,8 @@ using static GARCA.Utils.Enums.EnumCategories;
 
 namespace GARCA.Data.Services
 {
-    public class TransactionsService : ServiceBase<TransactionsManager, Transactions>
+    public class TransactionsService : ServiceBase<TransactionsRepository, Transactions>
     {
-        #region TransactionsActions
-
         private async Task<IEnumerable<Transactions>?> GetByInvestmentProduct(int id)
         {
             return (await GetAll())?.Where(x => id.Equals(x.InvestmentProductsId));
@@ -21,8 +19,7 @@ namespace GARCA.Data.Services
         }
 
         public override async Task<Transactions> Save(Transactions obj)
-        {
-            obj.Date = obj.Date.RemoveTime();            
+        {            
             return await base.Save(obj);
         }
 
@@ -33,47 +30,7 @@ namespace GARCA.Data.Services
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(int? id)
         {
-            return await manager.GetByAccount(id ?? -99);
+            return await repository.GetByAccount(id ?? -99);
         }
-
-        private async Task<int> GetNextId()
-        {
-            return await manager.GetNextId();
-        }
-
-        public async Task<Transactions?> SaveChanges(Transactions? transactions)
-        {
-            await UpdateTranferFromSplit(transactions);
-            transactions = await Save(transactions);            
-            return transactions;
-        }
-       
-        #endregion
-
-        #region SplitsActions
-
-        private async Task UpdateTranferFromSplit(Transactions transactions)
-        {
-            if (transactions.TranferSplitId != null &&
-                await iCategoriesService.IsTranfer(transactions.CategoriesId ?? -99))
-            {
-                var tContraria = await iSplitsService.GetById(transactions.TranferSplitId ?? -99);
-                if (tContraria != null)
-                {
-                    tContraria.Transactions.Date = transactions.Date;
-                    tContraria.Transactions.PersonsId = transactions.PersonsId;
-                    tContraria.CategoriesId = transactions.Accounts.Categoryid;
-                    tContraria.Memo = transactions.Memo;
-                    tContraria.TagsId = transactions.TagsId;
-                    tContraria.AmountIn = transactions.AmountOut;
-                    tContraria.AmountOut = transactions.AmountIn;
-                    tContraria.Transactions.TransactionsStatusId = transactions.TransactionsStatusId;
-                    await iSplitsService.Save(tContraria);
-                }
-            }
-        }
-
-        #endregion
-
     }
 }

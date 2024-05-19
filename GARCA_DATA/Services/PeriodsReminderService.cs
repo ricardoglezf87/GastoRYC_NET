@@ -1,10 +1,10 @@
-﻿using GARCA.Data.Managers;
+﻿using GARCA.wsData.Repositories;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
 
 namespace GARCA.Data.Services
 {
-    public class PeriodsRemindersService : ServiceBase<PeriodsRemindersManager, PeriodsReminders>
+    public class PeriodsRemindersService : ServiceBase<PeriodsRemindersRepository, PeriodsReminders>
     {
 
         public enum EPeriodsReminders

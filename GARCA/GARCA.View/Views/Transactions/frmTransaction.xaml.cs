@@ -443,7 +443,7 @@ namespace GARCA.View.Views
                     FillTransactionVar();
                     if (transaction != null)
                     {
-                        transaction = await iTransactionsService.SaveChanges(transaction);                        
+                        transaction = await iTransactionsService.Save(transaction);                        
                     }
                     return true;
                 }

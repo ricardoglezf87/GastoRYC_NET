@@ -1,19 +1,14 @@
 ﻿using GARCA.Models;
-using GARCA_DATA.Managers;
+using GARCA.wsData.Repositories;
 using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class AccountsService : ServiceBase<AccountsManager, Accounts>
+    public class AccountsService : ServiceBase<AccountsRepository, Accounts>
     {
         public async Task<IEnumerable<Accounts>?> GetAllOpened()
         {
-            return await manager.GetAllOpened();
-        }
-
-        public async Task<Accounts?> GetByCategoryId(int id)
-        {
-            return await manager.GetByCategoryId(id);
+            return await repository.GetAllOpened();
         }
 
         public async Task<Decimal> GetBalanceByAccount(int? id)

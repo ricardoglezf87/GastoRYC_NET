@@ -79,7 +79,7 @@ namespace GARCA.View.Views
         private async void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var splits = (Splits)e.RowData;
-            await iSplitsService.SaveChanges(splits);
+            await iSplitsService.Save(splits);
         }
 
         private async void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)

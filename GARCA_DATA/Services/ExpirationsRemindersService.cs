@@ -1,4 +1,4 @@
-﻿using GARCA.Data.Managers;
+﻿using GARCA.wsData.Repositories;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
 using Google.Apis.Sheets.v4.Data;
@@ -8,21 +8,21 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GARCA.Data.Services
 {
-    public class ExpirationsRemindersService : ServiceBase<ExpirationsRemindersManager, ExpirationsReminders>
+    public class ExpirationsRemindersService : ServiceBase<ExpirationsRemindersRepository, ExpirationsReminders>
     {      
         private async Task<bool> ExistsExpiration(TransactionsReminders transactionsReminder, DateTime date)
         {
-            return await manager.ExistsExpiration(transactionsReminder, date);
+            return await repository.ExistsExpiration(transactionsReminder, date);
         }
 
         public async Task<DateTime?> MaxExpiration(TransactionsReminders transactionsReminder)
         {
-            return await manager.MaxExpiration(transactionsReminder);
+            return await repository.MaxExpiration(transactionsReminder);
         }
 
         public async Task<IEnumerable<ExpirationsReminders>?> GetAllPending()
         {
-            return await manager.GetAllPending();
+            return await repository.GetAllPending();
         }
 
         public async Task GenerateAllExpirations()
@@ -35,7 +35,7 @@ namespace GARCA.Data.Services
 
         public async Task DoAutoregister()
         {
-            foreach (var exp in await manager.GetAllExpirationReadyToAutoregister())
+            foreach (var exp in await repository.GetAllExpirationReadyToAutoregister())
             {                
                 await RegisterTransactionfromReminder(exp.Id);
                 exp.Done = true;
@@ -92,7 +92,7 @@ namespace GARCA.Data.Services
                     transactions.AmountOut = expirationsReminders.TransactionsReminders.AmountOut;
                     transactions.TagsId = expirationsReminders.TransactionsReminders.TagsId;
                     transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;
-                    transactions = await iTransactionsService.SaveChanges(transactions);
+                    transactions = await iTransactionsService.Save(transactions);
 
                     foreach (var splitsReminders in
                         await iSplitsRemindersService.GetbyTransactionid(expirationsReminders.TransactionsReminders.Id))
@@ -104,10 +104,7 @@ namespace GARCA.Data.Services
                         splits.AmountIn = splitsReminders.AmountIn;
                         splits.AmountOut = splitsReminders.AmountOut;
                         splits.TagsId = splitsReminders.TagsId;
-
-                        //TODO: Revisar esto
-                        //splits = await iTransactionsService.UpdateTranferSplits(transactions, splits);
-                        await iSplitsService.SaveChanges(splits);
+                        await iSplitsService.Save(splits);
                     }
 
                     return transactions;
@@ -119,7 +116,7 @@ namespace GARCA.Data.Services
             
         private async Task<IEnumerable<ExpirationsReminders>?> GetByTransactionReminderid(int id)
         {
-            return await manager.GetByTransactionReminderid(id);
+            return await repository.GetByTransactionReminderid(id);
         }
 
         public async Task DeleteByTransactionReminderid(int id)
