@@ -110,8 +110,8 @@ namespace GARCA
 
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            await iExpirationsRemindersService.GenerateAllExpirations();
-            await iExpirationsRemindersService.DoAutoregister();
+            //await iExpirationsRemindersService.GenerateAllExpirations();
+            //await iExpirationsRemindersService.DoAutoregister();
             await LoadAccounts();
             ToggleViews(EViews.Home);
         }

@@ -57,7 +57,8 @@ namespace GARCA.wsData.Repositories
             using (var connection = dbContext.OpenConnection())
             {
                 return (await connection.QueryAsync<DateTime>(
-                    $"select max(date) from ExpirationsReminders where transactionsRemindersId={transactionsReminder.Id}")
+                    $"SELECT IFNULL(MAX(date), (select date from TransactionsReminders tr where id = {transactionsReminder.Id})) " +
+                    $"from ExpirationsReminders where transactionsRemindersId={transactionsReminder.Id}")
                     ).FirstOrDefault();
             }
         }
