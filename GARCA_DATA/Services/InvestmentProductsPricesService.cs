@@ -1,4 +1,4 @@
-﻿using GARCA.Data.Managers;
+﻿using GARCA.wsData.Repositories;
 using GARCA.Models;
 using GARCA_UTIL.Exceptions;
 using HtmlAgilityPack;
@@ -8,21 +8,21 @@ using static GARCA.Data.IOC.DependencyConfig;
 
 namespace GARCA.Data.Services
 {
-    public class InvestmentProductsPricesService : ServiceBase<InvestmentProductsPricesManager, InvestmentProductsPrices>
+    public class InvestmentProductsPricesService : ServiceBase<InvestmentProductsPricesRepository, InvestmentProductsPrices>
     {
         private async Task<bool> Exists(int investmentProductId, DateTime date)
         {
-            return await manager.Exists(investmentProductId, date);
+            return await repository.Exists(investmentProductId, date);
         }
 
         public async Task<Decimal?> GetActualPrice(InvestmentProducts investmentProducts)
         {
-            return await manager.GetActualPrice(investmentProducts);
+            return await repository.GetActualPrice(investmentProducts);
         }
 
         public async Task<DateTime?> GetLastValueDate(InvestmentProducts investmentProducts)
         {
-            return await manager.GetLastValueDate(investmentProducts);
+            return await repository.GetLastValueDate(investmentProducts);
         }
 
         public async Task getPricesOnlineAsync(InvestmentProducts investmentProducts)
@@ -37,7 +37,7 @@ namespace GARCA.Data.Services
                     productsPrices.Date = transactions.date;
                     productsPrices.InvestmentProductsid = investmentProducts.Id;
                     productsPrices.Prices = transactions.price;
-                    await manager.Update(productsPrices);
+                    await repository.Update(productsPrices);
                 }
             }
 
@@ -64,7 +64,7 @@ namespace GARCA.Data.Services
             {
                 if (!await Exists(productsPrices.InvestmentProductsid ?? -99, productsPrices.Date ?? DateTime.MinValue))
                 {
-                    await manager.Insert(productsPrices);
+                    await repository.Insert(productsPrices);
                 }
             }
         }

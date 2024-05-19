@@ -157,7 +157,7 @@ namespace GARCA.wsData.Endpoints
                     return Results.BadRequest(response);
                 }
 
-                await repository.Update(obj);
+                await repository.Save(obj);
 
                 response.Result = obj;
                 response.Success = true;
@@ -198,9 +198,9 @@ namespace GARCA.wsData.Endpoints
                     return Results.BadRequest(response);
                 }
 
-                var id = await repository.Insert(obj);
+                obj = await repository.Save(obj);
 
-                response.Result = await repository.GetById(id);
+                response.Result = obj;
                 response.Success = true;
                 response.StatusCode = HttpStatusCode.OK;
                 return Results.Ok(response);
@@ -229,7 +229,9 @@ namespace GARCA.wsData.Endpoints
 
                 Log.LogInformation($"Deleting {ClassName} by ID={nId}");
 
-                if ((await repository.GetById(nId)) == null)
+                Q obj = await repository.GetById(nId);
+
+                if (obj == null)
                 {
                     response.Success = false;
                     response.Result = $"{ClassName} {nId} not exists";
@@ -237,9 +239,9 @@ namespace GARCA.wsData.Endpoints
                     return Results.BadRequest(response);
                 }
 
-                var obj = await repository.Delete(nId);
+                var result = await repository.Delete(obj);
 
-                response.Result = obj;
+                response.Result = result;
                 response.Success = true;
                 response.StatusCode = HttpStatusCode.OK;
                 return Results.Ok(response);

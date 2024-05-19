@@ -13,7 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class DateCalendarUT : BaseUT<DateCalendar,DateCalendarValidations>
+    public class DateCalendarUT : BaseUT<DateCalendar,DateCalendarValidations,DateCalendarRepository>
     {
         public override DateCalendar MakeChange(DateCalendar obj)
         {
@@ -25,7 +25,7 @@ namespace GARCA.wsTests.wsData
         {
             return new DateCalendar()
             {
-                Id = int.MaxValue,
+                Id = 0,
                 Date = DateTime.Now,
                 Day = DateTime.Now.Day,
                 Month = DateTime.Now.Month,

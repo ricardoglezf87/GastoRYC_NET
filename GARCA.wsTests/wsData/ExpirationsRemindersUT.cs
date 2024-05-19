@@ -12,7 +12,7 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class ExpirationsRemindersUT : BaseUT<ExpirationsReminders,ExpirationsRemindersValidations>
+    public class ExpirationsRemindersUT : BaseUT<ExpirationsReminders,ExpirationsRemindersValidations,ExpirationsRemindersRepository>
     {
         public override ExpirationsReminders MakeChange(ExpirationsReminders obj)
         {
@@ -22,13 +22,13 @@ namespace GARCA.wsTests.wsData
 
         public override ExpirationsReminders CreateObj()
         {
-            var transid = new TransactionsRemindersRepository().Insert(new TransactionsRemindersUT().CreateObj()).Result;
+            var transid = new TransactionsRemindersRepository().Save(new TransactionsRemindersUT().CreateObj()).Result;
 
             return new ExpirationsReminders()
             {
-                Id = int.MaxValue,
-                Date = DateTime.Now,
-                TransactionsRemindersId = transid,
+                Id = 0,
+                Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
+                TransactionsRemindersId = transid.Id,
             };
         }
     }

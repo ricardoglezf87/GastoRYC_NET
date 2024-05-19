@@ -101,6 +101,11 @@ namespace wsData.Migrations
                                                 ) AS DECIMAL(20,0));
                         END;
                     ");
+
+
+                    connection.Execute(@"
+                        INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202404280858', '5.0');
+                    ");
                 }
             }
             catch(Exception ex)

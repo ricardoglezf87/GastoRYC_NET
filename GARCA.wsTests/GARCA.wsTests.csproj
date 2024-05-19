@@ -6,20 +6,20 @@
     <Configurations>Debug;Release;TEST</Configurations>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <AssemblyVersion>4.3.0.26</AssemblyVersion>
-    <FileVersion>4.3.0.0</FileVersion>
-    <InformationalVersion>4.3.0-alpha.26+Branch.develop.Sha.31617fea9dc1bf7f847619295f46b514f864470b</InformationalVersion>
-    <Version>4.3.0-alpha0026</Version>
+    <AssemblyVersion>4.4.0.56</AssemblyVersion>
+    <FileVersion>4.4.0.0</FileVersion>
+    <InformationalVersion>4.4.0-V5-00-MicroserviciosCore.56+Branch.feature-V5.00-MicroserviciosCore.Sha.c52c2725ad64e16c937ea2b10dd46d9d4a2a17bc</InformationalVersion>
+    <Version>4.4.0-v5-00-microservi0056</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.1">
+    <PackageReference Include="coverlet.collector" Version="6.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="NUnit" Version="4.1.0" />
-    <PackageReference Include="NUnit.Analyzers" Version="4.0.1">
+    <PackageReference Include="NUnit.Analyzers" Version="4.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

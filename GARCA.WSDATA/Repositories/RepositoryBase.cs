@@ -42,15 +42,16 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<Q> Save(Q obj)
         {
-            if (obj.Id != 0)
+            if (obj.Id != 0 && obj.Id != int.MinValue && obj.Id != int.MaxValue)
             {
                 await Update(obj);
+                return obj;
             }
             else
             {
                 obj.Id = await Insert(obj);
+                return obj;
             }
-            return obj;
         }
 
         public virtual async Task<bool> Update(Q obj)
@@ -74,7 +75,7 @@ namespace GARCA.wsData.Repositories
             return await Delete(obj.Id);
         }
 
-        public virtual async Task<bool> Delete(int id)
+        private async Task<bool> Delete(int id)
         {
             using (var connection = dbContext.OpenConnection())
             {
