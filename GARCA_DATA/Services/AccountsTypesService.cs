@@ -1,10 +1,9 @@
-﻿using GARCA.Data.Managers;
-using GARCA.Models;
-using GARCA_DATA.Managers;
+﻿ using GARCA.Models;
+using GARCA.wsData.Repositories;
 
 namespace GARCA.Data.Services
 {
-    public class AccountsTypesService : ServiceBase<AccountsTypesManager,AccountsTypes>
+    public class AccountsTypesService : ServiceBase<AccountsTypesRepository,AccountsTypes>
     {
         public enum EAccountsTypes
         {
@@ -16,11 +15,5 @@ namespace GARCA.Data.Services
             Bounds = 6,
             Savings = 7
         }
-
-        public bool AccountExpensives(int? types)
-        {
-            return types is (int)EAccountsTypes.Cash or (int)EAccountsTypes.Banks or (int)EAccountsTypes.Cards;
-        }
-
     }
 }

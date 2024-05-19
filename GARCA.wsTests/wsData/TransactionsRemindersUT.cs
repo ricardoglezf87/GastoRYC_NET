@@ -7,33 +7,33 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class TransactionsRemindersUT : BaseUT<TransactionsReminders,TransactionsRemindersValidations>
+    public class TransactionsRemindersUT : BaseUT<TransactionsReminders,TransactionsRemindersValidations,TransactionsRemindersRepository>
     {
         public override TransactionsReminders MakeChange(TransactionsReminders obj)
         {
-            obj.Memo = "TestDescripUpdate";
+            obj.Memo = getNextWord();
             return obj;
         }
 
         public override TransactionsReminders CreateObj()
         {
-            var periodid = new PeriodsRemindersRepository().Insert(new PeriodsReminderUT().CreateObj()).Result;
-            var perssonid = new PersonsRepository().Insert(new PersonsUT().CreateObj()).Result;
-            var categoryid = new CategoriesRepository().Insert(new CategoriesUT().CreateObj()).Result;
-            var accountid = new AccountsRepository().Insert(new AccountsUT().CreateObj()).Result;
-            var statustid = new TransactionsStatusRepository().Insert(new TransactionsStatusUT().CreateObj()).Result;
+            var period = new PeriodsRemindersRepository().Save(new PeriodsRemindersUT().CreateObj()).Result;
+            var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
+            var category = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result;
+            var account = new AccountsRepository().Save(new AccountsUT().CreateObj()).Result;
+            var statust = new TransactionsStatusRepository().Save(new TransactionsStatusUT().CreateObj()).Result;
 
             return new TransactionsReminders()
             {
-                Id = int.MaxValue,
-                Date = DateTime.Now,
-                PeriodsRemindersId = periodid,
-                AccountsId = accountid,
-                PersonsId = perssonid,
-                CategoriesId = categoryid,
-                AmountIn = decimal.MaxValue,
-                AmountOut = decimal.MaxValue,
-                TransactionsStatusId = statustid,
+                Id = 0,
+                Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
+                PeriodsRemindersId = period.Id,
+                AccountsId = account.Id,
+                PersonsId = person.Id,
+                CategoriesId = category.Id,
+                AmountIn = getNextDecimal(),
+                AmountOut = getNextDecimal(),
+                TransactionsStatusId = statust.Id,
             };
         }
     }

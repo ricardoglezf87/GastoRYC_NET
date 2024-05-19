@@ -1,37 +1,37 @@
-﻿using GARCA.Data.Managers;
+﻿using GARCA.wsData.Repositories;
 using GARCA.Models;
 
 namespace GARCA.Data.Services
 {
     public class ServiceBase<T, Q>
         where Q : ModelBase, new()
-        where T : ManagerBase<Q>, new()
+        where T : RepositoryBase<Q>, new()
     {
-        protected T manager;
+        protected T repository;
 
         public ServiceBase()
         {
-            manager = new T();
+            repository = new T();
         }
 
         public virtual async Task<IEnumerable<Q>?> GetAll()
         {
-            return await manager.GetAll();
+            return await repository.GetAll();
         }
 
         public virtual async Task<Q?> GetById(int id)
         {
-            return await manager.GetById(id);
+            return await repository.GetById(id);
         }
 
         public virtual async Task<bool> Delete(Q? obj)
         {
-            return obj != null && await manager.Delete(obj);
+            return obj != null && await repository.Delete(obj);
         }
 
         public virtual async Task<Q> Save(Q obj)
         {
-            return await manager.Save(obj);
+            return await repository.Save(obj);
         }
 
     }

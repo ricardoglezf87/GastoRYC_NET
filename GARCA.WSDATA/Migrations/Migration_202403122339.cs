@@ -14,6 +14,7 @@ namespace wsData.Migrations
             {
                 CategoriesTypesSeed.Do();
                 AccountsTypesSeed.Do();
+                CategoriesSeed.Do();
                 InvestmentProductTypesSeed.Do();
                 PeriodsRemindersSeed.Do();
                 TransactionsStatusSeed.Do();

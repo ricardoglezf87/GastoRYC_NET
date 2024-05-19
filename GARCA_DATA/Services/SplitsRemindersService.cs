@@ -1,19 +1,19 @@
-﻿using GARCA.Data.Managers;
+﻿using GARCA.wsData.Repositories;
 using GARCA.Models;
 
 
 namespace GARCA.Data.Services
 {
-    public class SplitsRemindersService : ServiceBase<SplitsRemindersManager, SplitsReminders>
+    public class SplitsRemindersService : ServiceBase<SplitsRemindersRepository, SplitsReminders>
     {
         public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionidNull()
         {
-            return await manager.GetbyTransactionidNull();
+            return await repository.GetbyTransactionidNull();
         }
 
         public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionid(int transactionid)
         {
-            return await manager.GetbyTransactionid(transactionid);
+            return await repository.GetbyTransactionid(transactionid);
         }
     }
 }

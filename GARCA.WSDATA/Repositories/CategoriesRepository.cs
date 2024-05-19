@@ -14,13 +14,5 @@ namespace GARCA.wsData.Repositories
                 return await connection.GetAllAsync<Categories, CategoriesTypes, Categories>();
             }
         }
-
-        public async Task<int> GetNextId()
-        {
-            using (var connection = dbContext.OpenConnection())
-            {
-                return await connection.ExecuteScalarAsync<int>("SELECT seq + 1 AS Current_Identity FROM SQLITE_SEQUENCE WHERE name = 'categories';");
-            }
-        }
     }
 }

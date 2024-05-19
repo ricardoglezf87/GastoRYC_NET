@@ -5,6 +5,7 @@ using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
 using GARCA.wsData.Validations;
+
 using Microsoft.AspNetCore.Http.HttpResults;
 
 using System.Net;
@@ -12,11 +13,11 @@ using System.Net;
 namespace GARCA.wsTests.wsData
 {
     [TestFixture]
-    public class PeriodsReminderUT : BaseUT<PeriodsReminders,PeriodsRemindersValidations>
+    public class PeriodsRemindersUT : BaseUT<PeriodsReminders,PeriodsRemindersValidations,PeriodsRemindersRepository>
     {
         public override PeriodsReminders MakeChange(PeriodsReminders obj)
         {
-            obj.Description = "TestDescripUpdate";
+            obj.Description = getNextWord();
             return obj;
         }
 
@@ -24,8 +25,8 @@ namespace GARCA.wsTests.wsData
         {
             return new PeriodsReminders()
             {
-                Id = int.MaxValue,
-                Description = "TestDescrip"
+                Id = 0,
+                Description = getNextWord()
             };
         }
     }

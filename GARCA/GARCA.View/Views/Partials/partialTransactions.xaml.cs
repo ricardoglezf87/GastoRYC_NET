@@ -56,8 +56,7 @@ namespace GARCA.View.Views
         {
             var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
-            frm.ShowDialog();
-            await iTransactionsService.UpdateTransactionAfterSplits(transactions);            
+            frm.ShowDialog();          
             await RefreshData();
             await parentForm.LoadAccounts();
         }

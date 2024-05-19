@@ -65,33 +65,6 @@ namespace GARCA.View.Views
             }
         }
 
-        private async Task UpdateCategory(Accounts accounts)
-        {
-            Categories? categories;
-
-            if (accounts.Categoryid != null)
-            {
-                categories = await iCategoriesService.GetById(accounts.Categoryid ?? -99);
-                if (categories != null)
-                {
-                    categories.Description = "[" + accounts.Description + "]";
-                    await iCategoriesService.Save(categories);
-                }
-            }
-            else
-            {
-                categories = new Categories();
-                accounts.Categoryid = await iCategoriesService.GetNextId();
-                categories.Description = "[" + accounts.Description + "]";
-                categories.CategoriesTypesId = (int)ECategoriesTypes.Transfers;
-            }
-
-            if (categories != null)
-            {
-                await iCategoriesService.Save(categories);
-            }
-        }
-
         private async void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
             var accounts = (Accounts)e.RowData;
@@ -101,7 +74,6 @@ namespace GARCA.View.Views
                 accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesId ?? -99);
             }
 
-            await UpdateCategory(accounts);
             await iAccountsService.Save(accounts);
             await LoadItemSource();
         }

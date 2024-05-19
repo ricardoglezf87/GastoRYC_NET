@@ -8,10 +8,10 @@
     <Authors>Ricardo González Fabelo</Authors>
     <NeutralLanguage>es-ES</NeutralLanguage>
     <PackageIcon>Logo-100.png</PackageIcon>
-    <AssemblyVersion>4.3.0.26</AssemblyVersion>
-    <FileVersion>4.3.0.0</FileVersion>
-    <InformationalVersion>4.3.0-alpha.26+Branch.develop.Sha.31617fea9dc1bf7f847619295f46b514f864470b</InformationalVersion>
-    <Version>4.3.0-alpha0026</Version>
+    <AssemblyVersion>4.4.0.56</AssemblyVersion>
+    <FileVersion>4.4.0.0</FileVersion>
+    <InformationalVersion>4.4.0-V5-00-MicroserviciosCore.56+Branch.feature-V5.00-MicroserviciosCore.Sha.c52c2725ad64e16c937ea2b10dd46d9d4a2a17bc</InformationalVersion>
+    <Version>4.4.0-v5-00-microservi0056</Version>
     <RootNamespace />
     <Configurations>Debug;Release;TEST</Configurations>
   </PropertyGroup>
@@ -91,12 +91,6 @@
     <Content Include="Resources\Portfolio-64.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\refreshBalance-32.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\refreshBalance-64.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\register-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -110,12 +104,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\reminders-64.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\reportWeb-32.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\reportWeb-64.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\skip-16.png">
@@ -142,13 +130,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SimpleInjector" Version="5.4.2" />
-    <PackageReference Include="Syncfusion.SfChart.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="23.1.44" />
-    <PackageReference Include="Syncfusion.Tools.WPF" Version="23.1.44" />
+    <PackageReference Include="SimpleInjector" Version="5.4.5" />
+    <PackageReference Include="Syncfusion.SfChart.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.Themes.Windows11Light.WPF" Version="25.1.42" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="25.1.42" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\options.png">
