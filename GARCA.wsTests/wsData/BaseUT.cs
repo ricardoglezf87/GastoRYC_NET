@@ -4,18 +4,13 @@
 //TODO: Conciliar falla
 
 using FluentValidation;
-using FluentValidation.Results;
 using GARCA.Model;
 using GARCA.Models;
 using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
-using GARCA.wsData.Validations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using System;
 using System.Net;
 
 namespace GARCA.wsTests.wsData
@@ -197,9 +192,9 @@ namespace GARCA.wsTests.wsData
             }
         }
 
-        protected Decimal? getNextDecimal()
+        protected Decimal? getNextDecimal(int decimales = 2)
         {
-            return (decimal?)Math.Round(new Random().Next(1, 1000) * new Random().NextDouble(),2);
+            return (decimal?)Math.Round(new Random().Next(1, 1000) * new Random().NextDouble(), decimales);
         }
 
         protected string getNextWord()

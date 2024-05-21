@@ -198,8 +198,7 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;
-                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
+                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;                    
                     await iTransactionsService.Save(transactions);
                 }
                 await RefreshData();
@@ -216,8 +215,7 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
-                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
+                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Provisional;                    
                     await iTransactionsService.Save(transactions);
                 }
                 await RefreshData();
@@ -234,8 +232,7 @@ namespace GARCA.View.Views
             {
                 foreach (Transactions transactions in gvTransactions.SelectedItems)
                 {
-                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
-                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
+                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;                  
                     await iTransactionsService.Save(transactions);
                 }
                 await RefreshData();
