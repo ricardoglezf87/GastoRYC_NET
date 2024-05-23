@@ -1,5 +1,6 @@
 ﻿using GARCA.Data.Services;
 using GARCA.Models;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -78,22 +79,36 @@ namespace GARCA.View.Views
 
         private async void gvSplits_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            var splits = (Splits)e.RowData;
-            await iSplitsService.Save(splits);
+            try
+            {
+                var splits = (Splits)e.RowData;
+                await iSplitsService.Save(splits);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");                
+            }
         }
 
         private async void gvSplits_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (Splits splits in e.Items)
+            try
             {
-                if (splits.TranferId != null)
+                foreach (Splits splits in e.Items)
                 {
-                    await iTransactionsService.Delete(await iTransactionsService.GetById(splits.TranferId ?? -99));
+                    if (splits.TranferId != null)
+                    {
+                        await iTransactionsService.Delete(await iTransactionsService.GetById(splits.TranferId ?? -99));
+                    }
+                    await iSplitsService.Delete(splits);
                 }
-                await iSplitsService.Delete(splits);
-            }
 
-            await loadSplits();
+                await loadSplits();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         private void gvSplits_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

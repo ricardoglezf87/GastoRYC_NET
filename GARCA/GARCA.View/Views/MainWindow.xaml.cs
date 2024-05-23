@@ -110,10 +110,18 @@ namespace GARCA
 
         private async void frmInicio_Loaded(object sender, RoutedEventArgs e)
         {
-            //await iExpirationsRemindersService.GenerateAllExpirations();
-            //await iExpirationsRemindersService.DoAutoregister();
-            await LoadAccounts();
-            ToggleViews(EViews.Home);
+            try
+            {
+                //await iExpirationsRemindersService.GenerateAllExpirations();
+                //await iExpirationsRemindersService.DoAutoregister();
+                await LoadAccounts();
+                ToggleViews(EViews.Home);
+            }
+            catch(Exception ex) 
+            {
+                MessageBox.Show(ex.Message,"GARCA");
+                Application.Current.Shutdown();
+            }
         }
 
         private async void lvAccounts_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -1,4 +1,5 @@
 ﻿using GARCA.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -87,27 +88,41 @@ namespace GARCA.View.Views
 
         private async Task PutDoneReminder(int? id)
         {
-            var expirationsReminders = await iExpirationsRemindersService.GetById(id ?? -99);
-
-            if (expirationsReminders != null)
+            try
             {
-                expirationsReminders.Done = true;
-                await iExpirationsRemindersService.Save(expirationsReminders);
-            }
+                var expirationsReminders = await iExpirationsRemindersService.GetById(id ?? -99);
 
-            await LoadReminders();
+                if (expirationsReminders != null)
+                {
+                    expirationsReminders.Done = true;
+                    await iExpirationsRemindersService.Save(expirationsReminders);
+                }
+
+                await LoadReminders();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         private async Task MakeTransactionFromReminder(int? id)
         {
-            var transaction = await iExpirationsRemindersService.RegisterTransactionfromReminder(id);
-            if (transaction != null)
+            try
             {
-                FrmTransaction frm = new(transaction);
-                frm.ShowDialog();
-            }
+                var transaction = await iExpirationsRemindersService.RegisterTransactionfromReminder(id);
+                if (transaction != null)
+                {
+                    FrmTransaction frm = new(transaction);
+                    frm.ShowDialog();
+                }
 
-            await parentForm.LoadAccounts();
+                await parentForm.LoadAccounts();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         #endregion

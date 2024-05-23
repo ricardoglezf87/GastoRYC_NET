@@ -1,6 +1,7 @@
 ﻿using GARCA.Models;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.Helpers;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -62,24 +63,38 @@ namespace GARCA.View.Views
 
         private async void gvInvestmentProducts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            var investmentProducts = (InvestmentProducts)e.RowData;
-
-            if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesId != null)
+            try
             {
-                investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesId ?? -99);
-            }
+                var investmentProducts = (InvestmentProducts)e.RowData;
 
-            await iInvestmentProductsService.Save(investmentProducts);
-            await LoadItemSource();
+                if (investmentProducts.InvestmentProductsTypes == null && investmentProducts.InvestmentProductsTypesId != null)
+                {
+                    investmentProducts.InvestmentProductsTypes = await iInvestmentProductsTypesService.GetById(investmentProducts.InvestmentProductsTypesId ?? -99);
+                }
+
+                await iInvestmentProductsService.Save(investmentProducts);
+                await LoadItemSource();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         private async void gvInvestmentProducts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (InvestmentProducts investmentProducts in e.Items)
+            try
             {
-                await iInvestmentProductsService.Delete(investmentProducts);
+                foreach (InvestmentProducts investmentProducts in e.Items)
+                {
+                    await iInvestmentProductsService.Delete(investmentProducts);
+                }
+                await LoadItemSource();
             }
-            await LoadItemSource();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         private void gvInvestmentProducts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)
