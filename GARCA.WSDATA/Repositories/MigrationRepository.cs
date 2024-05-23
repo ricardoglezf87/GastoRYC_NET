@@ -36,6 +36,7 @@ namespace GARCA.wsData.Repositories
                         DROP TABLE IF EXISTS GARCA_TEST.Categories;
                         DROP TABLE IF EXISTS GARCA_TEST.CategoriesTypes;
 
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateBalancebyDateAccount;
                         DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateBalancebyDate;
                         DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateBalancebyId;
                         DROP PROCEDURE IF EXISTS GARCA_TEST.UpdatePersonsCategoriesId;

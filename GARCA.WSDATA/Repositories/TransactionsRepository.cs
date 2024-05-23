@@ -60,7 +60,7 @@ namespace GARCA.wsData.Repositories
         {
             using (var connection = dbContext.OpenConnection())
             {
-                await connection.ExecuteAsync("UpdateBalancebyDate", new { p_transaction_date = transactionDate }, commandType: CommandType.StoredProcedure);
+                await connection.ExecuteAsync("UpdateBalancebyDate", new { s_date = transactionDate }, commandType: CommandType.StoredProcedure);
             }
         }
 

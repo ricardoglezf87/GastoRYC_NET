@@ -59,28 +59,12 @@ namespace GARCA.wsTests.wsData
                         TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    getOkResult(result);
+                    var result = repository.Save(transaction).Result;
                 }
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -88,6 +72,19 @@ namespace GARCA.wsTests.wsData
             {
                 Log.LogError(ex.Message);
                 Assert.Fail(ex.Message);
+            }
+        }
+
+        private void TestBalanceListAccounts(Accounts acc)
+        {
+            var lTransactions = repository.GetByAccount(acc.Id).Result;
+
+            if (lTransactions != null && lTransactions.Any())
+            {
+                Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
+                Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
+
+                Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
             }
         }
 
@@ -135,49 +132,32 @@ namespace GARCA.wsTests.wsData
                     if (!val.IsValid)
                         throw new Exception(val.Errors[0].ErrorMessage);
 
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    getOkResult(result);
+                    var result = repository.Save(transaction).Result;
                 }
 
                 for (int i = 0; i < 50; i++)
                 {
                     var accountsId = lAccounts[new Random().Next(0, 5)].Id;
-                    var result = TransactionsAPI.Get($"AccountsId={accountsId}", repository).Result;
+                    var lTransactions = repository.GetByAccount(accountsId).Result?.ToList();
 
-                    if (result is Ok<ResponseAPI> okResult)
+                    if (lTransactions != null && lTransactions.Any())
                     {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
+                        var transaction = lTransactions[new Random().Next(0, lTransactions.Count() - 1)] ?? new Transactions();
 
-                        if (lTransactions.Count > 0)
-                        {
-                            var transaction = lTransactions[new Random().Next(0, lTransactions.Count - 1)] ?? new Transactions();
+                        var val = validator.Validate(transaction);
+                        if (!val.IsValid)
+                            throw new Exception(val.Errors[0].ErrorMessage);
 
-                            var val = validator.Validate(transaction);
-                            if (!val.IsValid)
-                                throw new Exception(val.Errors[0].ErrorMessage);
+                        transaction.AmountIn = getNextDecimal();
+                        transaction.AmountOut = getNextDecimal();
 
-                            transaction.AmountIn = getNextDecimal();
-                            transaction.AmountOut = getNextDecimal();
-
-                            result = TransactionsAPI.Update(transaction, repository, validator).Result;
-                            getOkResult(result);
-                        }
+                        _ = repository.Save(transaction).Result;
                     }
                 }
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -228,38 +208,20 @@ namespace GARCA.wsTests.wsData
                         TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
                     };
 
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    var okResult = getOkResult(result);
-
-                    lTransactions.Add((Transactions?)okResult.Value.Result);
+                    lTransactions.Add(repository.Save(transaction).Result);
                 }
 
                 for (int i = 0; i < 50; i++)
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var transactions = lTransactions[id];
-                    var result = TransactionsAPI.Delete(transactions.Id.ToString(), repository).Result;
-                    getOkResult(result);
+                    var result = repository.Delete(transactions).Result;
                     lTransactions.RemoveAt(id);
                 }
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -307,32 +269,16 @@ namespace GARCA.wsTests.wsData
                         TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    getOkResult(result);
+                    _ = repository.Save(transaction).Result;
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
 
                 Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -380,13 +326,7 @@ namespace GARCA.wsTests.wsData
                         TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    getOkResult(result);
+                    _ = repository.Save(transaction).Result;
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
@@ -396,45 +336,29 @@ namespace GARCA.wsTests.wsData
                 for (int i = 0; i < 50; i++)
                 {
                     var accountsId = lAccounts[new Random().Next(0, 5)].Id;
-                    var result = TransactionsAPI.Get($"AccountsId={accountsId}", repository).Result;
+                    var lTransactions = repository.GetByAccount(accountsId).Result?.ToList();
 
-                    if (result is Ok<ResponseAPI> okResult)
+                    if (lTransactions != null && lTransactions.Any())
                     {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
+                        var transaction = lTransactions[new Random().Next(0, lTransactions.Count - 1)] ?? new Transactions();
 
-                        if (lTransactions.Count > 0)
-                        {
-                            var transaction = lTransactions[new Random().Next(0, lTransactions.Count - 1)] ?? new Transactions();
+                        var val = validator.Validate(transaction);
+                        if (!val.IsValid)
+                            throw new Exception(val.Errors[0].ErrorMessage);
 
-                            var val = validator.Validate(transaction);
-                            if (!val.IsValid)
-                                throw new Exception(val.Errors[0].ErrorMessage);
+                        transaction.AmountIn = getNextDecimal();
+                        transaction.AmountOut = getNextDecimal();
 
-                            transaction.AmountIn = getNextDecimal();
-                            transaction.AmountOut = getNextDecimal();
-
-                            result = TransactionsAPI.Update(transaction, repository, validator).Result;
-                            getOkResult(result);
-                        }
+                        _ = repository.Save(transaction).Result;
                     }
                 }
 
                 rActual = repository.GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + 200, Is.EqualTo(rActual));
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -483,15 +407,7 @@ namespace GARCA.wsTests.wsData
                         TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    var okResult = getOkResult(result);
-
-                    lTransactions.Add((Transactions?)okResult.Value.Result);
+                    lTransactions.Add(repository.Save(transaction).Result);
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
@@ -503,11 +419,10 @@ namespace GARCA.wsTests.wsData
                     var transactions = lTransactions[id];
                     transactions.CategoriesId = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result.Id;
 
-                     var result = TransactionsAPI.Update(transactions, repository, validator).Result;
-                    getOkResult(result);
+                    _ = repository.Save(transactions).Result;
 
-                    result = TransactionsAPI.GetById(transactions.TranferId.ToString() ?? "-99", repository).Result;
-                    Assert.That((HttpStatusCode)getNotFoundResult(result).StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                    transactions = repository.GetById(transactions.TranferId ?? -99).Result;
+                    Assert.That(transactions, Is.Null);
 
                     lTransactions.RemoveAt(id);
                 }
@@ -515,19 +430,9 @@ namespace GARCA.wsTests.wsData
                 rActual = repository.GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + 150, Is.EqualTo(rActual));
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -577,15 +482,7 @@ namespace GARCA.wsTests.wsData
                         TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    var okResult = getOkResult(result);
-
-                    lTransactions.Add((Transactions?)okResult.Value.Result);
+                    lTransactions.Add(repository.Save(transaction).Result);
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
@@ -595,27 +492,16 @@ namespace GARCA.wsTests.wsData
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var transactions = lTransactions[id];
-                    var result = TransactionsAPI.Delete(transactions.Id.ToString(), repository).Result;
-                    getOkResult(result);
+                    _ = repository.Delete(transactions).Result;
                     lTransactions.RemoveAt(id);
                 }
 
                 rActual = repository.GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + 100, Is.EqualTo(rActual));
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
