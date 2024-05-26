@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GARCA.wsData.Repositories
 {
-    static class dbContext
+    public static class DBContext
     {
         public static IDbConnection OpenConnection(bool migration = false)
         {

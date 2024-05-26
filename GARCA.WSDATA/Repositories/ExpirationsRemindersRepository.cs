@@ -11,7 +11,7 @@ namespace GARCA.wsData.Repositories
 
         public async Task<bool> ExistsExpiration(TransactionsReminders transactionsReminder, DateTime date)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.SelectAsync<ExpirationsReminders>(
                 x => x.TransactionsRemindersId == transactionsReminder.Id && x.Date == date) != null;
@@ -20,7 +20,7 @@ namespace GARCA.wsData.Repositories
 
         public async Task<IEnumerable<ExpirationsReminders>?> GetAllExpirationReadyToAutoregister()
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.QueryAsync<ExpirationsReminders>(
                     @"select er.* 
@@ -36,7 +36,7 @@ namespace GARCA.wsData.Repositories
         {
             DateTime futuro = DateTime.Now.AddMonths(1);
 
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 IEnumerable<ExpirationsReminders> list = await connection.SelectAsync<ExpirationsReminders>(
                     x => (x.Done == null || x.Done != true) && x.Date <= futuro);
@@ -54,7 +54,7 @@ namespace GARCA.wsData.Repositories
 
         public async Task<DateTime?> MaxExpiration(TransactionsReminders transactionsReminder)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return (await connection.QueryAsync<DateTime>(
                     $"SELECT IFNULL(MAX(date), (select date from TransactionsReminders tr where id = {transactionsReminder.Id})) " +
@@ -65,7 +65,7 @@ namespace GARCA.wsData.Repositories
 
         public async Task<IEnumerable<ExpirationsReminders>?> GetByTransactionReminderid(int id)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.FromAsync<ExpirationsReminders>(sql => sql
                     .Where(x => x.TransactionsRemindersId == id)
@@ -75,7 +75,7 @@ namespace GARCA.wsData.Repositories
 
         public override async Task<IEnumerable<ExpirationsReminders>?> GetAll()
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 var expirationsRemindersList = await connection.GetAllAsync<ExpirationsReminders, TransactionsReminders, ExpirationsReminders>();
 

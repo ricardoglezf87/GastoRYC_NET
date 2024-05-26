@@ -14,7 +14,7 @@ namespace GARCA.wsData.Repositories
         {
             try
             {
-                using (var connection = dbContext.OpenConnection(true))
+                using (var connection = DBContext.OpenConnection(true))
                 {
                    connection.Execute(@"
                         DROP TABLE IF EXISTS GARCA_TEST.ExpirationsReminders;
@@ -71,7 +71,7 @@ namespace GARCA.wsData.Repositories
 
         public static void Migrate()
         {
-            using (var connection = dbContext.OpenConnection(true))
+            using (var connection = DBContext.OpenConnection(true))
             {
                 connection.Execute(@"
                     -- MigrationsHistory definition
@@ -111,7 +111,7 @@ namespace GARCA.wsData.Repositories
 
         public static bool IsMigrateFeature(string feature)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return Convert.ToInt32(connection.ExecuteScalar($"Select count(*) from MigrationsHistory where MigrationId='{feature}'")) != 0;
             }
