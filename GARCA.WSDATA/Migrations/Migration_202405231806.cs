@@ -3,7 +3,6 @@ using GARCA.Utils.Logging;
 using GARCA.wsData.Migrations.Seeder;
 using GARCA.wsData.Repositories;
 
-
 namespace wsData.Migrations
 {
     public class Migration_202405231806
@@ -30,7 +29,7 @@ namespace wsData.Migrations
 	                        DECLARE cur CURSOR FOR 	
 		                        SELECT accountid
                                 FROM Transactions t
-                                WHERE date>s_date
+                                WHERE date>=s_date
                                 group by accountid;
     
                             DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
@@ -58,16 +57,15 @@ namespace wsData.Migrations
                         CREATE PROCEDURE UpdateBalancebyDateAccount(IN s_date DATE, IN s_accountid INT)
                         BEGIN   
  	
-	                         DECLARE done INT DEFAULT 0;    
+	                        DECLARE done INT DEFAULT 0;    
                             DECLARE c_id INT;
                             DECLARE c_amountIn DECIMAL(10, 2);
-                            DECLARE c_amountOut DECIMAL(10, 2);
-                            DECLARE c_date DATE;    
+                            DECLARE c_amountOut DECIMAL(10, 2);   
                             DECLARE c_balance DECIMAL(10, 2) DEFAULT 0;
                             DECLARE p_balance DECIMAL(10, 2) DEFAULT 0;                                                     
 					                           
 	                        DECLARE cur CURSOR FOR 	
-		                        SELECT id, amountIn, amountOut, date
+		                        SELECT id, amountIn, amountOut
                                 FROM Transactions t
                                 WHERE accountid = s_accountid and date >= s_date
                                 ORDER BY orden;
@@ -81,7 +79,7 @@ namespace wsData.Migrations
 	                        OPEN cur;
     
                             read_loop: LOOP
-                                FETCH cur INTO c_id, c_amountIn, c_amountOut, c_date;
+                                FETCH cur INTO c_id, c_amountIn, c_amountOut;
         
                                 IF done THEN
                                     LEAVE read_loop;
@@ -97,7 +95,7 @@ namespace wsData.Migrations
      
  	                        END LOOP;
     
-	                        CLOSE cur;                        
+	                        CLOSE cur;
 	
                         END;
 

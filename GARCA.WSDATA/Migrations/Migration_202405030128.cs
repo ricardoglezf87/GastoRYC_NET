@@ -18,9 +18,6 @@ namespace wsData.Migrations
                         CREATE PROCEDURE UpdateTranfer(IN Tid INT)
                         BEGIN
    
-                            START TRANSACTION;
-
-   
                             -- Borra cuando no se selecciona cuenta de transferencia
                             delete tt 
                             from Transactions t
@@ -77,8 +74,6 @@ namespace wsData.Migrations
                             from Transactions 
                             where tranferid = Tid and not exists(select * from Transactions t where t.id = Tid);
         
-        
-                            COMMIT;
                         END
                     ");
 

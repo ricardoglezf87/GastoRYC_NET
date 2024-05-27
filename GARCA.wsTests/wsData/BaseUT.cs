@@ -24,6 +24,9 @@ namespace GARCA.wsTests.wsData
     {
         protected Z repository;
         protected T validator;
+        protected const int N_INITIAL_MASTER = 5;
+        protected const int N_INSERT_ITEM = 100;
+        protected const int N_CHANGED_ITEM = 50;
 
         [SetUp]
         public void Setup()

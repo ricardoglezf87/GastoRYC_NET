@@ -19,8 +19,6 @@ namespace wsData.Migrations
                         BEGIN
                             DECLARE category_id INT;
     
-                            START TRANSACTION;
-
                             SELECT categoryid INTO category_id
 	                        FROM (
 	                            SELECT categoryid, COUNT(categoryid) AS repetition_count
@@ -35,7 +33,6 @@ namespace wsData.Migrations
                                 UPDATE Persons SET categoryid = category_id WHERE id = person_id;
                             END IF;
 
-                            COMMIT;
                         END
                     ");
 

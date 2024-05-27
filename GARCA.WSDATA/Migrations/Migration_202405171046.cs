@@ -18,9 +18,7 @@ namespace wsData.Migrations
 
                         CREATE PROCEDURE UpdateTransactionWithSplit(IN Tid INT)
                         BEGIN
-   
-                            START TRANSACTION;
-   
+      
                             UPDATE Transactions t
                             LEFT JOIN (
                                 SELECT transactionid, 
@@ -37,7 +35,6 @@ namespace wsData.Migrations
                                                 END
                             WHERE t.id = Tid;
       
-                            COMMIT;
                         END
  
                         ");                        

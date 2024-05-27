@@ -30,7 +30,7 @@ namespace GARCA.wsTests.wsData
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -45,18 +45,18 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lCategories[new Random().Next(0, 5)].Id,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lCategories[new Random().Next(0, N_INITIAL_MASTER)].Id,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
                     var result = repository.Save(transaction).Result;
@@ -98,7 +98,7 @@ namespace GARCA.wsTests.wsData
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -113,18 +113,18 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lCategories[new Random().Next(0, 5)].Id,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lCategories[new Random().Next(0, N_INITIAL_MASTER)].Id,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
 
@@ -135,9 +135,9 @@ namespace GARCA.wsTests.wsData
                     var result = repository.Save(transaction).Result;
                 }
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
-                    var accountsId = lAccounts[new Random().Next(0, 5)].Id;
+                    var accountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id;
                     var lTransactions = repository.GetByAccount(accountsId).Result?.ToList();
 
                     if (lTransactions != null && lTransactions.Any())
@@ -179,7 +179,7 @@ namespace GARCA.wsTests.wsData
                 var lTransactionsStatus = new List<TransactionsStatus>();
                 var lTransactions = new List<Transactions>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -194,24 +194,24 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lCategories[new Random().Next(0, 5)].Id,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lCategories[new Random().Next(0, N_INITIAL_MASTER)].Id,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
                     lTransactions.Add(repository.Save(transaction).Result);
                 }
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var transactions = lTransactions[id];
@@ -241,7 +241,7 @@ namespace GARCA.wsTests.wsData
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -255,18 +255,18 @@ namespace GARCA.wsTests.wsData
 
                 int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Categoryid,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
                     _ = repository.Save(transaction).Result;
@@ -274,7 +274,7 @@ namespace GARCA.wsTests.wsData
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
 
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
                 foreach (var account in lAccounts)
                 {
@@ -298,7 +298,7 @@ namespace GARCA.wsTests.wsData
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -312,18 +312,18 @@ namespace GARCA.wsTests.wsData
 
                 int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Categoryid,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
                     _ = repository.Save(transaction).Result;
@@ -331,11 +331,11 @@ namespace GARCA.wsTests.wsData
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
 
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
-                    var accountsId = lAccounts[new Random().Next(0, 5)].Id;
+                    var accountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id;
                     var lTransactions = repository.GetByAccount(accountsId).Result?.ToList();
 
                     if (lTransactions != null && lTransactions.Any())
@@ -354,7 +354,7 @@ namespace GARCA.wsTests.wsData
                 }
 
                 rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
                 foreach (var account in lAccounts)
                 {
@@ -379,7 +379,7 @@ namespace GARCA.wsTests.wsData
                 var lTransactionsStatus = new List<TransactionsStatus>();
                 var lTransactions = new List<Transactions>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -393,27 +393,27 @@ namespace GARCA.wsTests.wsData
 
                 int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Categoryid,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
                     lTransactions.Add(repository.Save(transaction).Result);
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var transactions = lTransactions[id];
@@ -428,7 +428,7 @@ namespace GARCA.wsTests.wsData
                 }
 
                 rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 150, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM + N_CHANGED_ITEM), Is.EqualTo(rActual));
 
                 foreach (var account in lAccounts)
                 {
@@ -454,7 +454,7 @@ namespace GARCA.wsTests.wsData
                 var lTransactionsStatus = new List<TransactionsStatus>();
                 var lTransactions = new List<Transactions>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -468,27 +468,27 @@ namespace GARCA.wsTests.wsData
 
                 int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Categoryid,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
                     lTransactions.Add(repository.Save(transaction).Result);
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var transactions = lTransactions[id];
@@ -497,7 +497,7 @@ namespace GARCA.wsTests.wsData
                 }
 
                 rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 100, Is.EqualTo(rActual));
+                Assert.That(rTotal + N_INSERT_ITEM, Is.EqualTo(rActual));
 
                 foreach (var account in lAccounts)
                 {

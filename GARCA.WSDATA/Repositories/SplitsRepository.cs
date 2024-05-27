@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using Dommel;
 using GARCA.Models;
+using Newtonsoft.Json;
 using System.Data;
+using GARCA.Utils.Logging;
 
 namespace GARCA.wsData.Repositories
 {
@@ -24,7 +26,7 @@ namespace GARCA.wsData.Repositories
         private async Task postChange(Splits obj)
         {
             await UpdateTransactionWithSplits(obj.TransactionsId ?? -99);
-            await UpdateTranferSplit(obj.Id);            
+            await UpdateTranferSplit(obj.Id);
             await UpdateTransactionBalance(obj.TransactionsId ?? -99);
         }
 
