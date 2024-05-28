@@ -19,7 +19,7 @@ namespace wsData.Migrations
                 PeriodsRemindersSeed.Do();
                 TransactionsStatusSeed.Do();
 
-                using (var connection = dbContext.OpenConnection(true))
+                using (var connection = DBContext.OpenConnection(true))
                 {
                     connection.Execute(@"
                         INSERT INTO MigrationsHistory(MigrationId, ProductVersion) VALUES('Migration_202403122339', '5.0');

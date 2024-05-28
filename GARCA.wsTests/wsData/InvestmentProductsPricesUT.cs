@@ -16,7 +16,7 @@ namespace GARCA.wsTests.wsData
     {
         public override InvestmentProductsPrices MakeChange(InvestmentProductsPrices obj)
         {
-            obj.Prices = 10;
+            obj.Prices = getNextDecimal(8);
             return obj;
         }
 
@@ -30,7 +30,7 @@ namespace GARCA.wsTests.wsData
                 Id = 0,
                 Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
                 InvestmentProductsid = investmentProducts.Id,
-                Prices = getNextDecimal(),
+                Prices = getNextDecimal(8),
             };
         }
     }

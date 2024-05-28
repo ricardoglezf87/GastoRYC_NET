@@ -21,7 +21,7 @@ namespace GARCA.wsTests.wsData
             try
             {
 #if !TEST
-                throw new Exception("No se puede ejecutar con esta configuraci�n");
+                throw new Exception("No se puede ejecutar con esta configuración");
 #endif 
 
                 MigrationRepository.CleanDataBase();

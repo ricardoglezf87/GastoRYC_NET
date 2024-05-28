@@ -67,30 +67,44 @@ namespace GARCA.View.Views
 
         private async void gvAccounts_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            var accounts = (Accounts)e.RowData;
-
-            if (accounts.AccountsTypes == null && accounts.AccountsTypesId != null)
+            try
             {
-                accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesId ?? -99);
-            }
+                var accounts = (Accounts)e.RowData;
 
-            await iAccountsService.Save(accounts);
-            await LoadItemSource();
+                if (accounts.AccountsTypes == null && accounts.AccountsTypesId != null)
+                {
+                    accounts.AccountsTypes = await iAccountsTypesService.GetById(accounts.AccountsTypesId ?? -99);
+                }
+
+                await iAccountsService.Save(accounts);
+                await LoadItemSource();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         private async void gvAccounts_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (Accounts accounts in e.Items)
+            try
             {
-                var categories = await iCategoriesService.GetById(accounts.Categoryid ?? -99);
-                if (categories != null)
+                foreach (Accounts accounts in e.Items)
                 {
-                    await iCategoriesService.Delete(categories);
-                }
+                    var categories = await iCategoriesService.GetById(accounts.Categoryid ?? -99);
+                    if (categories != null)
+                    {
+                        await iCategoriesService.Delete(categories);
+                    }
 
-                await iAccountsService.Delete(accounts);
+                    await iAccountsService.Delete(accounts);
+                }
+                await LoadItemSource();
             }
-            await LoadItemSource();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         private void gvAccounts_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

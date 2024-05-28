@@ -99,7 +99,7 @@ namespace GARCA.View.Views
             }
 
             FrmSplitsList frm = new(transaction);
-            frm.ShowDialog();  
+            frm.ShowDialog();
             transaction = await iTransactionsService.GetById(transaction.Id);
             LoadTransaction();
         }
@@ -435,23 +435,31 @@ namespace GARCA.View.Views
 
         private async Task<bool> SaveTransaction()
         {
-            if (IsTransactionValid())
+            try
             {
-                if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
-                        MessageBoxImage.Question) == MessageBoxResult.Yes)
+                if (IsTransactionValid())
                 {
-                    FillTransactionVar();
-                    if (transaction != null)
+                    if (MessageBox.Show("Se va a proceder a guardar el movimiento", "inserción movimiento", MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
                     {
-                        transaction = await iTransactionsService.Save(transaction);                        
+                        FillTransactionVar();
+                        if (transaction != null)
+                        {
+                            transaction = await iTransactionsService.Save(transaction);
+                        }
+                        return true;
                     }
-                    return true;
+
+                    return false;
                 }
 
                 return false;
             }
-
-            return false;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+                return false;
+            }
         }
 
         private void CalculateValueShares()

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static GARCA.Data.IOC.DependencyConfig;
@@ -33,8 +34,15 @@ namespace GARCA.View.Views
 
         public async Task LoadPortfolio()
         {
-            gvPortfolio.ItemsSource = await iVPortfolioService.GetAllAsync();
-            gvPortfolio.ExpandAllGroup();
+            try
+            {
+                gvPortfolio.ItemsSource = await iVPortfolioService.GetAllAsync();
+                gvPortfolio.ExpandAllGroup();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         #endregion       

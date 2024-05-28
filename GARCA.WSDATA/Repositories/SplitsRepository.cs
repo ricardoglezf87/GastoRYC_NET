@@ -1,7 +1,9 @@
 ﻿using Dapper;
 using Dommel;
 using GARCA.Models;
+using Newtonsoft.Json;
 using System.Data;
+using GARCA.Utils.Logging;
 
 namespace GARCA.wsData.Repositories
 {
@@ -23,30 +25,15 @@ namespace GARCA.wsData.Repositories
 
         private async Task postChange(Splits obj)
         {
-            await UpdateTransactionWithSplits(obj.TransactionsId ?? -99);
-            await UpdateTranferSplit(obj.Id);            
-            await UpdateTransactionBalance(obj.TransactionsId ?? -99);
-        }
-
-        public async Task UpdateTranferSplit(int id)
-        {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
-                await connection.ExecuteAsync("UpdateTranferSplit", new { Sid = id }, commandType: CommandType.StoredProcedure);
+                await connection.ExecuteAsync("SplitsPostSave", new {Sid = obj.Id, Tid = obj.TransactionsId }, commandType: CommandType.StoredProcedure);
             }
-        }
-
-        public async Task UpdateTransactionWithSplits(int id)
-        {
-            using (var connection = dbContext.OpenConnection())
-            {
-                await connection.ExecuteAsync("UpdateTransactionWithSplit", new { Tid = id }, commandType: CommandType.StoredProcedure);
-            }
-        }
+        }       
 
         private async Task UpdateTransactionBalance(int id)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 await connection.ExecuteAsync("UpdateBalancebyId", new { Tid = id }, commandType: CommandType.StoredProcedure);
             }
@@ -54,7 +41,7 @@ namespace GARCA.wsData.Repositories
 
         public async Task<IEnumerable<Splits>?> GetbyTransactionidNull()
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.SelectAsync<Splits>(x => x.TransactionsId == null);
             }
@@ -62,7 +49,7 @@ namespace GARCA.wsData.Repositories
 
         public async Task<IEnumerable<Splits>?> GetbyTransactionid(int transactionid)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.SelectAsync<Splits>(x => x.TransactionsId == transactionid);
             }
