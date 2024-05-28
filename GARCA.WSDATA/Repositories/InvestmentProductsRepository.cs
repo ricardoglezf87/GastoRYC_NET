@@ -8,7 +8,7 @@ namespace GARCA.wsData.Repositories
     {
         public async Task<IEnumerable<InvestmentProducts>?> GetAllOpened()
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.SelectAsync<InvestmentProducts, InvestmentProductsTypes, InvestmentProducts>(x => x.Active == true);
             }

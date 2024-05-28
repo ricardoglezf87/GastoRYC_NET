@@ -15,7 +15,7 @@ namespace GARCA.wsData.Repositories
 
         public async Task<IEnumerable<Accounts>?> GetAllOpened()
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.SelectAsync<Accounts, AccountsTypes, Accounts>(x => x.Closed == null || x.Closed == false);
             }
@@ -23,7 +23,7 @@ namespace GARCA.wsData.Repositories
 
         public async Task<Accounts?> GetByCategoryId(int id)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.FirstOrDefaultAsync<Accounts, AccountsTypes, Accounts>(x => x.Categoryid == id);
             }
@@ -31,7 +31,7 @@ namespace GARCA.wsData.Repositories
 
         public override async Task<IEnumerable<Accounts>?> GetAll()
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.GetAllAsync<Accounts, AccountsTypes, Accounts>();
             }

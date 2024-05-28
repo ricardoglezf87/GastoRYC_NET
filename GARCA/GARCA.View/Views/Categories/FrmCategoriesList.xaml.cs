@@ -1,4 +1,5 @@
 ﻿using GARCA.Models;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -61,24 +62,38 @@ namespace GARCA.View.Views
 
         private async void gvCategories_RowValidated(object sender, Syncfusion.UI.Xaml.Grid.RowValidatedEventArgs e)
         {
-            var categories = (Categories)e.RowData;
-
-            if (categories.CategoriesTypes == null && categories.CategoriesTypesId != null)
+            try
             {
-                categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesId ?? -99);
-            }
+                var categories = (Categories)e.RowData;
 
-            await iCategoriesService.Save(categories);
-            await LoadItemSource();
+                if (categories.CategoriesTypes == null && categories.CategoriesTypesId != null)
+                {
+                    categories.CategoriesTypes = await iCategoriesTypesService.GetById(categories.CategoriesTypesId ?? -99);
+                }
+
+                await iCategoriesService.Save(categories);
+                await LoadItemSource();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         private async void gvCategories_RecordDeleted(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletedEventArgs e)
         {
-            foreach (Categories categories in e.Items)
+            try
             {
-                await iCategoriesService.Delete(categories);
+                foreach (Categories categories in e.Items)
+                {
+                    await iCategoriesService.Delete(categories);
+                }
+                await LoadItemSource();
             }
-            await LoadItemSource();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         private void gvCategories_RecordDeleting(object sender, Syncfusion.UI.Xaml.Grid.RecordDeletingEventArgs e)

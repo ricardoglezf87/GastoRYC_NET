@@ -2,6 +2,7 @@
 using GARCA.Models;
 using GARCA.Utils.Extensions;
 using GARCA.View.ViewModels;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -56,7 +57,7 @@ namespace GARCA.View.Views
         {
             var transactions = (Transactions)gvTransactions.SelectedItem;
             FrmSplitsList frm = new(transactions);
-            frm.ShowDialog();          
+            frm.ShowDialog();
             await RefreshData();
             await parentForm.LoadAccounts();
         }
@@ -194,61 +195,46 @@ namespace GARCA.View.Views
 
         private async void btnPending_Click(object sender, RoutedEventArgs e)
         {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Pending;
-                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
-                    await iTransactionsService.Save(transactions);
-                }
-                await RefreshData();
-            }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
-            }
+            await ChangeStatus((int)TransactionsStatusService.ETransactionsTypes.Pending);
         }
 
         private async void btnProvisional_Click(object sender, RoutedEventArgs e)
         {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Provisional;
-                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
-                    await iTransactionsService.Save(transactions);
-                }
-                await RefreshData();
-            }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
-            }
+            await ChangeStatus((int)TransactionsStatusService.ETransactionsTypes.Provisional);
         }
 
         private async void btnReconciled_Click(object sender, RoutedEventArgs e)
         {
-            if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
-            {
-                foreach (Transactions transactions in gvTransactions.SelectedItems)
-                {
-                    transactions.TransactionsStatusId = (int)TransactionsStatusService.ETransactionsTypes.Reconciled;
-                    transactions.TransactionsStatus = await iTransactionsStatusService.GetById(transactions.TransactionsStatusId ?? -99);
-                    await iTransactionsService.Save(transactions);
-                }
-                await RefreshData();
-            }
-            else
-            {
-                MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimieno");
-            }
+            await ChangeStatus((int)TransactionsStatusService.ETransactionsTypes.Reconciled);
         }
 
         #endregion
 
         #region Functions   
+
+        private async Task ChangeStatus(int transactionStatusId)
+        {
+            try
+            {
+                if (gvTransactions.SelectedItems != null && gvTransactions.SelectedItems.Count > 0)
+                {
+                    foreach (Transactions transactions in gvTransactions.SelectedItems)
+                    {
+                        transactions.TransactionsStatusId = transactionStatusId;
+                        await iTransactionsService.Save(transactions);
+                    }
+                    await RefreshData();
+                }
+                else
+                {
+                    MessageBox.Show("Tiene que seleccionar alguna línea.", "Cambio estado movimiento");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
+        }
 
         public bool FilterRecords(object o)
         {
@@ -264,12 +250,19 @@ namespace GARCA.View.Views
 
         public void LoadTransactions()
         {
-            if (gvTransactions.View != null)
+            try
             {
-                gvTransactions.View.Filter = FilterRecords;
-                gvTransactions.View.RefreshFilter();
+                if (gvTransactions.View != null)
+                {
+                    gvTransactions.View.Filter = FilterRecords;
+                    gvTransactions.View.RefreshFilter();
+                }
+                SetColumnVisibility();
             }
-            SetColumnVisibility();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
+            }
         }
 
         public void SetColumnVisibility()
@@ -304,35 +297,42 @@ namespace GARCA.View.Views
 
         private async Task RemoveTransaction(Transactions transactions)
         {
-            if (transactions.TranferSplitId != null)
+            try
             {
-                MessageBox.Show("El movimiento Id: " + transactions.Id +
-                    " de fecha: " + transactions.Date.ToShortDateString() + " viene de una transferencia desde split, para borrar diríjase al split que lo generó.", "Eliminación movimiento");
-            }
-            else
-            {
-                var splits = await iSplitsService.GetbyTransactionid(transactions.Id);
-                if (splits != null)
+                if (transactions.TranferSplitId != null)
                 {
-                    var lSplits = splits.ToList();
-                    for (var i = 0; i < lSplits.Count; i++)
+                    MessageBox.Show("El movimiento Id: " + transactions.Id +
+                        " de fecha: " + transactions.Date.ToShortDateString() + " viene de una transferencia desde split, para borrar diríjase al split que lo generó.", "Eliminación movimiento");
+                }
+                else
+                {
+                    var splits = await iSplitsService.GetbyTransactionid(transactions.Id);
+                    if (splits != null)
                     {
-                        var split = lSplits[i];
-                        if (split.TranferId != null)
+                        var lSplits = splits.ToList();
+                        for (var i = 0; i < lSplits.Count; i++)
                         {
-                            await iTransactionsService.Delete(await iTransactionsService.GetById(split.TranferId ?? -99));
+                            var split = lSplits[i];
+                            if (split.TranferId != null)
+                            {
+                                await iTransactionsService.Delete(await iTransactionsService.GetById(split.TranferId ?? -99));
+                            }
+
+                            await iSplitsService.Delete(split);
                         }
-
-                        await iSplitsService.Delete(split);
                     }
-                }
 
-                if (transactions.TranferId != null)
-                {
-                    await iTransactionsService.Delete(await iTransactionsService.GetById(transactions.TranferId ?? -99));
-                }
+                    if (transactions.TranferId != null)
+                    {
+                        await iTransactionsService.Delete(await iTransactionsService.GetById(transactions.TranferId ?? -99));
+                    }
 
-                await iTransactionsService.Delete(transactions);
+                    await iTransactionsService.Delete(transactions);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GARCA");
             }
         }
 

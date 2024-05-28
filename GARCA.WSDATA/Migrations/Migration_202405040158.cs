@@ -12,14 +12,12 @@ namespace wsData.Migrations
         {
             try
             {
-                using (var connection = dbContext.OpenConnection(true))
+                using (var connection = DBContext.OpenConnection(true))
                 {
                     connection.Execute(@"
                         CREATE PROCEDURE UpdateTranferSplit(IN Sid INT)
                         BEGIN
-   
-                            START TRANSACTION;
-   
+      
                         -- Borra cuando no se selecciona cuenta de transferencia
                         delete tt 
                         from Splits t
@@ -77,7 +75,6 @@ namespace wsData.Migrations
                         from Transactions 
                         where tranferSplitid = Sid and not exists(select * from Splits s where s.id = Sid);
         
-                        COMMIT;
                         END
                     ");
 

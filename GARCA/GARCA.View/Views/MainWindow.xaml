@@ -45,7 +45,7 @@
             <syncfusion:RibbonTab Caption=""  IsChecked="True">
                 <syncfusion:RibbonBar  Header="Menú Principal" IsLauncherButtonVisible="False">
                     <syncfusion:RibbonButton Name="btnHome" SizeForm="Large" Label="Inicio" Click="btnHome_Click" LargeIcon="/Resources/home-32.png" />
-                    <syncfusion:RibbonButton Name="btnReminders" SizeForm="Large" Label="Recordatorios" Click="btnReminders_Click" LargeIcon="/Resources/reminders-32.png" />
+                    <syncfusion:RibbonButton Name="btnReminders" IsEnabled="False" SizeForm="Large" Label="Recordatorios" Click="btnReminders_Click" LargeIcon="/Resources/reminders-32.png" />
                     <syncfusion:RibbonButton Name="btnPortfolio" SizeForm="Large" Label="Portfolio" LargeIcon="/Resources/Portfolio-32.png" Click="btnPortfolio_Click" />
                 </syncfusion:RibbonBar>
                 <syncfusion:RibbonBar Header="Mantenimientos" IsLauncherButtonVisible="False">
@@ -53,7 +53,7 @@
                     <syncfusion:RibbonButton Name="btnMntPersons" SizeForm="Large" Label="Personas" Click="btnMntPersons_Click" LargeIcon="/Resources/mntPersons-32.png" IconStretch="Fill"/>
                     <syncfusion:RibbonButton Name="btnMntCategories" SizeForm="Large" Label="Categorias" Click="btnMntCategories_Click" LargeIcon="/Resources/mntCategories-32.png"/>
                     <syncfusion:RibbonButton Name="btnMntTags" SizeForm="Large" Label="Tags" Click="btnMntTags_Click" LargeIcon="/Resources/mntTags-32.png"/>
-                    <syncfusion:RibbonButton Name="btnMntReminders" SizeForm="Large" Label="Recordatorios" Click="btnMntReminders_Click" LargeIcon="/Resources/mntReminders-32.png"/>
+                    <syncfusion:RibbonButton Name="btnMntReminders" IsEnabled="False" SizeForm="Large" Label="Recordatorios" Click="btnMntReminders_Click" LargeIcon="/Resources/mntReminders-32.png"/>
                     <syncfusion:RibbonButton Name="btnMntInvestmentProducts" SizeForm="Large" Label="Productos de Inversión" LargeIcon="/Resources/mntInvestmentProducts-32.png" Click="btnMntInvestmentProducts_Click"/>
                 </syncfusion:RibbonBar>
                 <syncfusion:RibbonBar Header="Acciones" IsLauncherButtonVisible="False">

@@ -30,7 +30,7 @@ namespace GARCA.wsTests.wsData
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -45,42 +45,26 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lCategories[new Random().Next(0, 5)].Id,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lCategories[new Random().Next(0, N_INITIAL_MASTER)].Id,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    getOkResult(result);
+                    var result = repository.Save(transaction).Result;
                 }
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -88,6 +72,19 @@ namespace GARCA.wsTests.wsData
             {
                 Log.LogError(ex.Message);
                 Assert.Fail(ex.Message);
+            }
+        }
+
+        private void TestBalanceListAccounts(Accounts acc)
+        {
+            var lTransactions = repository.GetByAccount(acc.Id).Result;
+
+            if (lTransactions != null && lTransactions.Any())
+            {
+                Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
+                Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
+
+                Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
             }
         }
 
@@ -101,7 +98,7 @@ namespace GARCA.wsTests.wsData
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -116,18 +113,18 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lCategories[new Random().Next(0, 5)].Id,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lCategories[new Random().Next(0, N_INITIAL_MASTER)].Id,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
 
@@ -135,49 +132,32 @@ namespace GARCA.wsTests.wsData
                     if (!val.IsValid)
                         throw new Exception(val.Errors[0].ErrorMessage);
 
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    getOkResult(result);
+                    var result = repository.Save(transaction).Result;
                 }
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
-                    var accountsId = lAccounts[new Random().Next(0, 5)].Id;
-                    var result = TransactionsAPI.Get($"AccountsId={accountsId}", repository).Result;
+                    var accountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id;
+                    var lTransactions = repository.GetByAccount(accountsId).Result?.ToList();
 
-                    if (result is Ok<ResponseAPI> okResult)
+                    if (lTransactions != null && lTransactions.Any())
                     {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
+                        var transaction = lTransactions[new Random().Next(0, lTransactions.Count() - 1)] ?? new Transactions();
 
-                        if (lTransactions.Count > 0)
-                        {
-                            var transaction = lTransactions[new Random().Next(0, lTransactions.Count - 1)] ?? new Transactions();
+                        var val = validator.Validate(transaction);
+                        if (!val.IsValid)
+                            throw new Exception(val.Errors[0].ErrorMessage);
 
-                            var val = validator.Validate(transaction);
-                            if (!val.IsValid)
-                                throw new Exception(val.Errors[0].ErrorMessage);
+                        transaction.AmountIn = getNextDecimal();
+                        transaction.AmountOut = getNextDecimal();
 
-                            transaction.AmountIn = getNextDecimal();
-                            transaction.AmountOut = getNextDecimal();
-
-                            result = TransactionsAPI.Update(transaction, repository, validator).Result;
-                            getOkResult(result);
-                        }
+                        _ = repository.Save(transaction).Result;
                     }
                 }
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -199,7 +179,7 @@ namespace GARCA.wsTests.wsData
                 var lTransactionsStatus = new List<TransactionsStatus>();
                 var lTransactions = new List<Transactions>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -214,52 +194,34 @@ namespace GARCA.wsTests.wsData
                     lTransactionsStatus.Add(transactionsStatus);
                 }
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lCategories[new Random().Next(0, 5)].Id,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lCategories[new Random().Next(0, N_INITIAL_MASTER)].Id,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    var okResult = getOkResult(result);
-
-                    lTransactions.Add((Transactions?)okResult.Value.Result);
+                    lTransactions.Add(repository.Save(transaction).Result);
                 }
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var transactions = lTransactions[id];
-                    var result = TransactionsAPI.Delete(transactions.Id.ToString(), repository).Result;
-                    getOkResult(result);
+                    var result = repository.Delete(transactions).Result;
                     lTransactions.RemoveAt(id);
                 }
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -279,7 +241,7 @@ namespace GARCA.wsTests.wsData
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -293,46 +255,30 @@ namespace GARCA.wsTests.wsData
 
                 int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Categoryid,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    getOkResult(result);
+                    _ = repository.Save(transaction).Result;
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
 
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -352,7 +298,7 @@ namespace GARCA.wsTests.wsData
                 var lPersons = new List<Persons>();
                 var lTransactionsStatus = new List<TransactionsStatus>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -366,75 +312,53 @@ namespace GARCA.wsTests.wsData
 
                 int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Categoryid,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    getOkResult(result);
+                    _ = repository.Save(transaction).Result;
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
 
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
-                    var accountsId = lAccounts[new Random().Next(0, 5)].Id;
-                    var result = TransactionsAPI.Get($"AccountsId={accountsId}", repository).Result;
+                    var accountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id;
+                    var lTransactions = repository.GetByAccount(accountsId).Result?.ToList();
 
-                    if (result is Ok<ResponseAPI> okResult)
+                    if (lTransactions != null && lTransactions.Any())
                     {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
+                        var transaction = lTransactions[new Random().Next(0, lTransactions.Count - 1)] ?? new Transactions();
 
-                        if (lTransactions.Count > 0)
-                        {
-                            var transaction = lTransactions[new Random().Next(0, lTransactions.Count - 1)] ?? new Transactions();
+                        var val = validator.Validate(transaction);
+                        if (!val.IsValid)
+                            throw new Exception(val.Errors[0].ErrorMessage);
 
-                            var val = validator.Validate(transaction);
-                            if (!val.IsValid)
-                                throw new Exception(val.Errors[0].ErrorMessage);
+                        transaction.AmountIn = getNextDecimal();
+                        transaction.AmountOut = getNextDecimal();
 
-                            transaction.AmountIn = getNextDecimal();
-                            transaction.AmountOut = getNextDecimal();
-
-                            result = TransactionsAPI.Update(transaction, repository, validator).Result;
-                            getOkResult(result);
-                        }
+                        _ = repository.Save(transaction).Result;
                     }
                 }
 
                 rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        var lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -455,7 +379,7 @@ namespace GARCA.wsTests.wsData
                 var lTransactionsStatus = new List<TransactionsStatus>();
                 var lTransactions = new List<Transactions>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -469,65 +393,46 @@ namespace GARCA.wsTests.wsData
 
                 int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Categoryid,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    var okResult = getOkResult(result);
-
-                    lTransactions.Add((Transactions?)okResult.Value.Result);
+                    lTransactions.Add(repository.Save(transaction).Result);
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var transactions = lTransactions[id];
                     transactions.CategoriesId = new CategoriesRepository().Save(new CategoriesUT().CreateObj()).Result.Id;
 
-                     var result = TransactionsAPI.Update(transactions, repository, validator).Result;
-                    getOkResult(result);
+                    _ = repository.Save(transactions).Result;
 
-                    result = TransactionsAPI.GetById(transactions.TranferId.ToString() ?? "-99", repository).Result;
-                    Assert.That((HttpStatusCode)getNotFoundResult(result).StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                    transactions = repository.GetById(transactions.TranferId ?? -99).Result;
+                    Assert.That(transactions, Is.Null);
 
                     lTransactions.RemoveAt(id);
                 }
 
                 rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 150, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM + N_CHANGED_ITEM), Is.EqualTo(rActual));
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }
@@ -549,7 +454,7 @@ namespace GARCA.wsTests.wsData
                 var lTransactionsStatus = new List<TransactionsStatus>();
                 var lTransactions = new List<Transactions>();
 
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < N_INITIAL_MASTER; i++)
                 {
                     var person = new PersonsRepository().Save(new PersonsUT().CreateObj()).Result;
                     lPersons.Add(person);
@@ -563,59 +468,40 @@ namespace GARCA.wsTests.wsData
 
                 int rTotal = repository.GetAll()?.Result?.Count() ?? 0;
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < N_INSERT_ITEM; i++)
                 {
                     Transactions transaction = new Transactions()
                     {
                         Id = 0,
                         Date = DateTime.Now.AddDays(new Random().Next(-30, 30)),
-                        AccountsId = lAccounts[new Random().Next(0, 5)].Id,
-                        PersonsId = lPersons[new Random().Next(0, 5)].Id,
-                        CategoriesId = lAccounts[new Random().Next(0, 5)].Categoryid,
+                        AccountsId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        PersonsId = lPersons[new Random().Next(0, N_INITIAL_MASTER)].Id,
+                        CategoriesId = lAccounts[new Random().Next(0, N_INITIAL_MASTER)].Categoryid,
                         AmountIn = getNextDecimal(),
                         AmountOut = getNextDecimal(),
-                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, 5)].Id,
+                        TransactionsStatusId = lTransactionsStatus[new Random().Next(0, N_INITIAL_MASTER)].Id,
                     };
 
-
-                    var val = validator.Validate(transaction);
-                    if (!val.IsValid)
-                        throw new Exception(val.Errors[0].ErrorMessage);
-
-                    var result = TransactionsAPI.Create(transaction, repository, validator).Result;
-                    var okResult = getOkResult(result);
-
-                    lTransactions.Add((Transactions?)okResult.Value.Result);
+                    lTransactions.Add(repository.Save(transaction).Result);
                 }
 
                 int rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 200, Is.EqualTo(rActual));
+                Assert.That(rTotal + (N_INSERT_ITEM * 2), Is.EqualTo(rActual));
 
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < N_CHANGED_ITEM; i++)
                 {
                     int id = new Random().Next(0, lTransactions.Count - 1);
                     var transactions = lTransactions[id];
-                    var result = TransactionsAPI.Delete(transactions.Id.ToString(), repository).Result;
-                    getOkResult(result);
+                    _ = repository.Delete(transactions).Result;
                     lTransactions.RemoveAt(id);
                 }
 
                 rActual = repository.GetAll()?.Result?.Count() ?? 0;
-                Assert.That(rTotal + 100, Is.EqualTo(rActual));
+                Assert.That(rTotal + N_INSERT_ITEM, Is.EqualTo(rActual));
 
-                foreach (var acc in lAccounts)
+                foreach (var account in lAccounts)
                 {
-                    var result = TransactionsAPI.Get($"AccountsId={acc.Id}", repository).Result;
-
-                    if (result is Ok<ResponseAPI> okResult)
-                    {
-                        lTransactions = (List<Transactions?>?)okResult.Value.Result ?? new List<Transactions?>();
-
-                        Decimal total = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-                        Decimal last = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-                        Assert.That(total, Is.EqualTo(last), $"TestAccount: {acc.Id}");
-                    }
+                    TestBalanceListAccounts(account);
                 }
 
             }

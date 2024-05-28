@@ -1,16 +1,16 @@
+//TODO: Categoria por defecto en persona
+//TODO: Splits de una transferencia duplica
+//TODO: Duplica al añadir lineas de transferencia en splits
+//TODO: Conciliar falla
+
 using FluentValidation;
-using FluentValidation.Results;
 using GARCA.Model;
 using GARCA.Models;
 using GARCA.Utils.Logging;
 using GARCA.wsData.Endpoints;
 using GARCA.wsData.Repositories;
-using GARCA.wsData.Validations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using System;
 using System.Net;
 
 namespace GARCA.wsTests.wsData
@@ -24,6 +24,9 @@ namespace GARCA.wsTests.wsData
     {
         protected Z repository;
         protected T validator;
+        protected const int N_INITIAL_MASTER = 2;
+        protected const int N_INSERT_ITEM = 20;
+        protected const int N_CHANGED_ITEM = 10;
 
         [SetUp]
         public void Setup()
@@ -192,9 +195,9 @@ namespace GARCA.wsTests.wsData
             }
         }
 
-        protected Decimal? getNextDecimal()
+        protected Decimal? getNextDecimal(int decimales = 2)
         {
-            return (decimal?)Math.Round(new Random().Next(1, 1000) * new Random().NextDouble(),2);
+            return (decimal?)Math.Round(new Random().Next(1, 1000) * new Random().NextDouble(), decimales);
         }
 
         protected string getNextWord()

@@ -11,7 +11,7 @@ namespace wsData.Migrations
         {
             try
             {
-                using (var connection = dbContext.OpenConnection(true))
+                using (var connection = DBContext.OpenConnection(true))
                 {
                     connection.Execute(@"
                         -- accounts definition

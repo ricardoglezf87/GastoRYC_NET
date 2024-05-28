@@ -12,15 +12,13 @@ namespace wsData.Migrations
         {
             try
             {
-                using (var connection = dbContext.OpenConnection(true))
+                using (var connection = DBContext.OpenConnection(true))
                 {
                         connection.Execute(@"
 
                         CREATE PROCEDURE UpdateTransactionWithSplit(IN Tid INT)
                         BEGIN
-   
-                            START TRANSACTION;
-   
+      
                             UPDATE Transactions t
                             LEFT JOIN (
                                 SELECT transactionid, 
@@ -37,7 +35,6 @@ namespace wsData.Migrations
                                                 END
                             WHERE t.id = Tid;
       
-                            COMMIT;
                         END
  
                         ");                        

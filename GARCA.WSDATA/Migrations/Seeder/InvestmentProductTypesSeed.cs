@@ -7,7 +7,7 @@ namespace GARCA.wsData.Migrations.Seeder
     {
         public static void Do()
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 connection.Execute(@"
                     INSERT INTO InvestmentProductsTypes (description) VALUES

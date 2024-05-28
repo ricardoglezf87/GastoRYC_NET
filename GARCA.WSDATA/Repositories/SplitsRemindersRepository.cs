@@ -8,7 +8,7 @@ namespace GARCA.wsData.Repositories
     {
         public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionidNull()
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.SelectAsync<SplitsReminders>(x => x.TransactionsId == null);
             }
@@ -16,7 +16,7 @@ namespace GARCA.wsData.Repositories
 
         public async Task<IEnumerable<SplitsReminders>?> GetbyTransactionid(int transactionid)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.SelectAsync<SplitsReminders>(x => x.TransactionsId == transactionid);
             }

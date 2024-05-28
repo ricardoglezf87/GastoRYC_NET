@@ -10,7 +10,7 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<IEnumerable<Q>?> GetAll()
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.GetAllAsync<Q>();
             }
@@ -18,7 +18,7 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<Q?> GetById(int id)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.GetAsync<Q>(id);
             }
@@ -26,7 +26,7 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<Q?> GetById(DateTime id)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.GetAsync<Q>(id);
             }
@@ -34,7 +34,7 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<IEnumerable<Q>?> Get(Expression<Func<Q, bool>> predicate)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.SelectAsync<Q>(predicate);
             }
@@ -56,7 +56,7 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<bool> Update(Q obj)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.UpdateAsync(obj);
             }
@@ -64,7 +64,7 @@ namespace GARCA.wsData.Repositories
 
         public virtual async Task<int> Insert(Q obj)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return (int)(UInt64)await connection.InsertAsync<Q>(obj);
             }
@@ -77,7 +77,7 @@ namespace GARCA.wsData.Repositories
 
         private async Task<bool> Delete(int id)
         {
-            using (var connection = dbContext.OpenConnection())
+            using (var connection = DBContext.OpenConnection())
             {
                 return await connection.DeleteAsync(new Q() { Id = id });
             }
