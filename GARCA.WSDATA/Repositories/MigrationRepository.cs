@@ -9,9 +9,15 @@ namespace GARCA.wsData.Repositories
 {
     public static class MigrationRepository
     {
+        private const bool NOCLEAN = false;
 
         public static void CleanDataBase()
         {
+            if(NOCLEAN)
+            {
+                return;
+            }
+
             try
             {
                 using (var connection = DBContext.OpenConnection(true))
@@ -43,6 +49,9 @@ namespace GARCA.wsData.Repositories
                         DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateTranfer;
                         DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateTranferSplit;
                         DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateTransactionWithSplit;
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.UpdateBalancebyTransfer;
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.SplitsPostSave;
+                        DROP PROCEDURE IF EXISTS GARCA_TEST.TransactionPostSave;
 
                         DROP TRIGGER IF EXISTS GARCA_TEST.Splits_IT;
                         DROP TRIGGER IF EXISTS GARCA_TEST.Splits_Update_Transaction_IT;

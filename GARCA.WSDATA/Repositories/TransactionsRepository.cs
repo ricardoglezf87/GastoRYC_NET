@@ -3,6 +3,7 @@ using Dommel;
 using GARCA.Models;
 using GARCA.Utils.Extensions;
 using System.Data;
+using static GARCA.Utils.Enums.EnumComun;
 
 
 namespace GARCA.wsData.Repositories
@@ -22,21 +23,24 @@ namespace GARCA.wsData.Repositories
             obj.Date = obj.Date.RemoveTime();
             obj = await base.Save(obj);
             await postChange(obj);
+            _ = UpdateDefaultPerson(obj.PersonsId ?? -99);
             return await GetById(obj.Id) ?? obj;
         }
 
         public override async Task<bool> Delete(Transactions obj)
         {
             bool result = await base.Delete(obj);
-            await postChange(obj);           
+            await postChange(obj);
+            _ = UpdateDefaultPerson(obj.PersonsId ?? -99);
             return result;
         }
 
         private async Task postChange(Transactions obj)
         {
-            await UpdateTranfer(obj.Id);
-            await UpdateBalance(obj.Date ?? DateTime.Now);
-            _ = UpdateDefaultPerson(obj.PersonsId ?? -99);
+            using (var connection = DBContext.OpenConnection())
+            {                
+                await connection.ExecuteAsync("TransactionPostSave", new { Tid = obj.Id, TaccountId = obj.AccountsId, Tdate = obj.Date }, commandType: CommandType.StoredProcedure);            
+            }
         }
 
         public async Task<IEnumerable<Transactions>?> GetByAccount(int accountId)
@@ -45,22 +49,6 @@ namespace GARCA.wsData.Repositories
             {
                 return await connection.SelectAsync<Transactions, Accounts, Categories, TransactionsStatus, Persons, Tags, InvestmentProducts, Transactions>
                     (x => x.AccountsId == accountId);
-            }
-        }
-
-        public async Task UpdateTranfer(int id)
-        {
-            using (var connection = DBContext.OpenConnection())
-            {
-                await connection.ExecuteAsync("UpdateTranfer", new { Tid = id }, commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public async Task UpdateBalance(DateTime transactionDate)
-        {
-            using (var connection = DBContext.OpenConnection())
-            {
-                await connection.ExecuteAsync("UpdateBalancebyDate", new { s_date = transactionDate }, commandType: CommandType.StoredProcedure);
             }
         }
 

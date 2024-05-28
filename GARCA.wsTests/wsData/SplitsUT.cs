@@ -60,16 +60,7 @@ namespace GARCA.wsTests.wsData
                 int rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + N_INSERT_ITEM, Is.EqualTo(rActual));
 
-                foreach (var t in lTransactions)
-                {
-                    var transaction = new TransactionsRepository().GetById(t.Id).Result;
-
-                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
-
-                    var lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
-                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
-                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                }
+                TestBalanceTransaction(lTransactions);
 
                 TestBalanceAccount(account);
 
@@ -137,16 +128,7 @@ namespace GARCA.wsTests.wsData
                 rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + N_INSERT_ITEM, Is.EqualTo(rActual));
 
-                foreach (var t in lTransactions)
-                {
-                    var transaction = new TransactionsRepository().GetById(t.Id).Result;
-
-                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
-
-                    lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
-                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
-                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                }
+                TestBalanceTransaction(lTransactions);
 
                 TestBalanceAccount(account);
 
@@ -215,16 +197,7 @@ namespace GARCA.wsTests.wsData
                 rActual = new TransactionsRepository().GetAll()?.Result?.Count() ?? 0;
                 Assert.That(rTotal + N_CHANGED_ITEM, Is.EqualTo(rActual));
 
-                foreach (var t in lTransactions)
-                {
-                    var transaction = new TransactionsRepository().GetById(t.Id).Result;
-
-                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
-
-                    lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
-                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
-                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                }
+                TestBalanceTransaction(lTransactions);
 
                 TestBalanceAccount(account);
 
@@ -273,16 +246,7 @@ namespace GARCA.wsTests.wsData
                     _ = repository.Save(splits).Result;
                 }
 
-                foreach (var t in lTransactions)
-                {
-                    var transaction = new TransactionsRepository().GetById(t.Id).Result;
-
-                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
-
-                    var lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
-                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
-                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                }
+                TestBalanceTransaction(lTransactions);
 
                 TestBalanceAccount(account);
             }
@@ -341,16 +305,7 @@ namespace GARCA.wsTests.wsData
                     lSplits.RemoveAt(id);
                 }
 
-                foreach (var t in lTransactions)
-                {
-                    var transaction = new TransactionsRepository().GetById(t.Id).Result;
-
-                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
-
-                    lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
-                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
-                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                }
+                TestBalanceTransaction(lTransactions);
 
                 TestBalanceAccount(account);
             }
@@ -407,17 +362,8 @@ namespace GARCA.wsTests.wsData
                     lSplits.RemoveAt(id);
                 }
 
-                foreach (var t in lTransactions)
-                {
-                    var transaction = new TransactionsRepository().GetById(t.Id).Result;
+                TestBalanceTransaction(lTransactions);
 
-                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
-
-                    lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
-                    Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
-                    Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
-                }
-                
                 TestBalanceAccount(account);
 
             }
@@ -428,14 +374,39 @@ namespace GARCA.wsTests.wsData
             }
         }
 
+        private void TestBalanceTransaction(List<Transactions> lTransactions)
+        {
+            foreach (var t in lTransactions)
+            {
+                var transaction = new TransactionsRepository().GetById(t.Id).Result;
+
+                var lSplits = repository.GetbyTransactionid(transaction.Id).Result?.ToList() ?? new List<Splits>();
+
+                if (lSplits.Count > 0)
+                {
+                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.Split), $"TestTransCategory: {transaction.Id}");
+                }
+                else
+                {
+                    Assert.That(transaction.CategoriesId, Is.EqualTo((int)ESpecialCategories.WithoutCategory), $"TestTransCategory: {transaction.Id}");
+                }
+
+                Decimal total = lSplits.Sum(x => x.Amount) ?? 0;
+                Assert.That(total, Is.EqualTo(transaction.Amount), $"TestTrans: {transaction.Id}");
+            }
+        }
+
         private void TestBalanceAccount(Accounts accounts)
         {
             var lTransactions = new TransactionsRepository().GetByAccount(accounts.Id).Result?.ToList() ?? new List<Transactions>();
+            
+            if (lTransactions.Count > 0)
+            {
+                Decimal totalT = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
+                Decimal lastT = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
 
-            Decimal totalT = lTransactions.Sum(x => x.AmountIn - x.AmountOut) ?? 0;
-            Decimal lastT = lTransactions.OrderBy(x => x.Orden).Last().Balance ?? 0;
-
-            Assert.That(totalT, Is.EqualTo(lastT), $"TestAccount: {accounts.Id}");
+                Assert.That(totalT, Is.EqualTo(lastT), $"TestAccount: {accounts.Id}");
+            }
         }
 
         public override Splits CreateObj()

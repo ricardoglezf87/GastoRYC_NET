@@ -25,26 +25,11 @@ namespace GARCA.wsData.Repositories
 
         private async Task postChange(Splits obj)
         {
-            await UpdateTransactionWithSplits(obj.TransactionsId ?? -99);
-            await UpdateTranferSplit(obj.Id);
-            await UpdateTransactionBalance(obj.TransactionsId ?? -99);
-        }
-
-        public async Task UpdateTranferSplit(int id)
-        {
             using (var connection = DBContext.OpenConnection())
             {
-                await connection.ExecuteAsync("UpdateTranferSplit", new { Sid = id }, commandType: CommandType.StoredProcedure);
+                await connection.ExecuteAsync("SplitsPostSave", new {Sid = obj.Id, Tid = obj.TransactionsId }, commandType: CommandType.StoredProcedure);
             }
-        }
-
-        public async Task UpdateTransactionWithSplits(int id)
-        {
-            using (var connection = DBContext.OpenConnection())
-            {
-                await connection.ExecuteAsync("UpdateTransactionWithSplit", new { Tid = id }, commandType: CommandType.StoredProcedure);
-            }
-        }
+        }       
 
         private async Task UpdateTransactionBalance(int id)
         {
