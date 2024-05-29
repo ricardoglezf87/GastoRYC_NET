@@ -31,14 +31,6 @@ namespace GARCA.wsData.Repositories
             }
         }       
 
-        private async Task UpdateTransactionBalance(int id)
-        {
-            using (var connection = DBContext.OpenConnection())
-            {
-                await connection.ExecuteAsync("UpdateBalancebyId", new { Tid = id }, commandType: CommandType.StoredProcedure);
-            }
-        }
-
         public async Task<IEnumerable<Splits>?> GetbyTransactionidNull()
         {
             using (var connection = DBContext.OpenConnection())
