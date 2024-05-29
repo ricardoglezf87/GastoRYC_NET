@@ -13,8 +13,8 @@ namespace GARCA.wsData.Repositories
         {
             using (var connection = DBContext.OpenConnection())
             {
-                return await connection.SelectAsync<ExpirationsReminders>(
-                x => x.TransactionsRemindersId == transactionsReminder.Id && x.Date == date) != null;
+                return await connection.AnyAsync<ExpirationsReminders>(
+                x => x.TransactionsRemindersId == transactionsReminder.Id && x.Date == date);
             }
         }
 

@@ -4,10 +4,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Configurations>Debug;Release;TEST</Configurations>
-    <AssemblyVersion>4.4.0.56</AssemblyVersion>
+    <AssemblyVersion>4.4.0.11</AssemblyVersion>
     <FileVersion>4.4.0.0</FileVersion>
-    <InformationalVersion>4.4.0-V5-00-MicroserviciosCore.56+Branch.feature-V5.00-MicroserviciosCore.Sha.c52c2725ad64e16c937ea2b10dd46d9d4a2a17bc</InformationalVersion>
-    <Version>4.4.0-v5-00-microservi0056</Version>
+    <InformationalVersion>4.4.0-beta.11+Branch.release-V.Sha.64336baaeb6138706e525f0f082cd520b8592876</InformationalVersion>
+    <Version>4.4.0-beta0011</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dommel" Version="3.3.1" />
