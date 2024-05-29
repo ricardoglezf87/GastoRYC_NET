@@ -53,14 +53,22 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Accounts_Categories_IT
-                        BEFORE INSERT ON Accounts
-                        FOR EACH ROW
-                        BEGIN
-                            DECLARE idCat INT;
-                            INSERT INTO Categories (description,categoriesTypesid) VALUES (CONCAT('[', NEW.description, ']'),3);
-                            SET idCat = LAST_INSERT_ID();
-                            SET NEW.categoryid = idCat;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Accounts_Categories_IT
+
+                        BEFORE INSERT ON Accounts
+
+                        FOR EACH ROW
+
+                        BEGIN
+
+                            DECLARE idCat INT;
+
+                            INSERT INTO Categories (description,categoriesTypesid) VALUES (CONCAT('[', NEW.description, ']'),3);
+
+                            SET idCat = LAST_INSERT_ID();
+
+                            SET NEW.categoryid = idCat;
+
                         END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -76,11 +84,16 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Accounts_Categories_UT
-                        BEFORE UPDATE ON Accounts
-                        FOR EACH ROW
-                        BEGIN
-                            UPDATE Categories SET description = CONCAT('[', NEW.description, ']') WHERE id = OLD.categoryid;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Accounts_Categories_UT
+
+                        BEFORE UPDATE ON Accounts
+
+                        FOR EACH ROW
+
+                        BEGIN
+
+                            UPDATE Categories SET description = CONCAT('[', NEW.description, ']') WHERE id = OLD.categoryid;
+
                         END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -96,11 +109,16 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Accounts_Categories_DT
-                        BEFORE DELETE ON Accounts
-                        FOR EACH ROW
-                        BEGIN
-                            DELETE FROM Categories WHERE id = OLD.categoryid;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Accounts_Categories_DT
+
+                        BEFORE DELETE ON Accounts
+
+                        FOR EACH ROW
+
+                        BEGIN
+
+                            DELETE FROM Categories WHERE id = OLD.categoryid;
+
                         END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -433,18 +451,30 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_IT
-                        BEFORE INSERT ON Splits
-                        FOR EACH ROW
-                        BEGIN
-
-                            IF NEW.AmountIn IS NULL THEN
-                                SET NEW.AmountIn = 0;
-                            END IF;
-    
-                            IF NEW.AmountOut IS NULL THEN
-                                SET NEW.AmountOut = 0;
-                            END IF;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_IT
+
+                        BEFORE INSERT ON Splits
+
+                        FOR EACH ROW
+
+                        BEGIN
+
+
+
+                            IF NEW.AmountIn IS NULL THEN
+
+                                SET NEW.AmountIn = 0;
+
+                            END IF;
+
+    
+
+                            IF NEW.AmountOut IS NULL THEN
+
+                                SET NEW.AmountOut = 0;
+
+                            END IF;
+
                         END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -460,27 +490,48 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_Update_Transaction_IT
-                            AFTER INSERT ON Splits
-                            FOR EACH ROW
-                            BEGIN
-    
-	                            UPDATE Transactions t
-	                            LEFT JOIN (
-	                                SELECT transactionid, 
-	                                       SUM(amountIn) AS total_amountIn,
-	                                       SUM(amountOut) AS total_amountOut
-	                                FROM Splits
-	                                GROUP BY transactionid
-	                            ) s ON t.id = s.transactionid
-	                            SET t.amountIn = IFNULL(s.total_amountIn, 0),
-	                                t.amountOut = IFNULL(s.total_amountOut, 0),
-	                                t.categoryid = CASE
-			                                            WHEN s.transactionid IS NULL THEN 0	                        
-			                                            ELSE -1
-		                                            END
-	                            WHERE t.id = NEW.transactionid;
-	
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_Update_Transaction_IT
+
+                            AFTER INSERT ON Splits
+
+                            FOR EACH ROW
+
+                            BEGIN
+
+    
+
+	                            UPDATE Transactions t
+
+	                            LEFT JOIN (
+
+	                                SELECT transactionid, 
+
+	                                       SUM(amountIn) AS total_amountIn,
+
+	                                       SUM(amountOut) AS total_amountOut
+
+	                                FROM Splits
+
+	                                GROUP BY transactionid
+
+	                            ) s ON t.id = s.transactionid
+
+	                            SET t.amountIn = IFNULL(s.total_amountIn, 0),
+
+	                                t.amountOut = IFNULL(s.total_amountOut, 0),
+
+	                                t.categoryid = CASE
+
+			                                            WHEN s.transactionid IS NULL THEN 0	                        
+
+			                                            ELSE -1
+
+		                                            END
+
+	                            WHERE t.id = NEW.transactionid;
+
+	
+
                             END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -496,18 +547,30 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_UT
-                         BEFORE UPDATE ON Splits 
-                         FOR EACH ROW
-                         BEGIN
-
-                             IF NEW.AmountIn IS NULL THEN
-                                 SET NEW.AmountIn = 0;
-                             END IF;
-    
-                             IF NEW.AmountOut IS NULL THEN
-                                 SET NEW.AmountOut = 0;
-                             END IF;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_UT
+
+                         BEFORE UPDATE ON Splits 
+
+                         FOR EACH ROW
+
+                         BEGIN
+
+
+
+                             IF NEW.AmountIn IS NULL THEN
+
+                                 SET NEW.AmountIn = 0;
+
+                             END IF;
+
+    
+
+                             IF NEW.AmountOut IS NULL THEN
+
+                                 SET NEW.AmountOut = 0;
+
+                             END IF;
+
                          END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -523,27 +586,48 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_Update_Transaction_UT
-                            AFTER UPDATE ON Splits
-                            FOR EACH ROW
-                            BEGIN
-                               IF NEW.amountIn <> OLD.amountIn OR NEW.amountOut <> OLD.amountOut THEN
-		                            UPDATE Transactions t
-		                            LEFT JOIN (
-		                                SELECT transactionid, 
-		                                       SUM(amountIn) AS total_amountIn,
-		                                       SUM(amountOut) AS total_amountOut
-		                                FROM Splits
-		                                GROUP BY transactionid
-		                            ) s ON t.id = s.transactionid
-		                            SET t.amountIn = IFNULL(s.total_amountIn, 0),
-		                                t.amountOut = IFNULL(s.total_amountOut, 0),
-		                                t.categoryid = CASE
-			                                                WHEN s.transactionid IS NULL THEN 0	                        
-			                                                ELSE -1
-		                                                END
-		                            WHERE t.id = NEW.transactionid;
-	                            END IF;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_Update_Transaction_UT
+
+                            AFTER UPDATE ON Splits
+
+                            FOR EACH ROW
+
+                            BEGIN
+
+                               IF NEW.amountIn <> OLD.amountIn OR NEW.amountOut <> OLD.amountOut THEN
+
+		                            UPDATE Transactions t
+
+		                            LEFT JOIN (
+
+		                                SELECT transactionid, 
+
+		                                       SUM(amountIn) AS total_amountIn,
+
+		                                       SUM(amountOut) AS total_amountOut
+
+		                                FROM Splits
+
+		                                GROUP BY transactionid
+
+		                            ) s ON t.id = s.transactionid
+
+		                            SET t.amountIn = IFNULL(s.total_amountIn, 0),
+
+		                                t.amountOut = IFNULL(s.total_amountOut, 0),
+
+		                                t.categoryid = CASE
+
+			                                                WHEN s.transactionid IS NULL THEN 0	                        
+
+			                                                ELSE -1
+
+		                                                END
+
+		                            WHERE t.id = NEW.transactionid;
+
+	                            END IF;
+
                             END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -559,27 +643,48 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_Update_Transaction_DT
-                            AFTER DELETE ON Splits
-                            FOR EACH ROW
-                            BEGIN
-    
-	                            UPDATE Transactions t
-	                            LEFT JOIN (
-	                                SELECT transactionid, 
-	                                       SUM(amountIn) AS total_amountIn,
-	                                       SUM(amountOut) AS total_amountOut
-	                                FROM Splits
-	                                GROUP BY transactionid
-	                            ) s ON t.id = s.transactionid
-	                            SET t.amountIn = IFNULL(s.total_amountIn, 0),
-	                                t.amountOut = IFNULL(s.total_amountOut, 0),
-	                                t.categoryid = CASE
-			                                            WHEN s.transactionid IS NULL THEN 0	                        
-			                                            ELSE -1
-		                                            END
-	                            WHERE t.id = OLD.transactionid;
-	
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Splits_Update_Transaction_DT
+
+                            AFTER DELETE ON Splits
+
+                            FOR EACH ROW
+
+                            BEGIN
+
+    
+
+	                            UPDATE Transactions t
+
+	                            LEFT JOIN (
+
+	                                SELECT transactionid, 
+
+	                                       SUM(amountIn) AS total_amountIn,
+
+	                                       SUM(amountOut) AS total_amountOut
+
+	                                FROM Splits
+
+	                                GROUP BY transactionid
+
+	                            ) s ON t.id = s.transactionid
+
+	                            SET t.amountIn = IFNULL(s.total_amountIn, 0),
+
+	                                t.amountOut = IFNULL(s.total_amountOut, 0),
+
+	                                t.categoryid = CASE
+
+			                                            WHEN s.transactionid IS NULL THEN 0	                        
+
+			                                            ELSE -1
+
+		                                            END
+
+	                            WHERE t.id = OLD.transactionid;
+
+	
+
                             END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -631,18 +736,30 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER SplitsReminders_IT
-                        BEFORE INSERT ON SplitsReminders
-                        FOR EACH ROW
-                        BEGIN
-
-                            IF NEW.AmountIn IS NULL THEN
-                                SET NEW.AmountIn = 0;
-                            END IF;
-    
-                            IF NEW.AmountOut IS NULL THEN
-                                SET NEW.AmountOut = 0;
-                            END IF;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER SplitsReminders_IT
+
+                        BEFORE INSERT ON SplitsReminders
+
+                        FOR EACH ROW
+
+                        BEGIN
+
+
+
+                            IF NEW.AmountIn IS NULL THEN
+
+                                SET NEW.AmountIn = 0;
+
+                            END IF;
+
+    
+
+                            IF NEW.AmountOut IS NULL THEN
+
+                                SET NEW.AmountOut = 0;
+
+                            END IF;
+
                         END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -658,18 +775,30 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER SplitsReminders_UT
-                         BEFORE UPDATE ON SplitsReminders 
-                         FOR EACH ROW
-                         BEGIN
-
-                             IF NEW.AmountIn IS NULL THEN
-                                 SET NEW.AmountIn = 0;
-                             END IF;
-    
-                             IF NEW.AmountOut IS NULL THEN
-                                 SET NEW.AmountOut = 0;
-                             END IF;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER SplitsReminders_UT
+
+                         BEFORE UPDATE ON SplitsReminders 
+
+                         FOR EACH ROW
+
+                         BEGIN
+
+
+
+                             IF NEW.AmountIn IS NULL THEN
+
+                                 SET NEW.AmountIn = 0;
+
+                             END IF;
+
+    
+
+                             IF NEW.AmountOut IS NULL THEN
+
+                                 SET NEW.AmountOut = 0;
+
+                             END IF;
+
                          END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -763,26 +892,46 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Transactions_IT
-                        BEFORE INSERT ON Transactions
-                        FOR EACH ROW
-                        BEGIN
-
-                            IF NEW.AmountIn IS NULL THEN
-                                SET NEW.AmountIn = 0;
-                            END IF;
-    
-                            IF NEW.AmountOut IS NULL THEN
-                                SET NEW.AmountOut = 0;
-                            END IF;
-
-                            SET NEW.orden = CAST(CONCAT(
-                                                    YEAR(NEW.Date),
-                                                    LPAD(MONTH(NEW.Date), 2, '0'),
-                                                    LPAD(DAY(NEW.Date), 2, '0'),
-                                                    LPAD(NEW.id, 6, '0'),
-                                                    IF(NEW.AmountIn != 0, '1', '0')
-                                                ) AS DECIMAL(20,0));
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Transactions_IT
+
+                        BEFORE INSERT ON Transactions
+
+                        FOR EACH ROW
+
+                        BEGIN
+
+
+
+                            IF NEW.AmountIn IS NULL THEN
+
+                                SET NEW.AmountIn = 0;
+
+                            END IF;
+
+    
+
+                            IF NEW.AmountOut IS NULL THEN
+
+                                SET NEW.AmountOut = 0;
+
+                            END IF;
+
+
+
+                            SET NEW.orden = CAST(CONCAT(
+
+                                                    YEAR(NEW.Date),
+
+                                                    LPAD(MONTH(NEW.Date), 2, '0'),
+
+                                                    LPAD(DAY(NEW.Date), 2, '0'),
+
+                                                    LPAD(NEW.id, 6, '0'),
+
+                                                    IF(NEW.AmountIn != 0, '1', '0')
+
+                                                ) AS DECIMAL(20,0));
+
                         END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -798,26 +947,46 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Transactions_UT
-                        BEFORE UPDATE ON Transactions
-                        FOR EACH ROW
-                        BEGIN
-
-                            IF NEW.AmountIn IS NULL THEN
-                                SET NEW.AmountIn = 0;
-                            END IF;
-    
-                            IF NEW.AmountOut IS NULL THEN
-                                SET NEW.AmountOut = 0;
-                            END IF;
-
-                            SET NEW.orden = CAST(CONCAT(
-                                                    YEAR(NEW.Date),
-                                                    LPAD(MONTH(NEW.Date), 2, '0'),
-                                                    LPAD(DAY(NEW.Date), 2, '0'),
-                                                    LPAD(NEW.id, 6, '0'),
-                                                    IF(NEW.AmountIn != 0, '1', '0')
-                                                ) AS DECIMAL(20,0));
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER Transactions_UT
+
+                        BEFORE UPDATE ON Transactions
+
+                        FOR EACH ROW
+
+                        BEGIN
+
+
+
+                            IF NEW.AmountIn IS NULL THEN
+
+                                SET NEW.AmountIn = 0;
+
+                            END IF;
+
+    
+
+                            IF NEW.AmountOut IS NULL THEN
+
+                                SET NEW.AmountOut = 0;
+
+                            END IF;
+
+
+
+                            SET NEW.orden = CAST(CONCAT(
+
+                                                    YEAR(NEW.Date),
+
+                                                    LPAD(MONTH(NEW.Date), 2, '0'),
+
+                                                    LPAD(DAY(NEW.Date), 2, '0'),
+
+                                                    LPAD(NEW.id, 6, '0'),
+
+                                                    IF(NEW.AmountIn != 0, '1', '0')
+
+                                                ) AS DECIMAL(20,0));
+
                         END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -879,18 +1048,30 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER TransactionsReminders_IT
-                        BEFORE INSERT ON TransactionsReminders
-                        FOR EACH ROW
-                        BEGIN
-
-                            IF NEW.AmountIn IS NULL THEN
-                                SET NEW.AmountIn = 0;
-                            END IF;
-    
-                            IF NEW.AmountOut IS NULL THEN
-                                SET NEW.AmountOut = 0;
-                            END IF;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER TransactionsReminders_IT
+
+                        BEFORE INSERT ON TransactionsReminders
+
+                        FOR EACH ROW
+
+                        BEGIN
+
+
+
+                            IF NEW.AmountIn IS NULL THEN
+
+                                SET NEW.AmountIn = 0;
+
+                            END IF;
+
+    
+
+                            IF NEW.AmountOut IS NULL THEN
+
+                                SET NEW.AmountOut = 0;
+
+                            END IF;
+
                         END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -906,18 +1087,30 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER TransactionsReminders_UT
-                         BEFORE UPDATE ON TransactionsReminders 
-                         FOR EACH ROW
-                         BEGIN
-
-                             IF NEW.AmountIn IS NULL THEN
-                                 SET NEW.AmountIn = 0;
-                             END IF;
-    
-                             IF NEW.AmountOut IS NULL THEN
-                                 SET NEW.AmountOut = 0;
-                             END IF;
+/*!50003 CREATE*/ /*!50017 DEFINER=`arcadb`@`%`*/ /*!50003 TRIGGER TransactionsReminders_UT
+
+                         BEFORE UPDATE ON TransactionsReminders 
+
+                         FOR EACH ROW
+
+                         BEGIN
+
+
+
+                             IF NEW.AmountIn IS NULL THEN
+
+                                 SET NEW.AmountIn = 0;
+
+                             END IF;
+
+    
+
+                             IF NEW.AmountOut IS NULL THEN
+
+                                 SET NEW.AmountOut = 0;
+
+                             END IF;
+
                          END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -963,16 +1156,26 @@ UNLOCK TABLES;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`arcadb`@`%` PROCEDURE `UpdateBalancebyDate`(IN p_transaction_date DATE)
-BEGIN   
- 
-                            UPDATE Transactions t
-                            SET balance = (
-                                SELECT ROUND(SUM(t2.amountIn - t2.amountOut), 2)
-                                FROM Transactions t2
-                                WHERE t2.accountid = t.accountid
-                                    AND t2.orden <= t.orden
-                            )
-                            WHERE date >= p_transaction_date;
+BEGIN   
+
+ 
+
+                            UPDATE Transactions t
+
+                            SET balance = (
+
+                                SELECT ROUND(SUM(t2.amountIn - t2.amountOut), 2)
+
+                                FROM Transactions t2
+
+                                WHERE t2.accountid = t.accountid
+
+                                    AND t2.orden <= t.orden
+
+                            )
+
+                            WHERE date >= p_transaction_date;
+
                         END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -990,16 +1193,26 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`arcadb`@`%` PROCEDURE `UpdateBalancebyId`(IN Tid int)
-BEGIN   
- 
-                             DECLARE Tdate datetime;
-
-                            SELECT date INTO Tdate
-	                        FROM Transactions t 
-	                        where t.id = Tid;
-
-	                        call UpdateBalancebyDate(Tdate);
-
+BEGIN   
+
+ 
+
+                             DECLARE Tdate datetime;
+
+
+
+                            SELECT date INTO Tdate
+
+	                        FROM Transactions t 
+
+	                        where t.id = Tid;
+
+
+
+	                        call UpdateBalancebyDate(Tdate);
+
+
+
                         END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1017,26 +1230,46 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`arcadb`@`%` PROCEDURE `UpdatePersonsCategoriesId`(IN person_id INT)
-BEGIN
-                            DECLARE category_id INT;
-    
-                            START TRANSACTION;
-
-                            SELECT categoryid INTO category_id
-	                        FROM (
-	                            SELECT categoryid, COUNT(categoryid) AS repetition_count
-	                            FROM Transactions 
-	                            WHERE personid = person_id
-	                            GROUP BY categoryid
-	                            ORDER BY repetition_count DESC
-	                            LIMIT 1
-	                        ) AS A;
-
-                            IF category_id IS NOT NULL THEN
-                                UPDATE Persons SET categoryid = category_id WHERE id = person_id;
-                            END IF;
-
-                            COMMIT;
+BEGIN
+
+                            DECLARE category_id INT;
+
+    
+
+                            START TRANSACTION;
+
+
+
+                            SELECT categoryid INTO category_id
+
+	                        FROM (
+
+	                            SELECT categoryid, COUNT(categoryid) AS repetition_count
+
+	                            FROM Transactions 
+
+	                            WHERE personid = person_id
+
+	                            GROUP BY categoryid
+
+	                            ORDER BY repetition_count DESC
+
+	                            LIMIT 1
+
+	                        ) AS A;
+
+
+
+                            IF category_id IS NOT NULL THEN
+
+                                UPDATE Persons SET categoryid = category_id WHERE id = person_id;
+
+                            END IF;
+
+
+
+                            COMMIT;
+
                         END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1054,69 +1287,132 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`arcadb`@`%` PROCEDURE `UpdateTranfer`(IN Tid INT)
-BEGIN
-   
-                            START TRANSACTION;
-
-   
-                            -- Borra cuando no se selecciona cuenta de transferencia
-                            delete tt 
-                            from Transactions t
-    	                        inner join Transactions tt on t.tranferid = tt.id 
-    	                        inner join Categories c on t.categoryid = c.id     	
-                            where t.id = Tid and c.categoriesTypesid != 3;    
-   
-   
-   	                        UPDATE Transactions t
-		                        LEFT JOIN Transactions tt ON t.tranferid = tt.id 
-		                        INNER JOIN Categories c ON t.categoryid = c.id
-	                        SET 
-		                        t.tranferid = NULL
-	                        WHERE t.id = Tid AND t.tranferid IS NOT NULL AND tt.id IS NULL AND c.categoriesTypesid != 3;
-	    
-                            -- Actualiza cuando existe transacción y se ha seleccionado cuenta de transferencia
-    
-                            UPDATE Transactions tt
-	                        INNER JOIN Transactions t ON t.tranferid = tt.id
-		                        inner join Accounts ac on t.accountid = ac.id 
-	                        INNER JOIN Categories c ON t.categoryid = c.id
-		                        inner join Accounts ca on ca.categoryid = c.id 
-	                        SET 
-		                        tt.date = t.date,
-		                        tt.accountid = ca.id, 
-		                        tt.personid = t.personid,
-		                        tt.categoryid = ac.categoryid,
-		                        tt.amountIn = t.amountOut,
-		                        tt.amountOut = t.amountIn,
-		                        tt.memo = t.memo,
-		                        tt.tagid = t.tagid,
-		                        tt.transactionStatusid = t.transactionStatusid 
-	                        WHERE t.id = Tid AND c.categoriesTypesid = 3;
-
-	                        -- Crea cuando no existe transacción y se ha seleccionado cuenta de transferencia
-    
-                            insert into Transactions (date,accountid,personid,categoryid,amountIn,amountOut,memo,tagid,transactionStatusid, tranferid)
-	                        SELECT t.date,ca.id, t.personid,ac.categoryid, t.amountOut,t.amountIn,t.memo,t.tagid, t.transactionStatusid, t.id  
-	                        from Transactions t
-			                        inner join Accounts ac on t.accountid = ac.id 
-		                        INNER JOIN Categories c ON t.categoryid = c.id
-			                        inner join Accounts ca on ca.categoryid = c.id 
-	                            left join Splits s on s.tranferid = t.id
-	                        WHERE t.id = Tid AND c.categoriesTypesid = 3 and t.tranferid is null and s.id is null;		
-
-	                        update Transactions t 
-	                        inner join Transactions tt on t.id = tt.tranferid 
-	                        set
-		                        t.tranferid = tt.id 
-	                        where t.id = Tid and t.tranferid is null;
-
-                            -- Borra las transacciones cundo han sido borradas las transacciones en el otro lado
-                            delete
-                            from Transactions 
-                            where tranferid = Tid and not exists(select * from Transactions t where t.id = Tid);
-        
-        
-                            COMMIT;
+BEGIN
+
+   
+
+                            START TRANSACTION;
+
+
+
+   
+
+                            -- Borra cuando no se selecciona cuenta de transferencia
+
+                            delete tt 
+
+                            from Transactions t
+
+    	                        inner join Transactions tt on t.tranferid = tt.id 
+
+    	                        inner join Categories c on t.categoryid = c.id     	
+
+                            where t.id = Tid and c.categoriesTypesid != 3;    
+
+   
+
+   
+
+   	                        UPDATE Transactions t
+
+		                        LEFT JOIN Transactions tt ON t.tranferid = tt.id 
+
+		                        INNER JOIN Categories c ON t.categoryid = c.id
+
+	                        SET 
+
+		                        t.tranferid = NULL
+
+	                        WHERE t.id = Tid AND t.tranferid IS NOT NULL AND tt.id IS NULL AND c.categoriesTypesid != 3;
+
+	    
+
+                            -- Actualiza cuando existe transacción y se ha seleccionado cuenta de transferencia
+
+    
+
+                            UPDATE Transactions tt
+
+	                        INNER JOIN Transactions t ON t.tranferid = tt.id
+
+		                        inner join Accounts ac on t.accountid = ac.id 
+
+	                        INNER JOIN Categories c ON t.categoryid = c.id
+
+		                        inner join Accounts ca on ca.categoryid = c.id 
+
+	                        SET 
+
+		                        tt.date = t.date,
+
+		                        tt.accountid = ca.id, 
+
+		                        tt.personid = t.personid,
+
+		                        tt.categoryid = ac.categoryid,
+
+		                        tt.amountIn = t.amountOut,
+
+		                        tt.amountOut = t.amountIn,
+
+		                        tt.memo = t.memo,
+
+		                        tt.tagid = t.tagid,
+
+		                        tt.transactionStatusid = t.transactionStatusid 
+
+	                        WHERE t.id = Tid AND c.categoriesTypesid = 3;
+
+
+
+	                        -- Crea cuando no existe transacción y se ha seleccionado cuenta de transferencia
+
+    
+
+                            insert into Transactions (date,accountid,personid,categoryid,amountIn,amountOut,memo,tagid,transactionStatusid, tranferid)
+
+	                        SELECT t.date,ca.id, t.personid,ac.categoryid, t.amountOut,t.amountIn,t.memo,t.tagid, t.transactionStatusid, t.id  
+
+	                        from Transactions t
+
+			                        inner join Accounts ac on t.accountid = ac.id 
+
+		                        INNER JOIN Categories c ON t.categoryid = c.id
+
+			                        inner join Accounts ca on ca.categoryid = c.id 
+
+	                            left join Splits s on s.tranferid = t.id
+
+	                        WHERE t.id = Tid AND c.categoriesTypesid = 3 and t.tranferid is null and s.id is null;		
+
+
+
+	                        update Transactions t 
+
+	                        inner join Transactions tt on t.id = tt.tranferid 
+
+	                        set
+
+		                        t.tranferid = tt.id 
+
+	                        where t.id = Tid and t.tranferid is null;
+
+
+
+                            -- Borra las transacciones cundo han sido borradas las transacciones en el otro lado
+
+                            delete
+
+                            from Transactions 
+
+                            where tranferid = Tid and not exists(select * from Transactions t where t.id = Tid);
+
+        
+
+        
+
+                            COMMIT;
+
                         END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1134,68 +1430,130 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`arcadb`@`%` PROCEDURE `UpdateTranferSplit`(IN Sid INT)
-BEGIN
-   
-                            START TRANSACTION;
-   
-                        -- Borra cuando no se selecciona cuenta de transferencia
-                        delete tt 
-                        from Splits t
-    	                    inner join Transactions tt on t.tranferid = tt.id 
-    	                    inner join Categories c on t.categoryid = c.id     	
-                        where t.id = Sid and c.categoriesTypesid != 3;    
-   
-   
-   	                    UPDATE Splits t
-		                    LEFT JOIN Transactions tt ON t.tranferid  = tt.id 
-		                    INNER JOIN Categories c ON t.categoryid = c.id
-	                    SET 
-		                    t.tranferid = NULL
-	                    WHERE t.id = Sid AND t.tranferid IS NOT NULL AND tt.id IS NULL AND c.categoriesTypesid != 3;
-	    
-                        -- Actualiza cuando existe transacción y se ha seleccionado cuenta de transferencia
-    
-                        UPDATE Transactions tt
-	                    INNER JOIN Splits s ON s.tranferid = tt.id
-	                    inner join Transactions t on t.id = s.transactionid 
-		                    inner join Accounts ac on t.accountid = ac.id 
-	                    INNER JOIN Categories c ON s.categoryid = c.id
-		                    inner join Accounts ca on ca.categoryid = c.id 
-	                    SET 
-		                    tt.date = t.date,
-		                    tt.accountid = ca.id, 
-		                    tt.personid = t.personid,
-		                    tt.categoryid = ac.categoryid,
-		                    tt.amountIn = s.amountOut,
-		                    tt.amountOut = s.amountIn,
-		                    tt.memo = s.memo,
-		                    tt.tagid = s.tagid,
-		                    tt.transactionStatusid = t.transactionStatusid 
-	                    WHERE s.id = Sid AND c.categoriesTypesid = 3;
-
-	                    -- Crea cuando no existe transacción y se ha seleccionado cuenta de transferencia
-    
-                        insert into Transactions (date,accountid,personid,categoryid,amountIn,amountOut,memo,tagid,transactionStatusid, tranferSplitid)
-	                    SELECT t.date,ca.id, t.personid,ac.categoryid, s.amountOut,s.amountIn,s.memo,s.tagid, t.transactionStatusid, s.id  
-	                    from Transactions t
-			                    inner join Splits s on s.transactionid = t.id 
-			                    inner join Accounts ac on t.accountid = ac.id 
-		                    INNER JOIN Categories c ON s.categoryid = c.id
-			                    inner join Accounts ca on ca.categoryid = c.id 
-	                    WHERE s.id = Sid AND c.categoriesTypesid = 3 and s.tranferid is null;	
-
-	                    update Splits  s 
-		                    inner join Transactions t on t.tranferSplitid = s.id 
-	                    set
-		                    s.tranferid = t.id 
-	                    where s.id = Sid and s.tranferid is null;
-
-                        -- Borra las transacciones cundo han sido borradas las transacciones en el otro lado
-                        delete
-                        from Transactions 
-                        where tranferSplitid = Sid and not exists(select * from Splits s where s.id = Sid);
-        
-                        COMMIT;
+BEGIN
+
+   
+
+                            START TRANSACTION;
+
+   
+
+                        -- Borra cuando no se selecciona cuenta de transferencia
+
+                        delete tt 
+
+                        from Splits t
+
+    	                    inner join Transactions tt on t.tranferid = tt.id 
+
+    	                    inner join Categories c on t.categoryid = c.id     	
+
+                        where t.id = Sid and c.categoriesTypesid != 3;    
+
+   
+
+   
+
+   	                    UPDATE Splits t
+
+		                    LEFT JOIN Transactions tt ON t.tranferid  = tt.id 
+
+		                    INNER JOIN Categories c ON t.categoryid = c.id
+
+	                    SET 
+
+		                    t.tranferid = NULL
+
+	                    WHERE t.id = Sid AND t.tranferid IS NOT NULL AND tt.id IS NULL AND c.categoriesTypesid != 3;
+
+	    
+
+                        -- Actualiza cuando existe transacción y se ha seleccionado cuenta de transferencia
+
+    
+
+                        UPDATE Transactions tt
+
+	                    INNER JOIN Splits s ON s.tranferid = tt.id
+
+	                    inner join Transactions t on t.id = s.transactionid 
+
+		                    inner join Accounts ac on t.accountid = ac.id 
+
+	                    INNER JOIN Categories c ON s.categoryid = c.id
+
+		                    inner join Accounts ca on ca.categoryid = c.id 
+
+	                    SET 
+
+		                    tt.date = t.date,
+
+		                    tt.accountid = ca.id, 
+
+		                    tt.personid = t.personid,
+
+		                    tt.categoryid = ac.categoryid,
+
+		                    tt.amountIn = s.amountOut,
+
+		                    tt.amountOut = s.amountIn,
+
+		                    tt.memo = s.memo,
+
+		                    tt.tagid = s.tagid,
+
+		                    tt.transactionStatusid = t.transactionStatusid 
+
+	                    WHERE s.id = Sid AND c.categoriesTypesid = 3;
+
+
+
+	                    -- Crea cuando no existe transacción y se ha seleccionado cuenta de transferencia
+
+    
+
+                        insert into Transactions (date,accountid,personid,categoryid,amountIn,amountOut,memo,tagid,transactionStatusid, tranferSplitid)
+
+	                    SELECT t.date,ca.id, t.personid,ac.categoryid, s.amountOut,s.amountIn,s.memo,s.tagid, t.transactionStatusid, s.id  
+
+	                    from Transactions t
+
+			                    inner join Splits s on s.transactionid = t.id 
+
+			                    inner join Accounts ac on t.accountid = ac.id 
+
+		                    INNER JOIN Categories c ON s.categoryid = c.id
+
+			                    inner join Accounts ca on ca.categoryid = c.id 
+
+	                    WHERE s.id = Sid AND c.categoriesTypesid = 3 and s.tranferid is null;	
+
+
+
+	                    update Splits  s 
+
+		                    inner join Transactions t on t.tranferSplitid = s.id 
+
+	                    set
+
+		                    s.tranferid = t.id 
+
+	                    where s.id = Sid and s.tranferid is null;
+
+
+
+                        -- Borra las transacciones cundo han sido borradas las transacciones en el otro lado
+
+                        delete
+
+                        from Transactions 
+
+                        where tranferSplitid = Sid and not exists(select * from Splits s where s.id = Sid);
+
+        
+
+                        COMMIT;
+
                         END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1213,27 +1571,48 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`arcadb`@`%` PROCEDURE `UpdateTransactionWithSplit`(IN Tid INT)
-BEGIN
-   
-                            START TRANSACTION;
-   
-                            UPDATE Transactions t
-                            LEFT JOIN (
-                                SELECT transactionid, 
-                                       ROUND(SUM(amountIn),2) AS total_amountIn,
-                                       ROUND(SUM(amountOut),2) AS total_amountOut
-                                FROM Splits
-                                GROUP BY transactionid
-                            ) s ON t.id = s.transactionid
-                            SET t.amountIn = IFNULL(s.total_amountIn, 0),
-                                t.amountOut = IFNULL(s.total_amountOut, 0),
-                                t.categoryid = CASE
-                                                    WHEN s.transactionid IS NULL THEN 0	                        
-                                                    ELSE -1
-                                                END
-                            WHERE t.id = Tid;
-      
-                            COMMIT;
+BEGIN
+
+   
+
+                            START TRANSACTION;
+
+   
+
+                            UPDATE Transactions t
+
+                            LEFT JOIN (
+
+                                SELECT transactionid, 
+
+                                       ROUND(SUM(amountIn),2) AS total_amountIn,
+
+                                       ROUND(SUM(amountOut),2) AS total_amountOut
+
+                                FROM Splits
+
+                                GROUP BY transactionid
+
+                            ) s ON t.id = s.transactionid
+
+                            SET t.amountIn = IFNULL(s.total_amountIn, 0),
+
+                                t.amountOut = IFNULL(s.total_amountOut, 0),
+
+                                t.categoryid = CASE
+
+                                                    WHEN s.transactionid IS NULL THEN 0	                        
+
+                                                    ELSE -1
+
+                                                END
+
+                            WHERE t.id = Tid;
+
+      
+
+                            COMMIT;
+
                         END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
