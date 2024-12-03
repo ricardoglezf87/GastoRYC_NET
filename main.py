@@ -1,5 +1,8 @@
+import sqlite3
+import uuid
+from datetime import datetime
 from PyQt6.QtWidgets import (
-    QApplication, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
+    QApplication, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QPushButton, QHBoxLayout
 )
 from PyQt6.QtCore import Qt
 import sys
@@ -11,11 +14,11 @@ class EditableGridApp(QWidget):
 
         # Configuración de la ventana
         self.setWindowTitle("Transacciones - Estilo GNU Cash")
-        self.setGeometry(100, 100, 900, 400)
+        self.setGeometry(100, 100, 900, 500)
 
         # Crear el widget de tabla
         self.table = QTableWidget(self)
-        self.table.setRowCount(10)  # Cantidad inicial de filas
+        self.table.setRowCount(0)  # Comenzamos sin filas
         self.table.setColumnCount(7)  # Cantidad de columnas
 
         # Definir encabezados de columnas
@@ -31,40 +34,106 @@ class EditableGridApp(QWidget):
         self.table.setColumnWidth(5, 100)  # Crédito
         self.table.setColumnWidth(6, 100)  # Saldo
 
-        # Insertar datos ficticios
-        self.load_sample_data()
+        # Botones
+        self.new_line_button = QPushButton("Nueva Línea")
+        self.new_line_button.clicked.connect(self.add_new_line)
 
-        # Asociar evento de teclado
-        self.table.keyPressEvent = self.key_press_event
+        # Layouts
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(self.new_line_button)
 
-        # Configurar layout
-        layout = QVBoxLayout(self)
-        layout.addWidget(self.table)
-        self.setLayout(layout)
+        main_layout = QVBoxLayout(self)
+        main_layout.addLayout(button_layout)
+        main_layout.addWidget(self.table)
 
-    def load_sample_data(self):
-        """Cargar datos ficticios en la tabla."""
-        sample_data = [
-            ["01/12/2024", "Banco", "Depósito inicial", "", "1000.00", "", "1000.00"],
-            ["02/12/2024", "Caja", "Compra de materiales", "Proveedores", "", "200.00", "800.00"],
-            ["03/12/2024", "Banco", "Pago de factura", "Servicios", "", "150.00", "650.00"],
-            ["04/12/2024", "Banco", "Ingreso por venta", "", "500.00", "", "1150.00"],
-        ]
+        self.setLayout(main_layout)
 
-        for row_index, row_data in enumerate(sample_data):
+        # Conexión a la base de datos
+        self.db_connection = self.init_db()
+
+        # Cargar datos al iniciar
+        self.load_from_db()
+
+        # Evento de cambio en la tabla
+        self.table.itemChanged.connect(self.save_to_db)
+
+    def init_db(self):
+        """Inicializa la base de datos SQLite y las tablas necesarias."""
+        connection = sqlite3.connect("transacciones.db")
+        cursor = connection.cursor()
+
+        # Crear tabla de transacciones si no existe
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS transacciones (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fecha TEXT NOT NULL,
+                cuenta TEXT NOT NULL,
+                descripcion TEXT,
+                transferir TEXT,
+                debito REAL DEFAULT 0,
+                credito REAL DEFAULT 0,
+                saldo REAL DEFAULT 0
+            )
+        """)
+
+        # Crear tabla de migraciones si no existe
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS migraciones (
+                guid TEXT PRIMARY KEY,
+                fecha TEXT NOT NULL,
+                version TEXT NOT NULL
+            )
+        """)
+
+        # Registrar la primera migración si es la primera vez
+        cursor.execute("SELECT COUNT(*) FROM migraciones")
+        if cursor.fetchone()[0] == 0:
+            cursor.execute("""
+                INSERT INTO migraciones (guid, fecha, version)
+                VALUES (?, ?, ?)
+            """, (str(uuid.uuid4()), datetime.now().isoformat(), "1.0.0"))
+            connection.commit()
+
+        return connection
+
+    def load_from_db(self):
+        """Carga los datos de la base de datos en la tabla."""
+        cursor = self.db_connection.cursor()
+        cursor.execute("SELECT fecha, cuenta, descripcion, transferir, debito, credito, saldo FROM transacciones")
+        rows = cursor.fetchall()
+
+        self.table.setRowCount(len(rows))
+        for row_index, row_data in enumerate(rows):
             for col_index, value in enumerate(row_data):
-                self.table.setItem(row_index, col_index, QTableWidgetItem(value))
+                self.table.setItem(row_index, col_index, QTableWidgetItem(str(value)))
 
-    def key_press_event(self, event):
-        """Manejador de eventos de teclado personalizado."""
-        if event.key() == Qt.Key.Key_Return:  # Enter
-            # Obtener la celda seleccionada
-            current_item = self.table.currentItem()
-            if current_item:
-                self.table.editItem(current_item)  # Activar edición
-        else:
-            # Si no es Enter, manejar el evento como de costumbre
-            super(QTableWidget, self.table).keyPressEvent(event)
+    def save_to_db(self):
+        """Guarda los datos de la tabla en la base de datos."""
+        cursor = self.db_connection.cursor()
+
+        # Limpiar la tabla en la base de datos
+        cursor.execute("DELETE FROM transacciones")
+
+        # Insertar los datos actuales
+        for row_index in range(self.table.rowCount()):
+            row_data = []
+            for col_index in range(self.table.columnCount()):
+                item = self.table.item(row_index, col_index)
+                row_data.append(item.text() if item else "")
+
+            cursor.execute("""
+                INSERT INTO transacciones (fecha, cuenta, descripcion, transferir, debito, credito, saldo)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, row_data)
+
+        self.db_connection.commit()
+
+    def add_new_line(self):
+        """Agrega una nueva línea vacía a la tabla."""
+        current_row_count = self.table.rowCount()
+        self.table.insertRow(current_row_count)
+        for col_index in range(self.table.columnCount()):
+            self.table.setItem(current_row_count, col_index, QTableWidgetItem(""))
 
 
 if __name__ == "__main__":
