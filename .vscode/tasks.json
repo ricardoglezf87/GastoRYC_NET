@@ -12,6 +12,12 @@
             }
         },
         {
+            "label": "Crear superusuario",
+            "type": "shell",
+            "command": "python manage.py createsuperuser",
+            "problemMatcher": []
+        },
+        {
             "label": "Aplicar Migraciones",
             "type": "shell",
             "command": "python manage.py migrate",
