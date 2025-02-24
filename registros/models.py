@@ -1,5 +1,6 @@
 from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
+from django.utils import timezone
 
 # ACCOUNT
 class Account(MPTTModel):
@@ -14,7 +15,7 @@ class Account(MPTTModel):
 
 # ENTRY
 class Entry(models.Model):
-    date = models.DateField()
+    date = models.DateField(default=timezone.now)
     description = models.CharField(max_length=255)
 
     def __str__(self):
@@ -24,8 +25,8 @@ class Entry(models.Model):
 class Transaction(models.Model):
     entry = models.ForeignKey(Entry, on_delete=models.CASCADE, related_name='transactions')
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    debit = models.DecimalField(max_digits=10, decimal_places=2)
-    credit = models.DecimalField(max_digits=10, decimal_places=2)
+    debit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return f"{self.account.name} - Debit: {self.debit}, Credit: {self.credit}"
