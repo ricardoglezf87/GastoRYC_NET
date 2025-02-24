@@ -13,15 +13,15 @@ class Account(MPTTModel):
     def __str__(self):
         return self.name
 
+    def get_balance(self):
+        debit_sum = self.transaction_set.aggregate(models.Sum('debit'))['debit__sum'] or 0
+        credit_sum = self.transaction_set.aggregate(models.Sum('credit'))['credit__sum'] or 0
+        return debit_sum - credit_sum
+
 # ENTRY
 class Entry(models.Model):
     date = models.DateField(default=timezone.now)
     description = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f"{self.date} - {self.description}"
-
-# TRANSACTION
 class Transaction(models.Model):
     entry = models.ForeignKey(Entry, on_delete=models.CASCADE, related_name='transactions')
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
