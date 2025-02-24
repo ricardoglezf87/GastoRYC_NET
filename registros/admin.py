@@ -6,6 +6,7 @@ class TransactionInline(admin.TabularInline):
     model = Transaction
     extra = 1
     autocomplete_fields = ['account']  # Enable autocomplete for account field
+    ordering = ('-entry__date', '-id')  # Order by entry date and transaction ID in descending order
 
 class ReadOnlyTransactionInline(admin.TabularInline):
     model = Transaction
@@ -13,6 +14,7 @@ class ReadOnlyTransactionInline(admin.TabularInline):
     readonly_fields = ('entry', 'debit', 'credit', 'get_balance')
     can_delete = False
     autocomplete_fields = ['account']  # Enable autocomplete for account field
+    ordering = ('-entry__date', '-id')  # Order by entry date and transaction ID in descending order
 
     def get_balance(self, obj):
         return obj.account.get_balance()
