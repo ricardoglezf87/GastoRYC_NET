@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Ejecutar Servidor Django",
+            "type": "shell",
+            "command": "python manage.py runserver",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Aplicar Migraciones",
+            "type": "shell",
+            "command": "python manage.py migrate",
+            "problemMatcher": []
+        },
+        {
+            "label": "Crear Migraciones",
+            "type": "shell",
+            "command": "python manage.py makemigrations",
+            "problemMatcher": []
+        }
+    ]
+}

@@ -7,7 +7,7 @@ class CuentaAdmin(admin.ModelAdmin):
     search_fields = ('nombre',)
 
 class CategoriaAdmin(MPTTModelAdmin):
-    list_display = ('nombre')
+    list_display = ('nombre', 'parent')
     mptt_level_indent = 20
 
 admin.site.register(Cuenta, CuentaAdmin)
