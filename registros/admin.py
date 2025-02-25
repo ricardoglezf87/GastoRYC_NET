@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 from .models import Account, Entry, Transaction, Attachment
-from mptt.admin import MPTTModelAdmin
+from django.urls import reverse
+from django.utils.html import format_html
 
 class AttachmentInline(GenericTabularInline):
     model = Attachment
@@ -18,6 +19,7 @@ class ReadOnlyTransactionInline(admin.TabularInline):
     extra = 0
     readonly_fields = ('entry', 'debit', 'credit', 'get_balance')
     can_delete = False
+    can_add = False  # Deshabilitar la capacidad de añadir nuevas transacciones
     ordering = ('-entry__date', '-id')  # Order by entry date and transaction ID in ascending order
 
     def get_balance(self, obj):
@@ -30,12 +32,16 @@ class ReadOnlyTransactionInline(admin.TabularInline):
         return balance
     get_balance.short_description = 'Balance'
 
-class AccountAdmin(MPTTModelAdmin):
-    list_display = ('name', 'get_balance')
-    mptt_level_indent = 20
-    search_fields = ('name',)  # Enable search by account name
-    inlines = [ReadOnlyTransactionInline, AttachmentInline]  # Incluir AttachmentInline
-    fields = ('name', 'parent')  # Eliminar el campo de archivo adjunto del formulario de edición
+class AccountAdmin(admin.ModelAdmin):
+    list_display = ('name', 'get_balance', 'view_entries_link')
+    search_fields = ('name',)
+    inlines = [ReadOnlyTransactionInline, AttachmentInline]
+    fields = ('name', 'parent')
+
+    def view_entries_link(self, obj):
+        url = reverse('entry_detail', args=[obj.id])  # Asegúrate de que el nombre de la URL sea correcto
+        return format_html('<a href="{}">Ver Entradas</a>', url)
+    view_entries_link.short_description = 'Entradas'
 
     class Media:
         css = {

@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-from mptt.models import MPTTModel, TreeForeignKey
 from django.utils import timezone
 
 class Attachment(models.Model):
@@ -14,14 +13,11 @@ class Attachment(models.Model):
         return f"Attachment {self.id}"
 
 # ACCOUNT
-class Account(MPTTModel):
+class Account(models.Model):
     name = models.CharField(max_length=100)
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='account_parent')
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
     attachments = GenericRelation(Attachment)  # Relación genérica con Attachment
-
-    class MPTTMeta:
-        order_insertion_by = ['name']
-
+    
     def __str__(self):
         return self.name
 
@@ -30,8 +26,8 @@ class Account(MPTTModel):
         credit_sum = self.transaction_set.aggregate(models.Sum('credit'))['credit__sum'] or 0
         balance = debit_sum - credit_sum
 
-        # Include balance of child accounts
-        for child in self.get_children():
+        # Sumar el balance de los hijos recursivamente
+        for child in self.children.all():
             balance += child.get_balance()
 
         return balance
