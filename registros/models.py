@@ -1,11 +1,23 @@
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from mptt.models import MPTTModel, TreeForeignKey
 from django.utils import timezone
+
+class Attachment(models.Model):
+    file = models.FileField(upload_to='attachments/')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    def __str__(self):
+        return f"Attachment {self.id}"
 
 # ACCOUNT
 class Account(MPTTModel):
     name = models.CharField(max_length=100)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='account_parent')
+    attachments = GenericRelation(Attachment)  # Relación genérica con Attachment
 
     class MPTTMeta:
         order_insertion_by = ['name']
@@ -28,6 +40,7 @@ class Account(MPTTModel):
 class Entry(models.Model):
     date = models.DateField(default=timezone.now)
     description = models.CharField(max_length=255)
+    attachments = GenericRelation(Attachment)  # Relación genérica con Attachment
 
     def __str__(self):
         return f"{self.date} - {self.description}"

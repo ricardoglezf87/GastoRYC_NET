@@ -1,6 +1,11 @@
 from django.contrib import admin
-from .models import Account, Entry, Transaction
+from django.contrib.contenttypes.admin import GenericTabularInline
+from .models import Account, Entry, Transaction, Attachment
 from mptt.admin import MPTTModelAdmin
+
+class AttachmentInline(GenericTabularInline):
+    model = Attachment
+    extra = 1
 
 class TransactionInline(admin.TabularInline):
     model = Transaction
@@ -29,7 +34,8 @@ class AccountAdmin(MPTTModelAdmin):
     list_display = ('name', 'get_balance')
     mptt_level_indent = 20
     search_fields = ('name',)  # Enable search by account name
-    inlines = [ReadOnlyTransactionInline]
+    inlines = [ReadOnlyTransactionInline, AttachmentInline]  # Incluir AttachmentInline
+    fields = ('name', 'parent')  # Eliminar el campo de archivo adjunto del formulario de edición
 
     class Media:
         css = {
@@ -37,9 +43,10 @@ class AccountAdmin(MPTTModelAdmin):
         }
 
 class EntryAdmin(admin.ModelAdmin):
-    list_display = ('date', 'description')
+    list_display = ('date', 'description')  # Mostrar el campo de archivo adjunto
     search_fields = ('description',)
-    inlines = [TransactionInline]
+    inlines = [TransactionInline, AttachmentInline]  # Incluir AttachmentInline
+    fields = ('date', 'description')  # Eliminar el campo de archivo adjunto del formulario de edición
 
     class Media:
         css = {
