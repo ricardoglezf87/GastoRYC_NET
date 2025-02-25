@@ -14,10 +14,16 @@ class ReadOnlyTransactionInline(admin.TabularInline):
     readonly_fields = ('entry', 'debit', 'credit', 'get_balance')
     can_delete = False
     autocomplete_fields = ['account']  # Enable autocomplete for account field
-    ordering = ('-entry__date', '-id')  # Order by entry date and transaction ID in descending order
+    ordering = ('entry__date', 'id')  # Order by entry date and transaction ID in ascending order
 
     def get_balance(self, obj):
-        return obj.account.get_balance()
+        transactions = obj.account.transaction_set.order_by('-entry__date', '-id')
+        balance = 0
+        for transaction in transactions:
+            balance += transaction.debit - transaction.credit
+            if transaction.id == obj.id:
+                return balance
+        return balance
     get_balance.short_description = 'Balance'
 
 class AccountAdmin(MPTTModelAdmin):
