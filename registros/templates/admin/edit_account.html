@@ -3,7 +3,7 @@
 
 {% block content %}
   <h1>Editar Cuenta: {{ account.name }}</h1>
-  <form method="post">
+  <form method="post" enctype="multipart/form-data" id="accountForm">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="button">Guardar</button>
@@ -32,6 +32,7 @@
   </table>
 
   <h2>Adjuntos</h2>
+ 
   <table>
     <thead>
       <tr>
@@ -42,10 +43,77 @@
     <tbody>
       {% for attachment in account.attachments.all %}
         <tr>
-          <td><a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a></td>
+          <td><a href="{{ attachment.file.url }}" target="_blank">{{ attachment.file.name }}</a></td>
           <td>{{ attachment.description }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+  <div id="dropArea" class="drop-area">
+    Arrastra y suelta archivos aquí o haz clic para seleccionar archivos
+    <input type="file" id="fileInput" multiple style="display: none;">
+  </div>
+  
+  <style>
+    .drop-area {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .drop-area.dragover {
+      border-color: #000;
+      background-color: #f0f0f0;
+    }
+  </style>
+
+  <script>
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+
+    dropArea.addEventListener('click', () => fileInput.click());
+
+    dropArea.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropArea.classList.add('dragover');
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.classList.remove('dragover');
+    });
+
+    dropArea.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropArea.classList.remove('dragover');
+      const files = event.dataTransfer.files;
+      handleFiles(files);
+    });
+
+    fileInput.addEventListener('change', (event) => {
+      const files = event.target.files;
+      handleFiles(files);
+    });
+
+    function handleFiles(files) {
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append('files', file);
+      }
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+      fetch("{% url 'upload_attachments' account.id %}", {
+        method: 'POST',
+        body: formData
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          } else {
+            alert('Error al subir archivos');
+          }
+        });
+    }
+  </script>
 {% endblock %}

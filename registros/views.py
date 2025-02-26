@@ -1,6 +1,9 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Entry, Account
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Entry, Account, Attachment
 from .forms import AccountForm
+from django.contrib.contenttypes.models import ContentType
 
 def entry_detail_view(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
@@ -20,3 +23,16 @@ def edit_account(request, account_id):
     else:
         form = AccountForm(instance=account)
     return render(request, 'admin/edit_account.html', {'form': form, 'account': account})
+
+@csrf_exempt
+def upload_attachments(request, account_id):
+    if request.method == 'POST':
+        account = get_object_or_404(Account, id=account_id)
+        for file in request.FILES.getlist('files'):
+            Attachment.objects.create(
+                file=file,
+                content_type=ContentType.objects.get_for_model(Account),
+                object_id=account.id
+            )
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
