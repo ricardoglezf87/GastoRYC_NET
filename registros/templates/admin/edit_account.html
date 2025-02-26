@@ -1,0 +1,51 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+  <h1>Editar Cuenta: {{ account.name }}</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button">Guardar</button>
+  </form>
+
+  <h2>Transacciones</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Débito</th>
+        <th>Crédito</th>
+        <th>Balance</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for transaction in account.transaction_set.all %}
+        <tr>
+          <td>{{ transaction.entry.date }}</td>
+          <td>{{ transaction.debit }}</td>
+          <td>{{ transaction.credit }}</td>
+          <td>{{ transaction.get_balance }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Adjuntos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Archivo</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for attachment in account.attachment_set.all %}
+        <tr>
+          <td>{{ attachment.file }}</td>
+          <td>{{ attachment.description }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

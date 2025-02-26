@@ -33,7 +33,7 @@ class ReadOnlyTransactionInline(admin.TabularInline):
     get_balance.short_description = 'Balance'
 
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ('name', 'get_balance', 'view_entries_link')
+    list_display = ('name', 'get_balance', 'view_entries_link', 'edit_link')
     search_fields = ('name',)
     inlines = [ReadOnlyTransactionInline, AttachmentInline]
     fields = ('name', 'parent')
@@ -42,6 +42,11 @@ class AccountAdmin(admin.ModelAdmin):
         url = reverse('entry_detail', args=[obj.id])  # Asegúrate de que el nombre de la URL sea correcto
         return format_html('<a href="{}">Ver Entradas</a>', url)
     view_entries_link.short_description = 'Entradas'
+
+    def edit_link(self, obj):
+        url = reverse('edit_account', args=[obj.id])
+        return format_html('<a href="{}">Editar</a>', url)
+    edit_link.short_description = 'Editar'
 
     class Media:
         css = {
