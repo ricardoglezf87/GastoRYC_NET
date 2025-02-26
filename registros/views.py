@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Entry, Account, Attachment
@@ -19,10 +19,20 @@ def edit_account(request, account_id):
         form = AccountForm(request.POST, instance=account)
         if form.is_valid():
             form.save()
-            # Redirigir a la página de detalle de la cuenta o a otra página
+            return redirect('account_tree')
     else:
         form = AccountForm(instance=account)
     return render(request, 'admin/edit_account.html', {'form': form, 'account': account})
+
+def add_account(request):
+    if request.method == 'POST':
+        form = AccountForm(request.POST)
+        if form.is_valid():
+            account = form.save()
+            return redirect('edit_account', account_id=account.id)
+    else:
+        form = AccountForm()
+    return render(request, 'admin/add_account.html', {'form': form})
 
 @csrf_exempt
 def upload_attachments(request, account_id):
