@@ -10,7 +10,10 @@ def generate_account_tree(accounts):
         for account in accounts:
             html += f'<div class="list-group-item">'
             html += f'<div class="row">'
-            html += f'<div class="col-md-6"><span class="caret" onclick="toggleNested(this)">{account.name}</span></div>'
+            html += f'<div class="col-md-6">'
+            if account.children.exists():
+                html += f'<span class="caret" onclick="toggleNested(this)"></span> '
+            html += f'<a href="/admin/registros/account/{ account.id }">{account.name}</a></div>'
             html += f'<div class="col-md-6">{account.get_balance()}</div>'
             html += f'</div>'
             if account.children.exists():
