@@ -40,9 +40,9 @@
       </tr>
     </thead>
     <tbody>
-      {% for attachment in account.attachment_set.all %}
+      {% for attachment in account.attachments.all %}
         <tr>
-          <td>{{ attachment.file }}</td>
+          <td><a href="{{ attachment.file.url }}">{{ attachment.file.name }}</a></td>
           <td>{{ attachment.description }}</td>
         </tr>
       {% endfor %}
