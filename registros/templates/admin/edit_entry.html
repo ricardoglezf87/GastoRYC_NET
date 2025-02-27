@@ -1,0 +1,164 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+  <h1>Editar Entrada: {{ entry.description }}</h1>
+  <form method="post" enctype="multipart/form-data" id="entryForm">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="entry_id" value="{{ entry.id }}">
+    <button type="submit" class="button">Guardar</button>
+  </form>
+
+  <h2>Transacciones</h2>
+  <table id="transactionTable" class="display">
+    <thead>
+      <tr>
+        <th>Cuenta</th>
+        <th>Débito</th>
+        <th>Crédito</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for form in formset %}
+        <tr data-transaction-id="{{ form.instance.id }}">
+          <td>{{ form.account }}</td>
+          <td>{{ form.debit }}</td>
+          <td>{{ form.credit }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Adjuntos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Archivo</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for attachment in entry.attachments.all %}
+        <tr>
+          <td><a href="{{ attachment.file.url }}" target="_blank">{{ attachment.file.name }}</a></td>
+          <td>{{ attachment.description }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div id="dropArea" class="drop-area">
+    Arrastra y suelta archivos aquí o haz clic para seleccionar archivos
+    <input type="file" id="fileInput" multiple style="display: none;">
+  </div>
+  
+  <style>
+    .drop-area {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .drop-area.dragover {
+      border-color: #000;
+      background-color: #f0f0f0;
+    }
+  </style>
+
+  <!-- Cargar jQuery primero -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.editor.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      const table = $('#transactionTable').DataTable({
+        paging: false,
+        searching: false,
+        info: false
+      });
+
+      $('#transactionTable').on('change', 'input, select', function() {
+        const row = $(this).closest('tr');
+        let transactionId = row.data('transaction-id'); // Obtener el ID de la transacción
+        if (!transactionId || transactionId === '' || transactionId === 'None') {
+          transactionId = null; // Asegurarse de que transactionId no sea None o una cadena vacía
+        }
+        const formData = new FormData();
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        formData.append('entry_id', '{{ entry.id }}'); // Añadir entry_id al formData
+        formData.append('account', row.find('select[name$="account"]').val());
+        formData.append('debit', row.find('input[name$="debit"]').val());
+        formData.append('credit', row.find('input[name$="credit"]').val());
+
+        const url = transactionId ? "{% url 'update_transaction' 0 %}".replace('0', transactionId) : "{% url 'add_transaction' %}";
+        fetch(url, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          }
+        }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              if (!transactionId) {
+                row.attr('data-transaction-id', data.transaction_id); // Asignar el nuevo ID de la transacción
+              }
+              location.reload();
+            } else {
+              alert('Error al guardar transacción');
+            }
+          });
+      });
+    });
+
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+
+    dropArea.addEventListener('click', () => fileInput.click());
+
+    dropArea.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      dropArea.classList.add('dragover');
+    });
+
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.classList.remove('dragover');
+    });
+
+    dropArea.addEventListener('drop', (event) => {
+      event.preventDefault();
+      dropArea.classList.remove('dragover');
+      const files = event.dataTransfer.files;
+      handleFiles(files);
+    });
+
+    fileInput.addEventListener('change', (event) => {
+      const files = event.target.files;
+      handleFiles(files);
+    });
+
+    function handleFiles(files) {
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append('files', file);
+      }
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+      fetch("{% url 'upload_entry_attachments' entry.id %}", {
+        method: 'POST',
+        body: formData
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          } else {
+            alert('Error al subir archivos');
+          }
+        });
+    }
+  </script>
+{% endblock %}
