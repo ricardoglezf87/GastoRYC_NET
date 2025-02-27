@@ -43,13 +43,23 @@
           <tr>
             <th>Archivo</th>
             <th>Descripción</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {% for attachment in account.attachments.all %}
-            <tr>
-              <td><a href="{{ attachment.file.url }}" target="_blank">{{ attachment.file.name }}</a></td>
-              <td>{{ attachment.description }}</td>
+            <tr data-attachment-id="{{ attachment.id }}">
+              <td>
+                <button type="button" class="btn btn-link" onclick="window.open('{{ attachment.file.url }}', '_blank')">
+                  <i class="fas fa-paperclip"></i>
+                </button>
+              </td>
+              <td contenteditable="true" class="editable-description">{{ attachment.description }}</td>
+              <td>
+                <button type="button" class="btn btn-danger btn-sm delete-attachment">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </td>
             </tr>
           {% endfor %}
         </tbody>
@@ -78,6 +88,7 @@
 
   <!-- Cargar jQuery primero -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <!-- Bootstrap JS (optional, but needed for some features) -->
@@ -129,5 +140,49 @@
           }
         });
     }
+
+    // Funcionalidad para editar la descripción
+    document.querySelectorAll('.editable-description').forEach(cell => {
+      cell.addEventListener('blur', function() {
+        const attachmentId = this.closest('tr').dataset.attachmentId;
+        const description = this.textContent.trim();
+        fetch(`/registros/update_attachment_description/${attachmentId}/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({ description })
+        }).then(response => response.json())
+          .then(data => {
+            if (!data.success) {
+              alert('Error al actualizar la descripción');
+            }
+          });
+      });
+    });
+
+    // Funcionalidad para borrar adjuntos
+    document.querySelectorAll('.delete-attachment').forEach(button => {
+      button.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const attachmentId = row.dataset.attachmentId;
+        if (confirm('¿Estás seguro de que deseas eliminar este adjunto?')) {
+          fetch(`/registros/delete_attachment/${attachmentId}/`, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}'
+            }
+          }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                row.remove();
+              } else {
+                alert('Error al eliminar adjunto');
+              }
+            });
+        }
+      });
+    });
   </script>
 {% endblock %}

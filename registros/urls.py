@@ -14,4 +14,6 @@ urlpatterns = [
     path('update_transaction/<int:transaction_id>/', update_transaction, name='update_transaction'),
     path('add_transaction/', add_transaction, name='add_transaction'),    
     path('delete_transaction/<int:transaction_id>/', views.delete_transaction, name='delete_transaction'),
+    path('update_attachment_description/<int:attachment_id>/', views.update_attachment_description, name='update_attachment_description'),
+    path('delete_attachment/<int:attachment_id>/', views.delete_attachment, name='delete_attachment'),
 ]
