@@ -17,6 +17,7 @@
         <th>Cuenta</th>
         <th>Débito</th>
         <th>Crédito</th>
+        <th>Acciones</th> <!-- Nueva columna para el botón -->
       </tr>
     </thead>
     <tbody>
@@ -25,6 +26,13 @@
           <td>{{ form.account }}</td>
           <td>{{ form.debit }}</td>
           <td>{{ form.credit }}</td>
+          <td>
+            {% if form.instance.id %}
+              <button type="button" class="btn btn-danger delete-transaction">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            {% endif %}
+          </td> <!-- Botón en cada fila -->
         </tr>
       {% endfor %}
     </tbody>
@@ -73,6 +81,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <!-- Bootstrap JS (optional, but needed for some features) -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.editor.min.js"></script>
 
@@ -111,11 +120,15 @@
                 row.attr('data-transaction-id', data.transaction_id);
                 row.data('transaction-id', data.transaction_id);
 
-                 // New transaction: Add a new row to the table with empty fields
+                // Añadir el botón de borrado a la nueva fila
+                row.find('td:last').append('<button type="button" class="btn btn-danger delete-transaction"><i class="fas fa-trash-alt"></i></button>');
+
+                // New transaction: Add a new row to the table with empty fields
                 const newRow = $('<tr data-transaction-id="None"></tr>');
                 newRow.append('<td><select name="account"></select></td>');
                 newRow.append('<td><input type="number" name="debit" value="0"></td>');
                 newRow.append('<td><input type="number" name="credit" value="0"></td>');
+                newRow.append('<td></td>'); // Nueva fila sin botón de borrado
                 $('#transactionTable tbody').append(newRow);
 
                 // Optionally, you can populate the account select field with options
@@ -127,6 +140,29 @@
               alert('Error al guardar transacción');
             }
           });
+      });
+
+      $('#transactionTable').on('click', '.delete-transaction', function() {
+        const row = $(this).closest('tr');
+        const transactionId = row.data('transaction-id');
+        if (transactionId && transactionId !== 'None') {
+          if (confirm('¿Estás seguro de que deseas eliminar esta transacción?')) {
+            fetch("{% url 'delete_transaction' 0 %}".replace('0', transactionId), {
+              method: 'POST',
+              headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+              }
+            }).then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  table.row(row).remove().draw();
+                  location.reload();
+                } else {
+                  alert('Error al eliminar transacción');
+                }
+              });
+          }
+        }
       });
     });
 

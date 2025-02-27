@@ -113,3 +113,10 @@ def add_transaction(request):
         return JsonResponse({'success': True, 'transaction_id': transaction.id})
     else:
         return JsonResponse({'success': False, 'errors': form.errors})
+
+def delete_transaction(request, transaction_id):
+    if request.method == 'POST':
+        transaction = get_object_or_404(Transaction, id=transaction_id)
+        transaction.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
