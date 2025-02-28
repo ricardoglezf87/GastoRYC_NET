@@ -2,11 +2,10 @@
 {% load static %}
 
 {% block content %}
-  <h1>Editar Cuenta: {{ account.name }}</h1>
+  <h1>Editar Cuenta</h1>
   <form method="post" enctype="multipart/form-data" id="accountForm">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="button">Guardar</button>
   </form>
 
   <div class="row">
@@ -183,6 +182,23 @@
             });
         }
       });
+    });
+
+    // Guardado automático del formulario
+    $('#accountForm').on('change', 'input, select', function() {
+      const formData = new FormData($('#accountForm')[0]);
+      fetch("{% url 'edit_account' account.id %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      }).then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            alert('Error al guardar los cambios');
+          }
+        });
     });
   </script>
 {% endblock %}
