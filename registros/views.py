@@ -57,11 +57,15 @@ def edit_entry(request, entry_id):
     if request.method == 'POST':
         form = EntryForm(request.POST, instance=entry)
         formset = TransactionFormSet(request.POST, instance=entry)
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             form.save()
-            formset.save()
             return JsonResponse({'success': True})
         else:
+            errors = {
+                'form_errors': form.errors,
+                'formset_errors': formset.errors,
+                'non_form_errors': formset.non_form_errors()
+            }
             return JsonResponse({'success': False, 'errors': form.errors})
     else:
         form = EntryForm(instance=entry)
