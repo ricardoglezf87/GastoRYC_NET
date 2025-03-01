@@ -18,6 +18,8 @@ def account_tree_view(request):
 
 def edit_account(request, account_id):
     account = get_object_or_404(Account, id=account_id)
+    parents = Account.objects.exclude(pk=account_id) 
+
     if request.method == 'POST':
         form = AccountForm(request.POST, instance=account)
         if form.is_valid():
@@ -25,7 +27,7 @@ def edit_account(request, account_id):
             return redirect('account_tree')
     else:
         form = AccountForm(instance=account)
-    return render(request, 'admin/edit_account.html', {'form': form, 'account': account})
+    return render(request, 'admin/edit_account.html', {'form': form, 'account': account, 'parents': parents})
 
 def add_account(request):
     if request.method == 'POST':

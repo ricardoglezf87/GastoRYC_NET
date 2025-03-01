@@ -5,7 +5,19 @@
   <h1>Editar Cuenta</h1>
   <form method="post" enctype="multipart/form-data" id="accountForm">
     {% csrf_token %}
-    {{ form.as_p }}
+    <div class="form-group col-md-3">
+      <label for="id_name">Nombre</label>
+      <input type="text" class="form-control" id="id_name" name="name" value="{{ account.name }}">
+    </div>
+    <div class="form-group col-md-3">
+      <label for="id_parent">Padre</label>
+      <select class="form-control" id="id_parent" name="parent">
+        <option value="">---------</option>
+        {% for parent in parents %}
+          <option value="{{ parent.id }}" {% if parent.id == account.parent.id %}selected{% endif %}>{{ parent.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
   </form>
 
   <div class="row">
