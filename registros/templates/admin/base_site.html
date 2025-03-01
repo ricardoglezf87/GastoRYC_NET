@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block nav-global %}
+    {{ block.super }}
+    <a href="/registros/add_account/">Nueva cuenta</a>
+    <a href="/registros/add_entry/">Nueva entrada</a>
+{% endblock %}
+
+{% block branding %}
+    <h1 id="site-name"><a href="/registros/account_tree/">GARCA</a></h1>
+{% endblock %}
+
+{% block nav-breadcrumbs %}
+    {% if not is_popup %}
+    <div class="breadcrumbs">
+        <a href="/registros/account_tree/">Home</a>
+    </div>
+    {% endif %}
+{% endblock %}

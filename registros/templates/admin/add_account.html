@@ -1,6 +1,16 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 
+{% block nav-breadcrumbs %}
+    {% if not is_popup %}
+    <div class="breadcrumbs">
+        <a href="/registros/account_tree/">Home</a>
+        &rsaquo;
+        <a href="/registros/add_account/">Nueva cuenta</a>
+    </div>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
   <h1>Agregar Nueva Cuenta</h1>
   <form method="post">

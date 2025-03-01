@@ -4,8 +4,6 @@
 {% block title %}GARCA{% endblock %}
 {% block content %}
 
-<h1>GARCA</h1>
-<a href="{% url 'add_account' %}" class="btn btn-primary">Crear Nueva Cuenta</a>
 <ul id="accountTree" class="list-group">
     {% generate_account_tree accounts %}
 </ul>
