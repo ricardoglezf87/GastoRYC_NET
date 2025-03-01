@@ -1,5 +1,5 @@
 """
-WSGI config for GastosRYC project.
+WSGI config for GARCA project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GastosRYC.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GARCA.settings')
 
 application = get_wsgi_application()

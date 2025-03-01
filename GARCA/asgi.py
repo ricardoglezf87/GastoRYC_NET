@@ -1,5 +1,5 @@
 """
-ASGI config for GastosRYC project.
+ASGI config for GARCA project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GastosRYC.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GARCA.settings')
 
 application = get_asgi_application()
