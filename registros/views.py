@@ -58,6 +58,11 @@ def upload_attachments(request, account_id):
 
 def edit_entry(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
+        
+    back = request.GET.get('back')
+    if back and back.isdigit():  
+        back = int(back)
+
     TransactionFormSet = inlineformset_factory(Entry, Transaction, form=TransactionForm, extra=1)
     if request.method == 'POST':
         form = EntryForm(request.POST, instance=entry)
@@ -75,7 +80,7 @@ def edit_entry(request, entry_id):
     else:
         form = EntryForm(instance=entry)
         formset = TransactionFormSet(instance=entry)
-    return render(request, 'admin/edit_entry.html', {'form': form, 'formset': formset, 'entry': entry})
+    return render(request, 'admin/edit_entry.html', {'back': back,'form': form, 'formset': formset, 'entry': entry})
 
 def add_entry(request):
     if request.method == 'POST':

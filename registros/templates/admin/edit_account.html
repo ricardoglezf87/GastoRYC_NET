@@ -1,6 +1,16 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 
+{% block nav-breadcrumbs %}
+    {% if not is_popup %}
+    <div class="breadcrumbs">
+        <a href="/registros/account_tree/">Home</a>
+        &rsaquo;
+        <a href="/registros/edit_account/{{ account.id }}">Editar cuenta {{ account.id }}</a>
+    </div>
+    {% endif %}
+{% endblock %}
+
 {% block content %}
 <h1>Editar Cuenta</h1>
 <form method="post" enctype="multipart/form-data" id="accountForm">
@@ -36,7 +46,7 @@
       <tbody>
         {% for transaction in transactions %}
         <tr>
-          <td><a href="/registros/edit_entry/{{ transaction.entry.id }}">{{ transaction.entry.date }}</a></td>
+          <td><a href="/registros/edit_entry/{{ transaction.entry.id }}?back={{ account.id }}">{{ transaction.entry.date }}</a></td>
           <td>{{ transaction.entry.description }}</td>
           <td>{{ transaction.debit }}</td>
           <td>{{ transaction.credit }}</td>
