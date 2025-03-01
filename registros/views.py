@@ -8,9 +8,6 @@ from django.forms import inlineformset_factory
 from django.views.decorators.http import require_POST
 import json
 
-def entry_detail_view(request, entry_id):
-    entry = get_object_or_404(Entry, id=entry_id)
-    return render(request, 'admin/entry_detail.html', {'entry': entry})
 
 def account_tree_view(request):
     accounts = Account.objects.filter(parent=None).prefetch_related('children')

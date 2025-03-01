@@ -1,10 +1,9 @@
 from django.urls import path
-from .views import account_tree_view, entry_detail_view, edit_account, upload_attachments, add_account, edit_entry, add_entry, upload_entry_attachments, update_transaction, add_transaction
+from .views import account_tree_view, edit_account, upload_attachments, add_account, edit_entry, add_entry, upload_entry_attachments, update_transaction, add_transaction
 from . import views
 
 urlpatterns = [
     path('account_tree/', account_tree_view, name='account_tree'),
-    path('entry/<int:entry_id>/', entry_detail_view, name='entry_detail'),
     path('edit_account/<int:account_id>/', edit_account, name='edit_account'),
     path('upload_attachments/<int:account_id>/', upload_attachments, name='upload_attachments'),
     path('add_account/', add_account, name='add_account'),
