@@ -41,6 +41,7 @@
           <th>Débito</th>
           <th>Crédito</th>
           <th>Balance</th>
+          <th>Adjunto</th>
         </tr>
       </thead>
       <tbody>
@@ -51,6 +52,9 @@
           <td>{{ transaction.debit }}</td>
           <td>{{ transaction.credit }}</td>
           <td>{{ transaction.balance }}</td>
+          <td>
+            <input type="file" name="transaction_attachments_{{ transaction.entry.id }}" multiple>  <!-- File input -->
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -222,6 +226,38 @@
           alert('Error al guardar los cambios');
         }
       });
+  });
+
+  function handleTransactionFiles(files, entryId) {
+    const formData = new FormData();
+    // Change: Append files with the name "files" as expected by the view
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    // Change: Use the existing upload_entry_attachments URL
+    fetch(`/registros/upload_entry_attachments/${entryId}/`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert('Error al subir archivos: ' + data.error); // Keep the error message
+      }
+    });
+  }
+
+  // Attach event listeners to each file input
+  const transactionFileInputs = document.querySelectorAll('input[name^="transaction_attachments_"]');
+  transactionFileInputs.forEach(input => {
+    input.addEventListener('change', function() {
+      const entryId = this.name.split('_')[2];
+      handleTransactionFiles(this.files, entryId);
+    });
   });
 </script>
 {% endblock %}
