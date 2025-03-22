@@ -41,6 +41,7 @@
           <th>Débito</th>
           <th>Crédito</th>
           <th>Balance</th>
+          <th>Adjuntos</th> <!-- New column header -->
         </tr>
       </thead>
       <tbody>
@@ -51,6 +52,11 @@
           <td>{{ transaction.debit }}</td>
           <td>{{ transaction.credit }}</td>
           <td>{{ transaction.balance }}</td>
+          <td class="attachment-indicator">
+            {% if transaction.entry.attachments.all %}
+              <i class="fas fa-paperclip"></i>
+            {% endif %}
+          </td>
           <input type="file" name="transaction_attachments_{{ transaction.entry.id }}" multiple style="display: none;">  <!-- File input hidden -->
         </tr>
         {% endfor %}
@@ -115,6 +121,13 @@
   .transaction-row.dragover {
     background-color: #e0f0ff; /* Light blue background */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+  }
+  .attachment-indicator {
+    text-align: center;
+    width: 20px; /* Adjust width as needed */
+  }
+  .attachment-indicator i {
+    font-size: 1.2em; /* Adjust icon size as needed */
   }
 </style>
 
