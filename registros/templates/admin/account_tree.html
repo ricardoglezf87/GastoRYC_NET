@@ -1,64 +1,93 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
-{% load account_tags %} 
+{% load account_tags %}
 {% block title %}GARCA{% endblock %}
 {% block content %}
 
-<ul id="accountTree" class="list-group">
-    {% generate_account_tree accounts %}
-</ul>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Listado de Cuentas</h5>
+        <ul id="accountTree" class="list-group">
+            {% generate_account_tree accounts %}
+        </ul>
+    </div>
+</div>
 
 <!-- Add Bootstrap CSS and JS -->
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <style>
-/* Add some basic styling */
-ul, #accountTree {
-    list-style-type: none;
-}
+    /* Add some basic styling */
+    #accountTree {
+        list-style-type: none;
+        padding-left: 0; /* Remove default padding */
+    }
 
-.caret {
-    cursor: pointer;
-    user-select: none; /* Prevent text selection */
-}
+    .caret {
+        cursor: pointer;
+        user-select: none;
+        display: inline-block;
+        width: 1.2em; /* Adjust width for icon */
+        text-align: center;
+    }
 
-.caret::before {
-    content: "\25B6"; /* Right-pointing triangle */
-    color: black;
-    display: inline-block;
-    margin-right: 6px;
-}
+    .caret::before {
+        content: "\f0da"; /* Right-pointing triangle (Font Awesome) */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        color: #6c757d; /* Muted color */
+        display: inline-block;
+        margin-right: 0.3rem;
+        transition: transform 0.2s ease-in-out; /* Smooth transition */
+    }
 
-.list-group-item{
-    border:0!important;
-}
+    .caret-down::before {
+        transform: rotate(90deg); /* Down-pointing triangle */
+    }
 
-.caret-down::before {
-    transform: rotate(90deg); /* Down-pointing triangle */
-}
+    .nested {
+        display: none;
+        padding-left: 1.5rem; /* Indentation for nested items */
+    }
 
-.nested {
-    display: none;
-}
+    .active {
+        display: block;
+    }
 
-.active {
-    display: block;
-}
+    .list-group-item {
+        border: 0 !important;
+        padding: 0.25rem 0.5rem; /* Reduced padding */
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa; /* Light gray on hover */
+    }
+
+    .list-group-item.active {
+        background-color: #e9ecef; /* Slightly darker gray for active */
+    }
+    .card{
+        border: 1px solid #ced4da;
+    }
 </style>
 
 <script>
-// Add jQuery to handle the expand/collapse functionality
-function toggleNested(element) {
-    var nestedList = element.parentElement.parentElement.nextElementSibling;
-    if (nestedList.style.display === "none") {
-        nestedList.style.display = "block";
-    } else {
-        nestedList.style.display = "none";
+    // Add jQuery to handle the expand/collapse functionality
+    function toggleNested(element) {
+        var nestedList = element.parentElement.parentElement.nextElementSibling;
+        var caret = element.querySelector(".caret");
+
+        if (nestedList.style.display === "none") {
+            nestedList.style.display = "block";
+            caret.classList.add("caret-down");
+        } else {
+            nestedList.style.display = "none";
+            caret.classList.remove("caret-down");
+        }
     }
-}
 </script>
 {% endblock %}
-

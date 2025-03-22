@@ -30,6 +30,8 @@ class Account(models.Model):
         # Sumar el balance de los hijos recursivamente
         for child in self.children.all():
             balance += child.get_balance()
+        
+        balance = round(balance, 2)
 
         return balance
 
