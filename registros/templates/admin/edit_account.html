@@ -41,20 +41,17 @@
           <th>Débito</th>
           <th>Crédito</th>
           <th>Balance</th>
-          <th>Adjunto</th>
         </tr>
       </thead>
       <tbody>
         {% for transaction in transactions %}
-        <tr>
+        <tr class="transaction-row" data-entry-id="{{ transaction.entry.id }}">
           <td><a href="/registros/edit_entry/{{ transaction.entry.id }}?back={{ account.id }}">{{ transaction.entry.date }}</a></td>
           <td>{{ transaction.entry.description }}</td>
           <td>{{ transaction.debit }}</td>
           <td>{{ transaction.credit }}</td>
           <td>{{ transaction.balance }}</td>
-          <td>
-            <input type="file" name="transaction_attachments_{{ transaction.entry.id }}" multiple>  <!-- File input -->
-          </td>
+          <input type="file" name="transaction_attachments_{{ transaction.entry.id }}" multiple style="display: none;">  <!-- File input hidden -->
         </tr>
         {% endfor %}
       </tbody>
@@ -109,6 +106,15 @@
   .drop-area.dragover {
     border-color: #000;
     background-color: #f0f0f0;
+  }
+  .transaction-row {
+    cursor: pointer; /* Change cursor to indicate it's a drop zone */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease; /* Add transitions for smooth effect */
+  }
+
+  .transaction-row.dragover {
+    background-color: #e0f0ff; /* Light blue background */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
   }
 </style>
 
@@ -252,11 +258,33 @@
   }
 
   // Attach event listeners to each file input
-  const transactionFileInputs = document.querySelectorAll('input[name^="transaction_attachments_"]');
-  transactionFileInputs.forEach(input => {
-    input.addEventListener('change', function() {
-      const entryId = this.name.split('_')[2];
-      handleTransactionFiles(this.files, entryId);
+  //const transactionFileInputs = document.querySelectorAll('input[name^="transaction_attachments_"]');
+  //transactionFileInputs.forEach(input => {
+  //  input.addEventListener('change', function() {
+  //    const entryId = this.name.split('_')[2];
+  //    handleTransactionFiles(this.files, entryId);
+  //  });
+  //});
+
+  // New: Drag and drop for transaction rows
+  const transactionRows = document.querySelectorAll('.transaction-row');
+  transactionRows.forEach(row => {
+    const entryId = row.dataset.entryId;
+
+    row.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      row.classList.add('dragover');
+    });
+
+    row.addEventListener('dragleave', () => {
+      row.classList.remove('dragover');
+    });
+
+    row.addEventListener('drop', (event) => {
+      event.preventDefault();
+      row.classList.remove('dragover');
+      const files = event.dataTransfer.files;
+      handleTransactionFiles(files, entryId);
     });
   });
 </script>
