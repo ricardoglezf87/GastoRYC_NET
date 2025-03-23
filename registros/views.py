@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Entry, Account, Attachment, Transaction
 from .forms import AccountForm, EntryForm, TransactionForm
@@ -83,14 +84,22 @@ def edit_entry(request, entry_id):
     return render(request, 'admin/edit_entry.html', {'back': back,'form': form, 'formset': formset, 'entry': entry})
 
 def add_entry(request):
+
+    back = request.GET.get('back')
+    if back and back.isdigit():  
+        back = int(back)
+
     if request.method == 'POST':
         form = EntryForm(request.POST)
         if form.is_valid():
             entry = form.save()
-            return redirect('edit_entry', entry_id=entry.id)
+            if back is not None:
+                return redirect(reverse('edit_entry', kwargs={'entry_id': entry.id}) + '?back=' + str(back))
+            else:
+                return redirect('edit_entry', entry_id=entry.id)
     else:
         form = EntryForm()
-    return render(request, 'admin/add_entry.html', {'form': form})
+    return render(request, 'admin/add_entry.html', {'back': back,'form': form})
 
 @csrf_exempt
 def upload_entry_attachments(request, entry_id):
