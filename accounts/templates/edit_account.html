@@ -1,16 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load static %}
 
-{% block nav-breadcrumbs %}
-    {% if not is_popup %}
-    <div class="breadcrumbs">
-        <a href="/accounts/account_tree/">Home</a>
-        &rsaquo;
-        <a href="/accounts/edit_account/{{ account.id }}">Editar cuenta {{ account.id }}</a>
-    </div>
-    {% endif %}
-{% endblock %}
-
 {% block content %}
 <h1>Editar Cuenta</h1>
 <form method="post" enctype="multipart/form-data" id="accountForm">
@@ -34,7 +24,7 @@
   <div class="col-md-8">
     <div class="d-flex justify-content-between align-items-center">
       <h2>Transacciones</h2>
-      <a href="/entries/add_entry?back={{ account.id }}" class="btn btn-sm">
+      <a href="/entries/add_entry" class="btn btn-sm">
         <i class="bi bi-plus-circle"></i> <!-- Plus circle icon -->
       </a>
   </div>
@@ -52,7 +42,7 @@
       <tbody>
         {% for transaction in transactions %}
         <tr class="transaction-row" data-entry-id="{{ transaction.entry.id }}">
-          <td><a href="/entries/edit_entry/{{ transaction.entry.id }}?back={{ account.id }}">{{ transaction.entry.date }}</a></td>
+          <td><a href="/entries/edit_entry/{{ transaction.entry.id }}">{{ transaction.entry.date }}</a></td>
           <td>{{ transaction.entry.description }}</td>
           <td>{{ transaction.debit }}</td>
           <td>{{ transaction.credit }}</td>

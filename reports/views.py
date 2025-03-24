@@ -1,7 +1,12 @@
 from django.shortcuts import render
+from GARCA.utils import add_breadcrumb, clear_breadcrumbs
 from entries.models import Entry
 
 def unbalanced_entries_report(request):
+
+    clear_breadcrumbs(request)
+    add_breadcrumb(request, 'Entradas descuadradas' , request.path)
+
     unbalanced_entries = []
     entries = Entry.objects.all()
 

@@ -36,6 +36,9 @@
     {% if not is_popup %}
     <div class="breadcrumbs">
         <a href="/accounts/account_tree/">Home</a>
+        {% for breadcrumb_text, breadcrumb_url in breadcrumbs %}
+        &rsaquo; <a href="{{ breadcrumb_url }}">{{ breadcrumb_text }}</a>
+        {% endfor %}
     </div>
     {% endif %}
 {% endblock %}

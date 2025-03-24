@@ -1,7 +1,9 @@
+from urllib.parse import urlparse
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import inlineformset_factory
 from django.urls import reverse
+from GARCA.utils import add_breadcrumb, remove_breadcrumb
 from .models import Entry
 from transactions.models import Transaction
 from .forms import EntryForm
@@ -9,10 +11,9 @@ from transactions.forms import TransactionForm
 
 def edit_entry(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
-        
-    back = request.GET.get('back')
-    if back and back.isdigit():  
-        back = int(back)
+
+    # Add breadcrumb
+    add_breadcrumb(request, 'Editar entrada ' + str(entry_id), request.path)
 
     TransactionFormSet = inlineformset_factory(Entry, Transaction, form=TransactionForm, extra=1)
     if request.method == 'POST':
@@ -31,21 +32,19 @@ def edit_entry(request, entry_id):
     else:
         form = EntryForm(instance=entry)
         formset = TransactionFormSet(instance=entry)
-    return render(request, 'edit_entry.html', {'back': back,'form': form, 'formset': formset, 'entry': entry})
+    return render(request, 'edit_entry.html', {'form': form, 'formset': formset, 'entry': entry})
 
 def add_entry(request):
-    back = request.GET.get('back')
-    if back and back.isdigit():  
-        back = int(back)
+
+     # Add breadcrumb
+    add_breadcrumb(request, 'Nueva entrada', request.path)
 
     if request.method == 'POST':
         form = EntryForm(request.POST)
         if form.is_valid():
             entry = form.save()
-            if back is not None:
-                return redirect(reverse('edit_entry', kwargs={'entry_id': entry.id}) + '?back=' + str(back))
-            else:
-                return redirect('edit_entry', entry_id=entry.id)
+            remove_breadcrumb(request, 'Nueva entrada' , request.path)
+            return redirect('edit_entry', entry_id=entry.id)
     else:
         form = EntryForm()
-    return render(request, 'add_entry.html', {'back': back,'form': form})
+    return render(request, 'add_entry.html', {'form': form})

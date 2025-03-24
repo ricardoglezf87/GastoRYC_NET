@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from GARCA.utils import add_breadcrumb, clear_breadcrumbs
 from entries.models import Entry
 from transactions.models import Transaction
 from .forms import  BankImportForm
@@ -17,6 +18,8 @@ class BankImportView(View):
     template_name = 'import_movements.html'
     
     def get(self, request):
+        clear_breadcrumbs(request)
+        add_breadcrumb(request, 'Importar movimientos' , request.path)
         form = BankImportForm()
         return render(request, self.template_name, {'form': form})
     
