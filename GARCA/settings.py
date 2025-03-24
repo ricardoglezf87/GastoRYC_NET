@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'transactions',
     'attachments',
     'bank_imports',
+    'reports', 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
