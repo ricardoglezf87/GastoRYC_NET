@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block nav-breadcrumbs %}
+    {% if not is_popup %}
+    <div class="breadcrumbs">
+        <a href="/accounts/account_tree/">Home</a>
+        &rsaquo;
+        {% if back %}
+          <a href="/accounts/edit_account/{{ back }}">Editar cuenta {{ back }}</a>
+          &rsaquo;
+        {% endif %}
+        <a href="/entries/add_entry/">Nueva entrada</a>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+  <h1>Agregar Nueva Entrada</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="button">Guardar</button>
+  </form>
+{% endblock %}

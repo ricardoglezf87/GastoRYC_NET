@@ -18,8 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import index  # Importar la función index desde views.py
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('registros/', include('registros.urls')),
+    path('', index, name='index'),  # Usar la función index importada
+    path('accounts/', include('accounts.urls')),
+    path('entries/', include('entries.urls')),
+    path('transactions/', include('transactions.urls')),
+    path('attachments/', include('attachments.urls')),
+    path('bank_imports/', include('bank_imports.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -32,7 +32,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'registros',
+    'accounts',
+    'entries',
+    'transactions',
+    'attachments',
+    'bank_imports',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -57,7 +61,7 @@ ROOT_URLCONF = 'GARCA.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'registros/templates/admin')], 
+        'DIRS': [BASE_DIR / 'GARCA' / 'templates'],  # Añadir esta línea
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
