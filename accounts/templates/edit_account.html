@@ -42,7 +42,7 @@
       <tbody>
         {% for transaction in transactions %}
         <tr class="transaction-row" data-entry-id="{{ transaction.entry.id }}">
-          <td><a href="/entries/edit_entry/{{ transaction.entry.id }}">{{ transaction.entry.date }}</a></td>
+          <td><a href="/entries/edit_entry/{{ transaction.entry.id }}/">{{ transaction.entry.date }}</a></td>
           <td>{{ transaction.entry.description }}</td>
           <td>{{ transaction.debit }}</td>
           <td>{{ transaction.credit }}</td>
