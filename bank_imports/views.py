@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from GARCA.utils import add_breadcrumb, clear_breadcrumbs
+from accounts.models import AccountKeyword
 from entries.models import Entry
 from transactions.models import Transaction
 from .forms import  BankImportForm
@@ -109,36 +110,45 @@ class BankImportView(View):
     
     @transaction.atomic
     def import_movements(self, account, import_data):
-        """Importa los movimientos a la base de datos"""
         count = 0
-        
+
         for movement in import_data:
+            # Buscar cuenta de contrapartida
+            counterpart_account = None
+            for keyword in AccountKeyword.objects.all():
+                if keyword.keyword.lower() in movement['description'].lower():
+                    counterpart_account = keyword.account
+                    break
+
             # Crear una entrada por cada movimiento
             entry = Entry.objects.create(
                 date=movement['date'],
-                description=f"{movement['description']}"
+                description=movement['description']
             )
-            
+
             # Determinar si es débito o crédito
             amount = movement['amount']
-            debit = 0
-            credit = 0
-            
-            if amount > 0:
-                debit = amount
-            else:
-                credit = abs(amount)
-            
-            # Crear la transacción
+            debit = amount if amount > 0 else 0
+            credit = abs(amount) if amount < 0 else 0
+
+            # Crear transacciones
             Transaction.objects.create(
                 entry=entry,
                 account=account,
                 debit=debit,
                 credit=credit
             )
-            
+
+            if counterpart_account:
+                Transaction.objects.create(
+                    entry=entry,
+                    account=counterpart_account,
+                    debit=credit,
+                    credit=debit
+                )
+
             count += 1
-        
+
         return count
 
 @method_decorator(csrf_exempt, name='dispatch')

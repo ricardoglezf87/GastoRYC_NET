@@ -20,3 +20,10 @@ class Account(models.Model):
         
         balance = round(balance, 2)
         return balance
+
+class AccountKeyword(models.Model):
+    account = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='keywords')
+    keyword = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.keyword

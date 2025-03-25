@@ -1,7 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from GARCA.utils import add_breadcrumb, clear_breadcrumbs, remove_breadcrumb
-from .models import Account
+from .models import Account, AccountKeyword
 from .forms import AccountForm
+import json
 
 def account_tree_view(request):
 
@@ -47,3 +50,30 @@ def add_account(request):
     else:
         form = AccountForm()
     return render(request, 'add_account.html', {'form': form})
+
+@csrf_exempt
+def add_keyword(request, account_id):
+    if request.method == 'POST':
+        account = get_object_or_404(Account, id=account_id)
+        data = json.loads(request.body)
+        keyword = AccountKeyword.objects.create(account=account, keyword=data['keyword'])
+        return JsonResponse({'success': True, 'keyword_id': keyword.id})
+    return JsonResponse({'success': False})
+
+@csrf_exempt
+def update_keyword(request, keyword_id):
+    if request.method == 'POST':
+        keyword = get_object_or_404(AccountKeyword, id=keyword_id)
+        data = json.loads(request.body)
+        keyword.keyword = data['keyword']
+        keyword.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
+
+@csrf_exempt
+def delete_keyword(request, keyword_id):
+    if request.method == 'POST':
+        keyword = get_object_or_404(AccountKeyword, id=keyword_id)
+        keyword.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
