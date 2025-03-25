@@ -4,6 +4,38 @@
 {% block title %}GARCA{% endblock %}
 {% block content %}
 
-<h1>GARCA 6.0</h1>
+<div class="container">
+    <div class="jumbotron">
+        <h1 class="display-4">Bienvenido a GARCA - Tu App de Gastos Personales</h1>
+        <p class="lead">GARCA te ayuda a llevar un control detallado de tus finanzas personales de manera fácil y eficiente.</p>
+        <hr class="my-4">
+        <p>Con GARCA, puedes registrar tus gastos e ingresos, categorizarlos, y obtener reportes personalizados para entender mejor tus hábitos de consumo.</p>
+        <a class="btn btn-warning btn-lg" href="/accounts/account_tree/" role="button">Comienza a Registrar tus Gastos</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <h2>Registro Fácil</h2>
+            <p>Registra tus gastos e ingresos en segundos con nuestra interfaz intuitiva.</p>
+        </div>
+        <div class="col-md-4">
+            <h2>Reportes Personalizados</h2>
+            <p>Obtén reportes detallados de tus gastos por categoría, mes, o período de tiempo.</p>
+        </div>
+        <div class="col-md-4">
+            <h2>Control Total</h2>
+            <p>Toma el control de tus finanzas personales y alcanza tus metas de ahorro.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .jumbotron {
+        background-color: #f8f9fa;
+        padding: 2rem 1rem;
+        margin-bottom: 2rem;
+        border-radius: 0.3rem;
+    }
+</style>
 
 {% endblock %}

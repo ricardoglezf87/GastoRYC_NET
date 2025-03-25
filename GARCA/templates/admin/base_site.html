@@ -1,5 +1,6 @@
 {% extends "admin/base_site.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
@@ -28,8 +29,12 @@
         
 {% endblock %}
 
-{% block branding %}    
-    <h1 id="site-name"><a href="/accounts/account_tree/">GARCA</a></h1>
+{% block branding %}
+    <h1 id="site-name">
+        <a href="/accounts/account_tree/">
+            <img src="{% static 'img/logo.png' %}" alt="GARCA Logo" style="max-height: 40px;">
+        </a>
+    </h1>
 {% endblock %}
 
 {% block nav-breadcrumbs %}
