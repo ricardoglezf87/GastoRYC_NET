@@ -127,4 +127,6 @@ ATTACH DATABASE 'G:\Mi unidad\GARCA\Data\GARCA.mmb' AS otra_db;
     UPDATE entries_entry
     SET date = SUBSTR(date, 1, 10);
 
+    
+
 DETACH DATABASE otra_db;
