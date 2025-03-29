@@ -10,3 +10,7 @@ class Entry(models.Model):
 
     def __str__(self):
         return f"{self.date} - {self.description}"
+
+    @property
+    def transactions(self):
+        return self.transactions.all()  

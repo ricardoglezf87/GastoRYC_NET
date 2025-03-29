@@ -18,6 +18,10 @@ def edit_account(request, account_id):
     parents = Account.objects.exclude(pk=account_id)
     transactions = account.transaction_set.all().order_by('-entry__date', '-id')
 
+    for transaction in transactions:
+        transaction.filtered_transactions = transaction.entry.transactions.exclude(account=account)
+
+
     balance = 0
     for transaction in reversed(transactions):
         balance += transaction.debit - transaction.credit

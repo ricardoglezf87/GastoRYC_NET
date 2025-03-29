@@ -81,10 +81,11 @@
           <tr>
             <th>Fecha</th>
             <th>Descripción</th>
+            <th>Contrapartidas</th>
             <th>Débito</th>
             <th>Crédito</th>
             <th>Balance</th>
-            <th>Adjuntos</th> <!-- New column header -->
+            <th>Adjuntos</th>
           </tr>
         </thead>
         <tbody>
@@ -92,6 +93,11 @@
           <tr class="transaction-row" data-entry-id="{{ transaction.entry.id }}">
             <td><a href="/entries/edit_entry/{{ transaction.entry.id }}/">{{ transaction.entry.date }}</a></td>
             <td>{{ transaction.entry.description }}</td>
+            <td>
+              {% for t in transaction.filtered_transactions %}
+                {{ t.account.name }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </td>
             <td>{{ transaction.debit }}</td>
             <td>{{ transaction.credit }}</td>
             <td>{{ transaction.balance }}</td>
