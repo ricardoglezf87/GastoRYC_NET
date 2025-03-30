@@ -117,8 +117,13 @@
       searching: false,
       info: false
     });
-
-    $('#transactionTable').on('change', 'input, select', function () {
+    
+    $('select[name="account"]').select2({
+        placeholder: "Selecciona una cuenta",
+        allowClear: true,
+        width: '100%' // Ajustar el ancho al contenedor
+      });
+ $('#transactionTable').on('change', 'input, select', function () {
       const row = $(this).closest('tr');
       let transactionId = row.data('transaction-id'); // Obtener el ID de la transacción
       if (!transactionId || transactionId === '' || transactionId === 'None') {
@@ -158,8 +163,13 @@
 
               // Optionally, you can populate the account select field with options
               const accountSelect = newRow.find('select[name="account"]');
-              const accountOptions = row.find('select[name$="account"] option').clone();
+              const accountOptions = $('select[name="account"]:first option').clone();
               accountSelect.append(accountOptions);
+              accountSelect.select2({
+                placeholder: "Selecciona una cuenta",
+                allowClear: true,
+                width: '100%'
+              });
             }
           } else {
             alert('Error al guardar transacción');
@@ -167,6 +177,7 @@
         });
     });
 
+   
     $('#transactionTable').on('click', '.delete-transaction', function () {
       const row = $(this).closest('tr');
       const transactionId = row.data('transaction-id');
