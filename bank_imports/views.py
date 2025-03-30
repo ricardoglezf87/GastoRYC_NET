@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from GARCA.utils import add_breadcrumb, clear_breadcrumbs
-from accounts.models import AccountKeyword
+from accounts.models import Account, AccountKeyword
 from entries.models import Entry
 from transactions.models import Transaction
 from .forms import  BankImportForm
@@ -20,9 +20,17 @@ class BankImportView(View):
     
     def get(self, request):
         clear_breadcrumbs(request)
-        add_breadcrumb(request, 'Importar movimientos' , request.path)
+        add_breadcrumb(request, 'Importar movimientos', request.path)
+        
+        accounts = Account.objects.all()
+        accounts_with_hierarchy = sorted([
+            (account.id, account.get_full_hierarchy()) for account in accounts
+        ], key=lambda x: x[1])
+        
         form = BankImportForm()
-        return render(request, self.template_name, {'form': form})
+        form.fields['account'].choices = accounts_with_hierarchy
+        
+        return render(request, self.template_name, {'form': form, 'accounts': accounts_with_hierarchy})
     
     def post(self, request):
         form = BankImportForm(request.POST, request.FILES)
