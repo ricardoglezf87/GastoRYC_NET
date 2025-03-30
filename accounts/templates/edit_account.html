@@ -18,7 +18,7 @@
         <select class="form-control" id="id_parent" name="parent">
           <option value="">---------</option>
           {% for parent in parents %}
-          <option value="{{ parent.id }}" {% if parent.id == account.parent.id %}selected{% endif %}>{{ parent.name }}</option>
+          <option value="{{ parent.id }}" {% if parent.id == account.parent.id %}selected{% endif %}>{{ parent.get_full_hierarchy }}</option>
           {% endfor %}
         </select>
       </div>

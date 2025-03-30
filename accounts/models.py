@@ -9,6 +9,11 @@ class Account(models.Model):
     
     def __str__(self):
         return self.name
+    
+    def get_full_hierarchy(self):
+        if self.parent:
+            return f"{self.parent.get_full_hierarchy()}::{self.name}"
+        return self.name
 
     def get_balance(self):
         debit_sum = self.transaction_set.aggregate(models.Sum('debit'))['debit__sum'] or 0
