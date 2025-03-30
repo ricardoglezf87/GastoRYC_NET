@@ -16,9 +16,10 @@ def account_tree_view(request):
 def edit_account(request, account_id):
     account = get_object_or_404(Account, id=account_id)
     parents = Account.objects.exclude(pk=account_id)
-    parents_with_hierarchy = [
+    parents_with_hierarchy = sorted([
         (parent.id, parent.get_full_hierarchy()) for parent in parents
-    ]
+    ],key=lambda x: x[1])
+    
     transactions = account.transaction_set.all().order_by('-entry__date', '-id')
 
     for transaction in transactions:
@@ -46,9 +47,9 @@ def edit_account(request, account_id):
 def add_account(request):
 
     parents = Account.objects.all()
-    parents_with_hierarchy = [
+    parents_with_hierarchy = sorted([
         (parent.id, parent.get_full_hierarchy()) for parent in parents
-    ]
+    ],key=lambda x: x[1])
 
     # Add breadcrumb
     add_breadcrumb(request, 'Nueva cuenta' , request.path)

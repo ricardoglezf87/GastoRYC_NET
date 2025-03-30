@@ -13,9 +13,10 @@ from transactions.forms import TransactionForm
 def edit_entry(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
     accounts = Account.objects.all()
-    accounts_with_hierarchy = [
+    accounts_with_hierarchy = sorted([
         (account.id, account.get_full_hierarchy()) for account in accounts
-    ]
+    ],key=lambda x: x[1]  
+    )
 
     # Add breadcrumb
     add_breadcrumb(request, 'Editar entrada ' + str(entry_id), request.path)
