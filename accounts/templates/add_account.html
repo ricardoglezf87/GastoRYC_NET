@@ -3,9 +3,25 @@
 
 {% block content %}
   <h1>Agregar Nueva Cuenta</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="button">Guardar</button>
-  </form>
+  <div class="col-md-8">
+    <form method="post" enctype="multipart/form-data" id="accountForm">
+      {% csrf_token %}
+      <div class="form-group col-md-6">
+        <label for="id_name">Nombre</label>
+        <input type="text" class="form-control" id="id_name" name="name" value="{{ account.name }}">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="id_parent">Padre</label>
+        <select class="form-control" id="id_parent" name="parent">
+          <option value="">---------</option>
+          {% for parent_id, parent_hierarchy in parents %}
+            <option value="{{ parent_id }}" {% if parent_id == account.parent.id %}selected{% endif %}>
+              {{ parent_hierarchy }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="button">Guardar</button>
+    </form>
+  </div>
 {% endblock %}

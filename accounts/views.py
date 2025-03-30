@@ -16,6 +16,9 @@ def account_tree_view(request):
 def edit_account(request, account_id):
     account = get_object_or_404(Account, id=account_id)
     parents = Account.objects.exclude(pk=account_id)
+    parents_with_hierarchy = [
+        (parent.id, parent.get_full_hierarchy()) for parent in parents
+    ]
     transactions = account.transaction_set.all().order_by('-entry__date', '-id')
 
     for transaction in transactions:
@@ -38,9 +41,14 @@ def edit_account(request, account_id):
     else:
         form = AccountForm(instance=account)
               
-    return render(request, 'edit_account.html', {'form': form, 'account': account, 'parents': parents, 'transactions': transactions})
+    return render(request, 'edit_account.html', {'form': form, 'account': account, 'parents': parents_with_hierarchy, 'transactions': transactions})
 
 def add_account(request):
+
+    parents = Account.objects.all()
+    parents_with_hierarchy = [
+        (parent.id, parent.get_full_hierarchy()) for parent in parents
+    ]
 
     # Add breadcrumb
     add_breadcrumb(request, 'Nueva cuenta' , request.path)
@@ -53,7 +61,7 @@ def add_account(request):
             return redirect('edit_account', account_id=account.id)
     else:
         form = AccountForm()
-    return render(request, 'add_account.html', {'form': form})
+    return render(request, 'add_account.html', {'form': form, 'parents': parents_with_hierarchy,})
 
 @csrf_exempt
 def add_keyword(request, account_id):
