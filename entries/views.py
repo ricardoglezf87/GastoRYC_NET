@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import inlineformset_factory
 from django.urls import reverse
 from GARCA.utils import add_breadcrumb, remove_breadcrumb
+from accounts.models import Account
 from .models import Entry
 from transactions.models import Transaction
 from .forms import EntryForm
@@ -11,6 +12,10 @@ from transactions.forms import TransactionForm
 
 def edit_entry(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
+    accounts = Account.objects.all()
+    accounts_with_hierarchy = [
+        (account.id, account.get_full_hierarchy()) for account in accounts
+    ]
 
     # Add breadcrumb
     add_breadcrumb(request, 'Editar entrada ' + str(entry_id), request.path)
@@ -32,7 +37,8 @@ def edit_entry(request, entry_id):
     else:
         form = EntryForm(instance=entry)
         formset = TransactionFormSet(instance=entry)
-    return render(request, 'edit_entry.html', {'form': form, 'formset': formset, 'entry': entry})
+    return render(request, 'edit_entry.html', {'form': form, 'formset': formset,
+        'accounts_with_hierarchy': accounts_with_hierarchy, 'entry': entry})
 
 def add_entry(request):
 

@@ -34,7 +34,15 @@
         <tbody>
           {% for form in formset %}
           <tr data-transaction-id="{{ form.instance.id }}">
-            <td>{{ form.account }}</td>
+            <td>
+              <select name="account" class="form-control">
+                {% for account_id, account_hierarchy in accounts_with_hierarchy %}
+                  <option value="{{ account_id }}" {% if form.instance.account.id == account_id %}selected{% endif %}>
+                    {{ account_hierarchy }}
+                  </option>
+                {% endfor %}
+              </select>
+            </td>
             <td>{{ form.debit }}</td>
             <td>{{ form.credit }}</td>
             <td>

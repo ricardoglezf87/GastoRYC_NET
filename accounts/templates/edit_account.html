@@ -97,7 +97,7 @@
             <td>{{ transaction.entry.description }}</td>
             <td>
               {% for t in transaction.filtered_transactions %}
-                {{ t.account.get_full_hierarchy }}{% if not forloop.last %}, {% endif %}
+                {{ t.account.get_full_hierarchy }}{% if not forloop.last %}</br> {% endif %}
               {% endfor %}
             </td>
             <td>{{ transaction.debit }}</td>
