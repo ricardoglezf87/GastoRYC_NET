@@ -1,4 +1,5 @@
 from django import forms
+from accounts.models import Account
 
 class BankImportForm(forms.Form):
     BANK_CHOICES = (
@@ -7,5 +8,5 @@ class BankImportForm(forms.Form):
     )
     
     bank_provider = forms.ChoiceField(choices=BANK_CHOICES, label="Proveedor bancario")
-    account = forms.ChoiceField(choices=[], label="Cuenta destino")  # Cambiado a ChoiceField
+    account = forms.ModelChoiceField(queryset=Account.objects.all(), label="Cuenta destino")
     file = forms.FileField(label="Archivo CSV")
