@@ -15,7 +15,51 @@ from django.db import transaction
 from django.views import View
 from django.utils.decorators import method_decorator
 
-class BankImportView(View):
+class ImportMovementsMixin:
+    @transaction.atomic
+    def import_movements(self, account, import_data):
+        count = 0
+
+        for movement in import_data:
+            # Buscar cuenta de contrapartida
+            counterpart_account = None
+            for keyword in AccountKeyword.objects.all():
+                if keyword.keyword.lower() in movement['description'].lower():
+                    counterpart_account = keyword.account
+                    break
+
+            # Crear una entrada por cada movimiento
+            entry = Entry.objects.create(
+                date=movement['date'],
+                description=movement['description']
+            )
+
+            # Determinar si es débito o crédito
+            amount = movement['amount']
+            debit = amount if amount > 0 else 0
+            credit = abs(amount) if amount < 0 else 0
+
+            # Crear transacciones
+            Transaction.objects.create(
+                entry=entry,
+                account=account,
+                debit=debit,
+                credit=credit
+            )
+
+            if counterpart_account:
+                Transaction.objects.create(
+                    entry=entry,
+                    account=counterpart_account,
+                    debit=credit,
+                    credit=debit
+                )
+
+            count += 1
+
+        return count
+
+class BankImportView(ImportMovementsMixin, View):
     template_name = 'import_movements.html'
     
     def get(self, request):
@@ -36,38 +80,54 @@ class BankImportView(View):
                     preview_data, import_data = self.process_ing_file(file)
                     
                     if 'import' in request.POST and import_data:
-                        duplicates = self.find_duplicates(account, import_data)
+                        # Separar movimientos duplicados y no duplicados
+                        duplicates = []
+                        non_duplicates = []
+                        
+                        for movement in import_data:
+                            if self.is_duplicate(account, movement):
+                                duplicates.append(movement)
+                            else:
+                                non_duplicates.append(movement)
+                        
+                        # Importar primero los no duplicados
+                        if non_duplicates:
+                            success_count = self.import_movements(account, non_duplicates)
+                            if duplicates:
+                                messages.success(request, f'Se han importado {success_count} movimientos, pero se han encontrado algunos movimientos duplicados')
+                            else:
+                                messages.success(request, f'Se han importado {success_count} movimientos')
+                        
+                        # Si hay duplicados, mostrar página de confirmación
                         if duplicates:
                             # Convertir fechas y decimales a string antes de guardar en sesión
-                            session_import_data = []
                             session_duplicates = []
-                            
-                            for movement in import_data:
-                                movement_copy = movement.copy()
-                                movement_copy['date'] = movement['date'].strftime('%Y-%m-%d')
-                                movement_copy['amount'] = str(movement['amount'])  # Convertir Decimal a string
-                                session_import_data.append(movement_copy)
-                            
                             for movement in duplicates:
                                 movement_copy = movement.copy()
                                 movement_copy['date'] = movement['date'].strftime('%Y-%m-%d')
-                                movement_copy['amount'] = str(movement['amount'])  # Convertir Decimal a string
+                                movement_copy['amount'] = str(movement['amount'])
                                 session_duplicates.append(movement_copy)
                             
                             request.session['pending_import'] = {
                                 'account_id': account.id,
-                                'import_data': session_import_data,
                                 'duplicates': session_duplicates
                             }
                             return redirect('bank_import_duplicates')
                         
-                        success_count = self.import_movements(account, import_data)
-                        messages.success(request, f'Se han importado {success_count} movimientos correctamente.')
                         return redirect('bank_import')
             else:
                 messages.error(request, 'El archivo debe ser CSV')
                 
         return render(request, self.template_name, {'form': form})
+
+    def is_duplicate(self, account, movement):
+        """Helper method to check if a movement is duplicate"""
+        return Transaction.objects.filter(
+            account=account,
+            entry__date=movement['date'],
+            debit=movement['amount'] if movement['amount'] > 0 else 0,
+            credit=abs(movement['amount']) if movement['amount'] < 0 else 0
+        ).exists()
     
     def process_ing_file(self, file):
         """Procesa un archivo CSV de ING Direct"""
@@ -145,49 +205,6 @@ class BankImportView(View):
                 duplicates.append(movement)
         return duplicates
 
-    @transaction.atomic
-    def import_movements(self, account, import_data):
-        count = 0
-
-        for movement in import_data:
-            # Buscar cuenta de contrapartida
-            counterpart_account = None
-            for keyword in AccountKeyword.objects.all():
-                if keyword.keyword.lower() in movement['description'].lower():
-                    counterpart_account = keyword.account
-                    break
-
-            # Crear una entrada por cada movimiento
-            entry = Entry.objects.create(
-                date=movement['date'],
-                description=movement['description']
-            )
-
-            # Determinar si es débito o crédito
-            amount = movement['amount']
-            debit = amount if amount > 0 else 0
-            credit = abs(amount) if amount < 0 else 0
-
-            # Crear transacciones
-            Transaction.objects.create(
-                entry=entry,
-                account=account,
-                debit=debit,
-                credit=credit
-            )
-
-            if counterpart_account:
-                Transaction.objects.create(
-                    entry=entry,
-                    account=counterpart_account,
-                    debit=credit,
-                    credit=debit
-                )
-
-            count += 1
-
-        return count
-
 @method_decorator(csrf_exempt, name='dispatch')
 class BankImportPreviewView(View):
     def post(self, request):
@@ -202,7 +219,7 @@ class BankImportPreviewView(View):
                     return JsonResponse({'success': True, 'preview_data': preview_data})
         return JsonResponse({'success': False})
 
-class BankImportDuplicatesView(View):
+class BankImportDuplicatesView(ImportMovementsMixin, View):
     template_name = 'import_duplicates.html'
 
     def get(self, request):
@@ -226,23 +243,23 @@ class BankImportDuplicatesView(View):
             return redirect('bank_import')
 
         account = get_object_or_404(Account, id=pending_import['account_id'])
-        import_data = pending_import['import_data']
+        duplicates = pending_import['duplicates']
 
         # Convertir fechas de string a date y amounts de string a Decimal
-        for movement in import_data:
+        for movement in duplicates:
             movement['date'] = datetime.strptime(movement['date'], '%Y-%m-%d').date()
             movement['amount'] = Decimal(movement['amount'])
         
         # Filtrar movimientos según selección del usuario
         selected_movements = []
-        for movement in import_data:
+        for movement in duplicates:
             movement_key = f"{movement['date']}_{movement['amount']}"
             if request.POST.get(movement_key) == 'import':
                 selected_movements.append(movement)
 
         if selected_movements:
             success_count = self.import_movements(account, selected_movements)
-            messages.success(request, f'Se han importado {success_count} movimientos seleccionados.')
+            messages.success(request, f'Se han importado {success_count} movimientos duplicados seleccionados.')
 
         # Limpiar datos de sesión
         del request.session['pending_import']
