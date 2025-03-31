@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from GARCA.utils import add_breadcrumb, clear_breadcrumbs
-from accounts.models import AccountKeyword
+from accounts.models import Account, AccountKeyword
 from entries.models import Entry
 from transactions.models import Transaction
 from .forms import  BankImportForm
@@ -31,14 +31,36 @@ class BankImportView(View):
             account = form.cleaned_data['account']
             file = request.FILES['file']
             
-            # Leer contenido del archivo
             if file.name.endswith('.csv'):
-                # Procesar el archivo según el proveedor bancario
                 if bank_provider == 'ing':
                     preview_data, import_data = self.process_ing_file(file)
                     
-                    # Si es importar, procesar los datos
                     if 'import' in request.POST and import_data:
+                        duplicates = self.find_duplicates(account, import_data)
+                        if duplicates:
+                            # Convertir fechas y decimales a string antes de guardar en sesión
+                            session_import_data = []
+                            session_duplicates = []
+                            
+                            for movement in import_data:
+                                movement_copy = movement.copy()
+                                movement_copy['date'] = movement['date'].strftime('%Y-%m-%d')
+                                movement_copy['amount'] = str(movement['amount'])  # Convertir Decimal a string
+                                session_import_data.append(movement_copy)
+                            
+                            for movement in duplicates:
+                                movement_copy = movement.copy()
+                                movement_copy['date'] = movement['date'].strftime('%Y-%m-%d')
+                                movement_copy['amount'] = str(movement['amount'])  # Convertir Decimal a string
+                                session_duplicates.append(movement_copy)
+                            
+                            request.session['pending_import'] = {
+                                'account_id': account.id,
+                                'import_data': session_import_data,
+                                'duplicates': session_duplicates
+                            }
+                            return redirect('bank_import_duplicates')
+                        
                         success_count = self.import_movements(account, import_data)
                         messages.success(request, f'Se han importado {success_count} movimientos correctamente.')
                         return redirect('bank_import')
@@ -108,6 +130,21 @@ class BankImportView(View):
                     
         return csv_data, import_data
     
+    def find_duplicates(self, account, import_data):
+        duplicates = []
+        for movement in import_data:
+            # Buscar movimientos existentes con la misma fecha y cantidad
+            existing = Transaction.objects.filter(
+                account=account,
+                entry__date=movement['date'],
+                debit=movement['amount'] if movement['amount'] > 0 else 0,
+                credit=abs(movement['amount']) if movement['amount'] < 0 else 0
+            ).exists()
+            
+            if existing:
+                duplicates.append(movement)
+        return duplicates
+
     @transaction.atomic
     def import_movements(self, account, import_data):
         count = 0
@@ -164,3 +201,49 @@ class BankImportPreviewView(View):
                     preview_data, _ = BankImportView().process_ing_file(file)
                     return JsonResponse({'success': True, 'preview_data': preview_data})
         return JsonResponse({'success': False})
+
+class BankImportDuplicatesView(View):
+    template_name = 'import_duplicates.html'
+
+    def get(self, request):
+        pending_import = request.session.get('pending_import')
+        if not pending_import:
+            return redirect('bank_import')
+
+        # Convertir fechas de string a date y amounts de string a Decimal
+        duplicates = pending_import['duplicates']
+        for movement in duplicates:
+            movement['date'] = datetime.strptime(movement['date'], '%Y-%m-%d').date()
+            movement['amount'] = Decimal(movement['amount'])
+
+        return render(request, self.template_name, {
+            'duplicates': duplicates
+        })
+
+    def post(self, request):
+        pending_import = request.session.get('pending_import')
+        if not pending_import:
+            return redirect('bank_import')
+
+        account = get_object_or_404(Account, id=pending_import['account_id'])
+        import_data = pending_import['import_data']
+
+        # Convertir fechas de string a date y amounts de string a Decimal
+        for movement in import_data:
+            movement['date'] = datetime.strptime(movement['date'], '%Y-%m-%d').date()
+            movement['amount'] = Decimal(movement['amount'])
+        
+        # Filtrar movimientos según selección del usuario
+        selected_movements = []
+        for movement in import_data:
+            movement_key = f"{movement['date']}_{movement['amount']}"
+            if request.POST.get(movement_key) == 'import':
+                selected_movements.append(movement)
+
+        if selected_movements:
+            success_count = self.import_movements(account, selected_movements)
+            messages.success(request, f'Se han importado {success_count} movimientos seleccionados.')
+
+        # Limpiar datos de sesión
+        del request.session['pending_import']
+        return redirect('bank_import')
