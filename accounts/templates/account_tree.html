@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load account_tags %}
+{% block title %}GARCA{% endblock %}
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Listado de Cuentas</h5>
+        <ul id="accountTree" class="list-group">
+            {% generate_account_tree accounts %}
+        </ul>
+    </div>
+</div>
+
+<style>
+    /* Add some basic styling */
+    #accountTree {
+        list-style-type: none;
+        padding-left: 0; /* Remove default padding */
+    }
+
+    .caret {
+        cursor: pointer;
+        user-select: none;
+        display: inline-block;
+        width: 1.2em; /* Adjust width for icon */
+        text-align: center;
+    }
+
+    .caret::before {
+        content: "\f0da"; /* Right-pointing triangle (Font Awesome) */
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        color: #6c757d; /* Muted color */
+        display: inline-block;
+        margin-right: 0.3rem;
+        transition: transform 0.2s ease-in-out; /* Smooth transition */
+    }
+
+    .caret-down::before {
+        transform: rotate(90deg); /* Down-pointing triangle */
+    }
+
+    .nested {
+        display: none;
+        padding-left: 1.5rem; /* Indentation for nested items */
+    }
+
+    .active {
+        display: block;
+    }
+
+    .list-group-item {
+        border: 0 !important;
+        padding: 0.25rem 0.5rem; /* Reduced padding */
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa; /* Light gray on hover */
+    }
+
+    .list-group-item.active {
+        background-color: #e9ecef; /* Slightly darker gray for active */
+    }
+    .card{
+        border: 1px solid #ced4da;
+    }
+</style>
+
+<script>
+    // Add jQuery to handle the expand/collapse functionality
+    function toggleNested(element) {
+        var nestedList = element.parentElement.parentElement.nextElementSibling;
+        var caret = element.querySelector(".caret");
+
+        if (nestedList.style.display === "none") {
+            nestedList.style.display = "block";
+            caret.classList.add("caret-down");
+        } else {
+            nestedList.style.display = "none";
+            caret.classList.remove("caret-down");
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,440 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+  <!-- Descripción y Padre a la izquierda -->
+  <div class="col-md-8">
+    <h1>Editar Cuenta</h1>
+    <form method="post" enctype="multipart/form-data" id="accountForm">
+      {% csrf_token %}
+      <div class="form-group col-md-6">
+        <label for="id_name">Nombre</label>
+        <input type="text" class="form-control" id="id_name" name="name" value="{{ account.name }}">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="id_parent">Padre</label>
+        <select class="form-control" id="id_parent" name="parent">
+          <option value="">---------</option>
+          {% for parent_id, parent_hierarchy in parents %}
+            <option value="{{ parent_id }}" {% if parent_id == account.parent.id %}selected{% endif %}>
+              {{ parent_hierarchy }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <!-- Adjuntos -->
+  <div class="col-md-4">
+    <h2>Adjuntos</h2>
+    <div class="scrollable-section"> <!-- Contenedor con scroll -->
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Archivo</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for attachment in account.attachments.all %}
+          <tr data-attachment-id="{{ attachment.id }}">
+            <td>
+              <button type="button" class="btn btn-link" onclick="window.open('{{ attachment.file.url }}', '_blank')">
+                <i class="fas fa-paperclip"></i>
+              </button>
+            </td>
+            <td contenteditable="true" class="editable-description">{{ attachment.description }}</td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm delete-attachment">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div id="dropArea" class="drop-area">
+        Arrastra y suelta archivos aquí o haz clic para seleccionar archivos
+        <input type="file" id="fileInput" multiple style="display: none;">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Transacciones a la izquierda y Adjuntos a la derecha -->
+<div class="row mt-4">
+  <!-- Transacciones -->
+  <div class="col-md-8">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Transacciones</h2>
+      <a href="/entries/add_entry/" class="btn btn-sm">
+        <i class="bi bi-plus-circle"></i> <!-- Plus circle icon -->
+      </a>
+    </div>
+    <div class="scrollable-section scrollable-section-big"> <!-- Contenedor con scroll -->
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Contrapartidas</th>
+            <th>Débito</th>
+            <th>Crédito</th>
+            <th>Balance</th>
+            <th>Adjuntos</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transaction in transactions %}
+          <tr class="transaction-row" data-entry-id="{{ transaction.entry.id }}">
+            <td><a href="/entries/edit_entry/{{ transaction.entry.id }}/">{{ transaction.entry.date }}</a></td>
+            <td>{{ transaction.entry.description }}</td>
+            <td>
+              {% for t in transaction.filtered_transactions %}
+                {{ t.account.get_full_hierarchy }}{% if not forloop.last %}</br> {% endif %}
+              {% endfor %}
+            </td>
+            <td>{{ transaction.debit }}</td>
+            <td>{{ transaction.credit }}</td>
+            <td>{{ transaction.balance }}</td>
+            <td class="attachment-indicator">
+              {% if transaction.entry.attachments.all %}
+                <i class="fas fa-paperclip"></i>
+              {% endif %}
+            </td>
+            <input type="file" name="transaction_attachments_{{ transaction.entry.id }}" multiple style="display: none;">  <!-- File input hidden -->
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  
+  <!-- Palabras asociadas a la derecha -->
+  <div class="col-md-4">
+    <h2>Palabras Asociadas</h2>
+    <div class="scrollable-section"> <!-- Contenedor con scroll -->
+      <table id="keywordsTable" class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Palabra</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for keyword in account.keywords.all %}
+          <tr data-keyword-id="{{ keyword.id }}">
+            <td>
+              <input type="text" class="form-control keyword-input" value="{{ keyword.keyword }}">
+            </td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm delete-keyword">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+          <tr data-keyword-id="None">
+            <td>
+              <input type="text" class="form-control keyword-input" placeholder="Nueva palabra">
+            </td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+  
+<style>
+  .drop-area {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+    cursor: pointer;
+  }
+
+  .drop-area.dragover {
+    border-color: #000;
+    background-color: #f0f0f0;
+  }
+  .transaction-row {
+    cursor: pointer; /* Change cursor to indicate it's a drop zone */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease; /* Add transitions for smooth effect */
+  }
+
+  .transaction-row.dragover {
+    background-color: #e0f0ff; /* Light blue background */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+  }
+  .attachment-indicator {
+    text-align: center;
+    width: 20px; /* Adjust width as needed */
+  }
+  .attachment-indicator i {
+    font-size: 1.2em; /* Adjust icon size as needed */
+  }
+  .scrollable-section {
+    max-height: 300px; /* Ajusta la altura según sea necesario */
+    overflow-y: auto;
+    border: 1px solid #ddd; /* Opcional: para resaltar el área desplazable */
+    padding: 10px; /* Opcional: para agregar espacio interno */
+    background-color: #f9f9f9; /* Opcional: para diferenciar el fondo */
+  }
+
+  .scrollable-section-big {
+    max-height: 2000px!important;
+  }
+</style>
+
+<script>
+  const dropArea = document.getElementById('dropArea');
+  const fileInput = document.getElementById('fileInput');
+
+  dropArea.addEventListener('click', () => fileInput.click());
+
+  dropArea.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    dropArea.classList.add('dragover');
+  });
+
+  dropArea.addEventListener('dragleave', () => {
+    dropArea.classList.remove('dragover');
+  });
+
+  dropArea.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dropArea.classList.remove('dragover');
+    const files = event.dataTransfer.files;
+    handleFiles(files);
+  });
+
+  fileInput.addEventListener('change', (event) => {
+    const files = event.target.files;
+    handleFiles(files);
+  });
+
+  function handleFiles(files) {
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append('files', file);
+    }
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    fetch("{% url 'upload_attachments' account.id %}", {
+      method: 'POST',
+      body: formData
+    }).then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Error al subir archivos');
+        }
+      });
+  }
+
+  // Funcionalidad para editar la descripción
+  document.querySelectorAll('.editable-description').forEach(cell => {
+    cell.addEventListener('blur', function () {
+      const attachmentId = this.closest('tr').dataset.attachmentId;
+      const description = this.textContent.trim();
+      fetch(`/attachments/update_attachment_description/${attachmentId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ description })
+      }).then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            alert('Error al actualizar la descripción');
+          }
+        });
+    });
+  });
+
+  // Funcionalidad para borrar adjuntos
+  document.querySelectorAll('.delete-attachment').forEach(button => {
+    button.addEventListener('click', function () {
+      const row = this.closest('tr');
+      const attachmentId = row.dataset.attachmentId;
+      if (confirm('¿Estás seguro de que deseas eliminar este adjunto?')) {
+        fetch(`/attachments/delete_attachment/${attachmentId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          }
+        }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              row.remove();
+            } else {
+              alert('Error al eliminar adjunto');
+            }
+          });
+      }
+    });
+  });
+
+  // Guardado automático del formulario
+  $('#accountForm').on('change', 'input, select', function () {
+    const formData = new FormData($('#accountForm')[0]);
+    fetch("{% url 'edit_account' account.id %}", {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    }).then(response => response.json())
+      .then(data => {
+        if (!data.success) {
+          alert('Error al guardar los cambios');
+        }
+      });
+  });
+
+  function handleTransactionFiles(files, entryId) {
+    const formData = new FormData();
+    // Change: Append files with the name "files" as expected by the view
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    // Change: Use the existing upload_entry_attachments URL
+    fetch(`/attachments/upload_entry_attachments/${entryId}/`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert('Error al subir archivos: ' + data.error); // Keep the error message
+      }
+    });
+  }
+
+  const transactionRows = document.querySelectorAll('.transaction-row');
+  transactionRows.forEach(row => {
+    const entryId = row.dataset.entryId;
+
+    row.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      row.classList.add('dragover');
+    });
+
+    row.addEventListener('dragleave', () => {
+      row.classList.remove('dragover');
+    });
+
+    row.addEventListener('drop', (event) => {
+      event.preventDefault();
+      row.classList.remove('dragover');
+      const files = event.dataTransfer.files;
+      handleTransactionFiles(files, entryId);
+    });
+  });
+
+  document.querySelectorAll('.keyword-input').forEach(input => {
+    input.addEventListener('blur', function () {
+      const row = this.closest('tr');
+      const keywordId = row.dataset.keywordId;
+      const keyword = this.value.trim();
+
+      // Evitar guardar líneas vacías
+      if (!keyword) {
+        if (keywordId === "None") {
+          return; // No guardar si es una línea nueva vacía
+        } else {
+          alert('No se puede guardar una palabra vacía.');
+          this.value = row.dataset.originalKeyword || ''; // Restaurar el valor original
+          return;
+        }
+      }
+
+      const url = keywordId === "None" ? "{% url 'add_keyword' account.id %}" : "{% url 'update_keyword' 0 %}".replace('0', keywordId);
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ keyword })
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            if (keywordId === "None") {
+              // Actualizar el ID de la palabra clave en la fila
+              row.dataset.keywordId = data.keyword_id;
+              row.dataset.originalKeyword = keyword; // Guardar el valor original
+
+              // Añadir el botón de borrado a la fila actual
+              row.querySelector('td:last-child').innerHTML = `
+                <button type="button" class="btn btn-danger btn-sm delete-keyword">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              `;
+              row.querySelector('.delete-keyword').addEventListener('click', deleteKeyword);
+
+              // Añadir una nueva fila vacía al final
+              const newRow = document.createElement('tr');
+              newRow.dataset.keywordId = "None";
+              newRow.innerHTML = `
+                <td>
+                  <input type="text" class="form-control keyword-input" placeholder="Nueva palabra">
+                </td>
+                <td></td>
+              `;
+              document.querySelector('#keywordsTable tbody').appendChild(newRow);
+
+              // Asignar el evento `blur` a la nueva celda
+              newRow.querySelector('.keyword-input').addEventListener('blur', arguments.callee);
+            }
+          } else {
+            alert('Error al guardar la palabra clave.');
+          }
+        });
+    });
+  });
+
+  function deleteKeyword() {
+    const row = this.closest('tr');
+    const keywordId = row.dataset.keywordId;
+
+    if (confirm('¿Estás seguro de que deseas eliminar esta palabra clave?')) {
+      fetch("{% url 'delete_keyword' 0 %}".replace('0', keywordId), {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            row.remove();
+          } else {
+            alert('Error al eliminar la palabra clave.');
+          }
+        });
+    }
+  }
+
+  // Asignar el evento `click` a los botones de borrado existentes
+  document.querySelectorAll('.delete-keyword').forEach(button => {
+    button.addEventListener('click', deleteKeyword);
+  });
+</script>
+{% endblock %}
