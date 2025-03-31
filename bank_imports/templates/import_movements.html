@@ -74,6 +74,23 @@
         const previewData = document.getElementById('preview-data');
         const importButton = document.getElementById('import-button');
 
+        // Inicializar Select2 en el selector de cuenta
+        $(document).ready(function() {
+            $('#id_account').select2({
+                width: '100%',
+                placeholder: 'Selecciona una cuenta',
+                allowClear: true
+            }).on('select2:select select2:unselect', function (e) {
+                // Manejar el cambio usando el evento de Select2
+                fileInput.disabled = !this.value;
+                // Reiniciar el input de archivo cuando se cambia la cuenta
+                fileInput.value = '';
+                // Ocultar la vista previa y el botón de importar
+                previewCard.style.display = 'none';
+                importButton.style.display = 'none';
+            });
+        });
+
         // Initially disable the file input
         fileInput.disabled = true;
 
