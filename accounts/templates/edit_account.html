@@ -77,6 +77,22 @@
         <i class="bi bi-plus-circle"></i> <!-- Plus circle icon -->
       </a>
     </div>
+    <div class="mb-3">
+        <select id="periodSelector" class="form-select">
+            <option value="current_month">Mes actual</option>
+            <option value="last_month">Mes anterior</option>
+            <option value="last_30_days">Últimos 30 días</option>
+            <option value="last_60_days" selected>Últimos 60 días</option>
+            <option value="last_180_days">Últimos 180 días</option>
+            <option value="current_year">Año actual</option>
+            <option value="last_year">Año anterior</option>
+            <option value="year_before">Año atrás</option>
+            <option value="last_3_years">3 años atrás</option>
+            <option value="last_5_years">5 años atrás</option>
+            <option value="last_10_years">10 años atrás</option>
+            <option value="all">Todos los registros</option>
+        </select>
+    </div>
     <div id="transactionsTable"></div>
   </div>
 
@@ -561,27 +577,43 @@
 var table = new Tabulator("#transactionsTable", {
     ajaxURL: "{% url 'get_account_transactions' account.id %}",
     ajaxResponse: function(url, params, response) {
-        return response;
+        return response.data;
     },
     ajaxConfig: {
         method: "GET",
     },
-    pagination: true,
-    paginationMode: "remote",
-    paginationSize: 25,
-    ajaxLoader: true,
     layout: "fitColumns",
-    height: "400px",
+    height: "600px",
     placeholder: "No se encontraron transacciones",
+    virtualDomBuffer: 300,
     
-    // Configuración de búsqueda
     ajaxURLGenerator:function(url, config, params){
         const urlParams = new URLSearchParams();
-        urlParams.append("page", params.page || 1);
-        urlParams.append("size", params.size || 25);
-        if(params.filterValue) {
-            urlParams.append("search", params.filterValue);
+        
+        // Añadir período seleccionado
+        const period = document.getElementById('periodSelector').value;
+        urlParams.append("period", period);
+        
+        // Obtener filtros activos
+        try {
+            const filters = {};
+            if (this.getHeaderFilters) {
+                const headerFilters = this.getHeaderFilters();
+                headerFilters.forEach(function(filter) {
+                    const value = filter.getValue();
+                    if (value) {
+                        filters[filter.getField()] = value;
+                    }
+                });
+                
+                if (Object.keys(filters).length > 0) {
+                    urlParams.append("filters", JSON.stringify(filters));
+                }
+            }
+        } catch (error) {
+            console.error("Error al procesar filtros:", error);
         }
+        
         return `${url}?${urlParams.toString()}`;
     },
     
@@ -594,81 +626,89 @@ var table = new Tabulator("#transactionsTable", {
                 const link = cell.getRow().getData().date_link;
                 return `<a href="${link}" class="text-primary">${date}</a>`;
             },
-            width: 100,
-            headerFilter: true
+            headerFilter: true,
+            width: 120
         },
         {
-            title: "Descripción", 
+            title: "Descripción",
             field: "description",
             headerFilter: true,
-            width: 200
+            widthGrow: 2
         },
         {
-            title: "Contrapartidas", 
+            title: "Contrapartidas",
             field: "counterparts",
             headerFilter: true,
-            width: 200
+            widthGrow: 2
         },
         {
-            title: "Débito", 
+            title: "Debe",
             field: "debit",
             hozAlign: "right",
             formatter: "money",
             formatterParams: {
                 decimal: ",",
                 thousand: ".",
-                precision: 2,
-                symbol: "€"
+                symbol: "€",
+                symbolAfter: true,
+                precision: 2
             },
+            headerFilter: true,
             width: 120
         },
         {
-            title: "Crédito",
+            title: "Haber",
             field: "credit",
             hozAlign: "right",
             formatter: "money",
             formatterParams: {
                 decimal: ",",
                 thousand: ".",
-                precision: 2,
-                symbol: "€"
+                symbol: "€",
+                symbolAfter: true,
+                precision: 2
             },
+            headerFilter: true,
             width: 120
         },
         {
-            title: "Balance",
+            title: "Saldo",
             field: "balance",
             hozAlign: "right",
             formatter: "money",
             formatterParams: {
                 decimal: ",",
                 thousand: ".",
-                precision: 2,
-                symbol: "€"
+                symbol: "€",
+                symbolAfter: true,
+                precision: 2
             },
             width: 120
         },
         {
             title: "Adjuntos",
             field: "has_attachments",
-            hozAlign: "center",
-            width: 80,
-            formatter: function(cell) {
+            formatter: function(cell, formatterParams, onRendered) {
                 return cell.getValue() ? '<i class="fas fa-paperclip"></i>' : '';
-            }
+            },
+            hozAlign: "center",
+            width: 80
         }
-    ],
-    
-    // Añadir campo de búsqueda
-    headerFilterPlaceholder: "Buscar...",
-    headerFilter: true
+    ]
 });
 
-// Evento para manejar la búsqueda
-let filterTimer;
-table.on("headerFilterChanged", function(headerValue){
-    clearTimeout(filterTimer);
-    filterTimer = setTimeout(function(){
+// Eventos
+document.getElementById('periodSelector').addEventListener('change', function() {
+    table.setData();
+});
+
+table.on("tableBuilt", function(){
+    this.initialized = true;
+});
+
+table.on("headerFilterChanged", function(headerValue, field){
+    clearTimeout(window.filterTimer);
+    window.filterTimer = setTimeout(() => {
         table.setData();
     }, 300);
 });
