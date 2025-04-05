@@ -5,12 +5,12 @@ from django.forms import inlineformset_factory
 from django.urls import reverse
 from GARCA.utils import add_breadcrumb, remove_breadcrumb
 from accounts.models import Account
+from async_tasks.tasks import recalculate_balances_after_date
 from .models import Entry
 from transactions.models import Transaction
 from .forms import EntryForm
 from transactions.forms import TransactionForm
 from django.db import transaction
-from .utils import recalculate_balances_after_date
 
 def edit_entry(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
@@ -49,7 +49,7 @@ def edit_entry(request, entry_id):
                 
                 # Recalcular balances para todas las cuentas afectadas
                 for account_id in all_affected_accounts:
-                    recalculate_balances_after_date(
+                    recalculate_balances_after_date.delay(
                         min(original_date, entry.date),
                         account_id
                     )
