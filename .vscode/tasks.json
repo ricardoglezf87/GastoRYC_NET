@@ -2,6 +2,26 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Ejecutar server task",
+            "type": "shell",
+            "command": "celery -A GARCA worker -l info --pool=solo",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Ejecutar redis",
+            "type": "shell",
+            "command": "async_tasks\\redis\\redis-server.exe",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "Ejecutar Servidor Django",
             "type": "shell",
             "command": "python manage.py runserver",
