@@ -29,4 +29,5 @@ urlpatterns = [
     path('attachments/', include('attachments.urls')),
     path('bank_imports/', include('bank_imports.urls')),
     path('reports/', include('reports.urls')),  # Añadir esta línea
+    path('async/', include('async_tasks.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
