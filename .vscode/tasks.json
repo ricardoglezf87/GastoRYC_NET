@@ -48,6 +48,14 @@
             "type": "shell",
             "command": "python manage.py makemigrations",
             "problemMatcher": []
+        },
+        {
+            "label": "Ejecutar Servicios",
+            "dependsOn": [
+                "Ejecutar server task",
+                "Ejecutar redis",
+                "Ejecutar Servidor Django"
+            ]
         }
     ]
 }
