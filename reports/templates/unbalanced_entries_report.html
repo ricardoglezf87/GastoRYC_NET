@@ -59,6 +59,8 @@
             // Recargar la página con la nueva URL
             window.location.href = url.toString();
         });
+
+        periodSelector.value = "{{ selected_period }}"; // Set the initial value of the selector
     });
 </script>
 {% endblock %}

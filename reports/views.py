@@ -107,4 +107,4 @@ def unbalanced_entries_report(request):
         if total_debit != total_credit:
             unbalanced_entries.append(entry)
 
-    return render(request, 'unbalanced_entries_report.html', {'unbalanced_entries': unbalanced_entries})
+    return render(request, 'unbalanced_entries_report.html', {'selected_period':period,'unbalanced_entries': unbalanced_entries})
