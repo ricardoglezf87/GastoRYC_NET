@@ -5,28 +5,55 @@ from django.forms import inlineformset_factory
 from django.urls import reverse
 from GARCA.utils import add_breadcrumb, remove_breadcrumb
 from accounts.models import Account
+from async_tasks.tasks import recalculate_balances_after_date
 from .models import Entry
 from transactions.models import Transaction
 from .forms import EntryForm
 from transactions.forms import TransactionForm
+from django.db import transaction
 
 def edit_entry(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
     accounts = Account.objects.all()
     accounts_with_hierarchy = sorted([
         (account.id, account.get_full_hierarchy()) for account in accounts
-    ],key=lambda x: x[1]  
-    )
+    ],key=lambda x: x[1])
 
-    # Add breadcrumb
     add_breadcrumb(request, 'Editar entrada ' + str(entry_id), request.path)
 
     TransactionFormSet = inlineformset_factory(Entry, Transaction, form=TransactionForm, extra=1)
     if request.method == 'POST':
         form = EntryForm(request.POST, instance=entry)
         formset = TransactionFormSet(request.POST, instance=entry)
-        if form.is_valid():
-            form.save()
+        if form.is_valid() and formset.is_valid():
+            with transaction.atomic():
+                # Guardar la fecha original antes de los cambios
+                original_date = entry.date
+                
+                # Obtener las cuentas afectadas antes y después del cambio
+                affected_accounts_before = set(
+                    t.account_id for t in entry.transactions.all()
+                )
+                
+                form.save()
+                formset.save()
+                
+                affected_accounts_after = set(
+                    t.account_id for t in entry.transactions.all()
+                )
+                
+                # Combinar todas las cuentas afectadas
+                all_affected_accounts = affected_accounts_before.union(
+                    affected_accounts_after
+                )
+                
+                # Recalcular balances para todas las cuentas afectadas
+                for account_id in all_affected_accounts:
+                    recalculate_balances_after_date.delay(
+                        min(original_date, entry.date),
+                        account_id
+                    )
+                    
             return JsonResponse({'success': True})
         else:
             errors = {
@@ -34,7 +61,7 @@ def edit_entry(request, entry_id):
                 'formset_errors': formset.errors,
                 'non_form_errors': formset.non_form_errors()
             }
-            return JsonResponse({'success': False, 'errors': form.errors})
+            return JsonResponse({'success': False, 'errors': errors})
     else:
         form = EntryForm(instance=entry)
         formset = TransactionFormSet(instance=entry)
