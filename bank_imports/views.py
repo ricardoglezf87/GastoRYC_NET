@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from GARCA.utils import add_breadcrumb, clear_breadcrumbs
 from accounts.models import Account, AccountKeyword
+from async_tasks.tasks import recalculate_balances_after_date
 from entries.models import Entry
 from transactions.models import Transaction
 from .forms import  BankImportForm
@@ -19,6 +20,9 @@ class ImportMovementsMixin:
     @transaction.atomic
     def import_movements(self, account, import_data):
         count = 0
+        affected_accounts = set()
+        min_date = None
+        affected_accounts.add(account.id)
 
         for movement in import_data:
             # Buscar cuenta de contrapartida
@@ -48,6 +52,7 @@ class ImportMovementsMixin:
             )
 
             if counterpart_account:
+                affected_accounts.add(counterpart_account.id)
                 Transaction.objects.create(
                     entry=entry,
                     account=counterpart_account,
@@ -55,7 +60,16 @@ class ImportMovementsMixin:
                     credit=debit
                 )
 
+            if min_date is None or movement['date'] < min_date:
+                min_date = movement['date']
+
             count += 1
+
+        for account_id in affected_accounts:
+            recalculate_balances_after_date.delay(
+                min_date,
+                account_id
+            )
 
         return count
 
@@ -132,7 +146,7 @@ class BankImportView(ImportMovementsMixin, View):
     def process_ing_file(self, file):
         """Procesa un archivo CSV de ING Direct"""
         # Decodificar el archivo
-        content = file.read().decode('latin-1')
+        content = file.read().decode('utf-8')
         csv_data = []
         import_data = []
         

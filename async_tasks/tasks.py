@@ -11,7 +11,7 @@ def hello_world(self):
     print("¡Hola Mundo!")
     return "¡Hola Mundo!"
 
-@shared_task(bind=True)
+@shared_task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5, 'countdown': 1})
 def calculate_inicial_balances(self):
     print ('Calcula los balances iniciales para todas las cuentas')
     accounts = Account.objects.all()
@@ -23,7 +23,7 @@ def calculate_inicial_balances(self):
         print(f'Balances calculados para cuenta {account.name}')
     return "Balances iniciales calculados"
 
-@shared_task(bind=True)
+@shared_task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5, 'countdown': 1})
 def recalculate_balances_after_date(self,date, account_id):
     """
     Recalcula los balances de todas las entradas posteriores a una fecha

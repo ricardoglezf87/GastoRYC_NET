@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 from GARCA.utils import add_breadcrumb, clear_breadcrumbs
 from accounts.models import AccountKeyword
+from async_tasks.tasks import recalculate_balances_after_date
 from entries.models import Entry
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -40,6 +41,8 @@ def recategorized_entries(request):
 
 
     unbalanced_entries = []
+    min_date = None
+    affected_accounts = set()
     
     for entry in entries_filtered:
         total_debit = sum(transaction.debit for transaction in entry.transactions.all())
@@ -48,21 +51,35 @@ def recategorized_entries(request):
             unbalanced_entries.append(entry)
 
     for movement in unbalanced_entries:
-            # Buscar cuenta de contrapartida
-            counterpart_account = None
-            for keyword in AccountKeyword.objects.all():
-                if keyword.keyword.lower() in movement.description.lower():
-                    counterpart_account = keyword.account
-                    break                                 
 
-            if counterpart_account:
-                Transaction.objects.create(
-                    entry=movement,
-                    account=counterpart_account,
-                    debit=sum(transaction.credit for transaction in entry.transactions.all()),
-                    credit=sum(transaction.debit for transaction in entry.transactions.all())
-                )
+        if min_date is None or movement.date < min_date:
+            min_date = movement.date
 
+        for t in movement.transactions.all():
+            affected_accounts.add(t.account_id)
+
+        # Buscar cuenta de contrapartida
+        counterpart_account = None
+        for keyword in AccountKeyword.objects.all():
+            if keyword.keyword.lower() in movement.description.lower():
+                counterpart_account = keyword.account
+                break                                 
+
+        if counterpart_account:
+            affected_accounts.add(counterpart_account.id)
+            Transaction.objects.create(
+                entry=movement,
+                account=counterpart_account,
+                debit=sum(transaction.credit for transaction in movement.transactions.all()),
+                credit=sum(transaction.debit for transaction in movement.transactions.all())
+            )
+
+
+    for account_id in affected_accounts:
+        recalculate_balances_after_date.delay(
+            min_date,
+            account_id
+        )
 
     return redirect('unbalanced_entries_report')
 
