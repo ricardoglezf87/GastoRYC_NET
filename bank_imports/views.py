@@ -146,7 +146,7 @@ class BankImportView(ImportMovementsMixin, View):
     def process_ing_file(self, file):
         """Procesa un archivo CSV de ING Direct"""
         # Decodificar el archivo
-        content = file.read().decode('latin-1')
+        content = file.read().decode('utf-8')
         csv_data = []
         import_data = []
         
