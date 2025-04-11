@@ -55,7 +55,7 @@ def edit_entry(request, entry_id):
     if request.method == 'POST':
         form = EntryForm(request.POST, instance=entry)
         formset = TransactionFormSet(request.POST, instance=entry)
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             with transaction.atomic():
                 # Guardar la fecha original antes de los cambios
                 original_date = entry.date
