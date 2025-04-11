@@ -441,26 +441,29 @@
 
   function handleTransactionFiles(files, entryId) {
     const formData = new FormData();
-    // Change: Append files with the name "files" as expected by the view
     for (let i = 0; i < files.length; i++) {
-      formData.append('files', files[i]);
+        formData.append('files', files[i]);
     }
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
 
-    // Change: Use the existing upload_entry_attachments URL
+    // Usar la URL correcta para subir adjuntos de entradas
     fetch(`/attachments/upload_entry_attachments/${entryId}/`, {
-      method: 'POST',
-      body: formData
+        method: 'POST',
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
-      if (data.success) {
-        location.reload();
-      } else {
-        alert('Error al subir archivos: ' + data.error); // Keep the error message
-      }
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error al subir archivos: ' + (data.error || 'Error desconocido'));
+        }
+    })
+    .catch(error => {
+        console.error('Error en fetch:', error);
+        alert('Error de red al subir archivos.');
     });
-  }
+}
 
   const transactionRows = document.querySelectorAll('.transaction-row');
   transactionRows.forEach(row => {
@@ -574,71 +577,110 @@
 </script>
 <script>
 // Configuración de Tabulator
+// Configuración de Tabulator
 var table = new Tabulator("#transactionsTable", {
     ajaxURL: "{% url 'get_account_transactions' account.id %}",
     ajaxResponse: function(url, params, response) {
-        return response.data;
+        // Asegúrate de que la respuesta tenga el formato { data: [...] }
+        // o ajusta esto según la estructura real de tu respuesta JSON.
+        return response.data || response;
     },
     ajaxConfig: {
         method: "GET",
     },
     layout: "fitColumns",
-    height: "600px",
+    height: "600px", // Ajusta según necesites
     placeholder: "No se encontraron transacciones",
-    virtualDomBuffer: 300,
-    
+    // virtualDomBuffer: 300, // Considera ajustar o quitar si causa problemas
+
     ajaxURLGenerator:function(url, config, params){
         const urlParams = new URLSearchParams();
-        
-        // Añadir período seleccionado
         const period = document.getElementById('periodSelector').value;
         urlParams.append("period", period);
-        
-        // Obtener filtros activos
-        try {
-            const filters = {};
-            if (this.getHeaderFilters) {
+
+        // Añadir filtros si existen
+        if (this.initialized) { // Evitar error en la carga inicial si los filtros no están listos
+             try {
+                const filters = {};
                 const headerFilters = this.getHeaderFilters();
                 headerFilters.forEach(function(filter) {
                     const value = filter.getValue();
-                    if (value) {
+                    // Asegurarse de que el valor no sea nulo o indefinido antes de añadirlo
+                    if (value !== null && typeof value !== 'undefined' && value !== '') {
                         filters[filter.getField()] = value;
                     }
                 });
-                
+
                 if (Object.keys(filters).length > 0) {
                     urlParams.append("filters", JSON.stringify(filters));
                 }
+            } catch (error) {
+                console.error("Error al procesar filtros:", error);
             }
-        } catch (error) {
-            console.error("Error al procesar filtros:", error);
         }
-        
+
         return `${url}?${urlParams.toString()}`;
     },
-    
+
+    // --- Integración Drag-and-Drop ---
+    rowFormatter:function(row){
+        var data = row.getData();
+        var element = row.getElement();
+
+        // Asegúrate de que 'entry_id' existe en tus datos
+        if(data.entry_id) {
+            element.dataset.entryId = data.entry_id; // Guardar el ID para usarlo en el drop
+
+            element.addEventListener('dragover', (event) => {
+                event.preventDefault(); // Necesario para permitir el drop
+                element.classList.add('dragover'); // Estilo visual
+            });
+
+            element.addEventListener('dragleave', () => {
+                element.classList.remove('dragover'); // Quitar estilo visual
+            });
+
+            element.addEventListener('drop', (event) => {
+                event.preventDefault();
+                element.classList.remove('dragover');
+                const files = event.dataTransfer.files;
+                const entryId = element.dataset.entryId; // Obtener el ID guardado
+                if (files.length > 0 && entryId) {
+                    handleTransactionFiles(files, entryId);
+                } else {
+                    console.warn("Drop event sin archivos o sin entryId", {files, entryId});
+                }
+            });
+        } else {
+            // Opcional: Añadir un log si falta entry_id, puede ayudar a depurar
+            // console.warn("Fila sin entry_id:", data);
+        }
+    },
+    // --- Fin Integración Drag-and-Drop ---
+
     columns: [
         {
-            title: "Fecha", 
+            title: "Fecha",
             field: "date",
             formatter: function(cell, formatterParams, onRendered) {
                 const date = cell.getValue();
+                // Asegúrate de que 'date_link' viene en los datos
                 const link = cell.getRow().getData().date_link;
-                return `<a href="${link}" class="text-primary">${date}</a>`;
+                return link ? `<a href="${link}" class="text-primary">${date}</a>` : date;
             },
-            headerFilter: true,
+            headerFilter: "input", // Usar 'input' para filtro de texto simple
             width: 120
         },
         {
             title: "Descripción",
             field: "description",
-            headerFilter: true,
+            headerFilter: "input",
             widthGrow: 2
         },
         {
             title: "Contrapartidas",
             field: "counterparts",
-            headerFilter: true,
+            headerFilter: "input",
             widthGrow: 2
         },
         {
@@ -646,14 +688,9 @@ var table = new Tabulator("#transactionsTable", {
             field: "debit",
             hozAlign: "right",
             formatter: "money",
-            formatterParams: {
-                decimal: ",",
-                thousand: ".",
-                symbol: "€",
-                symbolAfter: true,
-                precision: 2
-            },
-            headerFilter: true,
+            formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+            headerFilter: "number", // Usar 'number' para filtro numérico
+             headerFilterFunc: ">=", // Ejemplo: buscar mayores o iguales
             width: 120
         },
         {
@@ -661,14 +698,9 @@ var table = new Tabulator("#transactionsTable", {
             field: "credit",
             hozAlign: "right",
             formatter: "money",
-            formatterParams: {
-                decimal: ",",
-                thousand: ".",
-                symbol: "€",
-                symbolAfter: true,
-                precision: 2
-            },
-            headerFilter: true,
+            formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+            headerFilter: "number",
+            headerFilterFunc: ">=",
             width: 120
         },
         {
@@ -676,24 +708,22 @@ var table = new Tabulator("#transactionsTable", {
             field: "balance",
             hozAlign: "right",
             formatter: "money",
-            formatterParams: {
-                decimal: ",",
-                thousand: ".",
-                symbol: "€",
-                symbolAfter: true,
-                precision: 2
-            },
+            formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
             width: 120
         },
         {
-            title: "Adjuntos",
+            title: "Adj.", // Título más corto
             field: "has_attachments",
             formatter: function(cell, formatterParams, onRendered) {
-                return cell.getValue() ? '<i class="fas fa-paperclip"></i>' : '';
+                return cell.getValue() ? '<i class="fas fa-paperclip attachment-icon"></i>' : '';
             },
             hozAlign: "center",
-            width: 80
+            width: 60, // Ancho reducido
+            headerSort: false // No suele tener sentido ordenar por si tiene adjuntos
         }
+    ],
+    initialSort:[ // Ejemplo: ordenar por fecha descendente al cargar
+        {column:"date", dir:"desc"},
     ]
 });
 
@@ -710,7 +740,7 @@ table.on("headerFilterChanged", function(headerValue, field){
     clearTimeout(window.filterTimer);
     window.filterTimer = setTimeout(() => {
         table.setData();
-    }, 300);
+    }, 500);
 });
 </script>
 {% endblock %}
