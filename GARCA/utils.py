@@ -40,3 +40,12 @@ def remove_breadcrumb(request, text, url):
 
     new_breadcrumbs = [bc for bc in breadcrumbs if f"{bc[0]}-{bc[1]}" != breadcrumb_to_remove_str]
     request.session['breadcrumbs'] = new_breadcrumbs
+
+def go_back_breadcrumb(request):
+    breadcrumbs = request.session.get('breadcrumbs', [])
+    if len(breadcrumbs) > 1:
+        breadcrumbs.pop()  # Remove the last breadcrumb
+    request.session['breadcrumbs'] = breadcrumbs
+
+def get_breadcrumbs(request):
+    return request.session.get('breadcrumbs', [])

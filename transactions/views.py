@@ -83,25 +83,15 @@ def add_transaction(request):
 def delete_transaction(request, transaction_id):
     if request.method == 'POST':
         transaction = get_object_or_404(Transaction, id=transaction_id)
-        entry_id = transaction.entry_id
 
         entry = Entry.objects.get(id=transaction.entry_id)
-        affected_accounts_before = set(
+        affected_accounts = set(
             t.account_id for t in entry.transactions.all()
         )
 
         transaction.delete()
 
-        affected_accounts_after = set(
-            t.account_id for t in entry.transactions.all()
-        )
-        
-        # Combinar todas las cuentas afectadas
-        all_affected_accounts = affected_accounts_before.union(
-            affected_accounts_after
-        )
-
-        for account_id in all_affected_accounts:
+        for account_id in affected_accounts:
             recalculate_balances_after_date.delay(
                 min(entry.date, entry.date),
                 account_id
