@@ -55,7 +55,7 @@ def edit_entry(request, entry_id):
     if request.method == 'POST':
         form = EntryForm(request.POST, instance=entry)
         formset = TransactionFormSet(request.POST, instance=entry)
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             with transaction.atomic():
                 # Guardar la fecha original antes de los cambios
                 original_date = entry.date
@@ -106,7 +106,17 @@ def add_entry(request):
     if request.method == 'POST':
         form = EntryForm(request.POST)
         if form.is_valid():
+
             entry = form.save()
+
+            Transaction.objects.create(
+                entry=entry,
+                account=Account.objects.get(id=1),
+                debit=0,
+                credit=0
+            )
+            entry.save()
+            
             remove_breadcrumb(request, 'Nueva entrada' , request.path)
             return redirect('edit_entry', entry_id=entry.id)
     else:
