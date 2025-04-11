@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import inlineformset_factory
 from django.urls import reverse
-from GARCA.utils import add_breadcrumb, remove_breadcrumb
+from GARCA.utils import add_breadcrumb, get_breadcrumbs, go_back_breadcrumb, remove_breadcrumb
 from accounts.models import Account
 from async_tasks.tasks import recalculate_balances_after_date
 from .models import Entry
@@ -11,6 +11,36 @@ from transactions.models import Transaction
 from .forms import EntryForm
 from transactions.forms import TransactionForm
 from django.db import transaction
+
+def delete_entry(request, entry_id):
+    
+    entry = Entry.objects.get(id=entry_id)
+
+    affected_accounts = set(
+        t.account_id for t in entry.transactions.all()
+    )
+
+    for transaction in Transaction.objects.filter(entry_id=entry_id):
+        transaction.delete()
+
+    entry.delete()
+
+    for account_id in affected_accounts:
+        recalculate_balances_after_date.delay(
+            min(entry.date, entry.date),
+            account_id
+        )
+
+    go_back_breadcrumb(request)
+    breadcrumbs = get_breadcrumbs(request)
+    print(breadcrumbs)
+
+    if breadcrumbs:
+        # Redirige al usuario al último breadcrumb restante
+        return redirect(breadcrumbs[-1][1])
+    else:
+        # Si no hay breadcrumbs, redirige a una página predeterminada
+        return redirect('/accounts/account_tree/')
 
 def edit_entry(request, entry_id):
     entry = get_object_or_404(Entry, id=entry_id)
