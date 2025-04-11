@@ -106,7 +106,17 @@ def add_entry(request):
     if request.method == 'POST':
         form = EntryForm(request.POST)
         if form.is_valid():
+
             entry = form.save()
+
+            Transaction.objects.create(
+                entry=entry,
+                account=Account.objects.get(id=1),
+                debit=0,
+                credit=0
+            )
+            entry.save()
+            
             remove_breadcrumb(request, 'Nueva entrada' , request.path)
             return redirect('edit_entry', entry_id=entry.id)
     else:
