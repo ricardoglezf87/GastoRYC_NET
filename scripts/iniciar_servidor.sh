@@ -2,7 +2,7 @@
 
 # Configura las rutas
 DJANGO_DIR="/volume1/web/GastoRYC_NET"
-LOG_FILE="/volume1/web/GastoRYC_NET/logs/servidor.log"
+LOG_FILE="/volume1/web/GastoRYC_NET/logs/django_server.log"
 PID_FILE="/volume1/web/GastoRYC_NET/logs/django_server.pid"
 
 # Ir al directorio del proyecto
