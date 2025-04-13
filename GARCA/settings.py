@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # Ajusta el .parent para que apunte correctamente a GastoRYC_NET/
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Application definition
 INSTALLED_APPS = [
