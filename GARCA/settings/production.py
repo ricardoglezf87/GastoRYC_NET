@@ -11,20 +11,10 @@ if not SECRET_KEY:
     raise ValueError("No se ha definido la variable de entorno DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False # ¡Fundamental para producción!
+DEBUG = True
 
-# Define los hosts/dominios permitidos para tu sitio en producción
-# Ejemplo: ALLOWED_HOSTS = ['www.tusitio.com', 'tusitio.com']
-# Lee desde una variable de entorno si es posible, separada por comas
-allowed_hosts_str = os.environ.get('DJANGO_ALLOWED_HOSTS')
-if allowed_hosts_str:
-    ALLOWED_HOSTS = allowed_hosts_str.split(',')
-else:
-    # Define un valor por defecto o lanza un error si prefieres
-    ALLOWED_HOSTS = ['*'] # O ['tu-dominio.com'] si siempre es el mismo
-    print("ADVERTENCIA: DJANGO_ALLOWED_HOSTS no está configurado. La aplicación quedara abierta hasta que se modifique.")
-
-
+ALLOWED_HOSTS = ['*'] 
+    
 # Database para Producción
 DATABASES = {
     'default': {
@@ -44,27 +34,6 @@ DATABASES = {
     # }
 }
 
-# --- Configuraciones de Seguridad Adicionales para Producción ---
-
-# Asegúrate de que las cookies CSRF y de sesión solo se envíen por HTTPS
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-
-# HSTS (Strict Transport Security) - Descomenta si tu sitio SIEMPRE usa HTTPS
-# Ayuda a prevenir ataques man-in-the-middle
-# SECURE_HSTS_SECONDS = 31536000 # 1 año
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
-
-# Redirección a HTTPS - Descomenta si tu proxy (Nginx/Apache) no lo maneja
-# SECURE_SSL_REDIRECT = True
-
-# Referrer Policy
-SECURE_REFERRER_POLICY = 'same-origin' # O 'strict-origin-when-cross-origin'
-
-# --- Logging ---
-# Configura el logging para enviar errores a un archivo o servicio externo en producción
-# (Esta es una configuración básica, puedes hacerla más compleja)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
