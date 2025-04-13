@@ -1,4 +1,4 @@
-# GARCA/settings/base.py
+# GARCA/settings.py
 """
 Configuración base de Django para GARCA project.
 """
@@ -8,7 +8,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # Ajusta el .parent para que apunte correctamente a GastoRYC_NET/
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Application definition
 INSTALLED_APPS = [
@@ -109,5 +109,30 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC' # O tu zona horaria
 
-# ¡IMPORTANTE! Elimina DEBUG, SECRET_KEY, ALLOWED_HOSTS y DATABASES de este archivo base.
-# Se definirán en development.py y production.py
+# SECURITY WARNING: keep the secret key used in production secret!
+# Puedes usar una clave simple para desarrollo
+SECRET_KEY = 'django-insecure-u4ih8i#^0=x+j4+*b(7uwf-3m-!jo4e!!p+pww5sns#69g2_j-'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1'] # Permite cualquier host en desarrollo
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        # Usamos la variable BASE_DIR importada de base.py
+        'NAME': BASE_DIR / 'garca.sqlite3', # <-- Base de datos para producción
+    }
+    # Si usaras PostgreSQL o MySQL en producción, la configuración iría aquí,
+    # leyendo credenciales de variables de entorno.
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': os.environ.get('DB_NAME'),
+    #     'USER': os.environ.get('DB_USER'),
+    #     'PASSWORD': os.environ.get('DB_PASSWORD'),
+    #     'HOST': os.environ.get('DB_HOST', 'localhost'),
+    #     'PORT': os.environ.get('DB_PORT', '5432'),
+    # }
+}
