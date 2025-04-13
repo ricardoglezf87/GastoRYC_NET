@@ -73,7 +73,10 @@ No Aplica
 pip install django
 pip install django-mptt
 pip install python-dateutil
-
+pip install celery
+pip install redis
+pip install pystray Pillow
+pip install pyinstaller
 
 ##### 7. Otros datos de interés
 [⇑Indice⇑](#indice)

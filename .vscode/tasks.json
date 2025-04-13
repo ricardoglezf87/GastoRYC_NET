@@ -2,6 +2,16 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Publicar Exe",
+            "type": "shell",
+            "command": "pyinstaller -w -F launcher.py",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
             "label": "Ejecutar server task",
             "type": "shell",
             "command": "celery -A GARCA worker -l info --pool=solo",
@@ -24,7 +34,7 @@
         {
             "label": "Ejecutar Servidor Django",
             "type": "shell",
-            "command": "python manage.py runserver",
+            "command": "python manage.py runserver --settings GARCA.settings.development",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
