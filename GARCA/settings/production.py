@@ -22,7 +22,7 @@ if allowed_hosts_str:
 else:
     # Define un valor por defecto o lanza un error si prefieres
     ALLOWED_HOSTS = ['*'] # O ['tu-dominio.com'] si siempre es el mismo
-    print("ADVERTENCIA: DJANGO_ALLOWED_HOSTS no está configurado. La aplicación podría no funcionar.")
+    print("ADVERTENCIA: DJANGO_ALLOWED_HOSTS no está configurado. La aplicación quedara abierta hasta que se modifique.")
 
 
 # Database para Producción
