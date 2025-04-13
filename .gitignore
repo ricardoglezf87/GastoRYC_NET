@@ -1,6 +1,5 @@
 *.db
 __pycache__/
-attachments/
 adjuntos/
 *.rdb
 build/
