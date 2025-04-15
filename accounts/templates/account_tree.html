@@ -7,6 +7,7 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Listado de Cuentas</h5>
+        <input type="text" id="accountSearch" class="form-control mb-3" placeholder="Buscar cuentas...">
         <ul id="accountTree" class="list-group">
             {% generate_account_tree accounts %}
         </ul>
@@ -66,11 +67,122 @@
     .card{
         border: 1px solid #ced4da;
     }
+    .hidden {
+        display: none !important;
+    }
 </style>
 
 <script>
-    // Add jQuery to handle the expand/collapse functionality
-    function toggleNested(element) {
+
+$(document).ready(function() {
+    console.log("Document ready, attaching keyup listener...");
+
+    // --- Cache frequently used selectors ---
+    var $accountTree = $("#accountTree");
+    var $accountSearch = $("#accountSearch");
+
+    $accountSearch.on("keyup", function() {
+        var value = $(this).val().toLowerCase().trim();
+        console.log("Search Value:", value);
+
+        // --- Select the correct elements: divs with class 'list-group-item' ---
+        var $allItems = $accountTree.find(".list-group-item"); // <-- CAMBIO CLAVE: Buscar .list-group-item
+
+        if (!$allItems.length) {
+            // Este error ahora sí indicaría un problema real con la generación del HTML
+            console.error("No items with class 'list-group-item' found in #accountTree!");
+            return;
+        }
+
+        // 1. Ocultar TODOS los elementos .list-group-item inicialmente
+        $allItems.addClass('hidden');
+        // Resetear carets y listas anidadas
+        $allItems.find('.caret').removeClass('caret-down');
+        // Encontrar los divs anidados directamente
+        $allItems.find('> .nested').removeClass('active').hide(); // <-- CAMBIO: Buscar div.nested directo
+
+        // 2. Si la búsqueda está vacía, mostrar solo los elementos de nivel superior
+        if (value === "") {
+            // Mostrar solo los .list-group-item que son hijos directos de #accountTree
+            // o del primer .nested si la estructura es ul > div.nested > div.list-group-item
+            $accountTree.find("> .list-group-item").removeClass('hidden'); // Asume ul > div.list-group-item
+            // Si la estructura es ul > div.nested > div.list-group-item, usa:
+            // $accountTree.find("> .nested > .list-group-item").removeClass('hidden');
+            // O para mostrar todo el árbol por defecto:
+            // $allItems.removeClass('hidden');
+            // $allItems.find('.caret').removeClass('caret-down');
+            // $allItems.find('> .nested').removeClass('active').hide();
+            return;
+        }
+
+        // 3. Encontrar coincidencias y revelar la línea de ancestros
+        $allItems.each(function() {
+            var itemDiv = $(this); // Ahora es un div
+
+            // Buscar texto solo en el contenido directo del div, excluyendo el div.nested
+            // Selecciona el div.row que contiene el texto principal
+            var textContainer = itemDiv.find('> .row > .col-md-6').first(); // Ajusta si la estructura cambia
+            var nodeText = textContainer.text().toLowerCase(); // Obtener texto del contenedor
+
+            var isMatch = nodeText.indexOf(value) > -1;
+
+            if (isMatch) {
+                // 4. Mostrar el elemento coincidente
+                itemDiv.removeClass('hidden');
+
+                // 5. Mostrar y expandir todos sus ancestros directos (div.list-group-item)
+                // Usamos parents() buscando .list-group-item hasta llegar a #accountTree
+                itemDiv.parentsUntil('#accountTree', '.list-group-item').each(function() { // <-- CAMBIO: Buscar ancestros .list-group-item
+                    var ancestorDiv = $(this);
+                    ancestorDiv.removeClass('hidden'); // Mostrar el ancestro
+
+                    // Encontrar el caret y el div anidado DIRECTAMENTE dentro de este ancestro
+                    var directCaret = ancestorDiv.find('> .row .caret').first(); // Busca caret dentro del row hijo
+                    var directNestedDiv = ancestorDiv.find('> .nested'); // Busca el div.nested hijo directo
+
+                    if (directCaret.length) {
+                        directCaret.addClass('caret-down');
+                    }
+                    if (directNestedDiv.length) {
+                        directNestedDiv.addClass('active').show();
+                        directNestedDiv.removeClass('hidden');
+                    }
+                });
+            }
+        });
+    });
+
+    // --- Manejador de clic para expandir/colapsar ---
+    // Delegar evento al contenedor #accountTree para los clics en .caret
+    $accountTree.on('click', '.caret', function(event) {
+        event.stopPropagation(); // Evita que el clic se propague a elementos padres si es necesario
+        console.log("Caret clicked!");
+
+        var caret = $(this);
+        // Encontrar el div.list-group-item contenedor más cercano
+        var parentItemDiv = caret.closest('.list-group-item');
+        // Encontrar el div.nested que es hijo directo de parentItemDiv
+        var nestedDiv = parentItemDiv.find('> .nested'); // <-- CAMBIO: Buscar div.nested hijo
+
+        if (nestedDiv.length) {
+            caret.toggleClass('caret-down');
+            nestedDiv.toggleClass('active');
+
+            if (nestedDiv.hasClass('active')) {
+                nestedDiv.slideDown(); // Efecto visual opcional
+                // nestedDiv.show(); // Sin efecto
+            } else {
+                nestedDiv.slideUp(); // Efecto visual opcional
+                // nestedDiv.hide(); // Sin efecto
+            }
+        } else {
+            console.warn("Could not find associated '.nested' div for the clicked caret.");
+        }
+    });
+
+});
+
+function toggleNested(element) {
         var nestedList = element.parentElement.parentElement.nextElementSibling;
         var caret = element.querySelector(".caret");
 
@@ -82,5 +194,7 @@
             caret.classList.remove("caret-down");
         }
     }
+
+
 </script>
 {% endblock %}
