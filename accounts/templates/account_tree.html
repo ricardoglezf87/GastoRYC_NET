@@ -7,6 +7,7 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">Listado de Cuentas</h5>
+        <input type="text" id="accountSearch" class="form-control mb-3" placeholder="Buscar cuentas...">
         <ul id="accountTree" class="list-group">
             {% generate_account_tree accounts %}
         </ul>
@@ -66,21 +67,95 @@
     .card{
         border: 1px solid #ced4da;
     }
+    .hidden {
+        display: none !important;
+    }
 </style>
 
 <script>
-    // Add jQuery to handle the expand/collapse functionality
-    function toggleNested(element) {
-        var nestedList = element.parentElement.parentElement.nextElementSibling;
-        var caret = element.querySelector(".caret");
 
-        if (nestedList.style.display === "none") {
-            nestedList.style.display = "block";
-            caret.classList.add("caret-down");
-        } else {
-            nestedList.style.display = "none";
-            caret.classList.remove("caret-down");
+$(document).ready(function() {
+    console.log("Document ready, attaching keyup listener...");
+
+    var $accountTree = $("#accountTree");
+    var $accountSearch = $("#accountSearch");
+
+    $accountSearch.on("keyup", function() {
+        var value = $(this).val().toLowerCase().trim();
+        console.log("Search Value:", value);
+
+        var $allItems = $accountTree.find(".list-group-item");
+
+        if (!$allItems.length) {
+            console.error("No items with class 'list-group-item' found in #accountTree!");
+            return;
         }
-    }
+
+        // 1. Ocultar TODOS los elementos .list-group-item inicialmente
+        //    y resetear estado visual de anidados/carets
+        $allItems.addClass('hidden');
+        $allItems.find('.caret').removeClass('caret-down');
+        // Asegúrate que este selector encuentre tus divs anidados para ocultarlos
+        $allItems.find('> .nested').removeClass('active').hide();
+
+        // 2. Si la búsqueda está vacía, mostrar TODOS los elementos, pero colapsados
+        if (value === "") {
+            $allItems.removeClass('hidden'); // <--- !! CAMBIO AQUÍ !! Muestra todos los items
+            // El reseteo de carets y nested ya se hizo justo arriba, así que el árbol aparecerá colapsado.
+            return; // Salir, no hacer más filtrado
+        }
+
+        // 3. Encontrar coincidencias y revelar la línea de ancestros (sin cambios aquí)
+        $allItems.each(function() {
+            var itemDiv = $(this);
+            var textContainer = itemDiv.find('> .row > .col-md-6').first();
+            var nodeText = textContainer.text().toLowerCase();
+            var isMatch = nodeText.indexOf(value) > -1;
+
+            if (isMatch) {
+                itemDiv.removeClass('hidden');
+                itemDiv.parentsUntil('#accountTree', '.list-group-item').each(function() {
+                    var ancestorDiv = $(this);
+                    ancestorDiv.removeClass('hidden');
+                    var directCaret = ancestorDiv.find('> .row .caret').first();
+                    var directNestedDiv = ancestorDiv.find('> .nested');
+
+                    if (directCaret.length) {
+                        directCaret.addClass('caret-down');
+                    }
+                    if (directNestedDiv.length) {
+                        directNestedDiv.addClass('active').show();
+                        directNestedDiv.removeClass('hidden'); // Asegura que el contenedor anidado sea visible
+                    }
+                });
+            }
+        });
+    });
+
+    // --- Manejador de clic para expandir/colapsar ---
+    $accountTree.on('click', '.caret', function(event) {
+        event.stopPropagation();
+        console.log("Caret clicked!");
+
+        var caret = $(this);
+        var parentItemDiv = caret.closest('.list-group-item');
+        var nestedDiv = parentItemDiv.find('> .nested');
+
+        if (nestedDiv.length) {
+            caret.toggleClass('caret-down');
+            nestedDiv.toggleClass('active');
+
+            if (nestedDiv.hasClass('active')) {
+                nestedDiv.slideDown();
+            } else {
+                nestedDiv.slideUp();
+            }
+        } else {
+            console.warn("Could not find associated '.nested' div for the clicked caret.");
+        }
+    });
+});
+
+
 </script>
 {% endblock %}
