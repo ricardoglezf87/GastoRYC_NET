@@ -64,7 +64,6 @@ ASGI_APPLICATION = 'GARCA.asgi.application' # Añade esto si no lo tenías
 
 
 # Password validation
-# ... (mantenlo como estaba)
 AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
     { 'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
@@ -74,15 +73,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# ... (mantenlo como estaba)
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 TIME_ZONE = 'UTC'
 USE_I18N = True
+USE_L10N  = True
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# ... (mantenlo como estaba)
+
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'GARCA', 'static'),
@@ -91,7 +90,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Default primary key field type
-# ... (mantenlo como estaba)
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media files (si los usas para adjuntos, mantenlo)
