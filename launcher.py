@@ -158,7 +158,7 @@ def iniciar_django():
     if django_process and django_process.poll() is None:
         gui_queue.put((django_text, "Django ya está iniciado.\n"))
         return
-    iniciar_proceso(["python", "manage.py", "runserver", "--noreload"], django_text, "Django")
+    iniciar_proceso(["python", "manage.py", "runserver","8585", "--noreload"], django_text, "Django")
 
 def detener_redis():
     detener_proceso(redis_process, redis_text, "Redis")

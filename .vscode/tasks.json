@@ -34,7 +34,7 @@
         {
             "label": "Ejecutar Servidor Django",
             "type": "shell",
-            "command": "python manage.py runserver --settings GARCA.settings.development",
+            "command": "python manage.py runserver",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
