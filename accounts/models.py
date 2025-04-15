@@ -11,6 +11,12 @@ class Account(models.Model):
     def __str__(self):
         return self.name
     
+    def get_root_parent(self):
+        account = self
+        while account.parent:
+            account = account.parent
+        return account
+    
     def get_full_hierarchy(self):
         if self.parent:
             return f"{self.parent.get_full_hierarchy()}::{self.name}"
