@@ -28,6 +28,13 @@
         <label for="id_name">Ruta por defecto</label>
         <input type="text" class="form-control" id="id_default_path" name="default_path" value="{{ account.default_path }}">
       </div>
+      <div class="form-group form-check col-md-6 ">
+        <div class="ml-4">
+          <input type="checkbox" class="form-check-input" id="id_closed" name="closed" {% if account.closed %}checked{% endif %}>
+          <label class="form-check-label" for="id_closed">Cerrada</label>
+        </div>
+        <small class="form-text text-muted">Marcar si la cuenta ya no se usa activamente.</small>
+      </div>
     </form>
   </div>
 

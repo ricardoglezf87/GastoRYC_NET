@@ -6,6 +6,7 @@ class Account(models.Model):
     name = models.CharField(max_length=100)
     parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
     default_path = models.CharField(max_length=255, blank=True, null=True, verbose_name="Ruta por defecto para adjuntos")
+    closed = models.BooleanField(default=False, verbose_name="Cerrada") 
     attachments = GenericRelation(Attachment)
     
     def __str__(self):
