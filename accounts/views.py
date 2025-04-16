@@ -1,15 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Sum, F, Q  # Añadir esta línea
 from GARCA.utils import add_breadcrumb, clear_breadcrumbs, remove_breadcrumb
 from .models import Account, AccountKeyword
 from .forms import AccountForm
 import json
-from django.core.paginator import Paginator
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-import math
+
 
 def account_tree_view(request):
 

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .tasks import hello_world, recalculate_balances_after_date, calculate_inicial_balances
+from .tasks import create_backup_view, hello_world, recalculate_balances_after_date, calculate_inicial_balances
 
 def trigger_hello_world(request):
     # Ejecutar tarea asíncrona
@@ -29,3 +29,11 @@ def trigger_calculate_inicial_balances(request):
         'message': 'Tarea iniciada correctamente'
     })
     
+def trigger_create_backup_view(request):
+    # Ejecutar tarea asíncrona
+    task = create_backup_view.delay()
+    return JsonResponse({
+        'success': True,
+        'task_id': task.id,
+        'message': 'Tarea iniciada correctamente'
+    })
