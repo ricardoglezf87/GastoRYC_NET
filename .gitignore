@@ -6,4 +6,3 @@ build/
 dist/
 logs/
 garca.sqlite3
-backups/
