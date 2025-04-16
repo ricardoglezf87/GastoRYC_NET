@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import index  # Importar la función index desde views.py
+from .views import index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +28,7 @@ urlpatterns = [
     path('transactions/', include('transactions.urls')),
     path('attachments/', include('attachments.urls')),
     path('bank_imports/', include('bank_imports.urls')),
-    path('reports/', include('reports.urls')),  # Añadir esta línea
+    path('reports/', include('reports.urls')),  
     path('async/', include('async_tasks.urls')),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

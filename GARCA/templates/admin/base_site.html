@@ -23,6 +23,52 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/2.3.1/luxon.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Seleccionamos el enlace por su id
+            $('#create-backup-link').on('click', function(event) {
+                event.preventDefault(); // Prevenimos la navegación normal del enlace
+    
+                var $link = $(this);
+                var originalText = $link.text();
+    
+                // Opcional: Cambiar el texto y deshabilitar el enlace mientras se procesa
+                $link.text('Creando copia...');
+                $link.css('pointer-events', 'none'); // Deshabilita clics visualmente
+                $link.css('opacity', '0.6');      // Atenúa el enlace
+    
+                // Hacemos la llamada AJAX usando jQuery (ya que lo tienes incluido)
+                $.ajax({
+                    // Asegúrate de que esta URL sea la correcta para tu vista de backup
+                    // En el código original del HTML, usa $link.attr('href'), 
+                    // pero si el href="#" no es la URL real, debes ponerla aquí directamente.
+                    // Por ejemplo: url: '/admin/create_backup/', 
+                    url: $link.attr('href'), // O reemplaza con la URL correcta si href="#"
+                    type: 'GET', // O 'POST' si tu vista espera un POST
+                    success: function(response) {
+                        // Éxito: Muestra un mensaje de confirmación
+                        // Puedes usar alert() o una notificación más elegante si usas alguna librería
+                        alert('¡Copia de seguridad iniciada/creada exitosamente!');
+                        // Aquí podrías revisar 'response' si tu vista devuelve algún JSON con detalles
+                        // ej: if(response.status == 'success') { alert(response.message); }
+                    },
+                    error: function(xhr, status, error) {
+                        // Error: Muestra un mensaje de error
+                        console.error("Error al crear backup:", status, error, xhr.responseText);
+                        alert('Error al crear la copia de seguridad. Revisa la consola del navegador para más detalles.');
+                    },
+                    complete: function() {
+                        // Se ejecuta siempre (éxito o error)
+                        // Restaura el texto y la apariencia del enlace
+                        $link.text(originalText);
+                        $link.css('pointer-events', 'auto'); // Habilita clics de nuevo
+                        $link.css('opacity', '1');
+                    }
+                });
+            });
+        });
+    </script>
     
 {% endblock %}
 
@@ -32,7 +78,7 @@
     <a href="/entries/add_entry/">Nueva entrada</a>
     <a href="/bank_imports/import_movements/">Importar movimientos</a>      
     <a href="/reports/unbalanced_entries/">Movimientos descuadrados</a>
-        
+    <a href="/async/create_backup" id="create-backup-link">Crear Copia Seguridad</a>
 {% endblock %}
 
 {% block branding %}

@@ -1,8 +1,6 @@
-from urllib.parse import urlparse
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms import inlineformset_factory
-from django.urls import reverse
 from GARCA.utils import add_breadcrumb, get_breadcrumbs, go_back_breadcrumb, remove_breadcrumb
 from accounts.models import Account
 from async_tasks.tasks import recalculate_balances_after_date
