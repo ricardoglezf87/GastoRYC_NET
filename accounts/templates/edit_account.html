@@ -24,6 +24,10 @@
           {% endfor %}
         </select>
       </div>
+      <div class="form-group col-md-6">
+        <label for="id_name">Ruta por defecto</label>
+        <input type="text" class="form-control" id="id_default_path" name="default_path" value="{{ account.default_path }}">
+      </div>
     </form>
   </div>
 
