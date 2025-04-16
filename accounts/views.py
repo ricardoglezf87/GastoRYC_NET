@@ -13,8 +13,9 @@ def account_tree_view(request):
 
     clear_breadcrumbs(request)
 
+    show_closed_flag = request.GET.get('show_closed') == 'on'
     accounts = Account.objects.filter(parent=None).prefetch_related('children')
-    return render(request, 'account_tree.html', {'accounts': accounts})
+    return render(request, 'account_tree.html', {'accounts': accounts, 'show_closed': show_closed_flag})
 
 def edit_account(request, account_id):
     account = get_object_or_404(Account, id=account_id)

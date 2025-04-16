@@ -6,10 +6,18 @@
 
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Listado de Cuentas</h5>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0">Listado de Cuentas</h5>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="showClosedCheckbox" {% if show_closed %}checked{% endif %}>
+                <label class="form-check-label" for="showClosedCheckbox">
+                    Mostrar cerradas
+                </label>
+            </div>
+       </div>
         <input type="text" id="accountSearch" class="form-control mb-3" placeholder="Buscar cuentas...">
         <ul id="accountTree" class="list-group">
-            {% generate_account_tree accounts %}
+            {% generate_account_tree accounts show_closed  %}
         </ul>
     </div>
 </div>
@@ -79,6 +87,7 @@ $(document).ready(function() {
 
     var $accountTree = $("#accountTree");
     var $accountSearch = $("#accountSearch");
+    var $showClosedCheckbox = $("#showClosedCheckbox");
 
     $accountSearch.on("keyup", function() {
         var value = $(this).val().toLowerCase().trim();
@@ -130,6 +139,17 @@ $(document).ready(function() {
                 });
             }
         });
+    });
+
+    $showClosedCheckbox.on("change", function() {
+        var url = window.location.pathname; 
+        var params = new URLSearchParams(window.location.search);
+        if (this.checked) {
+            params.set('show_closed', 'on');
+        } else {
+            params.delete('show_closed');
+        }
+        window.location.href = url + '?' + params.toString();
     });
 
     // --- Manejador de clic para expandir/colapsar ---
