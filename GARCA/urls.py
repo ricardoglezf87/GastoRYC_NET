@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import index  # Importar la función index desde views.py
+from .views import create_backup_view, index  # Importar la función index desde views.py
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,4 +30,6 @@ urlpatterns = [
     path('bank_imports/', include('bank_imports.urls')),
     path('reports/', include('reports.urls')),  # Añadir esta línea
     path('async/', include('async_tasks.urls')),
+    path('backup/create/', create_backup_view, name='create_backup'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
