@@ -1,6 +1,5 @@
 from urllib.parse import urlparse
 
-
 def add_breadcrumb(request, text, url, max_length=10):
     breadcrumbs = request.session.get('breadcrumbs', [])
     path_without_query = urlparse(url).path
@@ -49,3 +48,9 @@ def go_back_breadcrumb(request):
 
 def get_breadcrumbs(request):
     return request.session.get('breadcrumbs', [])
+
+
+
+
+
+
