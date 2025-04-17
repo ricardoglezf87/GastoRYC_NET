@@ -24,6 +24,17 @@
           {% endfor %}
         </select>
       </div>
+      <div class="form-group col-md-6">
+        <label for="id_name">Ruta por defecto</label>
+        <input type="text" class="form-control" id="id_default_path" name="default_path" value="{{ account.default_path }}">
+      </div>
+      <div class="form-group form-check col-md-6 ">
+        <div class="ml-4">
+          <input type="checkbox" class="form-check-input" id="id_closed" name="closed" {% if account.closed %}checked{% endif %}>
+          <label class="form-check-label" for="id_closed">Cerrada</label>
+        </div>
+        <small class="form-text text-muted">Marcar si la cuenta ya no se usa activamente.</small>
+      </div>
     </form>
   </div>
 
@@ -306,6 +317,16 @@
       outline: 0;
   }
 
+  .tabulator-row.uploading {
+    opacity: 0.6;
+    pointer-events: none; /* Evita interacciones mientras sube */
+  }
+  .tabulator-row .upload-indicator {
+    /* Estilo para un pequeño icono de carga si lo deseas */
+    margin-left: 5px;
+    color: blue;
+  }
+
   .tabulator-row.dragover {
     background-color: #f0f0f0 !important;
     border: 2px dashed #666;
@@ -439,14 +460,18 @@
       });
   });
 
-  function handleTransactionFiles(files, entryId) {
+  function handleTransactionFiles(files, entryId, tabulatorRow) { 
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
         formData.append('files', files[i]);
     }
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
 
-    // Usar la URL correcta para subir adjuntos de entradas
+    if (tabulatorRow) {
+        const rowElement = tabulatorRow.getElement();
+        rowElement.classList.add('uploading');
+    }
+
     fetch(`/attachments/upload_entry_attachments/${entryId}/`, {
         method: 'POST',
         body: formData
@@ -454,7 +479,12 @@
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            location.reload();
+            if (tabulatorRow) {
+                tabulatorRow.update({ has_attachments: true });
+                console.log(`Adjunto añadido a la entrada ${entryId}`);
+            } else {
+                 alert('Archivo subido. Refresca la tabla si no ves el cambio.');
+            }
         } else {
             alert('Error al subir archivos: ' + (data.error || 'Error desconocido'));
         }
@@ -462,6 +492,12 @@
     .catch(error => {
         console.error('Error en fetch:', error);
         alert('Error de red al subir archivos.');
+    })
+    .finally(() => {
+        if (tabulatorRow) {
+            const rowElement = tabulatorRow.getElement();
+            rowElement.classList.remove('uploading');
+        }
     });
 }
 
@@ -574,173 +610,168 @@
   document.querySelectorAll('.delete-keyword').forEach(button => {
     button.addEventListener('click', deleteKeyword);
   });
-</script>
-<script>
-// Configuración de Tabulator
-// Configuración de Tabulator
-var table = new Tabulator("#transactionsTable", {
-    ajaxURL: "{% url 'get_account_transactions' account.id %}",
-    ajaxResponse: function(url, params, response) {
-        // Asegúrate de que la respuesta tenga el formato { data: [...] }
-        // o ajusta esto según la estructura real de tu respuesta JSON.
-        return response.data || response;
-    },
-    ajaxConfig: {
-        method: "GET",
-    },
-    layout: "fitColumns",
-    height: "600px", // Ajusta según necesites
-    placeholder: "No se encontraron transacciones",
-    // virtualDomBuffer: 300, // Considera ajustar o quitar si causa problemas
 
-    ajaxURLGenerator:function(url, config, params){
-        const urlParams = new URLSearchParams();
-        const period = document.getElementById('periodSelector').value;
-        urlParams.append("period", period);
+  // Configuración de Tabulator
+  var table = new Tabulator("#transactionsTable", {
+      ajaxURL: "{% url 'get_account_transactions' account.id %}",
+      ajaxResponse: function(url, params, response) {
+          return response.data || response;
+      },
+      ajaxConfig: {
+          method: "GET",
+      },
+      layout: "fitColumns",
+      height: "600px",
+      placeholder: "No se encontraron transacciones",
 
-        // Añadir filtros si existen
-        if (this.initialized) { // Evitar error en la carga inicial si los filtros no están listos
-             try {
-                const filters = {};
-                const headerFilters = this.getHeaderFilters();
-                headerFilters.forEach(function(filter) {
-                    const value = filter.getValue();
-                    // Asegurarse de que el valor no sea nulo o indefinido antes de añadirlo
-                    if (value !== null && typeof value !== 'undefined' && value !== '') {
-                        filters[filter.getField()] = value;
-                    }
-                });
+      ajaxURLGenerator:function(url, config, params){
+          const urlParams = new URLSearchParams();
+          const period = document.getElementById('periodSelector').value;
+          urlParams.append("period", period);
 
-                if (Object.keys(filters).length > 0) {
-                    urlParams.append("filters", JSON.stringify(filters));
-                }
-            } catch (error) {
-                console.error("Error al procesar filtros:", error);
-            }
-        }
+          if (this.initialized) {
+              try {
+                  const filters = {};
+                  const headerFilters = this.getHeaderFilters();
+                  headerFilters.forEach(function(filter) {
+                      const value = filter.getValue();
+                      if (value !== null && typeof value !== 'undefined' && value !== '') {
+                          filters[filter.getField()] = value;
+                      }
+                  });
 
-        return `${url}?${urlParams.toString()}`;
-    },
+                  if (Object.keys(filters).length > 0) {
+                      urlParams.append("filters", JSON.stringify(filters));
+                  }
+              } catch (error) {
+                  console.error("Error al procesar filtros:", error);
+              }
+          }
 
-    // --- Integración Drag-and-Drop ---
-    rowFormatter:function(row){
-        var data = row.getData();
-        var element = row.getElement();
+          return `${url}?${urlParams.toString()}`;
+      },
 
-        // Asegúrate de que 'entry_id' existe en tus datos
-        if(data.entry_id) {
-            element.dataset.entryId = data.entry_id; // Guardar el ID para usarlo en el drop
+      rowFormatter:function(row){
+          var data = row.getData();
+          var element = row.getElement();
 
-            element.addEventListener('dragover', (event) => {
-                event.preventDefault(); // Necesario para permitir el drop
-                element.classList.add('dragover'); // Estilo visual
-            });
+          // Asegúrate de que 'entry_id' existe en tus datos
+          if(data.entry_id) {
+              element.dataset.entryId = data.entry_id; // Guardar el ID para usarlo en el drop
 
-            element.addEventListener('dragleave', () => {
-                element.classList.remove('dragover'); // Quitar estilo visual
-            });
+              element.addEventListener('dragover', (event) => {
+                  event.preventDefault(); // Necesario para permitir el drop
+                  element.classList.add('dragover'); // Estilo visual
+              });
 
-            element.addEventListener('drop', (event) => {
-                event.preventDefault();
-                element.classList.remove('dragover');
-                const files = event.dataTransfer.files;
-                const entryId = element.dataset.entryId; // Obtener el ID guardado
-                if (files.length > 0 && entryId) {
-                    handleTransactionFiles(files, entryId);
-                } else {
-                    console.warn("Drop event sin archivos o sin entryId", {files, entryId});
-                }
-            });
-        } else {
-            // Opcional: Añadir un log si falta entry_id, puede ayudar a depurar
-            // console.warn("Fila sin entry_id:", data);
-        }
-    },
-    // --- Fin Integración Drag-and-Drop ---
+              element.addEventListener('dragleave', () => {
+                  element.classList.remove('dragover'); // Quitar estilo visual
+              });
 
-    columns: [
-        {
-            title: "Fecha",
-            field: "date",
-            formatter: function(cell, formatterParams, onRendered) {
-                const date = cell.getValue();
-                // Asegúrate de que 'date_link' viene en los datos
-                const link = cell.getRow().getData().date_link;
-                return link ? `<a href="${link}" class="text-primary">${date}</a>` : date;
-            },
-            headerFilter: "input", // Usar 'input' para filtro de texto simple
-            width: 120
-        },
-        {
-            title: "Descripción",
-            field: "description",
-            headerFilter: "input",
-            widthGrow: 2
-        },
-        {
-            title: "Contrapartidas",
-            field: "counterparts",
-            headerFilter: "input",
-            widthGrow: 2
-        },
-        {
-            title: "Debe",
-            field: "debit",
-            hozAlign: "right",
-            formatter: "money",
-            formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
-            headerFilter: "number", // Usar 'number' para filtro numérico
-             headerFilterFunc: ">=", // Ejemplo: buscar mayores o iguales
-            width: 120
-        },
-        {
-            title: "Haber",
-            field: "credit",
-            hozAlign: "right",
-            formatter: "money",
-            formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
-            headerFilter: "number",
-            headerFilterFunc: ">=",
-            width: 120
-        },
-        {
-            title: "Saldo",
-            field: "balance",
-            hozAlign: "right",
-            formatter: "money",
-            formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
-            width: 120
-        },
-        {
-            title: "Adj.", // Título más corto
-            field: "has_attachments",
-            formatter: function(cell, formatterParams, onRendered) {
-                return cell.getValue() ? '<i class="fas fa-paperclip attachment-icon"></i>' : '';
-            },
-            hozAlign: "center",
-            width: 60, // Ancho reducido
-            headerSort: false // No suele tener sentido ordenar por si tiene adjuntos
-        }
-    ],
-    initialSort:[ // Ejemplo: ordenar por fecha descendente al cargar
-        {column:"date", dir:"desc"},
-    ]
-});
+              element.addEventListener('drop', (event) => {
+                  event.preventDefault();
+                  element.classList.remove('dragover');
+                  const files = event.dataTransfer.files;
+                  const entryId = element.dataset.entryId; // Obtener el ID guardado
 
-// Eventos
-document.getElementById('periodSelector').addEventListener('change', function() {
-    table.setData();
-});
+                  // ¡Importante! Pasa la instancia de la fila de Tabulator (`row`)
+                  // a handleTransactionFiles.
+                  const tabulatorRow = row; // 'row' es el componente de fila de Tabulator
 
-table.on("tableBuilt", function(){
-    this.initialized = true;
-});
+                  if (files.length > 0 && entryId) {
+                      handleTransactionFiles(files, entryId, tabulatorRow); // Pasa la fila aquí
+                  } else {
+                      console.warn("Drop event sin archivos o sin entryId", {files, entryId});
+                  }
+              });
+          } else {
+              console.warn("Fila sin entry_id:", data);
+          }
+      },
 
-table.on("headerFilterChanged", function(headerValue, field){
-    clearTimeout(window.filterTimer);
-    window.filterTimer = setTimeout(() => {
-        table.setData();
-    }, 500);
-});
+      columns: [
+          {
+              title: "Fecha",
+              field: "date",
+              formatter: function(cell, formatterParams, onRendered) {
+                  const date = cell.getValue();
+                  const link = cell.getRow().getData().date_link;
+                  return link ? `<a href="${link}" class="text-primary">${date}</a>` : date;
+              },
+              headerFilter: "input",
+              width: 120
+          },
+          {
+              title: "Descripción",
+              field: "description",
+              headerFilter: "input",
+              widthGrow: 2
+          },
+          {
+              title: "Contrapartidas",
+              field: "counterparts",
+              headerFilter: "input",
+              widthGrow: 2
+          },
+          {
+              title: "Debe",
+              field: "debit",
+              hozAlign: "right",
+              formatter: "money",
+              formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+              headerFilter: "number",
+              headerFilterFunc: ">=",
+              width: 120
+          },
+          {
+              title: "Haber",
+              field: "credit",
+              hozAlign: "right",
+              formatter: "money",
+              formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+              headerFilter: "number",
+              headerFilterFunc: ">=",
+              width: 120
+          },
+          {
+              title: "Saldo",
+              field: "balance",
+              hozAlign: "right",
+              formatter: "money",
+              formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+              width: 120
+          },
+          {
+              title: "Adj.",
+              field: "has_attachments", 
+              formatter: function(cell, formatterParams, onRendered) {
+                  // El formateador mostrará el icono si el valor es true
+                  return cell.getValue() ? '<i class="fas fa-paperclip attachment-icon"></i>' : '';
+              },
+              hozAlign: "center",
+              width: 60,
+              headerSort: false
+          }
+      ],
+      initialSort:[
+          {column:"date", dir:"desc"},
+      ]
+  });
+
+  document.getElementById('periodSelector').addEventListener('change', function() {
+      table.setData();
+  });
+
+  table.on("tableBuilt", function(){
+      this.initialized = true;
+  });
+
+  table.on("headerFilterChanged", function(headerValue, field){
+      clearTimeout(window.filterTimer);
+      window.filterTimer = setTimeout(() => {
+          table.setData();
+      }, 500);
+  });
+
 </script>
 {% endblock %}

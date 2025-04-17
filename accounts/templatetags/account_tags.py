@@ -9,10 +9,14 @@ NON_BREAKING_SPACE = '\xa0'
 DESIRED_THOUSAND_SEPARATOR = '.'
 
 @register.simple_tag
-def generate_account_tree(accounts):
+def generate_account_tree(accounts,show_closed):
     def generate_tree_html(accounts):
         html = ''
         for account in accounts:
+
+            if account.closed and not show_closed:
+                continue
+
             balance = account.get_balance()
             formatted_balance = "" # Inicializar
 

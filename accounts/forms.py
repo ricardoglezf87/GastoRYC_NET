@@ -4,4 +4,4 @@ from .models import Account
 class AccountForm(forms.ModelForm):
     class Meta:
         model = Account
-        fields = ['name', 'parent']
+        fields = ['name', 'default_path', 'parent', 'closed']

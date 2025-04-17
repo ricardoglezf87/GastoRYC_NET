@@ -5,10 +5,18 @@ from attachments.models import Attachment
 class Account(models.Model):
     name = models.CharField(max_length=100)
     parent = models.ForeignKey('self', null=True, blank=True, related_name='children', on_delete=models.CASCADE)
+    default_path = models.CharField(max_length=255, blank=True, null=True, verbose_name="Ruta por defecto para adjuntos")
+    closed = models.BooleanField(default=False, verbose_name="Cerrada") 
     attachments = GenericRelation(Attachment)
     
     def __str__(self):
         return self.name
+    
+    def get_root_parent(self):
+        account = self
+        while account.parent:
+            account = account.parent
+        return account
     
     def get_full_hierarchy(self):
         if self.parent:
