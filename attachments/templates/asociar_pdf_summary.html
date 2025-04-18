@@ -1,0 +1,99 @@
+{# attachments/templates/attachments/asociar_pdf_summary.html #}
+{% extends 'admin/base_site.html' %}
+
+{% block title %}Resumen de Asociación de PDFs{% endblock %}
+
+{% block content %}
+<h2>Resumen de Asociación de PDFs</h2>
+
+{% if not results %}
+    <p>No se procesaron archivos.</p>
+{% else %}
+    <div class="results-summary">
+        {% for result in results %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <strong>Archivo: {{ result.pdf_name }}</strong>
+                </div>
+                <div class="card-body">
+                    {% if result.errors %}
+                        <div class="alert alert-danger">
+                            <h5>Errores:</h5>
+                            <ul>
+                                {% for error in result.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+
+                    {% if result.matches %}
+                        <h5>Resultados de Asociación:</h5>
+                        <ul>
+                            {% for match in result.matches %}
+                                <li>
+                                    <strong>Estado:</strong> <span class="badge {% if 'Asociado' in match.status %}badge-success{% elif 'Múltiples' in match.status %}badge-warning{% elif 'Error' in match.status %}badge-danger{% else %}badge-secondary{% endif %}">{{ match.status }}</span>
+                                    <br>
+                                    <strong>Datos Extraídos:</strong> Fecha: {{ match.extracted_data.fecha|date:"Y-m-d" }}, Importe: {{ match.extracted_data.importe }}
+                                    {% if match.entry %}
+                                        <br>
+                                        <strong>Asiento Encontrado:</strong>
+                                        <a href="{% url 'admin:entries_entry_change' match.entry.id %}" target="_blank">
+                                            #{{ match.entry.id }} - {{ match.entry.date|date:"Y-m-d" }} - {{ match.entry.description|truncatechars:50 }}
+                                        </a>
+                                        <br>
+                                        <strong>Cuentas Involucradas:</strong>
+                                        {% for acc in match.accounts %}
+                                            <a href="{% url 'admin:accounts_account_change' acc.id %}" target="_blank">{{ acc.name }}</a>{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                    {% if match.candidate_entries %}
+                                        <br>
+                                        <strong>Candidatos (Múltiples coincidencias):</strong>
+                                        <ul>
+                                            {% for candidate in match.candidate_entries %}
+                                            <li>
+                                                <a href="{% url 'admin:entries_entry_change' candidate.id %}" target="_blank">
+                                                    #{{ candidate.id }} - {{ candidate.date|date:"Y-m-d" }} - {{ candidate.description|truncatechars:50 }}
+                                                </a>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                     {% if match.error_detail %}
+                                        <br>
+                                        <strong class="text-danger">Detalle del Error al Adjuntar:</strong> {{ match.error_detail }}
+                                    {% endif %}
+                                </li>
+                                <hr>
+                            {% endfor %}
+                        </ul>
+                    {% elif not result.errors %}
+                         <p class="text-muted">No se encontraron coincidencias ni errores específicos para este archivo.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <p><a href="{% url 'asociar_pdfs' %}" class="btn btn-secondary">Asociar más PDFs</a></p>
+
+{% endif %}
+
+<style>
+    /* Estilos opcionales para mejorar la legibilidad */
+    .results-summary .card {
+        border: 1px solid #dee2e6;
+    }
+    .results-summary .card-header {
+        background-color: #f8f9fa;
+    }
+    .results-summary ul {
+        padding-left: 20px;
+    }
+    .results-summary li {
+        margin-bottom: 10px;
+    }
+</style>
+
+{% endblock %}
