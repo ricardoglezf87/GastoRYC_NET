@@ -17,7 +17,7 @@ def generate_account_tree(accounts,show_closed):
             if account.closed and not show_closed:
                 continue
 
-            balance = account.get_balance()
+            balance = account.balance
             formatted_balance = "" # Inicializar
 
             try:
