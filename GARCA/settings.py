@@ -134,3 +134,10 @@ DATABASES = {
     #     'PORT': os.environ.get('DB_PORT', '5432'),
     # }
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake', 
+    }
+}

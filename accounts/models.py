@@ -8,6 +8,7 @@ class Account(models.Model):
     default_path = models.CharField(max_length=255, blank=True, null=True, verbose_name="Ruta por defecto para adjuntos")
     closed = models.BooleanField(default=False, verbose_name="Cerrada") 
     attachments = GenericRelation(Attachment)
+    balance = models.DecimalField(max_digits=15, decimal_places=2, default=0.00, editable=False)
     
     def __str__(self):
         return self.name
@@ -22,17 +23,6 @@ class Account(models.Model):
         if self.parent:
             return f"{self.parent.get_full_hierarchy()}::{self.name}"
         return self.name
-
-    def get_balance(self):
-        debit_sum = self.transaction_set.aggregate(models.Sum('debit'))['debit__sum'] or 0
-        credit_sum = self.transaction_set.aggregate(models.Sum('credit'))['credit__sum'] or 0
-        balance = debit_sum - credit_sum
-
-        for child in self.children.all():
-            balance += child.get_balance()
-        
-        balance = round(balance, 2)
-        return balance
 
 class AccountKeyword(models.Model):
     account = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='keywords')
