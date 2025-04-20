@@ -122,6 +122,10 @@ a img {
     border: none;
 }
 
+.btn-danger{
+    color: #fff!important;
+}
+
 a.section:link, a.section:visited {
     color: var(--header-link-color);
     text-decoration: none;
