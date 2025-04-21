@@ -17,7 +17,7 @@ def generate_account_tree(accounts,show_closed):
             if account.closed and not show_closed:
                 continue
 
-            balance = account.get_balance()
+            balance = account.balance
             formatted_balance = "" # Inicializar
 
             try:
@@ -60,7 +60,7 @@ def generate_account_tree(accounts,show_closed):
             html += f'<div class="col-md-6">'
             if account.children.exists():
                 html += f'<span class="caret" onclick="toggleNested(this)"></span> '
-            html += f'<a href="/accounts/edit_account/{ account.id }/">{account.name}</a></div>'
+            html += f'<a class="ula" href="/accounts/edit_account/{ account.id }/">{account.name}</a></div>'
             html += f'<div class="col-md-6">{formatted_balance}</div>'
             html += f'</div>'
             if account.children.exists():

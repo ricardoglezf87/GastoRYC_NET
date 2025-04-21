@@ -6,18 +6,17 @@
 
 {% block header %}
     {{ block.super }}
+    {# --- Tus otros links y scripts --- #}
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator.min.css" rel="stylesheet">
     <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap4.min.css" rel="stylesheet">
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.editor.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -26,60 +25,113 @@
 
     <script>
         $(document).ready(function() {
-            // Seleccionamos el enlace por su id
+            // --- Script para Crear Backup (existente) ---
             $('#create-backup-link').on('click', function(event) {
-                event.preventDefault(); // Prevenimos la navegación normal del enlace
-    
+                event.preventDefault();
                 var $link = $(this);
                 var originalText = $link.text();
-    
-                // Opcional: Cambiar el texto y deshabilitar el enlace mientras se procesa
                 $link.text('Creando copia...');
-                $link.css('pointer-events', 'none'); // Deshabilita clics visualmente
-                $link.css('opacity', '0.6');      // Atenúa el enlace
-    
-                // Hacemos la llamada AJAX usando jQuery (ya que lo tienes incluido)
+                $link.css('pointer-events', 'none');
+                $link.css('opacity', '0.6');
+
                 $.ajax({
-                    // Asegúrate de que esta URL sea la correcta para tu vista de backup
-                    // En el código original del HTML, usa $link.attr('href'), 
-                    // pero si el href="#" no es la URL real, debes ponerla aquí directamente.
-                    // Por ejemplo: url: '/admin/create_backup/', 
-                    url: $link.attr('href'), // O reemplaza con la URL correcta si href="#"
-                    type: 'GET', // O 'POST' si tu vista espera un POST
+                    url: $link.attr('href'), 
+                    type: 'GET',
                     success: function(response) {
-                        // Éxito: Muestra un mensaje de confirmación
-                        // Puedes usar alert() o una notificación más elegante si usas alguna librería
                         alert('¡Copia de seguridad iniciada/creada exitosamente!');
-                        // Aquí podrías revisar 'response' si tu vista devuelve algún JSON con detalles
-                        // ej: if(response.status == 'success') { alert(response.message); }
                     },
                     error: function(xhr, status, error) {
-                        // Error: Muestra un mensaje de error
                         console.error("Error al crear backup:", status, error, xhr.responseText);
-                        alert('Error al crear la copia de seguridad. Revisa la consola del navegador para más detalles.');
+                        alert('Error al crear la copia de seguridad.');
                     },
                     complete: function() {
-                        // Se ejecuta siempre (éxito o error)
-                        // Restaura el texto y la apariencia del enlace
                         $link.text(originalText);
-                        $link.css('pointer-events', 'auto'); // Habilita clics de nuevo
+                        $link.css('pointer-events', 'auto');
                         $link.css('opacity', '1');
-                    }
+                         }
+                });
+            });
+
+            // --- NUEVO Script para Recalcular Saldos ---
+            $('#recalculate-balances-link').on('click', function(event) {
+                event.preventDefault();
+                var $link = $(this);
+                var originalText = $link.text();
+                $link.text('Creando copia...');
+                $link.css('pointer-events', 'none');
+                $link.css('opacity', '0.6');
+
+                $.ajax({
+                    url: $link.attr('href'), 
+                    type: 'GET',
+                    success: function(response) {
+                        alert('¡Saldos iniciales creados/actualizados exitosamente!');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error al crear saldos iniciales:", status, error, xhr.responseText);
+                        alert('Error al crear saldos iniciales.');
+                    },
+                    complete: function() {
+                        $link.text(originalText);
+                        $link.css('pointer-events', 'auto');
+                        $link.css('opacity', '1');
+                         }
                 });
             });
         });
     </script>
-    
+
+    {# --- Estilos adicionales si son necesarios para el dropdown --- #}
+    <style>
+        /* Ajusta el espaciado o apariencia si es necesario */
+        #user-tools .dropdown {
+            margin-left: 10px; /* Ejemplo de espaciado */
+        }
+        #user-tools .dropdown-toggle::after {
+             margin-left: .255em; /* Ajuste del icono de flecha de Bootstrap */
+        }
+        
+        /* Asegura que los enlaces dentro del dropdown se vean bien */
+        .dropdown-item {
+            color: #333 !important; /* O el color que prefieras */
+            padding: .5rem 1.5rem;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa; /* Color de fondo al pasar el ratón */
+        }
+
+        .nav-global-dropdown {
+            display: inline-block;
+            vertical-align: middle; /* Puede ayudar a alinear con otros enlaces */
+            margin-left: 15px; /* Ajusta según necesites */
+        }
+    </style>
+
 {% endblock %}
 
 {% block nav-global %}
-    {{ block.super }}
+    {# Mantenemos los enlaces rápidos existentes si quieres #}
     <a href="/accounts/add_account/">Nueva cuenta</a>
     <a href="/entries/add_entry/">Nueva entrada</a>
-    <a href="/bank_imports/import_movements/">Importar movimientos</a>      
+    <a href="/bank_imports/import_movements/">Importar movimientos</a>
     <a href="/reports/unbalanced_entries/">Movimientos descuadrados</a>
-    <a href="/async/create_backup" id="create-backup-link">Crear Copia Seguridad</a>
     <a href="{% url 'asociar_pdfs' %}">Asociar PDFs a Movimientos</a>
+	
+    <div class="dropdown nav-global-dropdown" style="display: inline-block;">
+        <a class="nav-link dropdown-toggle" href="#" id="optionsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Opciones
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="optionsDropdown">
+            <a class="dropdown-item" href="/async/create_backup" id="create-backup-link">
+                <i class="fas fa-save mr-2"></i>Crear Copia Seguridad
+            </a>
+            <a class="dropdown-item" href="/async/calculate_inicial_balances" id="recalculate-balances-link">
+                <i class="fas fa-calculator mr-2"></i>Recalcular Saldos
+            </a>
+        </div>
+    </div>
+    {# Fin del Menú Desplegable #}
+
 {% endblock %}
 
 {% block branding %}
@@ -100,4 +152,3 @@
     </div>
     {% endif %}
 {% endblock %}
-
