@@ -1,6 +1,8 @@
 # invoice_processor/models.py
 from django.db import models
-from django.conf import settings # Para relacionar con User si es necesario
+from django.conf import settings
+
+from accounts.models import Account # Para relacionar con User si es necesario
 
 # Modelo para almacenar las "plantillas" o tipos de factura
 # Definimos InvoiceType ANTES de InvoiceDocument para ayudar a Django
@@ -27,6 +29,15 @@ class InvoiceType(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    account = models.ForeignKey(
+        Account,
+        on_delete=models.SET_NULL, # O models.PROTECT si no quieres borrar cuentas usadas
+        null=True, # Permite que no se asigne cuenta
+        blank=True, # Permite dejarlo vacío en formularios/admin
+        related_name='invoice_types',
+        verbose_name="Cuenta Contable Asociada"
+    )
 
     def __str__(self):
         return self.name

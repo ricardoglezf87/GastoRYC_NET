@@ -15,7 +15,7 @@ class InvoiceTypeSerializer(serializers.ModelSerializer):
             'id',
             'name',
             'extraction_rules', # <-- Incluir el campo JSON
-            # 'account', # Si tienes el campo de cuenta
+            'account',
             'created_at',
             'updated_at',
             # Incluye otros campos que necesites exponer

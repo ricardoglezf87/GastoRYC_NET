@@ -385,7 +385,7 @@ class MappingWindow(QWidget):
         self.total_regex_input.clear()
         # Limpiar otros campos de reglas que añadas
         # Limpiar también la selección de cuenta si la usas asociada al tipo
-        # self.account_combo.setCurrentIndex(0) # Asumiendo que el índice 0 es "-- Sin asignar --"
+        self.account_combo.setCurrentIndex(1) # Asumiendo que el índice 0 es "-- Sin asignar --"
         print("clear_type_fields: Campos limpiados.")
 
     def populate_type_fields(self, type_data):
@@ -416,16 +416,16 @@ class MappingWindow(QWidget):
         # Rellenar otros campos que tengas...
 
         # Seleccionar la cuenta asociada si existe en el tipo y en el combo
-        # account_id = type_data.get('account') # Si el tipo tiene un campo 'account'
-        # if account_id is not None:
-        #     index = self.account_combo.findData(account_id)
-        #     if index >= 0:
-        #         self.account_combo.setCurrentIndex(index)
-        #     else:
-        #         print(f"Advertencia: Cuenta ID {account_id} del tipo no encontrada en el ComboBox.")
-        #         self.account_combo.setCurrentIndex(0) # Volver a "-- Sin asignar --"
-        # else:
-        #     self.account_combo.setCurrentIndex(0) # Seleccionar "-- Sin asignar --"
+        account_id = type_data.get('account') # Si el tipo tiene un campo 'account'
+        if account_id is not None:
+            index = self.account_combo.findData(account_id)
+            if index >= 0:
+                self.account_combo.setCurrentIndex(index)
+            else:
+                print(f"Advertencia: Cuenta ID {account_id} del tipo no encontrada en el ComboBox.")
+                self.account_combo.setCurrentIndex(0) # Volver a "-- Sin asignar --"
+        else:
+            self.account_combo.setCurrentIndex(0) # Seleccionar "-- Sin asignar --"
 
         print(f"populate_type_fields: Campos rellenados para tipo: {type_data.get('name')}")
 
@@ -500,7 +500,7 @@ class MappingWindow(QWidget):
         rules = self._build_rules_payload()
         name = self.name_input.text().strip()
         # Obtener cuenta seleccionada (si la asocias al tipo)
-        # account_id = self.account_combo.currentData() # Devuelve None si es "-- Sin asignar --"
+        account_id = self.account_combo.currentData() # Devuelve None si es "-- Sin asignar --"
 
         if not name:
             QMessageBox.warning(self, "Faltan Datos", "Introduce un nombre para el tipo.")
@@ -515,8 +515,8 @@ class MappingWindow(QWidget):
 
         payload = {
             "name": name,
-            "extraction_rules": rules
-            # "account": account_id # Añadir si el modelo InvoiceType tiene relación con Account
+            "extraction_rules": rules,
+            "account": account_id # Añadir si el modelo InvoiceType tiene relación con Account
         }
         print(f"save_type: Payload construido: {payload}")
 
