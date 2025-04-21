@@ -631,6 +631,10 @@ class MappingWindow(QWidget):
              print("test_template_rules: Fallo en OCR local.")
              return # Detener si OCR falla
 
+        print("\n--- TEXTO OCR OBTENIDO ---\n")
+        print(extracted_text)
+        print("\n-------------------------\n")
+
         if not extracted_text:
              print("test_template_rules: OCR local no devolvió texto.")
              QMessageBox.information(self, "Resultado OCR", "El OCR no encontró texto en el documento.")
@@ -747,16 +751,33 @@ def extract_data(text, rules): # Renombrar y adaptar
 
     # --- Ejemplo de Extracción de Fecha ---
     date_rule = rules.get('date')
+    identifier_rule = rules.get('identifier')
+    if identifier_rule:
+        rule_type = identifier_rule.get('type')
+        rule_value = identifier_rule.get('value')
+        try:
+            if rule_type == 'keyword' and rule_value:
+                # Simplemente verificar si la palabra clave está en el texto
+                if rule_value in text:
+                    extracted['identifier_found'] = rule_value # O simplemente True
+                    print(f"Identificador encontrado (local, keyword '{rule_value}')")
+                else:
+                    extracted['identifier_found'] = None # O False
+                    print(f"Identificador NO encontrado (local, keyword '{rule_value}')")
+            # Añadir lógica para identificador regex si lo implementas
+        except Exception as e:
+            print(f"Error aplicando regla de identificador local: {e}")
     if date_rule:
         rule_type = date_rule.get('type')
         try:
             if rule_type == 'regex':
                 pattern = date_rule.get('pattern')
                 if pattern:
-                    match = re.search(pattern, text)
+                    # Añadir re.DOTALL para que '.' coincida con saltos de línea
+                    match = re.search(pattern, text, re.DOTALL) # <-- AÑADIR re.DOTALL
                     if match:
-                        # Devolvemos como string para la prueba
-                        extracted['invoice_date'] = match.group(0)
+                        # Usar match.group(1) para obtener solo lo capturado por los paréntesis
+                        extracted['invoice_date'] = match.group(1) # <-- CAMBIAR a group(1)
                         print(f"Fecha encontrada (local, regex '{pattern}'): {extracted['invoice_date']}")
             # Añadir más tipos de reglas si las tienes...
         except Exception as e:
