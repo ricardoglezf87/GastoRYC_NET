@@ -47,7 +47,52 @@ class InvoiceDocumentUploadView(generics.CreateAPIView):
         # La respuesta inmediata solo confirma la subida (HTTP 201 Created)
         # El cliente (app de escritorio) deberá consultar el estado después usando
         # la vista InvoiceDocumentStatusView.
+class ReprocessDocumentView(APIView):
+    """
+    Dispara el reprocesamiento de un documento específico.
+    """
+    def post(self, request, id, *args, **kwargs): # Recibe ID desde URL
+        try:
+            document = InvoiceDocument.objects.get(id=id)
+            print(f"Solicitud de reprocesamiento para Documento ID: {document.id}")
 
+            # --- Opción 1: Llamar directamente a la lógica síncrona ---
+            # Esto bloqueará la respuesta hasta que termine el procesamiento.
+            # Puede ser aceptable si el procesamiento es rápido.
+            # success, new_status = process_invoice_document(document.id)
+
+            # --- Opción 2: Re-encolar en Celery (si lo usas) ---
+            # Esto devuelve una respuesta rápida, el procesamiento ocurre en segundo plano.
+            # Es la opción preferida si el procesamiento es largo.
+            from async_tasks.tasks import process_invoice_task # Importa la tarea
+            process_invoice_task.delay(document.id)
+            success = True # Éxito al encolar
+            new_status = 'PROCESSING' # Estado mientras se procesa
+            document.status = new_status
+            document.save(update_fields=['status'])
+            # ----------------------------------------------------
+
+            if success:
+                # Devolver el documento actualizado (o al menos su estado)
+                serializer = InvoiceDocumentSerializer(document, context={'request': request})
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": f"Fallo al iniciar reprocesamiento: {new_status}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except InvoiceDocument.DoesNotExist:
+            return Response({"error": f"Documento con id {id} no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(f"Error en ReprocessDocumentView para ID {id}: {e}")
+            traceback.print_exc()
+            return Response({"error": f"Error interno del servidor al reprocesar: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class InvoiceDocumentListView(generics.ListAPIView):
+    """
+    Devuelve una lista de todos los documentos de factura.
+    Podrías añadir filtros por estado, fecha, etc. si es necesario.
+    """
+    queryset = InvoiceDocument.objects.all().order_by('-uploaded_at') # Ordenar por más reciente
+    serializer_class = InvoiceDocumentSerializer
 
 # ViewSet para gestionar los Tipos de Factura (Plantillas)
 class InvoiceTypeViewSet(viewsets.ModelViewSet):

@@ -28,6 +28,7 @@ class InvoiceDocumentSerializer(serializers.ModelSerializer):
     # Para mostrar el nombre del tipo de factura en lugar de solo el ID
     invoice_type_name = serializers.CharField(source='invoice_type.name', read_only=True, allow_null=True)
     # Hacer el campo 'file' de solo escritura en la creación, pero legible después
+    invoice_type_account_id = serializers.IntegerField(source='invoice_type.account_id', read_only=True, allow_null=True)
     file = serializers.FileField(write_only=True, required=True)
     file_url = serializers.SerializerMethodField(read_only=True) # Campo para mostrar URL del archivo
 
@@ -44,9 +45,11 @@ class InvoiceDocumentSerializer(serializers.ModelSerializer):
             'extracted_text',
             'invoice_type', # ID del tipo asociado (para lectura/asignación)
             'invoice_type_name', # Nombre del tipo asociado (solo lectura)
+            'invoice_type_account_id', # <-- AÑADIR ESTE CAMPO A LA LISTA
             'extracted_data', # Datos extraídos anidados (solo lectura)
         ]
-        read_only_fields = ['id', 'uploaded_at', 'status', 'get_status_display', 'extracted_text', 'extracted_data', 'invoice_type_name', 'file_url']
+        # Mueve invoice_type_account_id a read_only_fields si ya estaba definido como read_only
+        read_only_fields = ['id', 'uploaded_at', 'status', 'get_status_display', 'extracted_text', 'extracted_data', 'invoice_type_name', 'file_url', 'invoice_type_account_id']
 
     def get_file_url(self, obj):
         request = self.context.get('request')
@@ -58,4 +61,3 @@ class InvoiceDocumentSerializer(serializers.ModelSerializer):
         # DRF maneja la subida del archivo automáticamente si usas FileField
         # La lógica de procesamiento se llama desde la vista (perform_create)
         return super().create(validated_data)
-

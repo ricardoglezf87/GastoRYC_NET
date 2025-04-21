@@ -35,7 +35,8 @@ class ApiClient:
         self.invoices_url = f"{self.api_base}/invoices"
         self.accounts_url = f"{self.api_base}/accounts/" # Corregido para usar api_base
         self.invoice_types_url = f"{self.invoices_url}/invoice-types/"
-        # --- NUEVA URL para el endpoint de creación ---
+        self.list_documents_url = f"{self.invoices_url}/documents/"
+        self.reprocess_document_url_template = f"{self.invoices_url}/documents/{{id}}/reprocess/"
         self.create_document_ocr_url = f"{self.invoices_url}/documents/create_with_ocr/"
         # --- URLs para búsqueda y asociación ---
         self.search_entries_url = f"{self.api_base}/accounting/entries/search/" # Asume esta URL, ajústala
@@ -94,6 +95,23 @@ class ApiClient:
         except requests.exceptions.RequestException as e:
             print(f"Error Inesperado de Requests: {e}")
             return {"error": f"Error de red inesperado: {e}"}
+
+    def get_documents(self):
+        """Obtiene la lista de todos los documentos del backend."""
+        url = self.list_documents_url
+        result = self._make_request('get', url)
+        # Devuelve la lista o una lista vacía en caso de error
+        if isinstance(result, dict) and "error" in result:
+            return []
+        return result if isinstance(result, list) else []
+    
+    def reprocess_document(self, document_id):
+        """Solicita al backend reprocesar un documento específico."""
+        url = self.reprocess_document_url_template.format(id=document_id)
+        # Es una petición POST sin cuerpo (o podrías enviar parámetros si fuera necesario)
+        result = self._make_request('post', url)
+        # Devuelve la respuesta del backend (el documento actualizado o un error)
+        return result
 
     # --- Métodos existentes (get_accounts, get_invoice_types, etc.) ---
     def get_accounts(self):
@@ -175,6 +193,51 @@ class ApiClient:
         result = self._make_request('post', url, json=payload)
         # Devuelve la respuesta del backend (éxito o error)
         return result
+class ReprocessingWorker(QObject):
+    progress_updated = pyqtSignal(int, str)
+    file_processed = pyqtSignal(dict) # Reutilizamos la señal
+    error_occurred = pyqtSignal(int, str) # Enviamos ID y error
+    finished = pyqtSignal()
+
+    def __init__(self, doc_ids, api_client):
+        super().__init__()
+        self.doc_ids = doc_ids
+        self.api_client = api_client
+        self._is_running = True
+
+    def run(self):
+        total_docs = len(self.doc_ids)
+        for i, doc_id in enumerate(self.doc_ids):
+            if not self._is_running:
+                break
+
+            # Obtener nombre de archivo de los datos guardados (opcional, para status)
+            # filename = self.parent().documents_data.get(doc_id, {}).get('filename', f"ID {doc_id}")
+            filename = f"ID {doc_id}" # Más simple
+            self.progress_updated.emit(int((i / total_docs) * 100), f"Reprocesando: {filename}")
+
+            try:
+                # Llamar a la API para reprocesar
+                response = self.api_client.reprocess_document(doc_id)
+
+                if response and isinstance(response, dict) and "id" in response and "error" not in response:
+                    self.file_processed.emit(response) # Enviar datos actualizados
+                else:
+                    error_msg = response.get("error", "Error desconocido de API al reprocesar") if isinstance(response, dict) else "Respuesta inválida de API"
+                    self.error_occurred.emit(doc_id, error_msg)
+
+            except Exception as e:
+                print(f"Error reprocesando {doc_id}: {e}")
+                traceback.print_exc()
+                self.error_occurred.emit(doc_id, f"Error inesperado: {e}")
+
+            self.progress_updated.emit(int(((i + 1) / total_docs) * 100), f"Reprocesado: {filename}")
+
+        self.progress_updated.emit(100, "Reproceso completado.")
+        self.finished.emit()
+
+    def stop(self):
+        self._is_running = False
 
 # --- Worker para procesamiento en segundo plano ---
 class ProcessingWorker(QObject):
@@ -248,6 +311,7 @@ class MainWindow(QMainWindow):
         self.processing_worker = None
 
         self.init_ui()
+        self.load_initial_documents()
 
     def init_ui(self):
         # Layout principal
@@ -267,6 +331,11 @@ class MainWindow(QMainWindow):
         self.days_spinbox.setValue(3)     # Valor por defecto
         controls_layout.addWidget(self.days_spinbox)
 
+        self.reprocess_button = QPushButton("Reprocesar Seleccionados")
+        self.reprocess_button.clicked.connect(self.reprocess_selected)
+        self.reprocess_button.setEnabled(False) # Deshabilitado inicialmente
+        controls_layout.addWidget(self.reprocess_button)
+        
         self.find_match_button = QPushButton("Buscar Asientos Coincidentes")
         self.find_match_button.clicked.connect(self.find_matching_entries)
         self.find_match_button.setEnabled(False) # Deshabilitado hasta que haya filas seleccionadas
@@ -291,6 +360,7 @@ class MainWindow(QMainWindow):
         self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
         # Conectar selección para habilitar/deshabilitar botón
         self.table_widget.itemSelectionChanged.connect(self.on_selection_changed)
+        self.table_widget.cellClicked.connect(self.on_selection_changed)
 
         main_layout.addWidget(self.table_widget)
 
@@ -301,7 +371,117 @@ class MainWindow(QMainWindow):
         self.status_label = QLabel("Listo.")
         status_layout.addWidget(self.status_label)
         main_layout.addLayout(status_layout)
+    
+    def handle_reprocessing_error(self, doc_id, error_msg):
+        """Actualiza la fila con estado de error."""
+        print(f"Error reprocesando ID {doc_id}: {error_msg}")
+        for row in range(self.table_widget.rowCount()):
+            id_item = self.table_widget.item(row, 0)
+            if id_item and int(id_item.text()) == doc_id:
+                status_item = QTableWidgetItem("Error Reproceso")
+                status_item.setBackground(Qt.red)
+                self.table_widget.setItem(row, 2, status_item) # Columna Estado
+                break
+    def reprocess_selected(self):
+        """Inicia el reprocesamiento para las filas seleccionadas."""
+        selected_rows = self.table_widget.selectionModel().selectedRows()
+        if not selected_rows:
+            return
 
+        doc_ids_to_reprocess = []
+        for index in selected_rows:
+            id_item = self.table_widget.item(index.row(), 0) # Columna ID
+            if id_item:
+                try:
+                    doc_ids_to_reprocess.append(int(id_item.text()))
+                except ValueError:
+                    print(f"ID inválido en fila {index.row()}: {id_item.text()}")
+
+        if not doc_ids_to_reprocess:
+            return
+
+        print(f"Iniciando reproceso para IDs: {doc_ids_to_reprocess}")
+        # Deshabilitar botones
+        self.load_button.setEnabled(False)
+        self.find_match_button.setEnabled(False)
+        self.reprocess_button.setEnabled(False)
+        self.status_label.setText("Iniciando reprocesamiento...")
+        self.progress_bar.setValue(0)
+
+        # Crear y mover worker a hilo
+        self.reprocessing_thread = QThread()
+        # Pasar self como parent al worker para acceder a documents_data si es necesario
+        self.reprocessing_worker = ReprocessingWorker(doc_ids_to_reprocess, self.api_client)
+        self.reprocessing_worker.moveToThread(self.reprocessing_thread)
+
+        # Conectar señales
+        self.reprocessing_worker.progress_updated.connect(self.update_progress)
+        # Reutilizar update_document_table para actualizar la fila con la nueva info
+        self.reprocessing_worker.file_processed.connect(self.update_document_table)
+        self.reprocessing_worker.error_occurred.connect(self.handle_reprocessing_error)
+        self.reprocessing_worker.finished.connect(self.on_reprocessing_finished)
+        self.reprocessing_thread.started.connect(self.reprocessing_worker.run)
+
+        # Iniciar hilo
+        self.reprocessing_thread.start()
+
+    def on_reprocessing_finished(self):
+        """Se ejecuta cuando el hilo de reprocesamiento termina."""
+        self.status_label.setText("Reproceso completado.")
+        self.load_button.setEnabled(True)
+        self.find_match_button.setEnabled(self.table_widget.selectionModel().hasSelection())
+        self.reprocess_button.setEnabled(self.table_widget.selectionModel().hasSelection())
+
+        # Limpiar referencias
+        if self.reprocessing_thread:
+            self.reprocessing_thread.quit()
+            self.reprocessing_thread.wait()
+        self.reprocessing_thread = None
+        self.reprocessing_worker = None
+        print("Hilo de reprocesamiento terminado.")
+
+    def on_selection_changed(self):
+        """Habilita/deshabilita botones según la selección."""
+        selected_rows = self.table_widget.selectionModel().selectedRows()
+        has_selection = bool(selected_rows) # Será True si hay filas seleccionadas, False si no
+
+        # --- AÑADIR ESTE PRINT ---
+        print(f"on_selection_changed llamado. Filas seleccionadas: {len(selected_rows)}, Habilitar botones: {has_selection}")
+        # --------------------------
+
+        # Habilitar 'Buscar Asientos' si hay selección (podrías añadir lógica de estado)
+        self.find_match_button.setEnabled(has_selection)
+        # Habilitar 'Reprocesar' si hay selección
+        self.reprocess_button.setEnabled(has_selection)
+
+    def load_initial_documents(self):
+        """Carga los documentos existentes desde la API al iniciar."""
+        self.status_label.setText("Cargando documentos existentes...")
+        QApplication.processEvents()
+        try:
+            documents = self.api_client.get_documents()
+            if documents:
+                self.table_widget.setRowCount(0) # Limpiar tabla antes de llenar
+                self.documents_data = {} # Limpiar datos internos
+                print(f"Cargando {len(documents)} documentos existentes...")
+                for doc_info in documents:
+                    # Asegurarse de que doc_info tenga 'filename' si la API no lo devuelve
+                    # (Podría necesitar extraerlo de 'file_url')
+                    if 'filename' not in doc_info and 'file_url' in doc_info:
+                         try:
+                             doc_info['filename'] = os.path.basename(doc_info['file_url'])
+                         except:
+                             doc_info['filename'] = 'Nombre Desconocido'
+                    self.update_document_table(doc_info)
+                self.status_label.setText(f"{len(documents)} documentos cargados.")
+            else:
+                self.status_label.setText("No se encontraron documentos existentes o hubo un error.")
+        except Exception as e:
+            print(f"Error cargando documentos iniciales: {e}")
+            traceback.print_exc()
+            self.status_label.setText("Error al cargar documentos.")
+            messagebox.critical(self, "Error de Carga", f"No se pudieron cargar los documentos:\n{e}")
+    
     def load_files(self):
         """Abre diálogo para seleccionar múltiples PDFs e inicia el procesamiento."""
         options = QFileDialog.Options()
@@ -344,31 +524,82 @@ class MainWindow(QMainWindow):
     def update_document_table(self, doc_info):
         """Añade o actualiza una fila en la tabla con datos REALES."""
         doc_id = doc_info.get("id")
-        if not doc_id: return
-        self.documents_data[doc_id] = doc_info # Guardar datos reales
+        if not doc_id:
+            print("Error: doc_info recibido sin ID.")
+            return
 
+        if 'filename' not in doc_info:
+            # Buscar el nombre en los datos que ya teníamos guardados
+            existing_data = self.documents_data.get(doc_id, {})
+            doc_info['filename'] = existing_data.get('filename', f"ID {doc_id}")
+
+        # Guardar/Actualizar datos internos
+        self.documents_data[doc_id] = doc_info
+        print(f"Actualizando tabla para Doc ID: {doc_id}, Info: {doc_info}") # DEBUG
+
+        # Buscar si la fila ya existe
         row_index = -1
         for row in range(self.table_widget.rowCount()):
-            id_item = self.table_widget.item(row, 0)
+            id_item = self.table_widget.item(row, 0) # Columna ID (oculta)
             if id_item and int(id_item.text()) == doc_id:
                 row_index = row
                 break
+
+        # Si no existe, añadir nueva fila
         if row_index == -1:
             row_index = self.table_widget.rowCount()
             self.table_widget.insertRow(row_index)
-            self.table_widget.setItem(row_index, 0, QTableWidgetItem(str(doc_id)))
+            # Añadir el ID como item (oculto pero accesible)
+            id_item = QTableWidgetItem(str(doc_id))
+            self.table_widget.setItem(row_index, 0, id_item)
 
-        # Llenar con datos reales o placeholders si no vienen
+        # --- Llenar celdas con datos de doc_info ---
+        # Columna 1: Archivo
         self.table_widget.setItem(row_index, 1, QTableWidgetItem(doc_info.get("filename", "")))
-        self.table_widget.setItem(row_index, 2, QTableWidgetItem(doc_info.get("status", "")))
-        # Aquí necesitarías obtener el nombre del tipo y la cuenta si el backend los devuelve
-        self.table_widget.setItem(row_index, 3, QTableWidgetItem(doc_info.get("invoice_type_name", ""))) # Placeholder
-        self.table_widget.setItem(row_index, 4, QTableWidgetItem(doc_info.get("invoice_date", "") or ""))
-        total_str = f"{doc_info.get('total_amount'):.2f}" if doc_info.get('total_amount') is not None else ""
+        # Columna 2: Estado (usar el texto legible)
+        self.table_widget.setItem(row_index, 2, QTableWidgetItem(doc_info.get("get_status_display", doc_info.get("status", ""))))
+        # Columna 3: Tipo (Nombre del tipo)
+        self.table_widget.setItem(row_index, 3, QTableWidgetItem(doc_info.get("invoice_type_name", "") or "")) # Usa el nombre si existe
+        # Columna 4: Fecha Factura (del extracted_data)
+        extracted_data = doc_info.get("extracted_data", {}) # Obtener sub-diccionario
+        invoice_date_str = extracted_data.get("invoice_date", "") if extracted_data else ""
+        self.table_widget.setItem(row_index, 4, QTableWidgetItem(invoice_date_str or ""))
+        # Columna 5: Importe Factura (del extracted_data)
+        total_amount = extracted_data.get("total_amount") if extracted_data else None
+        total_str = f"{float(total_amount):.2f}" if total_amount is not None else ""
         self.table_widget.setItem(row_index, 5, QTableWidgetItem(total_str))
-        self.table_widget.setItem(row_index, 6, QTableWidgetItem(str(doc_info.get("account_id", "")) or "")) # Placeholder
-        self.table_widget.setItem(row_index, 7, QTableWidgetItem("")) # Fecha Asiento
-        self.table_widget.setItem(row_index, 8, QTableWidgetItem("")) # Importe Asiento
+        # Columna 6: Cuenta (ID de la cuenta asociada al TIPO)
+        # Necesitamos obtener el ID de la cuenta del tipo de factura
+        # Asumiendo que tu serializer devuelve el ID de la cuenta en 'invoice_type_account_id' o similar
+        # O si devuelve el objeto tipo completo, puedes accederlo
+        account_id_from_type = doc_info.get("invoice_type_account_id", "") # AJUSTA este nombre de campo
+        self.table_widget.setItem(row_index, 6, QTableWidgetItem(str(account_id_from_type) or ""))
+        # Columna 7: Fecha Asiento (Vacío inicialmente)
+        self.table_widget.setItem(row_index, 7, QTableWidgetItem(""))
+        # Columna 8: Importe Asiento (Vacío inicialmente)
+        self.table_widget.setItem(row_index, 8, QTableWidgetItem(""))
+        # Columna 9: Acción (Vacío inicialmente)
+        # El botón se añadirá después si hay coincidencia
+
+        # --- Opcional: Colorear fila según estado ---
+        status = doc_info.get("status", "")
+        color = None
+        if status == 'NEEDS_MATCHING':
+            color = Qt.yellow # Amarillo claro
+        elif status == 'NEEDS_MAPPING':
+            color = Qt.cyan # Cian claro
+        elif status == 'ASSOCIATED':
+            color = Qt.green # Verde claro
+        elif status == 'FAILED' or status == 'Error':
+            color = Qt.red # Rojo claro
+
+        if color:
+            for col in range(self.table_widget.columnCount()):
+                item = self.table_widget.item(row_index, col)
+                if not item: # Crear item si no existe para poder colorear
+                     item = QTableWidgetItem("")
+                     self.table_widget.setItem(row_index, col, item)
+                item.setBackground(color)
 
     def find_matching_entries(self):
         """Busca asientos contables para las filas seleccionadas (usa API real)."""
@@ -503,17 +734,6 @@ class MainWindow(QMainWindow):
         self.processing_worker = None
         print("Hilo de procesamiento terminado.")
 
-    def on_selection_changed(self):
-        """Habilita/deshabilita el botón 'Buscar Asientos' según la selección."""
-        selected_rows = self.table_widget.selectionModel().selectedRows()
-        # Habilitar solo si hay filas seleccionadas y el estado es apropiado
-        can_find_match = False
-        if selected_rows:
-             # Podrías verificar el estado aquí si quieres ser más específico
-             can_find_match = True
-
-        self.find_match_button.setEnabled(can_find_match)
-
     def find_matching_entries(self):
         """Busca asientos contables para las filas seleccionadas."""
         selected_rows = self.table_widget.selectionModel().selectedRows()
@@ -634,13 +854,19 @@ class MainWindow(QMainWindow):
             self.status_label.setText(f"Error al asociar doc {doc_id}.")
 
     def closeEvent(self, event):
-        """Asegurarse de detener el hilo si la ventana se cierra."""
+        """Asegurarse de detener los hilos si la ventana se cierra."""
         if self.processing_worker:
-            print("Deteniendo hilo de procesamiento...")
+            print("Deteniendo hilo de carga...")
             self.processing_worker.stop()
         if self.processing_thread and self.processing_thread.isRunning():
-            self.processing_thread.quit()
-            self.processing_thread.wait()
+            self.processing_thread.quit(); self.processing_thread.wait()
+
+        if self.reprocessing_worker:
+            print("Deteniendo hilo de reproceso...")
+            self.reprocessing_worker.stop()
+        if self.reprocessing_thread and self.reprocessing_thread.isRunning():
+            self.reprocessing_thread.quit(); self.reprocessing_thread.wait()
+
         event.accept()
 
 
