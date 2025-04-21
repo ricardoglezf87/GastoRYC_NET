@@ -5,7 +5,8 @@ from .views import (
     InvoiceDocumentUploadView,
     InvoiceTypeViewSet,
     ExtractedDataViewSet,
-    InvoiceDocumentStatusView
+    InvoiceDocumentStatusView,
+    TestExtractionRulesView
 )
 
 # El router genera automáticamente las URLs para los ViewSets (list, create, retrieve, update, delete)
@@ -21,6 +22,7 @@ urlpatterns = [
     path('documents/<int:id>/status/', InvoiceDocumentStatusView.as_view(), name='invoice-document-status'),
     # Incluye las URLs generadas por el router para InvoiceType y ExtractedData
     path('', include(router.urls)),
+    path('test-rules/', TestExtractionRulesView.as_view(), name='test-extraction-rules'),
 ]
 
 # El prefijo de la API (ej. /api/v1/invoices/) se definirá en GARCA/urls.py

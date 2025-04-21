@@ -6,20 +6,25 @@ from django.conf import settings # Para relacionar con User si es necesario
 # Definimos InvoiceType ANTES de InvoiceDocument para ayudar a Django
 class InvoiceType(models.Model):
     name = models.CharField(max_length=100, unique=True, verbose_name="Nombre del Tipo")
-    # Aquí podrías añadir campos para patrones de identificación automática (ej. CIF, palabras clave)
-    # identification_pattern = models.CharField(max_length=255, blank=True, null=True, verbose_name="Patrón de Identificación")
-
-    # Campos para almacenar las reglas de extracción (esto es simplificado, podría ser JSON, etc.)
-    # Ejemplo: coordenadas (x1, y1, x2, y2) o reglas de texto (regex, texto cercano a etiqueta)
-    date_extraction_rule = models.CharField(max_length=255, blank=True, null=True, verbose_name="Regla Extracción Fecha")
-    total_extraction_rule = models.CharField(max_length=255, blank=True, null=True, verbose_name="Regla Extracción Total")
-    # Añade más campos según necesites (NIF Emisor, NIF Receptor, Número Factura, etc.)
-    # ...
-
-    # Relación con la cuenta contable (asumiendo que tienes un modelo Account en 'entries' o similar)
-    # Ajusta 'entries.Account' al nombre real de tu modelo de cuentas
-    # account = models.ForeignKey('entries.Account', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cuenta Contable")
-
+    
+    # Guarda las reglas de extracción en formato JSON.
+    # Ejemplo de estructura:
+    # {
+    #   "identifier": {"type": "keyword", "value": "Proveedor Ejemplo S.L."},
+    #   "date": {"type": "regex", "pattern": "\\d{1,2}[/-]\\d{1,2}[/-]\\d{2,4}"},
+    #   "total": {"type": "keyword_proximity", "keyword": "TOTAL", "lines_after": 1},
+    #   "coordinates": { # Opcional, si usas mapeo visual
+    #       "date": [x1, y1, x2, y2],
+    #       "total": [x1, y1, x2, y2]
+    #    }
+    # }
+    extraction_rules = models.JSONField(
+        default=dict, # Valor por defecto un diccionario vacío
+        blank=True,
+        null=True, # Permite nulo si aún no se han definido reglas
+        verbose_name="Reglas de Extracción (JSON)"
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

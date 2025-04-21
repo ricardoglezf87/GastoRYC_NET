@@ -18,6 +18,8 @@ from django.core.exceptions import ImproperlyConfigured
 import logging
 from django.core.cache import cache
 
+from invoice_processor.processing_logic import process_invoice_document
+
 logger = logging.getLogger(__name__)
 
 # --- hello_world, calculate_inicial_balances, recalculate_balances_after_date sin cambios ---
@@ -233,3 +235,37 @@ def create_backup():
              try: os.remove(zip_filepath)
              except OSError as remove_err: logger.error(f"No se pudo eliminar el ZIP incompleto {zip_filepath}: {remove_err}")
         raise # Relanzar
+
+
+@shared_task(bind=True) # bind=True permite acceder a self (info de la tarea)
+def process_invoice_task(self, document_id):
+    """
+    Tarea Celery para procesar un documento de factura.
+    """
+    print(f"Iniciando Tarea Celery para Documento ID: {document_id}")
+    try:
+        success, result_status = process_invoice_document(document_id)
+        if success:
+            print(f"Tarea Celery completada para Documento ID: {document_id}. Resultado: {result_status}")
+            return {'document_id': document_id, 'status': result_status}
+        else:
+            print(f"Tarea Celery falló para Documento ID: {document_id}. Razón: {result_status}")
+            # Puedes reintentar la tarea si es un error temporal
+            # raise self.retry(exc=Exception(result_status), countdown=60, max_retries=3)
+            return {'document_id': document_id, 'status': 'FAILED', 'error': result_status}
+    except Exception as e:
+        print(f"Excepción no controlada en Tarea Celery para Documento ID: {document_id}: {e}")
+        # Reintentar podría ser una opción aquí también
+        # raise self.retry(exc=e, countdown=60, max_retries=3)
+        # O simplemente marcar como fallo
+        # Asegúrate de que el documento se marque como FAILED si no lo hizo process_invoice_document
+        from .models import InvoiceDocument
+        try:
+            doc = InvoiceDocument.objects.get(id=document_id)
+            if doc.status != 'FAILED':
+                 doc.status = 'FAILED'
+                 doc.extracted_text = f"Error en tarea Celery: {e}"
+                 doc.save()
+        except InvoiceDocument.DoesNotExist:
+             pass # El error ya fue loggeado antes
+        return {'document_id': document_id, 'status': 'FAILED', 'error': str(e)}

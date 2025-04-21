@@ -10,7 +10,17 @@ class ExtractedDataSerializer(serializers.ModelSerializer):
 class InvoiceTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceType
-        fields = '__all__' # Incluye 'id', 'name', reglas de extracción, 'account', etc.
+        # Asegúrate de incluir 'extraction_rules'
+        fields = [
+            'id',
+            'name',
+            'extraction_rules', # <-- Incluir el campo JSON
+            # 'account', # Si tienes el campo de cuenta
+            'created_at',
+            'updated_at',
+            # Incluye otros campos que necesites exponer
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 class InvoiceDocumentSerializer(serializers.ModelSerializer):
     # Para mostrar los datos extraídos anidados al consultar un documento
