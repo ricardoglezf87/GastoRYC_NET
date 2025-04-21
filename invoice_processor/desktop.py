@@ -1,20 +1,25 @@
 # desktop.py (con depuración adicional)
 import json
+import re
 import sys
 import os
+from tkinter import Image
 import traceback # Para imprimir errores detallados
 from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel,
                              QLineEdit, QPushButton, QComboBox, QMessageBox,
                              QFileDialog, QScrollArea)
 from PyQt5.QtGui import QPixmap, QImage
+import pytesseract
 import requests
 from PIL import Image as PILImage
-from pdf2image import convert_from_path, exceptions as pdf2image_exceptions
+from pdf2image import convert_from_bytes, convert_from_path, exceptions as pdf2image_exceptions
 from PyQt5.QtCore import pyqtSlot
+
 
 # --- Calcular rutas dinámicamente ---
 script_dir = os.path.dirname(os.path.abspath(__file__))
 poppler_bin_path = os.path.join(script_dir, 'poppler', 'Library', 'bin')
+pytesseract.pytesseract.tesseract_cmd = os.path.join(script_dir,'tesseract', 'tesseract.exe')
 # ------------------------------------
 
 # --- Clase ApiClient (Añadido timeout y prints) ---
@@ -604,8 +609,8 @@ class MappingWindow(QWidget):
 
 
     def test_template_rules(self):
-        """Prueba las reglas actuales enviando el archivo PDF cargado."""
-        print("test_template_rules: Intentando probar reglas...") # DEBUG
+        """Prueba las reglas actuales realizando OCR y extracción localmente."""
+        print("test_template_rules: Iniciando prueba local...") # DEBUG
         rules = self._build_rules_payload() # Obtener reglas de los campos
         if not rules:
              QMessageBox.warning(self, "Sin Reglas", "Define al menos una regla para probar.")
@@ -616,32 +621,174 @@ class MappingWindow(QWidget):
              QMessageBox.critical(self, "Error", "No hay una ruta de archivo PDF válida para probar.")
              return
 
-        print(f"test_template_rules: Enviando archivo '{self.file_path}' y reglas para probar: {rules}") # DEBUG
+        print(f"test_template_rules: Realizando OCR local en '{self.file_path}'...") # DEBUG
 
-        # Llama al método del cliente API modificado
-        test_result = self.api_client.test_rules(self.file_path, rules) # Pasar ruta y reglas
-        print(f"test_template_rules: Respuesta de probar reglas: {test_result}") # DEBUG
+        # 1. Realizar OCR localmente
+        extracted_text = perform_ocr(self.file_path)
 
-        # Muestra el resultado en un QMessageBox (lógica sin cambios)
-        if isinstance(test_result, dict):
-            result_text = "Resultado de la Prueba:\n\n"
-            if "error" in test_result:
-                result_text += f"Error: {test_result['error']}"
-            elif not test_result:
-                 result_text += "No se extrajo ningún dato con las reglas proporcionadas."
-            else:
-                for key, value in test_result.items():
-                    field_name = key.replace('_', ' ').title()
-                    if value is None:
-                        field_value = "No encontrado"
-                    elif isinstance(value, (float, int)):
-                        field_value = f"{value:.2f}"
-                    else:
-                        field_value = str(value)
-                    result_text += f"{field_name}: {field_value}\n"
-            QMessageBox.information(self, "Resultado Prueba", result_text.strip())
+        # Verificar si el OCR falló (perform_ocr_local ya muestra QMessageBox)
+        if extracted_text is None:
+             print("test_template_rules: Fallo en OCR local.")
+             return # Detener si OCR falla
+
+        if not extracted_text:
+             print("test_template_rules: OCR local no devolvió texto.")
+             QMessageBox.information(self, "Resultado OCR", "El OCR no encontró texto en el documento.")
+             # Puedes decidir si continuar con la extracción o no
+
+        print("test_template_rules: OCR local completado. Extrayendo datos localmente...") # DEBUG
+
+        # 2. Extraer datos localmente usando las reglas
+        extracted_data = extract_data(extracted_text, rules)
+        print(f"test_template_rules: Datos extraídos localmente: {extracted_data}") # DEBUG
+
+        # 3. Mostrar el resultado
+        result_text = "Resultado de la Prueba Local:\n\n"
+        if not extracted_data:
+             result_text += "No se extrajo ningún dato con las reglas proporcionadas."
         else:
-             QMessageBox.critical(self, "Error", f"Respuesta inesperada del servidor al probar reglas: {test_result}")
+            for key, value in extracted_data.items():
+                field_name = key.replace('_', ' ').title()
+                if value is None:
+                    field_value = "No encontrado"
+                elif isinstance(value, (float, int)):
+                    field_value = f"{value:.2f}"
+                else:
+                    field_value = str(value)
+                result_text += f"{field_name}: {field_value}\n"
+        QMessageBox.information(self, "Resultado Prueba Local", result_text.strip())
+
+
+def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo más
+    """
+    Realiza OCR en un archivo (ruta, objeto UploadedFile, bytes).
+    Devuelve el texto extraído o None si hay error.
+    (Adaptado de processing_logic.py para usar poppler_bin_path local)
+    """
+    global poppler_bin_path # Usar la ruta de poppler definida globalmente
+    text = None
+    is_pdf = False
+    filename = getattr(file_input, 'name', str(type(file_input)))
+
+    try:
+        print(f"perform_ocr_local: Iniciando OCR para '{filename}' (Tipo: {type(file_input)})")
+
+        if isinstance(file_input, str) and file_input.lower().endswith('.pdf'):
+            is_pdf = True
+        elif hasattr(file_input, 'name') and file_input.name.lower().endswith('.pdf'):
+            is_pdf = True
+
+        if is_pdf:
+            print("perform_ocr_local: Detectado como PDF.")
+            images = []
+            if isinstance(file_input, str): # Si es una ruta
+                # Usar poppler_path aquí
+                images = convert_from_path(file_input, dpi=200, poppler_path=poppler_bin_path) # Ajusta DPI si es necesario
+            else: # Si fuera un objeto de archivo (menos probable aquí)
+                file_input.seek(0)
+                pdf_bytes = file_input.read()
+                file_input.seek(0)
+                if pdf_bytes:
+                     # Usar poppler_path aquí
+                     images = convert_from_bytes(pdf_bytes, dpi=200, poppler_path=poppler_bin_path)
+                else:
+                     print("perform_ocr_local: Error - Contenido del PDF está vacío.")
+                     return None
+
+            if not images:
+                 print("perform_ocr_local: Error - pdf2image no devolvió imágenes.")
+                 return None
+
+            print(f"perform_ocr_local: PDF convertido a {len(images)} imágenes.")
+            full_text = ""
+            for i, img in enumerate(images):
+                print(f"perform_ocr_local: Procesando imagen {i+1}/{len(images)} del PDF...")
+                # Asegúrate que Tesseract esté configurado o en el PATH
+                full_text += pytesseract.image_to_string(img, lang='spa') + "\n\n"
+            text = full_text.strip()
+
+        else: # Asumir que es una imagen
+            print("perform_ocr_local: Tratando como imagen.")
+            image = Image.open(file_input)
+            text = pytesseract.image_to_string(image, lang='spa')
+
+        if text:
+            print(f"--- OCR Local Exitoso para '{filename}' ---")
+            return text
+        else:
+            print(f"--- OCR Local para '{filename}' no devolvió texto. ---")
+            return ""
+
+    except pytesseract.TesseractNotFoundError:
+        print("Error: Tesseract no encontrado localmente. Asegúrate de que está instalado y en el PATH o configura tesseract_cmd.")
+        # Ya no se muestra QMessageBox aquí
+        return None
+    except pdf2image_exceptions.PDFInfoNotInstalledError:
+         # Este error ya se maneja en load_document_image, pero por si acaso
+         print(f"Error: Poppler (pdfinfo) no encontrado en '{poppler_bin_path}' o no funciona.")
+         # Ya no se muestra QMessageBox aquí
+         return None
+    except Exception as e:
+        print(f"Error inesperado durante OCR local para '{filename}': {type(e).__name__}: {e}")
+        traceback.print_exc()
+        return None
+
+def extract_data(text, rules): # Renombrar y adaptar
+    """
+    Extrae datos usando las reglas proporcionadas.
+    (Adaptado de extract_data_based_on_type)
+    """
+    if not text or not rules:
+        print("Texto o reglas de extracción faltantes.")
+        return {}
+
+    extracted = {}
+    # No necesitamos invoice_type, usamos directamente el diccionario 'rules'
+
+    # --- Ejemplo de Extracción de Fecha ---
+    date_rule = rules.get('date')
+    if date_rule:
+        rule_type = date_rule.get('type')
+        try:
+            if rule_type == 'regex':
+                pattern = date_rule.get('pattern')
+                if pattern:
+                    match = re.search(pattern, text)
+                    if match:
+                        # Devolvemos como string para la prueba
+                        extracted['invoice_date'] = match.group(0)
+                        print(f"Fecha encontrada (local, regex '{pattern}'): {extracted['invoice_date']}")
+            # Añadir más tipos de reglas si las tienes...
+        except Exception as e:
+            print(f"Error aplicando regla de fecha local: {e}")
+
+    # --- Ejemplo de Extracción de Total ---
+    total_rule = rules.get('total')
+    if total_rule:
+        rule_type = total_rule.get('type')
+        try:
+            if rule_type == 'regex':
+                pattern = total_rule.get('pattern')
+                if pattern:
+                     matches = re.findall(pattern, text, re.IGNORECASE)
+                     if matches:
+                         # Limpiar y convertir el último encontrado
+                         amount_str = matches[-1].replace('.', '').replace(',', '.')
+                         try:
+                             # Devolvemos como float para la prueba
+                             extracted['total_amount'] = float(amount_str)
+                             print(f"Total encontrado (local, regex '{pattern}'): {extracted['total_amount']}")
+                         except ValueError:
+                             print(f"Error convirtiendo total local (regex): {matches[-1]}")
+            # Añadir más tipos de reglas si las tienes...
+        except Exception as e:
+            print(f"Error aplicando regla de total local: {e}")
+
+    # ... Extraer otros campos ...
+
+    print(f"Datos extraídos locales finales: {extracted}")
+    return extracted
+
 
 # --- Bloque Principal (con manejo de errores y prints) ---
 if __name__ == '__main__':

@@ -2,9 +2,11 @@
 import traceback
 from pdf2image import convert_from_bytes, convert_from_path
 import pytesseract
+from pdf2image import exceptions as pdf2image_exceptions
 from PIL import Image
 import re
 import io
+
 import json 
 from .models import InvoiceDocument, InvoiceType, ExtractedData
 # Importa aquí librerías para PDF si trabajas con ellos (ej. pdf2image)
@@ -15,83 +17,135 @@ from .models import InvoiceDocument, InvoiceType, ExtractedData
 # pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe' # Ejemplo Windows
 # pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract' # Ejemplo Linux
 
-def perform_ocr(file_input):
+def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo más
     """
     Realiza OCR en un archivo (ruta, objeto UploadedFile, bytes).
     Devuelve el texto extraído o None si hay error.
+    (Adaptado de processing_logic.py para usar poppler_bin_path local)
     """
+    global poppler_bin_path # Usar la ruta de poppler definida globalmente
     text = None
     is_pdf = False
-    filename = getattr(file_input, 'name', str(type(file_input))) # Obtener nombre si existe
+    filename = getattr(file_input, 'name', str(type(file_input)))
 
     try:
-        print(f"perform_ocr: Iniciando OCR para '{filename}' (Tipo: {type(file_input)})")
+        print(f"perform_ocr_local: Iniciando OCR para '{filename}' (Tipo: {type(file_input)})")
 
-        # Determinar si es PDF (por nombre o contenido si es posible)
-        # Una forma simple es por extensión si es ruta o tiene nombre
         if isinstance(file_input, str) and file_input.lower().endswith('.pdf'):
             is_pdf = True
         elif hasattr(file_input, 'name') and file_input.name.lower().endswith('.pdf'):
             is_pdf = True
-        # Podrías añadir una verificación más robusta leyendo los primeros bytes si es necesario
 
         if is_pdf:
-            print("perform_ocr: Detectado como PDF.")
-            # Necesita Poppler instalado en el servidor
+            print("perform_ocr_local: Detectado como PDF.")
             images = []
             if isinstance(file_input, str): # Si es una ruta
-                images = convert_from_path(file_input, dpi=200) # Ajusta DPI
-            else: # Asumir que es un objeto tipo archivo (UploadedFile, BytesIO, etc.)
-                # Leer el contenido en bytes
-                file_input.seek(0) # Asegurar que leemos desde el principio
+                # Usar poppler_path aquí
+                images = convert_from_path(file_input, dpi=200, poppler_path=poppler_bin_path) # Ajusta DPI si es necesario
+            else: # Si fuera un objeto de archivo (menos probable aquí)
+                file_input.seek(0)
                 pdf_bytes = file_input.read()
-                file_input.seek(0) # Dejar el puntero al inicio por si se reutiliza
+                file_input.seek(0)
                 if pdf_bytes:
-                     images = convert_from_bytes(pdf_bytes, dpi=200) # Ajusta DPI
+                     # Usar poppler_path aquí
+                     images = convert_from_bytes(pdf_bytes, dpi=200, poppler_path=poppler_bin_path)
                 else:
-                     print("perform_ocr: Error - Contenido del PDF está vacío.")
+                     print("perform_ocr_local: Error - Contenido del PDF está vacío.")
                      return None
 
             if not images:
-                 print("perform_ocr: Error - pdf2image no devolvió imágenes.")
+                 print("perform_ocr_local: Error - pdf2image no devolvió imágenes.")
                  return None
 
-            print(f"perform_ocr: PDF convertido a {len(images)} imágenes.")
+            print(f"perform_ocr_local: PDF convertido a {len(images)} imágenes.")
             full_text = ""
             for i, img in enumerate(images):
-                print(f"perform_ocr: Procesando imagen {i+1}/{len(images)} del PDF...")
-                full_text += pytesseract.image_to_string(img, lang='spa') + "\n\n" # 'spa' para español
+                print(f"perform_ocr_local: Procesando imagen {i+1}/{len(images)} del PDF...")
+                # Asegúrate que Tesseract esté configurado o en el PATH
+                full_text += pytesseract.image_to_string(img, lang='spa') + "\n\n"
             text = full_text.strip()
 
         else: # Asumir que es una imagen
-            print("perform_ocr: Tratando como imagen.")
-            # PIL puede abrir rutas o objetos tipo archivo directamente
+            print("perform_ocr_local: Tratando como imagen.")
             image = Image.open(file_input)
-            text = pytesseract.image_to_string(image, lang='spa') # Especifica el idioma
+            text = pytesseract.image_to_string(image, lang='spa')
 
         if text:
-            print(f"--- OCR Exitoso para '{filename}' ---")
-            # print(text[:500] + "...") # Mostrar solo una parte para no llenar logs
-            print("------------------------------------")
+            print(f"--- OCR Local Exitoso para '{filename}' ---")
             return text
         else:
-            print(f"--- OCR para '{filename}' no devolvió texto. ---")
-            return "" # Devolver string vacío en lugar de None si OCR no encuentra nada
+            print(f"--- OCR Local para '{filename}' no devolvió texto. ---")
+            return ""
 
     except pytesseract.TesseractNotFoundError:
-        print("Error: Tesseract no encontrado en el servidor. Asegúrate de que está instalado y en el PATH o configura tesseract_cmd.")
-        return None # Error crítico
-    except ImportError as e:
-         if 'pdf2image' in str(e) or 'poppler' in str(e):
-              print(f"Error: Falta pdf2image o Poppler en el servidor para procesar PDFs: {e}")
-              return None # Error crítico si se necesita para PDF
-         else:
-              print(f"Error de importación inesperado durante OCR: {e}")
-              return None # Error crítico
+        print("Error: Tesseract no encontrado localmente. Asegúrate de que está instalado y en el PATH o configura tesseract_cmd.")
+        # Ya no se muestra QMessageBox aquí
+        return None
+    except pdf2image_exceptions.PDFInfoNotInstalledError:
+         # Este error ya se maneja en load_document_image, pero por si acaso
+         print(f"Error: Poppler (pdfinfo) no encontrado en '{poppler_bin_path}' o no funciona.")
+         # Ya no se muestra QMessageBox aquí
+         return None
     except Exception as e:
-        print(f"Error inesperado durante OCR para '{filename}': {type(e).__name__}: {e}")
-        traceback.print_exc() # Loguear traceback completo en el servidor
-        return None # Error crítico
+        print(f"Error inesperado durante OCR local para '{filename}': {type(e).__name__}: {e}")
+        traceback.print_exc()
+        return None
+
+def extract_data(text, rules): # Renombrar y adaptar
+    """
+    Extrae datos usando las reglas proporcionadas.
+    (Adaptado de extract_data_based_on_type)
+    """
+    if not text or not rules:
+        print("Texto o reglas de extracción faltantes.")
+        return {}
+
+    extracted = {}
+    # No necesitamos invoice_type, usamos directamente el diccionario 'rules'
+
+    # --- Ejemplo de Extracción de Fecha ---
+    date_rule = rules.get('date')
+    if date_rule:
+        rule_type = date_rule.get('type')
+        try:
+            if rule_type == 'regex':
+                pattern = date_rule.get('pattern')
+                if pattern:
+                    match = re.search(pattern, text)
+                    if match:
+                        # Devolvemos como string para la prueba
+                        extracted['invoice_date'] = match.group(0)
+                        print(f"Fecha encontrada (local, regex '{pattern}'): {extracted['invoice_date']}")
+            # Añadir más tipos de reglas si las tienes...
+        except Exception as e:
+            print(f"Error aplicando regla de fecha local: {e}")
+
+    # --- Ejemplo de Extracción de Total ---
+    total_rule = rules.get('total')
+    if total_rule:
+        rule_type = total_rule.get('type')
+        try:
+            if rule_type == 'regex':
+                pattern = total_rule.get('pattern')
+                if pattern:
+                     matches = re.findall(pattern, text, re.IGNORECASE)
+                     if matches:
+                         # Limpiar y convertir el último encontrado
+                         amount_str = matches[-1].replace('.', '').replace(',', '.')
+                         try:
+                             # Devolvemos como float para la prueba
+                             extracted['total_amount'] = float(amount_str)
+                             print(f"Total encontrado (local, regex '{pattern}'): {extracted['total_amount']}")
+                         except ValueError:
+                             print(f"Error convirtiendo total local (regex): {matches[-1]}")
+            # Añadir más tipos de reglas si las tienes...
+        except Exception as e:
+            print(f"Error aplicando regla de total local: {e}")
+
+    # ... Extraer otros campos ...
+
+    print(f"Datos extraídos locales finales: {extracted}")
+    return extracted
 
 def identify_invoice_type(text):
     """
