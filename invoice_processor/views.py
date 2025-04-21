@@ -8,7 +8,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from datetime import datetime, timedelta
 from async_tasks.tasks import process_invoice_task
-from invoice_processor.processing_logic import extract_invoice_data, identify_invoice_type, perform_ocr
+from invoice_processor.processing_logic import extract_invoice_data, identify_invoice_type, perform_ocr, process_invoice_document
 from .models import InvoiceDocument, InvoiceType, ExtractedData
 from .serializers import InvoiceDocumentSerializer, InvoiceTypeSerializer, ExtractedDataSerializer
 # --- Importa la tarea Celery ---
@@ -58,26 +58,28 @@ class ReprocessDocumentView(APIView):
 
             # --- Opción 1: Llamar directamente a la lógica síncrona ---
             # Esto bloqueará la respuesta hasta que termine el procesamiento.
-            # Puede ser aceptable si el procesamiento es rápido.
-            # success, new_status = process_invoice_document(document.id)
+            success, final_status = process_invoice_document(document.id)
+            # La función process_invoice_document ya guarda el estado final.
+            # Recargamos el documento para obtener los datos actualizados por el procesamiento.
+            document.refresh_from_db()
+            # ---------------------------------------------------------
 
-            # --- Opción 2: Re-encolar en Celery (si lo usas) ---
-            # Esto devuelve una respuesta rápida, el procesamiento ocurre en segundo plano.
-            # Es la opción preferida si el procesamiento es largo.
-            from async_tasks.tasks import process_invoice_task # Importa la tarea
-            process_invoice_task.delay(document.id)
-            success = True # Éxito al encolar
-            new_status = 'PROCESSING' # Estado mientras se procesa
-            document.status = new_status
-            document.save(update_fields=['status'])
+            # --- Opción 2: Re-encolar en Celery (Comentada) ---
+            # from async_tasks.tasks import process_invoice_task # Importa la tarea
+            # process_invoice_task.delay(document.id)
+            # success = True # Éxito al encolar
+            # final_status = 'PROCESSING' # Estado mientras se procesa
+            # document.status = final_status
+            # document.save(update_fields=['status'])
             # ----------------------------------------------------
 
             if success:
-                # Devolver el documento actualizado (o al menos su estado)
+                # Devolver el documento con su estado y datos finales
                 serializer = InvoiceDocumentSerializer(document, context={'request': request})
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                return Response({"error": f"Fallo al iniciar reprocesamiento: {new_status}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                # Si process_invoice_document devolvió False
+                return Response({"error": f"Fallo durante el reprocesamiento: {final_status}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except InvoiceDocument.DoesNotExist:
             return Response({"error": f"Documento con id {id} no encontrado"}, status=status.HTTP_404_NOT_FOUND)
