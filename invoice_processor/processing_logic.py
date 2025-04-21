@@ -1,4 +1,5 @@
 # invoice_processor/processing_logic.py
+from datetime import datetime
 import traceback
 from pdf2image import convert_from_bytes, convert_from_path
 import pytesseract
@@ -6,16 +7,16 @@ from pdf2image import exceptions as pdf2image_exceptions
 from PIL import Image
 import re
 import io
-
+import os
 import json 
-from .models import InvoiceDocument, InvoiceType, ExtractedData
-# Importa aquí librerías para PDF si trabajas con ellos (ej. pdf2image)
-# from pdf2image import convert_from_path # Ejemplo
+from django.utils.dateparse import parse_date
 
-# --- Configuración de Tesseract (Ajusta la ruta si es necesario) ---
-# Si tesseract no está en tu PATH del sistema, descomenta y ajusta la línea:
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe' # Ejemplo Windows
-# pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract' # Ejemplo Linux
+from .models import InvoiceDocument, InvoiceType, ExtractedData
+
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+poppler_bin_path = os.path.join(script_dir, 'poppler', 'Library', 'bin')
+pytesseract.pytesseract.tesseract_cmd = os.path.join(script_dir,'tesseract', 'tesseract.exe')
 
 def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo más
     """
@@ -29,7 +30,7 @@ def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo
     filename = getattr(file_input, 'name', str(type(file_input)))
 
     try:
-        print(f"perform_ocr_local: Iniciando OCR para '{filename}' (Tipo: {type(file_input)})")
+        print(f"perform_ocr_local: Iniciando OCR para {filename} (Tipo: {type(file_input)})")
 
         if isinstance(file_input, str) and file_input.lower().endswith('.pdf'):
             is_pdf = True
@@ -41,14 +42,14 @@ def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo
             images = []
             if isinstance(file_input, str): # Si es una ruta
                 # Usar poppler_path aquí
-                images = convert_from_path(file_input, dpi=200, poppler_path=poppler_bin_path) # Ajusta DPI si es necesario
+                images = convert_from_path(file_input, dpi=300, poppler_path=poppler_bin_path) # Ajusta DPI si es necesario
             else: # Si fuera un objeto de archivo (menos probable aquí)
                 file_input.seek(0)
                 pdf_bytes = file_input.read()
                 file_input.seek(0)
                 if pdf_bytes:
                      # Usar poppler_path aquí
-                     images = convert_from_bytes(pdf_bytes, dpi=200, poppler_path=poppler_bin_path)
+                     images = convert_from_bytes(pdf_bytes, dpi=300, poppler_path=poppler_bin_path)
                 else:
                      print("perform_ocr_local: Error - Contenido del PDF está vacío.")
                      return None
@@ -62,7 +63,8 @@ def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo
             for i, img in enumerate(images):
                 print(f"perform_ocr_local: Procesando imagen {i+1}/{len(images)} del PDF...")
                 # Asegúrate que Tesseract esté configurado o en el PATH
-                full_text += pytesseract.image_to_string(img, lang='spa') + "\n\n"
+                config = '--psm 6'
+                full_text += pytesseract.image_to_string(img, lang='spa', config=config) + "\n\n"
             text = full_text.strip()
 
         else: # Asumir que es una imagen
@@ -90,62 +92,6 @@ def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo
         print(f"Error inesperado durante OCR local para '{filename}': {type(e).__name__}: {e}")
         traceback.print_exc()
         return None
-
-def extract_data(text, rules): # Renombrar y adaptar
-    """
-    Extrae datos usando las reglas proporcionadas.
-    (Adaptado de extract_data_based_on_type)
-    """
-    if not text or not rules:
-        print("Texto o reglas de extracción faltantes.")
-        return {}
-
-    extracted = {}
-    # No necesitamos invoice_type, usamos directamente el diccionario 'rules'
-
-    # --- Ejemplo de Extracción de Fecha ---
-    date_rule = rules.get('date')
-    if date_rule:
-        rule_type = date_rule.get('type')
-        try:
-            if rule_type == 'regex':
-                pattern = date_rule.get('pattern')
-                if pattern:
-                    match = re.search(pattern, text)
-                    if match:
-                        # Devolvemos como string para la prueba
-                        extracted['invoice_date'] = match.group(0)
-                        print(f"Fecha encontrada (local, regex '{pattern}'): {extracted['invoice_date']}")
-            # Añadir más tipos de reglas si las tienes...
-        except Exception as e:
-            print(f"Error aplicando regla de fecha local: {e}")
-
-    # --- Ejemplo de Extracción de Total ---
-    total_rule = rules.get('total')
-    if total_rule:
-        rule_type = total_rule.get('type')
-        try:
-            if rule_type == 'regex':
-                pattern = total_rule.get('pattern')
-                if pattern:
-                     matches = re.findall(pattern, text, re.IGNORECASE)
-                     if matches:
-                         # Limpiar y convertir el último encontrado
-                         amount_str = matches[-1].replace('.', '').replace(',', '.')
-                         try:
-                             # Devolvemos como float para la prueba
-                             extracted['total_amount'] = float(amount_str)
-                             print(f"Total encontrado (local, regex '{pattern}'): {extracted['total_amount']}")
-                         except ValueError:
-                             print(f"Error convirtiendo total local (regex): {matches[-1]}")
-            # Añadir más tipos de reglas si las tienes...
-        except Exception as e:
-            print(f"Error aplicando regla de total local: {e}")
-
-    # ... Extraer otros campos ...
-
-    print(f"Datos extraídos locales finales: {extracted}")
-    return extracted
 
 def identify_invoice_type(text):
     """
@@ -184,18 +130,54 @@ def identify_invoice_type(text):
     print("No se pudo identificar el tipo de factura automáticamente usando reglas.")
     return None
 
-def extract_data_based_on_type(text, invoice_type):
+def extract_invoice_data(text, rules_or_type):
     """
-    Extrae datos usando las reglas definidas en extraction_rules del InvoiceType.
+    Extrae datos usando reglas (de un dict o un InvoiceType) y parsea la fecha.
     """
-    if not text or not invoice_type or not invoice_type.extraction_rules:
-        print("Texto, tipo de factura o reglas de extracción faltantes.")
+    if not text:
+        print("Texto de entrada faltante.")
+        return {}
+
+    rules = None
+    invoice_type_name = "Reglas directas" # Nombre por defecto para logs
+
+    # Determinar si recibimos un diccionario de reglas o un objeto InvoiceType
+    if isinstance(rules_or_type, InvoiceType):
+        if rules_or_type.extraction_rules:
+            rules = rules_or_type.extraction_rules
+            invoice_type_name = rules_or_type.name
+        else:
+            print(f"InvoiceType {rules_or_type.name} no tiene reglas de extracción.")
+            return {}
+    elif isinstance(rules_or_type, dict):
+        rules = rules_or_type
+    else:
+        print("Entrada de reglas inválida (ni dict ni InvoiceType).")
+        return {}
+
+    if not rules:
+        print("Reglas de extracción vacías o no encontradas.")
         return {}
 
     extracted = {}
-    rules = invoice_type.extraction_rules
 
-    # --- Ejemplo de Extracción de Fecha ---
+    # --- Extracción de Identificador (Opcional, más útil para prueba local) ---
+    identifier_rule = rules.get('identifier')
+    if identifier_rule:
+        rule_type = identifier_rule.get('type')
+        rule_value = identifier_rule.get('value')
+        try:
+            if rule_type == 'keyword' and rule_value:
+                if rule_value in text:
+                    extracted['identifier_found'] = rule_value
+                    print(f"Identificador encontrado ({invoice_type_name}, keyword '{rule_value}')")
+                else:
+                    extracted['identifier_found'] = None
+                    print(f"Identificador NO encontrado ({invoice_type_name}, keyword '{rule_value}')")
+        except Exception as e:
+            print(f"Error aplicando regla de identificador ({invoice_type_name}): {e}")
+
+    # --- Extracción de Fecha (con parseo) ---
     date_rule = rules.get('date')
     if date_rule:
         rule_type = date_rule.get('type')
@@ -203,74 +185,65 @@ def extract_data_based_on_type(text, invoice_type):
             if rule_type == 'regex':
                 pattern = date_rule.get('pattern')
                 if pattern:
-                    match = re.search(pattern, text)
+                    match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
                     if match:
-                        # Aquí necesitarás parsear la fecha encontrada
-                        # Deberías guardar el formato esperado también en las reglas
-                        # o intentar varios formatos comunes.
-                        extracted['invoice_date_str'] = match.group(0) # Guardar como texto por ahora
-                        print(f"Fecha encontrada (regex '{pattern}'): {extracted['invoice_date_str']}")
-                        # TODO: Parsear a objeto Date
-            elif rule_type == 'keyword_proximity':
-                keyword = date_rule.get('keyword')
-                lines_after = date_rule.get('lines_after', 0)
-                # Lógica para buscar keyword y extraer de línea(s) siguientes
-                # (Esta lógica puede ser compleja)
-                pass
-            elif rule_type == 'coordinates':
-                coords = date_rule.get('value') # Asume [x1, y1, x2, y2]
-                # Necesitarías pytesseract.image_to_data para obtener bounding boxes
-                # y encontrar el texto dentro de esas coordenadas. Requiere la imagen original.
-                pass
-            # Añadir más tipos de reglas de fecha
+                        date_str = match.group(1).strip()
+                        print(f"Cadena de fecha encontrada ({invoice_type_name}, regex '{pattern}'): '{date_str}'")
+                        # Intentar parsear la fecha
+                        parsed_date = parse_date(date_str) # Intenta formatos estándar
+                        if not parsed_date:
+                            # Intentar formatos específicos si parse_date falla
+                            formats_to_try = [
+                                '%d/%m/%Y', '%d.%m.%Y', '%d-%m-%Y',
+                                '%d/%m/%y', '%d.%m.%y', '%d-%m-%y',
+                                '%d de %B de %Y', # Ej: 01 de noviembre de 2024 (requiere locale español)
+                                '%d %b %Y',      # Ej: 01 Nov 2024
+                            ]
+                            # Configurar locale para nombres de mes en español (si es necesario)
+                            # import locale
+                            # try:
+                            #     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8') # O 'Spanish_Spain.1252' en Windows
+                            # except locale.Error:
+                            #     print("Advertencia: No se pudo establecer locale español para parsear fecha.")
+
+                            for fmt in formats_to_try:
+                                try:
+                                    parsed_date = datetime.strptime(date_str, fmt).date()
+                                    break # Salir si un formato funciona
+                                except ValueError:
+                                    continue # Probar el siguiente formato
+
+                        if parsed_date:
+                            extracted['invoice_date'] = parsed_date # Guardar objeto date
+                            print(f"Fecha parseada ({invoice_type_name}): {parsed_date}")
+                        else:
+                            print(f"No se pudo parsear la fecha '{date_str}' ({invoice_type_name}).")
         except Exception as e:
-            print(f"Error aplicando regla de fecha para {invoice_type.name}: {e}")
+            print(f"Error aplicando regla de fecha ({invoice_type_name}): {e}")
+            traceback.print_exc()
 
-
-    # --- Ejemplo de Extracción de Total ---
+    # --- Extracción de Total ---
     total_rule = rules.get('total')
     if total_rule:
         rule_type = total_rule.get('type')
         try:
             if rule_type == 'regex':
                 pattern = total_rule.get('pattern')
-                # Ejemplo: Buscar 'TOTAL' seguido de números con decimales
-                # pattern = r'(?:TOTAL|IMPORTE)\s*:?\s*([\d.,]+)'
                 if pattern:
-                     # Buscar todas las coincidencias y quizás tomar la última o la mayor
                      matches = re.findall(pattern, text, re.IGNORECASE)
                      if matches:
-                         # Limpiar y convertir el último encontrado (o el más probable)
                          amount_str = matches[-1].replace('.', '').replace(',', '.')
                          try:
-                             extracted['total_amount'] = float(amount_str)
-                             print(f"Total encontrado (regex '{pattern}'): {extracted['total_amount']}")
+                             extracted['total_amount'] = float(amount_str) # O Decimal
+                             print(f"Total encontrado ({invoice_type_name}, regex '{pattern}'): {extracted['total_amount']}")
                          except ValueError:
-                             print(f"Error convirtiendo total (regex): {matches[-1]}")
-            elif rule_type == 'keyword_proximity':
-                 keyword = total_rule.get('keyword', 'TOTAL') # Palabra clave por defecto
-                 # Lógica para buscar keyword y el número más cercano
-                 pass
-            elif rule_type == 'coordinates':
-                 coords = total_rule.get('value')
-                 # Lógica con image_to_data
-                 pass
-             # Añadir más tipos de reglas de total
+                             print(f"Error convirtiendo total ({invoice_type_name}, regex): {matches[-1]}")
         except Exception as e:
-            print(f"Error aplicando regla de total para {invoice_type.name}: {e}")
+            print(f"Error aplicando regla de total ({invoice_type_name}): {e}")
 
-    # ... Extraer otros campos de manera similar ...
+    # ... (Extraer otros campos si los tienes) ...
 
-    # --- Limpieza y Formateo Final ---
-    # Convierte la fecha string a objeto Date si se encontró
-    if 'invoice_date_str' in extracted:
-         from django.utils import parse_date # Necesitarás crear una función robusta de parseo
-         parsed_date = parse_date(extracted['invoice_date_str'])
-         if parsed_date:
-             extracted['invoice_date'] = parsed_date
-         del extracted['invoice_date_str'] # Elimina la versión string
-
-    print(f"Datos extraídos finales: {extracted}")
+    print(f"Datos extraídos finales ({invoice_type_name}): {extracted}")
     return extracted
 
 def process_invoice_document(document_id):
@@ -283,64 +256,44 @@ def process_invoice_document(document_id):
         doc.status = 'PROCESSING'
         doc.save()
 
-        # 1. Realizar OCR
-        # Usamos doc.file.path para obtener la ruta al archivo guardado por Django
         extracted_text = perform_ocr(doc.file.path)
         if extracted_text is None:
-            doc.status = 'FAILED'
-            doc.extracted_text = "Error durante OCR"
-            doc.save()
+            doc.status = 'FAILED'; doc.extracted_text = "Error durante OCR"; doc.save()
             print(f"Fallo OCR para Documento ID: {doc.id}")
             return False, "Error OCR"
-
         doc.extracted_text = extracted_text
 
-        # 2. Intentar identificar el tipo
         invoice_type = identify_invoice_type(extracted_text)
-
         if invoice_type:
             doc.invoice_type = invoice_type
-            # 3. Extraer datos si se identificó el tipo
-            data = extract_data_based_on_type(extracted_text, invoice_type)
-
-            if data:
-                # Guardar datos extraídos
+            # --- LLAMAR A LA NUEVA FUNCIÓN ---
+            data = extract_invoice_data(extracted_text, invoice_type)
+            # -------------------------------
+            if data.get('invoice_date') or data.get('total_amount'): # Si se extrajo algo útil
                 ExtractedData.objects.update_or_create(
                     document=doc,
                     defaults={
-                        'invoice_date': data.get('invoice_date'), # Asegúrate que esté en formato Date
+                        'invoice_date': data.get('invoice_date'), # Ya es objeto date
                         'total_amount': data.get('total_amount'),
-                        # ... otros campos ...
                     }
                 )
-                doc.status = 'PROCESSED'
+                doc.status = 'PROCESSED' # O 'NEEDS_MATCHING' si ese es tu flujo
                 print(f"Datos extraídos para Documento ID: {doc.id}")
             else:
-                # Se identificó pero no se pudieron extraer datos (quizás reglas incompletas)
-                doc.status = 'NEEDS_MAPPING' # O podrías poner 'PROCESSED' si la identificación es suficiente
+                doc.status = 'NEEDS_MAPPING'
                 print(f"Tipo identificado pero sin datos extraídos para Documento ID: {doc.id}")
-
         else:
-            # No se pudo identificar el tipo
             doc.status = 'NEEDS_MAPPING'
             print(f"Documento ID: {doc.id} necesita mapeo manual.")
 
         doc.save()
         print(f"Procesamiento finalizado para Documento ID: {doc.id}. Estado: {doc.status}")
         return True, doc.status
-
-    except InvoiceDocument.DoesNotExist:
-        print(f"Error: Documento con ID {document_id} no encontrado.")
-        return False, "Documento no encontrado"
+    # ... (manejo de excepciones sin cambios) ...
     except Exception as e:
         print(f"Error procesando documento {document_id}: {e}")
-        # Marcar como fallido si ocurre un error inesperado
         try:
             doc = InvoiceDocument.objects.get(id=document_id)
-            doc.status = 'FAILED'
-            doc.extracted_text = f"Error inesperado: {e}"
-            doc.save()
-        except InvoiceDocument.DoesNotExist:
-            pass # Ya se registró el error de no encontrado
+            doc.status = 'FAILED'; doc.extracted_text = f"Error inesperado: {e}"; doc.save()
+        except: pass
         return False, f"Error inesperado: {e}"
-

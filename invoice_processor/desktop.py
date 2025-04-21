@@ -1,6 +1,7 @@
 # desktop.py (con depuración adicional)
 import json
 import re
+import django
 import sys
 import os
 from tkinter import Image
@@ -16,11 +17,14 @@ from PyQt5.QtCore import Qt,pyqtSlot, QStringListModel
 from PyQt5.QtWidgets import QCompleter
 
 
-# --- Calcular rutas dinámicamente ---
-script_dir = os.path.dirname(os.path.abspath(__file__))
-poppler_bin_path = os.path.join(script_dir, 'poppler', 'Library', 'bin')
-pytesseract.pytesseract.tesseract_cmd = os.path.join(script_dir,'tesseract', 'tesseract.exe')
-# ------------------------------------
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GARCA.settings')
+try:
+    django.setup()
+    print("DJANGO SETUP: Django inicializado correctamente.") # Mensaje de confirmación
+except Exception as e:
+    print(f"DJANGO SETUP ERROR: No se pudo inicializar Django: {e}")
+
+from .processing_logic import extract_invoice_data, perform_ocr
 
 # --- Clase ApiClient (Añadido timeout y prints) ---
 class ApiClient:
@@ -623,7 +627,7 @@ class MappingWindow(QWidget):
         print("test_template_rules: Extrayendo datos localmente del texto actual...") # DEBUG
 
         # Extraer datos localmente usando las reglas y el texto actual
-        extracted_data = extract_data(current_text, rules)
+        extracted_data = extract_invoice_data(current_text, rules)
         print(f"test_template_rules: Datos extraídos localmente: {extracted_data}") # DEBUG
 
         # Mostrar el resultado (lógica sin cambios)
@@ -641,155 +645,6 @@ class MappingWindow(QWidget):
                     field_value = str(value)
                 result_text += f"{field_name}: {field_value}\n"
         QMessageBox.information(self, "Resultado Prueba Local", result_text.strip())
-
-
-def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo más
-    """
-    Realiza OCR en un archivo (ruta, objeto UploadedFile, bytes).
-    Devuelve el texto extraído o None si hay error.
-    (Adaptado de processing_logic.py para usar poppler_bin_path local)
-    """
-    global poppler_bin_path # Usar la ruta de poppler definida globalmente
-    text = None
-    is_pdf = False
-    filename = getattr(file_input, 'name', str(type(file_input)))
-
-    try:
-        print(f"perform_ocr_local: Iniciando OCR para {filename} (Tipo: {type(file_input)})")
-
-        if isinstance(file_input, str) and file_input.lower().endswith('.pdf'):
-            is_pdf = True
-        elif hasattr(file_input, 'name') and file_input.name.lower().endswith('.pdf'):
-            is_pdf = True
-
-        if is_pdf:
-            print("perform_ocr_local: Detectado como PDF.")
-            images = []
-            if isinstance(file_input, str): # Si es una ruta
-                # Usar poppler_path aquí
-                images = convert_from_path(file_input, dpi=300, poppler_path=poppler_bin_path) # Ajusta DPI si es necesario
-            else: # Si fuera un objeto de archivo (menos probable aquí)
-                file_input.seek(0)
-                pdf_bytes = file_input.read()
-                file_input.seek(0)
-                if pdf_bytes:
-                     # Usar poppler_path aquí
-                     images = convert_from_bytes(pdf_bytes, dpi=300, poppler_path=poppler_bin_path)
-                else:
-                     print("perform_ocr_local: Error - Contenido del PDF está vacío.")
-                     return None
-
-            if not images:
-                 print("perform_ocr_local: Error - pdf2image no devolvió imágenes.")
-                 return None
-
-            print(f"perform_ocr_local: PDF convertido a {len(images)} imágenes.")
-            full_text = ""
-            for i, img in enumerate(images):
-                print(f"perform_ocr_local: Procesando imagen {i+1}/{len(images)} del PDF...")
-                # Asegúrate que Tesseract esté configurado o en el PATH
-                config = '--psm 6'
-                full_text += pytesseract.image_to_string(img, lang='spa', config=config) + "\n\n"
-            text = full_text.strip()
-
-        else: # Asumir que es una imagen
-            print("perform_ocr_local: Tratando como imagen.")
-            image = Image.open(file_input)
-            text = pytesseract.image_to_string(image, lang='spa')
-
-        if text:
-            print(f"--- OCR Local Exitoso para '{filename}' ---")
-            return text
-        else:
-            print(f"--- OCR Local para '{filename}' no devolvió texto. ---")
-            return ""
-
-    except pytesseract.TesseractNotFoundError:
-        print("Error: Tesseract no encontrado localmente. Asegúrate de que está instalado y en el PATH o configura tesseract_cmd.")
-        # Ya no se muestra QMessageBox aquí
-        return None
-    except pdf2image_exceptions.PDFInfoNotInstalledError:
-         # Este error ya se maneja en load_document_image, pero por si acaso
-         print(f"Error: Poppler (pdfinfo) no encontrado en '{poppler_bin_path}' o no funciona.")
-         # Ya no se muestra QMessageBox aquí
-         return None
-    except Exception as e:
-        print(f"Error inesperado durante OCR local para '{filename}': {type(e).__name__}: {e}")
-        traceback.print_exc()
-        return None
-
-def extract_data(text, rules): # Renombrar y adaptar
-    """
-    Extrae datos usando las reglas proporcionadas.
-    (Adaptado de extract_data_based_on_type)
-    """
-    if not text or not rules:
-        print("Texto o reglas de extracción faltantes.")
-        return {}
-
-    extracted = {}
-    # No necesitamos invoice_type, usamos directamente el diccionario 'rules'
-
-    # --- Ejemplo de Extracción de Fecha ---
-    date_rule = rules.get('date')
-    identifier_rule = rules.get('identifier')
-    if identifier_rule:
-        rule_type = identifier_rule.get('type')
-        rule_value = identifier_rule.get('value')
-        try:
-            if rule_type == 'keyword' and rule_value:
-                # Simplemente verificar si la palabra clave está en el texto
-                if rule_value in text:
-                    extracted['identifier_found'] = rule_value # O simplemente True
-                    print(f"Identificador encontrado (local, keyword '{rule_value}')")
-                else:
-                    extracted['identifier_found'] = None # O False
-                    print(f"Identificador NO encontrado (local, keyword '{rule_value}')")
-            # Añadir lógica para identificador regex si lo implementas
-        except Exception as e:
-            print(f"Error aplicando regla de identificador local: {e}")
-    if date_rule:
-        rule_type = date_rule.get('type')
-        try:
-            if rule_type == 'regex':
-                pattern = date_rule.get('pattern')
-                if pattern:
-                    # Añadir re.DOTALL para que '.' coincida con saltos de línea
-                    match = re.search(pattern, text, re.DOTALL) # <-- AÑADIR re.DOTALL
-                    if match:
-                        # Usar match.group(1) para obtener solo lo capturado por los paréntesis
-                        extracted['invoice_date'] = match.group(1) # <-- CAMBIAR a group(1)
-                        print(f"Fecha encontrada (local, regex '{pattern}'): {extracted['invoice_date']}")
-            # Añadir más tipos de reglas si las tienes...
-        except Exception as e:
-            print(f"Error aplicando regla de fecha local: {e}")
-
-    # --- Ejemplo de Extracción de Total ---
-    total_rule = rules.get('total')
-    if total_rule:
-        rule_type = total_rule.get('type')
-        try:
-            if rule_type == 'regex':
-                pattern = total_rule.get('pattern')
-                if pattern:
-                     matches = re.findall(pattern, text, re.IGNORECASE)
-                     if matches:
-                         # Limpiar y convertir el último encontrado
-                         amount_str = matches[-1].replace('.', '').replace(',', '.')
-                         try:
-                             # Devolvemos como float para la prueba
-                             extracted['total_amount'] = float(amount_str)
-                             print(f"Total encontrado (local, regex '{pattern}'): {extracted['total_amount']}")
-                         except ValueError:
-                             print(f"Error convirtiendo total local (regex): {matches[-1]}")
-            # Añadir más tipos de reglas si las tienes...
-        except Exception as e:
-            print(f"Error aplicando regla de total local: {e}")
-
-    # ... Extraer otros campos ...
-
-    print(f"Datos extraídos locales finales: {extracted}")
-    return extracted
 
 
 # --- Bloque Principal (con manejo de errores y prints) ---

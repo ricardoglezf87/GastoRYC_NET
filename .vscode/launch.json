@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Ejecutar Bulk Matcher", // Tu configuración existente
+            "type": "debugpy", // Cambiado a debugpy que es más común ahora
+            "request": "launch",
+            "module": "invoice_processor.bulk_matcher_app",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Python: Ejecutar Gestor Tipos", // La nueva configuración
+            "type": "debugpy", // Usar debugpy
+            "request": "launch",
+            "module": "invoice_processor.desktop", // Apunta al módulo desktop.py
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
