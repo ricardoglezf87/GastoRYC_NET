@@ -7,7 +7,7 @@ from tkinter import Image
 import traceback # Para imprimir errores detallados
 from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel,
                              QLineEdit, QPushButton, QComboBox, QMessageBox,
-                             QTextEdit)
+                             QTextEdit,QFileDialog)
 import pytesseract
 import requests
 from PIL import Image 
@@ -160,19 +160,28 @@ class ApiClient:
 
 
 class MappingWindow(QWidget):
-    def __init__(self, document_id, file_path, api_client, parent=None):
+    def __init__(self, document_id, initial_file_path, api_client, parent=None): # Cambiado nombre de parámetro
         super().__init__(parent)
         print("MappingWindow __init__ started") # DEBUG
         self.document_id = document_id # Aún puede ser útil si guardas tipos asociados a docs
-        self.file_path = file_path
+        self.file_path = initial_file_path # Guardar la ruta inicial (puede ser None)
         self.api_client = api_client
         self.current_invoice_type_id = None
         self.invoice_types_data = {}
 
-        self.setWindowTitle("Gestor de Tipos de Factura - Editor de Texto") # Título actualizado
+        self.setWindowTitle("Gestor de Tipos de Factura - Editor de Texto")
         self.layout = QVBoxLayout(self)
-        self.setMinimumSize(700, 800) # Ajusta tamaño si es necesario
+        self.setMinimumSize(700, 800)
         print("MappingWindow basic setup done") # DEBUG
+
+        # --- NUEVO: Sección de Selección de Archivo ---
+        self.file_select_button = QPushButton("Seleccionar Archivo PDF")
+        self.file_select_button.clicked.connect(self.select_file)
+        self.layout.addWidget(self.file_select_button)
+
+        self.selected_file_label = QLabel("Archivo seleccionado: Ninguno") # Label para mostrar ruta
+        self.layout.addWidget(self.selected_file_label)
+        # --------------------------------------------
 
         # --- Selección de Tipo (sin cambios) ---
         self.layout.addWidget(QLabel("Tipo de Factura:"))
@@ -182,15 +191,14 @@ class MappingWindow(QWidget):
         self.type_combo.currentIndexChanged.connect(self.on_type_selected)
         print("MappingWindow type combo setup done") # DEBUG
 
-        # --- NUEVO: Visor de Texto OCR ---
+        # --- Visor de Texto OCR (sin cambios) ---
         self.layout.addWidget(QLabel("Texto Extraído (OCR):"))
         self.text_edit = QTextEdit()
-        self.text_edit.setReadOnly(True) # Hacerlo no editable
-        self.text_edit.setLineWrapMode(QTextEdit.NoWrap) # Evitar salto de línea automático (opcional)
-        self.text_edit.setFontFamily("Courier New") # Usar fuente monoespaciada (recomendado)
-        self.layout.addWidget(self.text_edit, 1) # El '1' le da más espacio vertical
+        self.text_edit.setReadOnly(True)
+        self.text_edit.setLineWrapMode(QTextEdit.NoWrap)
+        self.text_edit.setFontFamily("Courier New")
+        self.layout.addWidget(self.text_edit, 1)
         print("MappingWindow text viewer setup done") # DEBUG
-        # --- FIN Visor de Texto OCR ---
 
         # --- Campos de Reglas (sin cambios) ---
         self.layout.addWidget(QLabel("Nombre del Tipo:"))
@@ -217,15 +225,22 @@ class MappingWindow(QWidget):
         self.save_button = QPushButton("Guardar Tipo")
         self.save_button.clicked.connect(self.save_type)
         self.layout.addWidget(self.save_button)
-        self.test_button = QPushButton("Probar Reglas con Texto Actual") # Texto actualizado
+        self.test_button = QPushButton("Probar Reglas con Texto Actual")
         self.test_button.clicked.connect(self.test_template_rules)
         self.layout.addWidget(self.test_button)
         print("MappingWindow buttons setup done") # DEBUG
 
         # --- Carga inicial ---
-        print("Calling load_document_text...") # Llamar a la nueva función
-        self.load_document_text() # <--- CAMBIO DE NOMBRE
-        print("Finished load_document_text call.")
+        # Ya no cargamos el texto aquí, se hará al seleccionar archivo
+        # print("Calling load_document_text...")
+        # self.load_document_text()
+        # print("Finished load_document_text call.")
+
+        # Actualizar label si se pasó una ruta inicial
+        if self.file_path:
+             self.selected_file_label.setText(f"Archivo seleccionado: {os.path.basename(self.file_path)}")
+             # Podrías llamar a load_document_text aquí si quieres cargar el inicial
+             # self.load_document_text()
 
         print("Calling load_invoice_types...")
         self.load_invoice_types()
@@ -235,30 +250,58 @@ class MappingWindow(QWidget):
         self.load_accounts()
         print("Finished load_accounts call.")
         print("MappingWindow __init__ finished") # DEBUG
+    # --- FIN MODIFICADO __init__ ---
+
+    # --- NUEVO MÉTODO select_file ---
+    def select_file(self):
+        """Abre un diálogo para seleccionar un archivo PDF."""
+        # Abre el diálogo, empezando en el directorio actual o el último usado
+        # Filtra para mostrar solo archivos PDF
+        options = QFileDialog.Options()
+        # options |= QFileDialog.DontUseNativeDialog # Descomenta si el diálogo nativo da problemas
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Seleccionar Factura PDF",
+            "", # Directorio inicial (vacío usa el último o el actual)
+            "Archivos PDF (*.pdf);;Todos los archivos (*)",
+            options=options
+        )
+
+        if file_path: # Si el usuario seleccionó un archivo
+            print(f"Archivo seleccionado: {file_path}")
+            self.file_path = file_path
+            # Actualiza el label para mostrar el nombre del archivo
+            self.selected_file_label.setText(f"Archivo seleccionado: {os.path.basename(self.file_path)}")
+            # Llama a la función para cargar y hacer OCR del nuevo archivo
+            self.load_document_text()
+        else:
+            print("Selección de archivo cancelada.")
 
     # --- MÉTODO RENOMBRADO Y MODIFICADO ---
     def load_document_text(self):
-        """Realiza OCR en el PDF y muestra el texto en el QTextEdit."""
+        """Realiza OCR en el PDF (self.file_path) y muestra el texto."""
+        if not self.file_path or not os.path.exists(self.file_path):
+             error_msg = "Por favor, selecciona un archivo PDF válido primero."
+             print(f"load_document_text: {error_msg}")
+             self.text_edit.setPlainText(error_msg)
+             # Podrías mostrar un QMessageBox también
+             # QMessageBox.warning(self, "Archivo no válido", error_msg)
+             return
+
         print(f"load_document_text: Intentando cargar y hacer OCR en: {self.file_path}") # DEBUG
         self.text_edit.setPlainText("Realizando OCR, por favor espera...") # Mensaje temporal
         QApplication.processEvents() # Forzar actualización de la UI
 
         try:
-            # Llamar a la función OCR local
             extracted_text = perform_ocr(self.file_path)
-
             if extracted_text is not None:
-                # Mostrar el texto en el QTextEdit
                 self.text_edit.setPlainText(extracted_text)
                 print("load_document_text: Texto OCR cargado en la interfaz.") # DEBUG
             else:
-                # perform_ocr ya debería haber mostrado un error si falló
                 error_msg = "Error durante el OCR. Revisa la consola para más detalles."
                 print(f"load_document_text: {error_msg}") # DEBUG
                 self.text_edit.setPlainText(error_msg)
-
         except Exception as e:
-             # Captura errores inesperados al llamar a perform_ocr
              error_msg = f"Error inesperado al cargar texto OCR: {e.__class__.__name__}: {e}"
              print(f"load_document_text: {error_msg}") # DEBUG
              traceback.print_exc()
@@ -592,7 +635,7 @@ def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo
     filename = getattr(file_input, 'name', str(type(file_input)))
 
     try:
-        print(f"perform_ocr_local: Iniciando OCR para '{filename}' (Tipo: {type(file_input)})")
+        print(f"perform_ocr_local: Iniciando OCR para {filename} (Tipo: {type(file_input)})")
 
         if isinstance(file_input, str) and file_input.lower().endswith('.pdf'):
             is_pdf = True
@@ -731,50 +774,43 @@ def extract_data(text, rules): # Renombrar y adaptar
 
 # --- Bloque Principal (con manejo de errores y prints) ---
 if __name__ == '__main__':
-    # Usar instancia existente de QApplication si la hay (útil en algunos entornos)
-    app = QApplication.instance()
-    if app is None:
-        print("__main__: Creando nueva QApplication.") # DEBUG
-        app = QApplication(sys.argv)
-    else:
-        print("__main__: Usando QApplication existente.") # DEBUG
+   app = QApplication.instance()
+if app is None:
+    print("__main__: Creando nueva QApplication.") # DEBUG
+    app = QApplication(sys.argv)
+else:
+    print("__main__: Usando QApplication existente.") # DEBUG
 
-    # --- Configuración del documento de prueba ---
-    # Puedes hacerlo más dinámico si quieres, ej. usando QFileDialog aquí
-    test_doc_id = None # Asegúrate que este ID exista en tu BD Django
-    # Usar raw string (r"...") o barras inclinadas (/) para rutas en Windows
-    test_file_path = r"G:\Mi unidad\Pruebas\Factura Vizenter-1.pdf"
-    # test_file_path = "G:/Mi unidad/Pruebas/Factura Vizenter-1.pdf" # Alternativa
+# --- Ya no se define el archivo aquí ---
+# test_file_path = r"G:\Mi unidad\Pruebas\Factura Vizenter-1.pdf"
+# print(f"__main__: Verificando archivo de prueba: {test_file_path}")
+# if not os.path.exists(test_file_path):
+#      print(f"__main__: Error: Archivo de prueba no existe: {test_file_path}")
+#      QMessageBox.critical(None, "Error Archivo", f"Archivo de prueba no existe:\n{test_file_path}")
+#      sys.exit(1)
+# else:
+#      print("__main__: Archivo de prueba encontrado.")
+# -------------------------------------------
 
-    print(f"__main__: Verificando archivo de prueba: {test_file_path}") # DEBUG
-    if not os.path.exists(test_file_path):
-         print(f"__main__: Error: Archivo de prueba no existe: {test_file_path}") # DEBUG
-         QMessageBox.critical(None, "Error Archivo", f"Archivo de prueba no existe:\n{test_file_path}")
-         sys.exit(1)
-    else:
-         print("__main__: Archivo de prueba encontrado.") # DEBUG
-    # -------------------------------------------
+print("__main__: Creando ApiClient...") # DEBUG
+api = ApiClient()
 
-    print("__main__: Creando ApiClient...") # DEBUG
-    api = ApiClient() # Usa la URL base por defecto http://127.0.0.1:8000/
+try:
+    print("__main__: Creando MappingWindow...") # DEBUG
+    # Pasar None como ruta inicial del archivo
+    mapper = MappingWindow(document_id=None, initial_file_path=None, api_client=api)
+    print("__main__: MappingWindow creado.") # DEBUG
+    print("__main__: Llamando a mapper.show()...") # DEBUG
+    mapper.show()
+    print("__main__: mapper.show() llamado.") # DEBUG
 
-    # Envolver creación y muestra de ventana en try-except
-    try:
-        print("__main__: Creando MappingWindow...") # DEBUG
-        # Pasar el ID y la ruta del archivo de prueba a la ventana
-        mapper = MappingWindow(test_doc_id, test_file_path, api)
-        print("__main__: MappingWindow creado.") # DEBUG
-        print("__main__: Llamando a mapper.show()...") # DEBUG
-        mapper.show()
-        print("__main__: mapper.show() llamado.") # DEBUG
+    print("__main__: Iniciando bucle de eventos app.exec_()...") # DEBUG
+    exit_code = app.exec_()
+    print(f"__main__: app.exec_() finalizado con código: {exit_code}") # DEBUG
+    sys.exit(exit_code)
 
-        print("__main__: Iniciando bucle de eventos app.exec_()...") # DEBUG
-        exit_code = app.exec_()
-        print(f"__main__: app.exec_() finalizado con código: {exit_code}") # DEBUG
-        sys.exit(exit_code)
-
-    except Exception as e:
-        print(f"__main__: Error crítico al inicializar/mostrar ventana: {e}") # DEBUG
-        traceback.print_exc() # Imprime traceback detallado
-        QMessageBox.critical(None, "Error Crítico", f"No se pudo iniciar la aplicación:\n{e}")
-        sys.exit(1)
+except Exception as e:
+    print(f"__main__: Error crítico al inicializar/mostrar ventana: {e}") # DEBUG
+    traceback.print_exc()
+    QMessageBox.critical(None, "Error Crítico", f"No se pudo iniciar la aplicación:\n{e}")
+    sys.exit(1)
