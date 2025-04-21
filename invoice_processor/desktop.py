@@ -12,7 +12,8 @@ import pytesseract
 import requests
 from PIL import Image 
 from pdf2image import convert_from_bytes, convert_from_path, exceptions as pdf2image_exceptions
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import Qt,pyqtSlot, QStringListModel
+from PyQt5.QtWidgets import QCompleter
 
 
 # --- Calcular rutas dinámicamente ---
@@ -216,8 +217,20 @@ class MappingWindow(QWidget):
         print("MappingWindow rules fields setup done") # DEBUG
 
         # --- Selección de Cuenta (sin cambios) ---
-        self.layout.addWidget(QLabel("Cuenta Contable (Opcional):"))
+        self.layout.addWidget(QLabel("Cuenta Contable (Filtrable):")) # Etiqueta actualizada
         self.account_combo = QComboBox()
+        
+        self.account_combo.setEditable(True)
+        self.account_combo.setInsertPolicy(QComboBox.NoInsert) # No añadir texto escrito como item nuevo
+        self.account_combo.setPlaceholderText("Escribe para filtrar...") # Texto de ayuda
+
+        self.account_completer = QCompleter(self) # Crear el completer
+        self.account_completer.setFilterMode(Qt.MatchContains) # Filtrar si contiene el texto
+        self.account_completer.setCompletionMode(QCompleter.PopupCompletion) # Mostrar sugerencias en popup
+        self.account_completer.setCaseSensitivity(Qt.CaseInsensitive) # Ignorar mayúsculas/minúsculas
+
+        self.account_combo.setCompleter(self.account_completer)
+
         self.layout.addWidget(self.account_combo)
         print("MappingWindow account combo setup done") # DEBUG
 
@@ -434,45 +447,52 @@ class MappingWindow(QWidget):
         print("load_accounts: Cargando cuentas contables...") # DEBUG
         self.account_combo.clear() # Limpiar combo
         self.account_combo.setEnabled(False) # Deshabilitar mientras carga
+        account_display_names = [] # Lista para guardar los textos a mostrar
 
         try:
             accounts = self.api_client.get_accounts()
-            if accounts: # Si la API devolvió una lista (puede estar vacía)
-                 print(f"load_accounts: Cuentas recibidas: {len(accounts)}") # DEBUG
-                 try:
-                     # Ordenar por jerarquía completa (campo del serializer)
-                     accounts_sorted = sorted(accounts, key=lambda x: str(x.get('get_full_hierarchy', x.get('name', ''))))
-                 except TypeError:
-                     print("load_accounts: Advertencia: No se pudo ordenar las cuentas.") # DEBUG
-                     accounts_sorted = accounts
+            if accounts:
+                print(f"load_accounts: Cuentas recibidas: {len(accounts)}") # DEBUG
+                try:
+                    accounts_sorted = sorted(accounts, key=lambda x: str(x.get('get_full_hierarchy', x.get('name', ''))))
+                except TypeError:
+                    print("load_accounts: Advertencia: No se pudo ordenar las cuentas.") # DEBUG
+                    accounts_sorted = accounts
 
-                 added_count = 0
-                 self.account_combo.addItem("-- Sin asignar --", userData=None) # Opción por defecto
-                 for acc in accounts_sorted:
-                     acc_id = acc.get('id')
-                     # Usar jerarquía completa si existe, si no, nombre
-                     display_name = acc.get('get_full_hierarchy', acc.get('name'))
-                     if acc_id is not None and display_name:
-                         self.account_combo.addItem(display_name, userData=acc_id)
-                         added_count += 1
-                     else:
-                         print(f"load_accounts: Advertencia: Cuenta omitida por ID o nombre nulo: {acc}") # DEBUG
-                 print(f"load_accounts: {added_count} cuentas cargadas en el ComboBox.") # DEBUG
-                 if added_count > 0:
-                     self.account_combo.setEnabled(True) # Habilitar si hay cuentas
-                 else:
-                     # Mantener deshabilitado si solo está "-- Sin asignar --"
-                     self.account_combo.clear()
-                     self.account_combo.addItem("No hay cuentas disponibles", userData=None)
+                added_count = 0
+                self.account_combo.addItem("-- Sin asignar --", userData=None) # Opción por defecto
+                account_display_names.append("-- Sin asignar --") # Añadir a la lista del completer
 
-            else: # Si la API devolvió [] por error
-                 print("load_accounts: Error al cargar cuentas (revisar error API previo).") # DEBUG
-                 self.account_combo.addItem("Error al cargar cuentas", userData=None)
+                for acc in accounts_sorted:
+                    acc_id = acc.get('id')
+                    display_name = acc.get('get_full_hierarchy', acc.get('name'))
+                    if acc_id is not None and display_name:
+                        self.account_combo.addItem(display_name, userData=acc_id)
+                        account_display_names.append(display_name) # <-- Guardar texto para el completer
+                        added_count += 1
+                    else:
+                        print(f"load_accounts: Advertencia: Cuenta omitida por ID o nombre nulo: {acc}") # DEBUG
+                print(f"load_accounts: {added_count} cuentas cargadas en el ComboBox.") # DEBUG
+
+                if added_count > 0:
+                    self.account_combo.setEnabled(True) # Habilitar si hay cuentas
+                else:
+                    self.account_combo.clear()
+                    self.account_combo.addItem("No hay cuentas disponibles", userData=None)
+                    account_display_names = ["No hay cuentas disponibles"] # Actualizar lista
+
+            else:
+                print("load_accounts: Error al cargar cuentas (revisar error API previo).") # DEBUG
+                self.account_combo.addItem("Error al cargar cuentas", userData=None)
+                account_display_names = ["Error al cargar cuentas"] # Actualizar lista
+
+            # --- Configurar el modelo para el Completer ---
+            self.account_model = QStringListModel(account_display_names, self)
+            self.account_completer.setModel(self.account_model)
+            # ---------------------------------------------
 
         except Exception as e:
-            error_msg = f"Error inesperado en load_accounts: {e}"
-            print(f"load_accounts: {error_msg}") # DEBUG
-            traceback.print_exc() # Imprime traceback detallado
+            # ... (manejo de excepción sin cambios) ...
             self.account_combo.clear()
             self.account_combo.addItem("Error crítico al cargar cuentas", userData=None)
 
