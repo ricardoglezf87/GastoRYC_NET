@@ -79,6 +79,7 @@ pip install pystray Pillow
 pip install django-extensions
 pip install fitz
 pip install pymupdf
+pip install djangorestframework
 
 ##### 7. Otros datos de interés
 [⇑Indice⇑](#indice)

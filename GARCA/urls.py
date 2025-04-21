@@ -30,5 +30,6 @@ urlpatterns = [
     path('bank_imports/', include('bank_imports.urls')),
     path('reports/', include('reports.urls')),  
     path('async/', include('async_tasks.urls')),
+    path('api/invoices/', include('invoice_processor.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
