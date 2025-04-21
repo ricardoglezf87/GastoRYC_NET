@@ -604,14 +604,14 @@ def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo
             images = []
             if isinstance(file_input, str): # Si es una ruta
                 # Usar poppler_path aquí
-                images = convert_from_path(file_input, dpi=200, poppler_path=poppler_bin_path) # Ajusta DPI si es necesario
+                images = convert_from_path(file_input, dpi=300, poppler_path=poppler_bin_path) # Ajusta DPI si es necesario
             else: # Si fuera un objeto de archivo (menos probable aquí)
                 file_input.seek(0)
                 pdf_bytes = file_input.read()
                 file_input.seek(0)
                 if pdf_bytes:
                      # Usar poppler_path aquí
-                     images = convert_from_bytes(pdf_bytes, dpi=200, poppler_path=poppler_bin_path)
+                     images = convert_from_bytes(pdf_bytes, dpi=300, poppler_path=poppler_bin_path)
                 else:
                      print("perform_ocr_local: Error - Contenido del PDF está vacío.")
                      return None
@@ -625,7 +625,8 @@ def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo
             for i, img in enumerate(images):
                 print(f"perform_ocr_local: Procesando imagen {i+1}/{len(images)} del PDF...")
                 # Asegúrate que Tesseract esté configurado o en el PATH
-                full_text += pytesseract.image_to_string(img, lang='spa') + "\n\n"
+                config = '--psm 6'
+                full_text += pytesseract.image_to_string(img, lang='spa', config=config) + "\n\n"
             text = full_text.strip()
 
         else: # Asumir que es una imagen
