@@ -7,11 +7,10 @@ from tkinter import Image
 import traceback # Para imprimir errores detallados
 from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel,
                              QLineEdit, QPushButton, QComboBox, QMessageBox,
-                             QFileDialog, QScrollArea)
-from PyQt5.QtGui import QPixmap, QImage
+                             QTextEdit)
 import pytesseract
 import requests
-from PIL import Image as PILImage
+from PIL import Image 
 from pdf2image import convert_from_bytes, convert_from_path, exceptions as pdf2image_exceptions
 from PyQt5.QtCore import pyqtSlot
 
@@ -164,35 +163,36 @@ class MappingWindow(QWidget):
     def __init__(self, document_id, file_path, api_client, parent=None):
         super().__init__(parent)
         print("MappingWindow __init__ started") # DEBUG
-        self.document_id = document_id
+        self.document_id = document_id # Aún puede ser útil si guardas tipos asociados a docs
         self.file_path = file_path
         self.api_client = api_client
-        self.current_invoice_type_id = None # Para saber si estamos creando o editando
-        self.invoice_types_data = {} # Para guardar {id: type_data}
+        self.current_invoice_type_id = None
+        self.invoice_types_data = {}
 
-        self.setWindowTitle("Gestor de Tipos de Factura") # Título más general
+        self.setWindowTitle("Gestor de Tipos de Factura - Editor de Texto") # Título actualizado
         self.layout = QVBoxLayout(self)
-        self.setMinimumSize(600, 700) # Ajusta según necesidad
+        self.setMinimumSize(700, 800) # Ajusta tamaño si es necesario
         print("MappingWindow basic setup done") # DEBUG
 
-        # --- Selección de Tipo ---
+        # --- Selección de Tipo (sin cambios) ---
         self.layout.addWidget(QLabel("Tipo de Factura:"))
         self.type_combo = QComboBox()
-        self.type_combo.addItem("-- Crear Nuevo Tipo --", userData=None) # Opción para crear
+        self.type_combo.addItem("-- Crear Nuevo Tipo --", userData=None)
         self.layout.addWidget(self.type_combo)
-        self.type_combo.currentIndexChanged.connect(self.on_type_selected) # Conectar señal
+        self.type_combo.currentIndexChanged.connect(self.on_type_selected)
         print("MappingWindow type combo setup done") # DEBUG
 
-        # --- Visor de Imagen ---
-        self.scroll_area = QScrollArea(self)
-        self.image_label = QLabel("Cargando imagen...")
-        self.image_label.setScaledContents(False) # Importante para scroll
-        self.scroll_area.setWidget(self.image_label)
-        self.scroll_area.setWidgetResizable(True) # Permite que el QLabel se expanda
-        self.layout.addWidget(self.scroll_area, 1) # El '1' le da más espacio vertical
-        print("MappingWindow image viewer setup done") # DEBUG
+        # --- NUEVO: Visor de Texto OCR ---
+        self.layout.addWidget(QLabel("Texto Extraído (OCR):"))
+        self.text_edit = QTextEdit()
+        self.text_edit.setReadOnly(True) # Hacerlo no editable
+        self.text_edit.setLineWrapMode(QTextEdit.NoWrap) # Evitar salto de línea automático (opcional)
+        self.text_edit.setFontFamily("Courier New") # Usar fuente monoespaciada (recomendado)
+        self.layout.addWidget(self.text_edit, 1) # El '1' le da más espacio vertical
+        print("MappingWindow text viewer setup done") # DEBUG
+        # --- FIN Visor de Texto OCR ---
 
-        # --- Campos de Reglas ---
+        # --- Campos de Reglas (sin cambios) ---
         self.layout.addWidget(QLabel("Nombre del Tipo:"))
         self.name_input = QLineEdit()
         self.layout.addWidget(self.name_input)
@@ -205,131 +205,65 @@ class MappingWindow(QWidget):
         self.layout.addWidget(QLabel("Regla Total (Regex):"))
         self.total_regex_input = QLineEdit()
         self.layout.addWidget(self.total_regex_input)
-        # Añade aquí más QLineEdit para otras reglas si las tienes
         print("MappingWindow rules fields setup done") # DEBUG
 
-        # --- Selección de Cuenta (Opcional) ---
-        self.layout.addWidget(QLabel("Cuenta Contable (Opcional):")) # Etiqueta opcional
+        # --- Selección de Cuenta (sin cambios) ---
+        self.layout.addWidget(QLabel("Cuenta Contable (Opcional):"))
         self.account_combo = QComboBox()
         self.layout.addWidget(self.account_combo)
         print("MappingWindow account combo setup done") # DEBUG
 
-        # --- Botones ---
-        self.save_button = QPushButton("Guardar Tipo") # Texto actualizado
-        self.save_button.clicked.connect(self.save_type) # Conectado a save_type
+        # --- Botones (sin cambios) ---
+        self.save_button = QPushButton("Guardar Tipo")
+        self.save_button.clicked.connect(self.save_type)
         self.layout.addWidget(self.save_button)
-        self.test_button = QPushButton("Probar Reglas con este Documento")
-        self.test_button.clicked.connect(self.test_template_rules) # Conectado a test_template_rules
+        self.test_button = QPushButton("Probar Reglas con Texto Actual") # Texto actualizado
+        self.test_button.clicked.connect(self.test_template_rules)
         self.layout.addWidget(self.test_button)
         print("MappingWindow buttons setup done") # DEBUG
 
         # --- Carga inicial ---
-        print("Calling load_document_image...") # Carga imagen del doc fijo
-        self.load_document_image()
-        print("Finished load_document_image call.")
+        print("Calling load_document_text...") # Llamar a la nueva función
+        self.load_document_text() # <--- CAMBIO DE NOMBRE
+        print("Finished load_document_text call.")
 
-        print("Calling load_invoice_types...") # Cargar tipos existentes
+        print("Calling load_invoice_types...")
         self.load_invoice_types()
         print("Finished load_invoice_types call.")
 
-        # Cargar cuentas
         print("Calling load_accounts...")
         self.load_accounts()
         print("Finished load_accounts call.")
         print("MappingWindow __init__ finished") # DEBUG
 
-    def load_document_image(self):
-        """Carga la imagen del PDF usando pdf2image y la muestra."""
-        global poppler_bin_path
-        print(f"load_document_image: Intentando cargar PDF: {self.file_path}") # DEBUG
-        print(f"load_document_image: Usando Poppler desde: {poppler_bin_path}") # DEBUG
+    # --- MÉTODO RENOMBRADO Y MODIFICADO ---
+    def load_document_text(self):
+        """Realiza OCR en el PDF y muestra el texto en el QTextEdit."""
+        print(f"load_document_text: Intentando cargar y hacer OCR en: {self.file_path}") # DEBUG
+        self.text_edit.setPlainText("Realizando OCR, por favor espera...") # Mensaje temporal
+        QApplication.processEvents() # Forzar actualización de la UI
 
         try:
-            print("load_document_image: Calling convert_from_path...") # DEBUG
-            # Usar DPI=75 que funcionó por memoria
-            images = convert_from_path(self.file_path, dpi=75, poppler_path=poppler_bin_path)
-            print(f"load_document_image: convert_from_path returned {len(images)} images.") # DEBUG
+            # Llamar a la función OCR local
+            extracted_text = perform_ocr(self.file_path)
 
-            if images:
-                pil_image = images[0] # Usar solo la primera página
-                print(f"load_document_image: PDF convertido a imagen PIL ({pil_image.width}x{pil_image.height}), Mode: {pil_image.mode}") # DEBUG
-
-                qimage = None
-                print("load_document_image: Convirtiendo PIL Image a QImage...") # DEBUG
-                try:
-                    # --- Conversión PIL a QImage ---
-                    if pil_image.mode == "RGB":
-                        qimage = QImage(pil_image.tobytes("raw", "RGB"), pil_image.width, pil_image.height, QImage.Format_RGB888)
-                    elif pil_image.mode == "RGBA":
-                        qimage = QImage(pil_image.tobytes("raw", "RGBA"), pil_image.width, pil_image.height, QImage.Format_RGBA8888)
-                    elif pil_image.mode == "L": # Grayscale
-                        qimage = QImage(pil_image.tobytes("raw", "L"), pil_image.width, pil_image.height, QImage.Format_Grayscale8)
-                    else: # Intentar convertir a RGB si es un modo diferente
-                        print(f"load_document_image: Convirtiendo imagen de modo {pil_image.mode} a RGB...") # DEBUG
-                        pil_image_rgb = pil_image.convert("RGB")
-                        qimage = QImage(pil_image_rgb.tobytes("raw", "RGB"), pil_image_rgb.width, pil_image_rgb.height, QImage.Format_RGB888)
-                        print("load_document_image: Conversión a RGB exitosa.") # DEBUG
-
-                    if qimage is None or qimage.isNull():
-                        error_msg = "Error: QImage resultante es nula o no se creó después de la conversión."
-                        print(f"load_document_image: {error_msg}") # DEBUG
-                        self.image_label.setText(error_msg)
-                        return
-                    print("load_document_image: QImage creada exitosamente.") # DEBUG
-
-                except Exception as conv_e:
-                    error_msg = f"Error durante conversión PIL->QImage: {conv_e}"
-                    print(f"load_document_image: {error_msg}") # DEBUG
-                    traceback.print_exc()
-                    self.image_label.setText(error_msg)
-                    return
-
-                # --- Creación y asignación de QPixmap ---
-                print("load_document_image: Creando QPixmap desde QImage...") # DEBUG
-                pixmap = QPixmap.fromImage(qimage)
-
-                if pixmap.isNull():
-                    error_msg = "Error: QPixmap creado es nulo (isNull() es True) después de fromImage."
-                    print(f"load_document_image: {error_msg}") # DEBUG
-                    self.image_label.setText(error_msg)
-                    return
-                print("load_document_image: QPixmap creado exitosamente (no es nulo).") # DEBUG
-
-                print("load_document_image: Intentando establecer pixmap en label...") # DEBUG
-                self.image_label.setPixmap(pixmap)
-                print("load_document_image: Pixmap establecido en label (setPixmap ejecutado).") # DEBUG
-
-                print("load_document_image: Intentando ajustar tamaño del label...") # DEBUG
-                self.image_label.adjustSize() # Ajusta el tamaño del label al pixmap
-                print("load_document_image: Tamaño del label ajustado (adjustSize ejecutado).") # DEBUG
-                print("load_document_image: Imagen cargada y mostrada en la interfaz.") # DEBUG
+            if extracted_text is not None:
+                # Mostrar el texto en el QTextEdit
+                self.text_edit.setPlainText(extracted_text)
+                print("load_document_text: Texto OCR cargado en la interfaz.") # DEBUG
             else:
-                error_msg = "Error: convert_from_path devolvió una lista vacía."
-                print(f"load_document_image: {error_msg}") # DEBUG
-                self.image_label.setText(error_msg)
+                # perform_ocr ya debería haber mostrado un error si falló
+                error_msg = "Error durante el OCR. Revisa la consola para más detalles."
+                print(f"load_document_text: {error_msg}") # DEBUG
+                self.text_edit.setPlainText(error_msg)
 
-        # --- Manejo de excepciones ---
-        except pdf2image_exceptions.PDFInfoNotInstalledError:
-             error_msg = f"Error: Poppler (pdfinfo) no encontrado en '{poppler_bin_path}' o no funciona."
-             print(f"load_document_image: {error_msg}") # DEBUG
-             self.image_label.setText(error_msg)
-             QMessageBox.critical(self, "Error Poppler", error_msg)
-        except pdf2image_exceptions.PDFPageCountError:
-             error_msg = f"Error: No se pudo obtener el número de páginas del PDF (Poppler)."
-             print(f"load_document_image: {error_msg}") # DEBUG
-             self.image_label.setText(error_msg)
-             QMessageBox.critical(self, "Error Poppler", error_msg)
-        except FileNotFoundError:
-             error_msg = f"Error: Archivo PDF no encontrado en: {self.file_path}"
-             print(f"load_document_image: {error_msg}") # DEBUG
-             self.image_label.setText(error_msg)
-             QMessageBox.critical(self, "Error Archivo", error_msg)
         except Exception as e:
-             error_msg = f"Error inesperado en load_document_image: {e.__class__.__name__}: {e}"
-             print(f"load_document_image: {error_msg}") # DEBUG
+             # Captura errores inesperados al llamar a perform_ocr
+             error_msg = f"Error inesperado al cargar texto OCR: {e.__class__.__name__}: {e}"
+             print(f"load_document_text: {error_msg}") # DEBUG
              traceback.print_exc()
-             self.image_label.setText(error_msg)
-             QMessageBox.critical(self, "Error Inesperado", error_msg)
+             self.text_edit.setPlainText(error_msg)
+             QMessageBox.critical(self, "Error Crítico OCR", error_msg)
 
     def load_invoice_types(self):
         """Carga los tipos de factura desde la API y los añade al ComboBox."""
@@ -609,44 +543,27 @@ class MappingWindow(QWidget):
 
 
     def test_template_rules(self):
-        """Prueba las reglas actuales realizando OCR y extracción localmente."""
-        print("test_template_rules: Iniciando prueba local...") # DEBUG
+        """Prueba las reglas actuales contra el texto mostrado en el QTextEdit."""
+        print("test_template_rules: Iniciando prueba local con texto actual...") # DEBUG
         rules = self._build_rules_payload() # Obtener reglas de los campos
         if not rules:
              QMessageBox.warning(self, "Sin Reglas", "Define al menos una regla para probar.")
              return
 
-        # Asegúrate que self.file_path tenga la ruta al archivo PDF actual
-        if not self.file_path or not os.path.exists(self.file_path):
-             QMessageBox.critical(self, "Error", "No hay una ruta de archivo PDF válida para probar.")
+        # Obtener el texto directamente del QTextEdit
+        current_text = self.text_edit.toPlainText()
+
+        if not current_text or "Realizando OCR" in current_text or "Error" in current_text:
+             QMessageBox.warning(self, "Sin Texto", "No hay texto OCR válido cargado para probar.")
              return
 
-        print(f"test_template_rules: Realizando OCR local en '{self.file_path}'...") # DEBUG
+        print("test_template_rules: Extrayendo datos localmente del texto actual...") # DEBUG
 
-        # 1. Realizar OCR localmente
-        extracted_text = perform_ocr(self.file_path)
-
-        # Verificar si el OCR falló (perform_ocr_local ya muestra QMessageBox)
-        if extracted_text is None:
-             print("test_template_rules: Fallo en OCR local.")
-             return # Detener si OCR falla
-
-        print("\n--- TEXTO OCR OBTENIDO ---\n")
-        print(extracted_text)
-        print("\n-------------------------\n")
-
-        if not extracted_text:
-             print("test_template_rules: OCR local no devolvió texto.")
-             QMessageBox.information(self, "Resultado OCR", "El OCR no encontró texto en el documento.")
-             # Puedes decidir si continuar con la extracción o no
-
-        print("test_template_rules: OCR local completado. Extrayendo datos localmente...") # DEBUG
-
-        # 2. Extraer datos localmente usando las reglas
-        extracted_data = extract_data(extracted_text, rules)
+        # Extraer datos localmente usando las reglas y el texto actual
+        extracted_data = extract_data(current_text, rules)
         print(f"test_template_rules: Datos extraídos localmente: {extracted_data}") # DEBUG
 
-        # 3. Mostrar el resultado
+        # Mostrar el resultado (lógica sin cambios)
         result_text = "Resultado de la Prueba Local:\n\n"
         if not extracted_data:
              result_text += "No se extrajo ningún dato con las reglas proporcionadas."
