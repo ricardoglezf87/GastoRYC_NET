@@ -1,5 +1,6 @@
 # invoice_processor/processing_logic.py
 from datetime import datetime
+import locale
 import traceback
 from pdf2image import convert_from_bytes, convert_from_path
 import pytesseract
@@ -189,38 +190,62 @@ def extract_invoice_data(text, rules_or_type):
                     if match:
                         date_str = match.group(1).strip()
                         print(f"Cadena de fecha encontrada ({invoice_type_name}, regex '{pattern}'): '{date_str}'")
-                        # Intentar parsear la fecha
-                        parsed_date = parse_date(date_str) # Intenta formatos estándar
+                        parsed_date = parse_date(date_str) # Intenta primero con parse_date
+
                         if not parsed_date:
-                            # Intentar formatos específicos si parse_date falla
+                            # --- Configurar locale ANTES de strptime con %B ---
+                            original_locale = None # Para restaurarlo después
+                            try:
+                                # Intenta establecer locale español (ajusta según tu OS)
+                                # Para Linux/macOS:
+                                original_locale = locale.getlocale(locale.LC_TIME) # Guarda el actual
+                                locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+                                print("Locale español (es_ES.UTF-8) establecido temporalmente.")
+                            except locale.Error:
+                                try:
+                                    # Para Windows:
+                                    original_locale = locale.getlocale(locale.LC_TIME)
+                                    locale.setlocale(locale.LC_TIME, 'Spanish_Spain.1252')
+                                    print("Locale español (Spanish_Spain.1252) establecido temporalmente.")
+                                except locale.Error:
+                                    print("Advertencia: No se pudo establecer locale español para parsear fecha con nombre de mes.")
+                            # ----------------------------------------------------
+
                             formats_to_try = [
                                 '%d/%m/%Y', '%d.%m.%Y', '%d-%m-%Y',
                                 '%d/%m/%y', '%d.%m.%y', '%d-%m-%y',
-                                '%d de %B de %Y', # Ej: 01 de noviembre de 2024 (requiere locale español)
-                                '%d %b %Y',      # Ej: 01 Nov 2024
+                                '%d de %B de %Y', # Ahora debería funcionar con locale español
+                                '%d %b %Y',
                             ]
-                            # Configurar locale para nombres de mes en español (si es necesario)
-                            # import locale
-                            # try:
-                            #     locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8') # O 'Spanish_Spain.1252' en Windows
-                            # except locale.Error:
-                            #     print("Advertencia: No se pudo establecer locale español para parsear fecha.")
 
                             for fmt in formats_to_try:
                                 try:
                                     parsed_date = datetime.strptime(date_str, fmt).date()
-                                    break # Salir si un formato funciona
+                                    break
                                 except ValueError:
-                                    continue # Probar el siguiente formato
+                                    continue
+
+                            # --- Restaurar locale original ---
+                            if original_locale:
+                                try:
+                                    locale.setlocale(locale.LC_TIME, original_locale)
+                                    print("Locale original restaurado.")
+                                except locale.Error:
+                                     print("Advertencia: No se pudo restaurar el locale original.")
+                            # -------------------------------
 
                         if parsed_date:
-                            extracted['invoice_date'] = parsed_date # Guardar objeto date
+                            extracted['invoice_date'] = parsed_date
                             print(f"Fecha parseada ({invoice_type_name}): {parsed_date}")
                         else:
                             print(f"No se pudo parsear la fecha '{date_str}' ({invoice_type_name}).")
         except Exception as e:
             print(f"Error aplicando regla de fecha ({invoice_type_name}): {e}")
             traceback.print_exc()
+            # Asegurarse de restaurar locale si hubo error
+            if 'original_locale' in locals() and original_locale:
+                 try: locale.setlocale(locale.LC_TIME, original_locale)
+                 except: pass
 
     # --- Extracción de Total ---
     total_rule = rules.get('total')
