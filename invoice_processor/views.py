@@ -216,7 +216,7 @@ class CreateDocumentWithOCRView(APIView):
                             }
                         )
                         # Actualizar estado: Listo para buscar coincidencias
-                        new_status = 'NEEDS_MATCHING'
+                        new_status = 'PROCESSED'
                         print(f"Datos extraídos y guardados para Doc ID: {document.id}")
                     else:
                         # Tipo identificado pero no se extrajeron datos

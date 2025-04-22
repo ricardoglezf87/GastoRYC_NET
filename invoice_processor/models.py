@@ -55,6 +55,7 @@ class InvoiceDocument(models.Model):
         ('PROCESSED', 'Procesado'),
         ('FAILED', 'Error en Procesamiento'),
         ('NEEDS_MAPPING', 'Necesita Mapeo Manual'),
+        ('ASSOCIATED', 'Asociado a Transacción'),
     ]
 
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Subida")
