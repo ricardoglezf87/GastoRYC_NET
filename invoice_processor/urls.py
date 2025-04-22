@@ -26,7 +26,7 @@ urlpatterns = [
     path('documents/<int:id>/reprocess/', ReprocessDocumentView.as_view(), name='invoice-document-reprocess'), 
     path('documents/create_with_ocr/', CreateDocumentWithOCRView.as_view(), name='create-document-with-ocr'),
     path('documents/<int:id>/status/', InvoiceDocumentStatusView.as_view(), name='invoice-document-status'),
-    path('accounting/entries/search/', SearchAccountingEntriesView.as_view(), name='search-accounting-entries'), # Ajusta prefijo si quieres
+    path('entries/search/', SearchAccountingEntriesView.as_view(), name='search-accounting-entries'), # Ajusta prefijo si quieres
     path('documents/associate_entry/', AssociateEntryView.as_view(), name='associate-entry'),
 ]
 

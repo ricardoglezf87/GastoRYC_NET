@@ -1,11 +1,34 @@
 # invoice_processor/serializers.py
 from rest_framework import serializers
+
+from entries.models import Entry
+from transactions.models import Transaction
 from .models import InvoiceDocument, InvoiceType, ExtractedData
 
 class ExtractedDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExtractedData
         fields = '__all__' # O lista explícitamente los campos que quieres exponer
+
+class TransactionSerializer(serializers.ModelSerializer):
+    # Opcional: Mostrar nombre de cuenta en lugar de ID
+    account_name = serializers.CharField(source='account.get_full_hierarchy', read_only=True)
+
+    class Meta:
+        model = Transaction
+        # Incluye los campos que quieres de cada transacción
+        fields = ['id', 'account', 'account_name', 'debit', 'credit']
+        read_only_fields = ['account_name'] 
+class EntrySerializer(serializers.ModelSerializer):
+    # Puedes añadir campos extra o modificar la representación aquí si es necesario
+    
+    transactions = TransactionSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Entry
+        fields = ['id', 'date', 'description', 'transactions']
+
+    
 
 class InvoiceTypeSerializer(serializers.ModelSerializer):
     class Meta:

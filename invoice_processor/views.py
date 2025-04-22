@@ -1,7 +1,7 @@
 # invoice_processor/views.py
 import json
-from tkinter import Entry
 import traceback
+from entries.models import Entry 
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from async_tasks.tasks import process_invoice_task
 from invoice_processor.processing_logic import extract_invoice_data, identify_invoice_type, perform_ocr, process_invoice_document
 from .models import InvoiceDocument, InvoiceType, ExtractedData
-from .serializers import InvoiceDocumentSerializer, InvoiceTypeSerializer, ExtractedDataSerializer
+from .serializers import EntrySerializer, InvoiceDocumentSerializer, InvoiceTypeSerializer, ExtractedDataSerializer
 # --- Importa la tarea Celery ---
 
 # -----------------------------
@@ -255,51 +255,52 @@ class CreateDocumentWithOCRView(APIView):
 # --- NUEVA VISTA para buscar asientos (Ejemplo básico) ---
 # Necesitarás adaptar esto a tu modelo real de Asientos Contables ('Entry')
 class SearchAccountingEntriesView(generics.ListAPIView):
-    # serializer_class = EntrySerializer # Reemplaza con tu serializer de asientos
+    serializer_class = EntrySerializer # Reemplaza con tu serializer de asientos
     queryset = None # Se filtrará dinámicamente
 
+    def get_serializer_context(self):
+        """
+        Añade el account_id del filtro al contexto del serializer.
+        """
+        context = super().get_serializer_context()
+        try:
+            # Obtener account_id de los parámetros de la query
+            context['account_id'] = int(self.request.query_params.get('account_id'))
+        except (TypeError, ValueError):
+            context['account_id'] = None
+        return context
+
     def get_queryset(self):
-        # Obtener parámetros de la URL
+        # ... (tu lógica de filtrado existente para obtener el queryset de Entry) ...
+        # Asegúrate que esta lógica filtre por account_id usando la relación
+        # a través de Transaction, por ejemplo:
+        # queryset = Entry.objects.filter(transactions__account_id=account_id, ...)
+        # --------------------------------------------------------------------
         account_id = self.request.query_params.get('account_id')
         start_date_str = self.request.query_params.get('start_date')
         end_date_str = self.request.query_params.get('end_date')
-        amount_str = self.request.query_params.get('amount') # Opcional
 
         if not account_id or not start_date_str or not end_date_str:
-            # Devolver queryset vacío o lanzar error si los parámetros son obligatorios
-            # from django.core.exceptions import ValidationError
-            # raise ValidationError("Faltan parámetros account_id, start_date o end_date")
-            return Entry.objects.none() # Ejemplo
+            return Entry.objects.none()
 
         try:
-            # Convertir parámetros
             account_id = int(account_id)
             start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
             end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
-            amount = float(amount_str) if amount_str else None
 
-            # --- Filtrar tus asientos contables ---
-            # Reemplaza 'Entry' y los nombres de campo con los de tu modelo real
+            # Filtrar Entry basado en la transacción y la fecha
             queryset = Entry.objects.filter(
-                transactions__account_id=account_id, # Asume relación a través de Transaction
+                transactions__account_id=account_id,
                 date__gte=start_date,
                 date__lte=end_date
-            ).distinct() # Evitar duplicados si un asiento tiene múltiples transacciones
-
-            # Filtrado opcional por importe (ejemplo simple)
-            if amount is not None:
-                 # Cuidado con la comparación de flotantes, usa tolerancia
-                 tolerance = 0.01
-                 # Esto es complejo, puede requerir filtrar por transacciones específicas
-                 # queryset = queryset.filter(transactions__amount__range=(amount - tolerance, amount + tolerance)) # Ejemplo muy simplificado
-                 pass # Implementa tu lógica de filtro por importe aquí
+            ).distinct() # distinct() es importante si un Entry pudiera coincidir múltiples veces
 
             print(f"Buscando asientos para cuenta {account_id} entre {start_date} y {end_date}")
             return queryset
 
         except (ValueError, TypeError) as e:
             print(f"Error en parámetros de búsqueda de asientos: {e}")
-            return Entry.objects.none() # Devuelve vacío si hay error en parámetros
+            return Entry.objects.none()
         except Exception as e:
              print(f"Error inesperado buscando asientos: {e}")
              traceback.print_exc()

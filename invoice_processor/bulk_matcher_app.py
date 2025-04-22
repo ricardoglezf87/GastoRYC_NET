@@ -39,7 +39,7 @@ class ApiClient:
         self.reprocess_document_url_template = f"{self.invoices_url}/documents/{{id}}/reprocess/"
         self.create_document_ocr_url = f"{self.invoices_url}/documents/create_with_ocr/"
         # --- URLs para búsqueda y asociación ---
-        self.search_entries_url = f"{self.api_base}/accounting/entries/search/" # Asume esta URL, ajústala
+        self.search_entries_url = f"{self.invoices_url}/entries/search/" # Asume esta URL, ajústala
         self.associate_entry_url = f"{self.invoices_url}/documents/associate_entry/" # Asume esta URL
 
     def _make_request(self, method, url, **kwargs):
@@ -176,6 +176,7 @@ class ApiClient:
         if amount is not None:
             params['amount'] = amount # Opcional: filtrar por importe en backend si es posible
 
+        print(f"Buscando asientos contables: {params}") # DEBUG
         result = self._make_request('get', url, params=params)
         # Asume que devuelve una lista de asientos o un dict con error
         if isinstance(result, dict) and "error" in result:
@@ -602,75 +603,103 @@ class MainWindow(QMainWindow):
                 item.setBackground(color)
 
     def find_matching_entries(self):
-        """Busca asientos contables para las filas seleccionadas (usa API real)."""
+        """Busca asientos contables y compara importes de transacciones específicas."""
         selected_rows = self.table_widget.selectionModel().selectedRows()
         if not selected_rows: return
         tolerance_days = self.days_spinbox.value()
         self.status_label.setText(f"Buscando asientos (+/- {tolerance_days} días)...")
         QApplication.processEvents()
 
-        # --- Lógica de búsqueda REAL (aún podría necesitar hilo propio) ---
         for index in selected_rows:
             row = index.row()
             id_item = self.table_widget.item(row, 0)
             if not id_item: continue
             doc_id = int(id_item.text())
-            doc_info = self.documents_data.get(doc_id)
-            if not doc_info: continue
+            doc_info = self.documents_data.get(doc_id) # Obtener datos guardados para este ID
+            if not doc_info:
+                print(f"No se encontraron datos internos para Doc ID: {doc_id}")
+                continue
 
-            # --- Obtener datos REALES de doc_info o tabla ---
-            account_id = doc_info.get("account_id") # Asume que el backend lo devuelve
-            invoice_date_str = doc_info.get("invoice_date") # Asume formato YYYY-MM-DD
-            total_amount = doc_info.get("total_amount")
-            # ------------------------------------------------
+            # --- Obtener datos REALES de doc_info ---
+            account_id_to_match = doc_info.get("invoice_type_account_id") # La cuenta de la factura
+            extracted_data = doc_info.get("extracted_data", {})
+            invoice_date_str = extracted_data.get("invoice_date") # Formato YYYY-MM-DD
+            total_amount_str = extracted_data.get("total_amount") # Viene como string de la API
+            invoice_total_amount = None
+            if total_amount_str:
+                try: invoice_total_amount = float(total_amount_str)
+                except (ValueError, TypeError): pass
 
-            if not account_id or not invoice_date_str or total_amount is None:
-                 print(f"Faltan datos (cuenta, fecha, importe) para buscar coincidencias para doc {doc_id}")
-                 self.table_widget.setItem(row, 2, QTableWidgetItem("Faltan Datos"))
+            print(f"DEBUG: Doc ID {doc_id} - Importe Factura a buscar: {invoice_total_amount}") # DEBUG
+
+            if not account_id_to_match or not invoice_date_str or invoice_total_amount is None:
+                 print(f"Faltan datos (cuenta={account_id_to_match}, fecha={invoice_date_str}, importe={invoice_total_amount}) para buscar coincidencias para doc {doc_id}")
+                 status_item = self.table_widget.item(row, 2)
+                 if status_item and status_item.text() not in ["Error Búsqueda", "Asociado"]:
+                     self.table_widget.setItem(row, 2, QTableWidgetItem("Faltan Datos Extracción"))
                  continue
 
             try:
                 from datetime import datetime, timedelta
-                invoice_date = datetime.strptime(invoice_date_str, "%Y-%m-%d")
+                invoice_date = datetime.strptime(invoice_date_str, "%Y-%m-%d").date()
                 start_date = (invoice_date - timedelta(days=tolerance_days)).strftime("%Y-%m-%d")
                 end_date = (invoice_date + timedelta(days=tolerance_days)).strftime("%Y-%m-%d")
+                print(f"Buscando asientos entre {start_date} y {end_date} para doc {doc_id}")
 
-                # --- Llamar a la API REAL ---
-                entries = self.api_client.get_accounting_entries(account_id, start_date, end_date)
-                # ---------------------------
+                entries = self.api_client.get_accounting_entries(account_id_to_match, start_date, end_date)
 
                 match_found = None
-                if entries: # entries ahora es una lista real
+                relevant_entry_amount = 0.0
+
+                if entries:
+                    print(f"DEBUG: Entries encontradas: {len(entries)}")
                     for entry in entries:
-                        if abs(float(entry.get("amount", 0)) - total_amount) < 0.01:
-                            match_found = entry
+                        entry_transactions = entry.get("transactions", [])
+                        for transaction in entry_transactions:
+                            print(f"DEBUG:   Transacción {transaction.get('id')} - Cuenta: {transaction.get('account')} (Buscando: {account_id_to_match})")
+                            if transaction.get("account") == account_id_to_match:
+                                try:
+                                    debit = float(transaction.get("debit", 0))
+                                    credit = float(transaction.get("credit", 0))
+                                    current_entry_amount = debit if debit != 0 else credit
+                                    print(f"DEBUG:     Comparando: Asiento={current_entry_amount} vs Factura={invoice_total_amount}")
+                                    if abs(current_entry_amount - invoice_total_amount) < 0.01:
+                                        match_found = entry
+                                        relevant_entry_amount = current_entry_amount
+                                        print(f"Coincidencia encontrada para doc {doc_id}: Entry ID {entry['id']}, Transaction ID {transaction['id']}, Amount {relevant_entry_amount}")
+                                        break
+                                except (ValueError, TypeError) as e:
+                                     print(f"Error convirtiendo debit/credit: {e}")
+                                     continue
+                        if match_found:
                             break
 
                 if match_found:
-                    # ... (actualizar tabla y añadir botón como antes) ...
-                    print(f"Coincidencia encontrada para doc {doc_id}: Asiento ID {match_found['id']}")
                     self.table_widget.setItem(row, 2, QTableWidgetItem("Coincidencia Encontrada"))
                     self.table_widget.setItem(row, 7, QTableWidgetItem(match_found.get("date", "")))
-                    self.table_widget.setItem(row, 8, QTableWidgetItem(f"{float(match_found.get('amount', 0)):.2f}"))
+                    self.table_widget.setItem(row, 8, QTableWidgetItem(f"{relevant_entry_amount:.2f}"))
                     associate_button = QPushButton("Asociar")
                     associate_button.setProperty("doc_id", doc_id)
                     associate_button.setProperty("entry_id", match_found['id'])
                     associate_button.clicked.connect(self.on_associate_button_clicked)
                     self.table_widget.setCellWidget(row, 9, associate_button)
                 else:
-                    # ... (limpiar tabla como antes) ...
                     print(f"No se encontraron coincidencias para doc {doc_id}")
                     self.table_widget.setItem(row, 2, QTableWidgetItem("Sin Coincidencia"))
                     self.table_widget.setItem(row, 7, QTableWidgetItem(""))
                     self.table_widget.setItem(row, 8, QTableWidgetItem(""))
                     self.table_widget.removeCellWidget(row, 9)
 
+            except ValueError as ve:
+                 print(f"Error parseando fecha '{invoice_date_str}' para doc {doc_id}: {ve}")
+                 self.table_widget.setItem(row, 2, QTableWidgetItem("Error Fecha"))
             except Exception as e:
                  print(f"Error buscando coincidencias para doc {doc_id}: {e}")
                  traceback.print_exc()
                  self.table_widget.setItem(row, 2, QTableWidgetItem("Error Búsqueda"))
 
         self.status_label.setText("Búsqueda de asientos completada.")
+
 
     def on_associate_button_clicked(self):
         """Slot para manejar el clic en 'Asociar' (usa API real)."""
@@ -734,85 +763,7 @@ class MainWindow(QMainWindow):
         self.processing_worker = None
         print("Hilo de procesamiento terminado.")
 
-    def find_matching_entries(self):
-        """Busca asientos contables para las filas seleccionadas."""
-        selected_rows = self.table_widget.selectionModel().selectedRows()
-        if not selected_rows:
-            return
-
-        tolerance_days = self.days_spinbox.value()
-        self.status_label.setText(f"Buscando asientos (+/- {tolerance_days} días)...")
-        QApplication.processEvents() # Actualizar UI
-
-        # --- Lógica de búsqueda (simplificada) ---
-        # En una app real, esto debería ir en otro hilo si la búsqueda es lenta
-        for index in selected_rows:
-            row = index.row()
-            id_item = self.table_widget.item(row, 0)
-            if not id_item: continue
-            doc_id = int(id_item.text())
-            doc_info = self.documents_data.get(doc_id)
-
-            if not doc_info: continue
-
-            # --- Necesitarías extraer/obtener estos datos ---
-            # Esto es un placeholder, necesitarías la lógica real de extracción
-            # o recuperarlos del backend si ya se procesaron allí.
-            account_id = 1 # Placeholder - Obtener de doc_info o tabla
-            invoice_date_str = "2024-11-18" # Placeholder - Obtener de doc_info o tabla
-            total_amount = 63.03 # Placeholder - Obtener de doc_info o tabla
-            # --- Fin Placeholders ---
-
-            if not account_id or not invoice_date_str or total_amount is None:
-                 print(f"Faltan datos (cuenta, fecha, importe) para buscar coincidencias para doc {doc_id}")
-                 self.table_widget.setItem(row, 2, QTableWidgetItem("Faltan Datos")) # Actualizar estado
-                 continue
-
-            try:
-                from datetime import datetime, timedelta
-                invoice_date = datetime.strptime(invoice_date_str, "%Y-%m-%d") # Ajusta formato si es necesario
-                start_date = (invoice_date - timedelta(days=tolerance_days)).strftime("%Y-%m-%d")
-                end_date = (invoice_date + timedelta(days=tolerance_days)).strftime("%Y-%m-%d")
-
-                # Llamar a la API
-                entries = self.api_client.get_accounting_entries(account_id, start_date, end_date)
-
-                # Buscar coincidencia de importe (simple, podrías hacerlo más robusto)
-                match_found = None
-                if entries:
-                    for entry in entries:
-                        # Compara importes (considera una pequeña tolerancia si es necesario)
-                        if abs(entry.get("amount", 0) - total_amount) < 0.01: # Tolerancia de 0.01
-                            match_found = entry
-                            break # Tomar la primera coincidencia
-
-                if match_found:
-                    print(f"Coincidencia encontrada para doc {doc_id}: Asiento ID {match_found['id']}")
-                    self.table_widget.setItem(row, 2, QTableWidgetItem("Coincidencia Encontrada"))
-                    self.table_widget.setItem(row, 7, QTableWidgetItem(match_found.get("date", "")))
-                    self.table_widget.setItem(row, 8, QTableWidgetItem(f"{match_found.get('amount', 0):.2f}"))
-                    # Añadir botón "Asociar"
-                    associate_button = QPushButton("Asociar")
-                    # Guardar IDs en el botón para usarlo en el slot
-                    associate_button.setProperty("doc_id", doc_id)
-                    associate_button.setProperty("entry_id", match_found['id'])
-                    associate_button.clicked.connect(self.on_associate_button_clicked)
-                    self.table_widget.setCellWidget(row, 9, associate_button)
-                else:
-                    print(f"No se encontraron coincidencias para doc {doc_id}")
-                    self.table_widget.setItem(row, 2, QTableWidgetItem("Sin Coincidencia"))
-                    # Limpiar celdas de asiento y quitar botón si existía
-                    self.table_widget.setItem(row, 7, QTableWidgetItem(""))
-                    self.table_widget.setItem(row, 8, QTableWidgetItem(""))
-                    self.table_widget.removeCellWidget(row, 9)
-
-
-            except Exception as e:
-                 print(f"Error buscando coincidencias para doc {doc_id}: {e}")
-                 self.table_widget.setItem(row, 2, QTableWidgetItem("Error Búsqueda"))
-
-        self.status_label.setText("Búsqueda de asientos completada.")
-
+   
     def on_associate_button_clicked(self):
         """Slot para manejar el clic en el botón 'Asociar'."""
         button = self.sender() # Obtener el botón que fue presionado
