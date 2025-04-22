@@ -374,7 +374,7 @@ class MainWindow(QMainWindow):
         # ---------------------------------
 
         # Verificar la respuesta del backend
-        if response and isinstance(response, dict) and "error" not in response and response.get("status") == "ATTACHED_AND_DELETED":
+        if response and isinstance(response, dict) and "error" not in response and response.get("status") == "ATTACHMENT_CREATED_DOC_DELETED":
             print(f"Documento {doc_id} finalizado (adjuntado a asiento {entry_id} y eliminado).")
             self.status_label.setText(f"Documento {doc_id} finalizado.")
 

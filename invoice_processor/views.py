@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from datetime import datetime, timedelta
+from django.db import transaction
 from async_tasks.tasks import process_invoice_task
 from invoice_processor.processing_logic import extract_invoice_data, identify_invoice_type, perform_ocr, process_invoice_document
 from .models import InvoiceDocument, InvoiceType, ExtractedData
@@ -312,11 +313,11 @@ class SearchAccountingEntriesView(generics.ListAPIView):
 class FinalizeInvoiceAttachmentView(APIView):
     """
     Crea un Attachment para un Entry usando el archivo de un InvoiceDocument,
+    permitiendo que Django determine la ruta final usando upload_to,
     y luego elimina el InvoiceDocument.
     """
+    @transaction.atomic # Asegura que toda la operación sea atómica
     def post(self, request, document_id, entry_id, *args, **kwargs):
-        # Usar get_object_or_404 es más seguro y devuelve 404 si no existen
-        print(f"Finalizando adjunto para Documento ID: {document_id} y Asiento ID: {entry_id}!!!")
         try:
             invoice_document = InvoiceDocument.objects.get(id=document_id)
         except InvoiceDocument.DoesNotExist:
@@ -328,41 +329,47 @@ class FinalizeInvoiceAttachmentView(APIView):
              return Response({"error": f"Asiento {entry_id} no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
         if not invoice_document.file or not invoice_document.file.name:
-            return Response(
-                {"error": f"El documento {document_id} no tiene archivo asociado."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": f"Doc {document_id} no tiene archivo."}, status=status.HTTP_400_BAD_REQUEST)
 
-        invoice_file = invoice_document.file
-        invoice_filename = os.path.basename(invoice_file.name)
+        # --- Obtener información del archivo fuente ---
+        source_file_field = invoice_document.file
+        original_filename = os.path.basename(source_file_field.name)
 
         try:
-
+            # 1. Crear la instancia de Attachment (sin guardar aún)
             entry_content_type = ContentType.objects.get_for_model(Entry)
+            attachment = Attachment(
+                content_type=entry_content_type,
+                object_id=entry.id,
+                description=f"Factura: {original_filename}"
+                # El campo 'file' se asignará antes de guardar
+            )
 
-            # 1. Crear Attachment referenciando el archivo existente
-            #    (Verificar duplicados es opcional pero recomendado)
-            if not Attachment.objects.filter(content_type=entry_content_type, object_id=entry.id, file=invoice_file.name).exists():
-                attachment = Attachment.objects.create(
-                    content_type=entry_content_type, # <-- Usar ContentType
-                    object_id=entry.id,             # <-- Usar object_id (el ID del asiento)
-                    file=invoice_file,              # Asigna el FileField existente
-                    description=f"Factura: {invoice_filename}"
-                )
-                print(f"Adjunto creado (ID: {attachment.id}) para Asiento {entry_id} usando archivo de Doc {document_id}")
-            else:
-                print(f"Info: El archivo '{invoice_filename}' ya estaba adjunto al asiento {entry_id}. Procediendo a eliminar documento original.")
+            # 2. Asignar el archivo fuente al campo 'file' del nuevo adjunto.
+            #    Al guardar, Django usará get_attachment_upload_path para la ruta final
+            #    y copiará/moverá el archivo según el backend de almacenamiento.
+            #    Usar file.save() es más explícito para indicar que se procese el archivo.
+            attachment.file.save(original_filename, source_file_field, save=False)
+            # Alternativa (puede funcionar pero save() es más seguro):
+            # attachment.file = source_file_field
 
-           # 2. Eliminar InvoiceDocument original (sin cambios aquí)
+            # 3. Guardar el Attachment (esto ejecuta la lógica de upload_to y la copia/movimiento del archivo)
+            attachment.save()
+            print(f"Adjunto creado (ID: {attachment.id}) para Asiento {entry_id}. Archivo guardado en: {attachment.file.name}")
+
+            # 4. Eliminar el InvoiceDocument original
+            #    Django NO debería eliminar el archivo físico porque 'attachment.file'
+            #    ahora lo referencia (especialmente si se copió).
             doc_id_deleted = invoice_document.id
             invoice_document.delete()
             print(f"InvoiceDocument ID {doc_id_deleted} eliminado.")
 
-            # 3. Devolver éxito (sin cambios aquí)
-            return Response({"status": "ATTACHED_AND_DELETED"}, status=status.HTTP_200_OK)
+            # 5. Devolver éxito
+            #    Usamos un nuevo estado para claridad
+            return Response({"status": "ATTACHMENT_CREATED_DOC_DELETED", "attachment_id": attachment.id}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            # ... (manejo de excepción sin cambios aquí) ...
             print(f"Error al crear adjunto o eliminar Doc para Asiento {entry_id} desde Documento {document_id}: {e}")
             traceback.print_exc()
+            # La transacción se revierte automáticamente
             return Response({"error": f"Error interno durante la finalización: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
