@@ -18,6 +18,8 @@ INSTALLED_APPS = [
     'attachments',
     'bank_imports',
     'reports',
+    'document_classified',
+    'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

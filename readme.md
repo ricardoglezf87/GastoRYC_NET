@@ -77,6 +77,12 @@ pip install celery
 pip install redis
 pip install pystray Pillow
 pip install django-extensions
+pip install fitz
+pip install pymupdf
+pip install djangorestframework
+pip install pytesseract 
+pip install pdf2image
+pip install PyQt5
 
 ##### 7. Otros datos de interés
 [⇑Indice⇑](#indice)

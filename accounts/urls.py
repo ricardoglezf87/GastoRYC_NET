@@ -9,4 +9,5 @@ urlpatterns = [
     path('update_keyword/<int:keyword_id>/', views.update_keyword, name='update_keyword'),
     path('delete_keyword/<int:keyword_id>/', views.delete_keyword, name='delete_keyword'),
     path('get_account_transactions/<int:account_id>/', views.get_account_transactions, name='get_account_transactions'),
+    path('', views.AccountListView.as_view(), name='account-list'),
 ]
