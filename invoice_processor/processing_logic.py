@@ -322,3 +322,5 @@ def process_invoice_document(document_id):
             doc.status = 'FAILED'; doc.extracted_text = f"Error inesperado: {e}"; doc.save()
         except: pass
         return False, f"Error inesperado: {e}"
+    
+
