@@ -8,7 +8,8 @@ from PyQt5.QtWidgets import (
     QProgressBar, QLabel, QFileDialog, QSpinBox, QAbstractItemView,
     QMessageBox 
 )
-from PyQt5.QtCore import Qt, QThread
+from PyQt5.QtCore import Qt, QThread,QUrl
+from PyQt5.QtGui import QDesktopServices
 from .garca_api_client import ApiClient
 
 from .bulk_matcher_ProcessWoker import ProcessingWorker, ReprocessingWorker
@@ -20,7 +21,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Conciliador de Documentos Masivo")
-        self.setGeometry(100, 100, 1200, 700) # Ajustar tamaño si es necesario
+        self.setGeometry(100, 100, 1400, 700) # Ajustar tamaño si es necesario
 
         self.api_client = ApiClient()
         self.documents_data = {}
@@ -76,6 +77,7 @@ class MainWindow(QMainWindow):
         self.table_widget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents) # Estado
         self.table_widget.horizontalHeader().setSectionResizeMode(8, QHeaderView.Stretch) # Desc. Asiento
         self.table_widget.horizontalHeader().setSectionResizeMode(9, QHeaderView.Stretch) # Cuentas Asiento
+        self.table_widget.horizontalHeader().setSectionResizeMode(10, QHeaderView.ResizeToContents) # Acción
         self.table_widget.setColumnHidden(0, True)
         self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget.itemSelectionChanged.connect(self.on_selection_changed)
@@ -237,6 +239,33 @@ class MainWindow(QMainWindow):
         self.table_widget.setItem(row_index, 9, QTableWidgetItem("")) # Cuentas Asiento
         self.table_widget.removeCellWidget(row_index, 10) # Asegurar que no haya botón inicialmente
 
+        action_widget = QWidget()
+        action_layout = QHBoxLayout(action_widget)
+        action_layout.setContentsMargins(2, 2, 2, 2) # Márgenes pequeños
+        action_layout.setSpacing(5)
+
+        # --- Botón Ver ---
+        view_button = QPushButton("Ver")
+        view_button.setToolTip("Abrir el archivo del documento")
+        view_button.setProperty("doc_id", doc_id)
+        file_url = doc_info.get("file_url")
+        if file_url:
+            view_button.setProperty("file_url", file_url)
+            view_button.clicked.connect(self.on_view_button_clicked) # Conectar a nuevo slot
+        else:
+            view_button.setEnabled(False) # Deshabilitar si no hay URL
+        action_layout.addWidget(view_button)
+
+        # --- Botón Borrar ---
+        delete_button = QPushButton("Borrar")
+        delete_button.setToolTip("Eliminar este documento de la base de datos")
+        delete_button.setProperty("doc_id", doc_id)
+        delete_button.clicked.connect(self.on_delete_button_clicked) # Conectar a nuevo slot
+        action_layout.addWidget(delete_button)
+
+        action_layout.addStretch() # Empuja los botones a la izquierda
+        self.table_widget.setCellWidget(row_index, 10, action_widget) # Establecer el widget en la celda
+
         # Coloreado
         status = doc_info.get("status", "")
         color = None
@@ -255,106 +284,313 @@ class MainWindow(QMainWindow):
                 if item: item.setBackground(Qt.white) # O el color por defecto
 
     def find_matching_entries(self):
-        # ... (código sin cambios, asumiendo que está correcto) ...
         selected_rows = self.table_widget.selectionModel().selectedRows()
         if not selected_rows: return
         tolerance_days = self.days_spinbox.value()
         self.status_label.setText(f"Buscando asientos (+/- {tolerance_days} días)...")
         QApplication.processEvents()
 
+        processed_count = 0
+        found_count = 0
+        error_count = 0
+
         for index in selected_rows:
             row = index.row()
             id_item = self.table_widget.item(row, 0)
-            if not id_item: continue
+            if not id_item or not id_item.text().isdigit(): continue # Saltar si no hay ID válido
             doc_id = int(id_item.text())
             doc_info = self.documents_data.get(doc_id)
-            if not doc_info: print(f"No se encontraron datos internos para Doc ID: {doc_id}"); continue
+
+            # --- Limpiar resultados previos en la fila ---
+            self.table_widget.setItem(row, 7, QTableWidgetItem("")) # ID Asiento
+            self.table_widget.setItem(row, 8, QTableWidgetItem("")) # Desc. Asiento
+            self.table_widget.setItem(row, 9, QTableWidgetItem("")) # Cuentas Asiento
+            # Recuperar el widget de acción existente para añadir/quitar el botón "Asociar"
+            action_widget = self.table_widget.cellWidget(row, 10)
+            action_layout = action_widget.layout() if action_widget else None
+            # Eliminar botón "Asociar" si existía previamente
+            if action_layout:
+                for i in reversed(range(action_layout.count())):
+                    item = action_layout.itemAt(i)
+                    widget = item.widget()
+                    # Comprobar si es un QPushButton y su texto es "Asociar"
+                    if isinstance(widget, QPushButton) and widget.text() == "Asociar":
+                        # Eliminar el widget del layout y luego borrarlo
+                        action_layout.takeAt(i) # Quita el item del layout
+                        widget.deleteLater()    # Programa la eliminación del widget
+                        print(f"Botón 'Asociar' previo eliminado para fila {row}")
+                        break # Asumimos solo un botón "Asociar" por fila
+            # -------------------------------------------
+
+            if not doc_info:
+                print(f"No se encontraron datos internos para Doc ID: {doc_id}")
+                status_item = QTableWidgetItem("Error Interno")
+                status_item.setBackground(Qt.red)
+                self.table_widget.setItem(row, 2, status_item)
+                error_count += 1
+                continue
 
             account_id_to_match = doc_info.get("document_type_account_id")
             extracted_data = doc_info.get("extracted_data", {})
             document_date_str = extracted_data.get("document_date")
             total_amount_str = extracted_data.get("total_amount")
             document_total_amount = None
+
             if total_amount_str:
                 try: document_total_amount = float(total_amount_str)
                 except (ValueError, TypeError): pass
 
-            print(f"DEBUG: Doc ID {doc_id} - Importe Factura a buscar: {document_total_amount}")
+            print(f"Buscando para Doc ID {doc_id}: Cuenta={account_id_to_match}, Fecha={document_date_str}, Importe={document_total_amount}")
 
             if not account_id_to_match or not document_date_str or document_total_amount is None:
-                 print(f"Faltan datos (cuenta={account_id_to_match}, fecha={document_date_str}, importe={document_total_amount}) para buscar coincidencias para doc {doc_id}")
-                 status_item = self.table_widget.item(row, 2)
-                 if status_item and status_item.text() not in ["Error Búsqueda", "Asociado"]:
-                     self.table_widget.setItem(row, 2, QTableWidgetItem("Faltan Datos Extracción"))
-                 continue
+                print(f"Faltan datos para buscar coincidencias para doc {doc_id}")
+                status_item = self.table_widget.item(row, 2)
+                # Solo actualizar si no es un error más grave o ya asociado
+                if status_item and status_item.text() not in ["Error Búsqueda", "Asociado", "Error Interno", "Error Fecha", "FAILED", "Error Reproceso"]:
+                    new_status_item = QTableWidgetItem("Faltan Datos Extracción")
+                    new_status_item.setBackground(Qt.red) # O un color específico
+                    self.table_widget.setItem(row, 2, new_status_item)
+                error_count += 1
+                continue
 
             try:
                 from datetime import datetime, timedelta
                 document_date = datetime.strptime(document_date_str, "%Y-%m-%d").date()
                 start_date = (document_date - timedelta(days=tolerance_days)).strftime("%Y-%m-%d")
                 end_date = (document_date + timedelta(days=tolerance_days)).strftime("%Y-%m-%d")
-                print(f"Buscando asientos entre {start_date} y {end_date} para doc {doc_id}")
+                print(f" -> Rango API: {start_date} a {end_date}")
 
-                entries = self.api_client.get_accounting_entries(account_id_to_match, start_date, end_date)
+                # --- LLAMADA API ---
+                # Pasar el importe para que el backend filtre si es posible
+                entries = self.api_client.get_accounting_entries(
+                    account_id=account_id_to_match,
+                    start_date=start_date,
+                    end_date=end_date,
+                    amount=document_total_amount
+                )
+                # -------------------
 
                 match_found = None
-                relevant_entry_amount = 0.0
+                # Si la API devuelve error, 'entries' será un dict con 'error'
+                if isinstance(entries, dict) and 'error' in entries:
+                    print(f"Error API buscando asientos para doc {doc_id}: {entries['error']}")
+                    status_item = QTableWidgetItem("Error API Búsqueda")
+                    status_item.setBackground(Qt.red)
+                    self.table_widget.setItem(row, 2, status_item)
+                    error_count += 1
+                    continue # Pasar al siguiente documento
 
+                # Si la API devuelve una lista (puede estar vacía)
                 if entries:
-                    print(f"DEBUG: Entries encontradas: {len(entries)}")
-                    for entry in entries:
-                        entry_transactions = entry.get("transactions", [])
-                        for transaction in entry_transactions:
-                            print(f"DEBUG:   Transacción {transaction.get('id')} - Cuenta: {transaction.get('account')} (Buscando: {account_id_to_match})")
-                            if transaction.get("account") == account_id_to_match:
-                                try:
-                                    debit = float(transaction.get("debit", 0))
-                                    credit = float(transaction.get("credit", 0))
-                                    current_entry_amount = debit if debit != 0 else credit
-                                    print(f"DEBUG:     Comparando: Asiento={current_entry_amount} vs Factura={document_total_amount}")
-                                    if abs(current_entry_amount - document_total_amount) < 0.01:
-                                        match_found = entry
-                                        relevant_entry_amount = current_entry_amount
-                                        print(f"Coincidencia encontrada para doc {doc_id}: Entry ID {entry['id']}, Transaction ID {transaction['id']}, Amount {relevant_entry_amount}")
-                                        break
-                                except (ValueError, TypeError) as e:
-                                     print(f"Error convirtiendo debit/credit: {e}")
-                                     continue
-                        if match_found: break
+                    print(f" -> API devolvió {len(entries)} asientos candidatos.")
+                    # Asumimos que la API ya filtró por importe y devuelve la mejor/única coincidencia
+                    # Si devuelve múltiples, podrías necesitar lógica adicional aquí para elegir.
+                    if len(entries) > 0:
+                        match_found = entries[0] # Tomamos el primero
+                        print(f" -> Coincidencia encontrada por API: Entry ID {match_found.get('id')}")
+                        found_count += 1
+                    else:
+                        print(f" -> API devolvió 0 asientos tras filtrar.")
 
+                # --- Actualizar fila con resultado ---
                 if match_found:
-                    self.table_widget.setItem(row, 2, QTableWidgetItem("Coincidencia Encontrada"))
+                    status_item = QTableWidgetItem("Coincidencia Encontrada")
+                    status_item.setBackground(Qt.yellow) # Color para coincidencia
+                    self.table_widget.setItem(row, 2, status_item)
                     self.table_widget.setItem(row, 7, QTableWidgetItem(str(match_found.get("id", ""))))
                     self.table_widget.setItem(row, 8, QTableWidgetItem(match_found.get("description", "")))
+
+                    # Construir string de cuentas del asiento encontrado
                     accounts_in_entry = []
                     for trans in match_found.get("transactions", []):
-                        acc_name = trans.get("account_name")
-                        if not acc_name: acc_name = f"ID:{trans.get('account', '?')}"
-                        accounts_in_entry.append(acc_name)
+                        acc_name = trans.get("account_name", f"ID:{trans.get('account', '?')}")
+                        debit = trans.get("debit", 0)
+                        credit = trans.get("credit", 0)
+                        # Mostrar el importe relevante de la transacción
+                        amount_str = f"{float(debit):.2f}" if debit else f"{float(credit):.2f}"
+                        accounts_in_entry.append(f"{acc_name} ({amount_str})")
                     accounts_str = "; ".join(accounts_in_entry)
                     self.table_widget.setItem(row, 9, QTableWidgetItem(accounts_str))
-                    associate_button = QPushButton("Asociar")
-                    associate_button.setProperty("doc_id", doc_id)
-                    associate_button.setProperty("entry_id", match_found['id'])
-                    associate_button.clicked.connect(self.on_associate_button_clicked)
-                    self.table_widget.setCellWidget(row, 10, associate_button)
-                else:
-                    print(f"No se encontraron coincidencias para doc {doc_id}")
-                    self.table_widget.setItem(row, 2, QTableWidgetItem("Sin Coincidencia"))
-                    self.table_widget.setItem(row, 7, QTableWidgetItem(""))
-                    self.table_widget.setItem(row, 8, QTableWidgetItem(""))
-                    self.table_widget.setItem(row, 9, QTableWidgetItem(""))
-                    self.table_widget.removeCellWidget(row, 10)
+
+                    # --- Añadir botón "Asociar" al layout existente ---
+                    if action_layout:
+                        associate_button = QPushButton("Asociar")
+                        associate_button.setToolTip(f"Asociar Doc {doc_id} con Asiento {match_found['id']}")
+                        associate_button.setProperty("doc_id", doc_id)
+                        associate_button.setProperty("entry_id", match_found['id'])
+                        associate_button.clicked.connect(self.on_associate_button_clicked)
+
+                        # Insertar antes del stretch item (que suele ser el último)
+                        stretch_index = -1
+                        for i in range(action_layout.count()):
+                            # Comprobar si es un QSpacerItem (el stretch)
+                            item = action_layout.itemAt(i)
+                            if item and item.spacerItem(): # Método más fiable para detectar stretch
+                                stretch_index = i
+                                break
+                        if stretch_index != -1:
+                            action_layout.insertWidget(stretch_index, associate_button)
+                            print(f"Botón 'Asociar' insertado en índice {stretch_index} para fila {row}")
+                        else:
+                            action_layout.addWidget(associate_button) # Añadir al final si no hay stretch
+                            print(f"Botón 'Asociar' añadido al final para fila {row}")
+                    else:
+                        print(f"Advertencia: No se encontró action_layout para fila {row}, no se pudo añadir botón 'Asociar'.")
+                    # -------------------------------------------------
+
+                else: # No se encontró coincidencia
+                    print(f" -> No se encontraron coincidencias para doc {doc_id}")
+                    status_item = QTableWidgetItem("Sin Coincidencia")
+                    status_item.setBackground(Qt.lightGray) # Color para sin coincidencia
+                    self.table_widget.setItem(row, 2, status_item)
+                    # Las celdas 7, 8, 9 ya se limpiaron al principio
+                    # El botón "Asociar" ya se eliminó al principio
+
+                processed_count += 1
 
             except ValueError as ve:
-                 print(f"Error parseando fecha '{document_date_str}' para doc {doc_id}: {ve}")
-                 self.table_widget.setItem(row, 2, QTableWidgetItem("Error Fecha"))
+                print(f"Error parseando fecha '{document_date_str}' para doc {doc_id}: {ve}")
+                status_item = QTableWidgetItem("Error Fecha")
+                status_item.setBackground(Qt.red)
+                self.table_widget.setItem(row, 2, status_item)
+                error_count += 1
             except Exception as e:
-                 print(f"Error buscando coincidencias para doc {doc_id}: {e}")
-                 traceback.print_exc()
-                 self.table_widget.setItem(row, 2, QTableWidgetItem("Error Búsqueda"))
+                print(f"Error buscando coincidencias para doc {doc_id}: {e}")
+                traceback.print_exc()
+                status_item = QTableWidgetItem("Error Búsqueda")
+                status_item.setBackground(Qt.red)
+                self.table_widget.setItem(row, 2, status_item)
+                error_count += 1
 
-        self.status_label.setText("Búsqueda de asientos completada.")
+            # --- Actualizar colores y layout de la fila después de procesar ---
+            # Recuperar la info actualizada (puede haber cambiado el estado)
+            current_doc_info = self.documents_data.get(doc_id)
+            if current_doc_info:
+                # Actualizar el estado en la info interna si cambió en la tabla
+                current_status_item = self.table_widget.item(row, 2)
+                if current_status_item:
+                    current_doc_info['status'] = current_status_item.text()
+
+                # --- Aplicar coloreado basado en el estado actual ---
+                status_val = current_doc_info.get("status", "")
+                color = None
+                if status_val == 'PROCESSED': color = Qt.yellow
+                elif status_val == 'NEEDS_MAPPING': color = Qt.cyan
+                elif status_val == 'ASSOCIATED': color = Qt.green
+                elif status_val in ['FAILED', 'Error', 'Error Reproceso', 'Error Búsqueda', 'Error Fecha', 'Faltan Datos Extracción', 'Error API Búsqueda', 'Error Interno']: color = Qt.red
+                elif status_val == 'Coincidencia Encontrada': color = Qt.yellow # O un verde claro?
+                elif status_val == 'Sin Coincidencia': color = Qt.lightGray
+
+                base_color = color if color else Qt.white # Color base
+
+                for col in range(self.table_widget.columnCount() -1): # Excluir columna de acción
+                    item = self.table_widget.item(row, col)
+                    if not item: # Crear item si no existe para poder colorear
+                        item = QTableWidgetItem("")
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                        self.table_widget.setItem(row, col, item)
+                    item.setBackground(base_color)
+                # ----------------------------------------------------
+
+            # ----------------------------------------------------------------
+
+        self.status_label.setText(f"Búsqueda completada. Procesados: {processed_count}, Encontrados: {found_count}, Errores: {error_count}")
+
+
+    def on_delete_button_clicked(self):
+        button = self.sender()
+        if not button: return
+        doc_id = button.property("doc_id")
+        if doc_id is None: return
+
+        doc_info = self.documents_data.get(doc_id)
+        filename = doc_info.get('filename', f'ID {doc_id}') if doc_info else f'ID {doc_id}'
+
+        reply = QMessageBox.question(self, 'Confirmar Borrado',
+                                    f"¿Estás seguro de que quieres eliminar permanentemente el documento '{filename}' (ID: {doc_id})?\n\nEsta acción no se puede deshacer.",
+                                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            print(f"Intentando borrar Doc ID: {doc_id}")
+
+            # --- Encontrar la fila correspondiente al doc_id ---
+            target_row = -1
+            for row in range(self.table_widget.rowCount()):
+                id_item = self.table_widget.item(row, 0) # Columna 0 (ID oculto)
+                if id_item and id_item.text().isdigit() and int(id_item.text()) == doc_id:
+                    target_row = row
+                    break
+            # ----------------------------------------------------
+
+            if target_row == -1:
+                print(f"Error: No se encontró la fila para Doc ID {doc_id} en la tabla.")
+                QMessageBox.warning(self, "Error Interno", f"No se pudo encontrar la fila para el documento {doc_id}.")
+                return
+
+            self.status_label.setText(f"Borrando documento {doc_id}...")
+            QApplication.processEvents()
+
+            # --- Deshabilitar botones en la fila encontrada ---
+            action_widget = self.table_widget.cellWidget(target_row, 10) # Columna 10 (Acción)
+            buttons_to_disable = []
+            if action_widget:
+                buttons_to_disable = action_widget.findChildren(QPushButton)
+                for btn in buttons_to_disable:
+                    btn.setEnabled(False)
+            # -------------------------------------------------
+
+            # --- LLAMAR AL MÉTODO API REAL ---
+            response = self.api_client.delete_document(doc_id)
+            # ---------------------------------
+
+            # Verificar la respuesta (esperamos True si fue exitoso - 204 No Content)
+            if response is True:
+                print(f"Documento {doc_id} borrado exitosamente.")
+                self.status_label.setText(f"Documento {doc_id} eliminado.")
+
+                # --- Eliminar la fila encontrada de la tabla ---
+                self.table_widget.removeRow(target_row)
+                # ---------------------------------------------
+
+                # Eliminar de datos internos
+                if doc_id in self.documents_data:
+                    del self.documents_data[doc_id]
+
+            else: # Falló la operación en el backend o hubo otro error
+                error_msg = "Error desconocido al borrar"
+                if isinstance(response, dict) and "error" in response:
+                    error_msg = response["error"]
+                elif response is False: # Podría ser un error genérico del _make_request
+                     error_msg = "Fallo en la petición API (ver consola)."
+                elif response is None:
+                     error_msg = "No se recibió respuesta válida de la API."
+
+                print(f"Error al borrar Doc ID {doc_id}: {error_msg}")
+                QMessageBox.critical(self, "Error de Borrado", f"No se pudo eliminar el documento {doc_id}:\n{error_msg}")
+                self.status_label.setText(f"Error al borrar doc {doc_id}.")
+
+                # --- Volver a habilitar botones si falló ---
+                # (No es necesario buscar la fila de nuevo, ya tenemos 'buttons_to_disable')
+                for btn in buttons_to_disable:
+                     # Podrías añadir lógica extra si algún botón no debe rehabilitarse siempre
+                     btn.setEnabled(True)
+
+    def on_view_button_clicked(self):
+        button = self.sender()
+        if not button: return
+        file_url = button.property("file_url")
+        doc_id = button.property("doc_id")
+
+        if file_url:
+            print(f"Intentando abrir archivo para Doc ID {doc_id}: {file_url}")
+            # Usar QDesktopServices para abrir la URL (puede ser local o http)
+            success = QDesktopServices.openUrl(QUrl(file_url))
+            if not success:
+                QMessageBox.warning(self, "Error al Abrir", f"No se pudo abrir el archivo:\n{file_url}\n\nAsegúrate de tener un programa asociado.")
+                print(f"Fallo al abrir URL: {file_url}")
+        else:
+            QMessageBox.information(self, "Sin Archivo", f"No hay URL de archivo asociada al documento ID {doc_id}.")
+            print(f"No file_url para Doc ID {doc_id}")
 
     # --- SOLO UNA DEFINICIÓN DE on_associate_button_clicked ---
     def on_associate_button_clicked(self):

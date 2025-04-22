@@ -17,6 +17,14 @@ from .serializers import documentInfoSerializer, documentTypeSerializer, Extract
 
 # -----------------------------
 
+class DocumentDetailView(generics.RetrieveDestroyAPIView): # Añade Destroy
+    """
+    Permite obtener (GET) o eliminar (DELETE) un documento específico.
+    """
+    queryset = documentInfo.objects.all()
+    serializer_class = documentInfoSerializer
+    lookup_field = 'id'
+
 class ReprocessDocumentView(APIView):
     """
     Dispara el reprocesamiento de un documento específico.

@@ -21,9 +21,6 @@ except Exception as e:
 
 from .processing_logic import extract_document_data, perform_ocr
 
-# --- Clase ApiClient (Añadido timeout y prints) ---
-
-
 class MappingWindow(QWidget):
     def __init__(self, document_id, initial_file_path, api_client, parent=None): # Cambiado nombre de parámetro
         super().__init__(parent)
@@ -107,17 +104,10 @@ class MappingWindow(QWidget):
         self.layout.addWidget(self.test_button)
         print("MappingWindow buttons setup done") # DEBUG
 
-        # --- Carga inicial ---
-        # Ya no cargamos el texto aquí, se hará al seleccionar archivo
-        # print("Calling load_document_text...")
-        # self.load_document_text()
-        # print("Finished load_document_text call.")
-
         # Actualizar label si se pasó una ruta inicial
         if self.file_path:
              self.selected_file_label.setText(f"Archivo seleccionado: {os.path.basename(self.file_path)}")
-             # Podrías llamar a load_document_text aquí si quieres cargar el inicial
-             # self.load_document_text()
+
 
         print("Calling load_document_types...")
         self.load_document_types()
@@ -127,9 +117,7 @@ class MappingWindow(QWidget):
         self.load_accounts()
         print("Finished load_accounts call.")
         print("MappingWindow __init__ finished") # DEBUG
-    # --- FIN MODIFICADO __init__ ---
 
-    # --- NUEVO MÉTODO select_file ---
     def select_file(self):
         """Abre un diálogo para seleccionar un archivo PDF."""
         # Abre el diálogo, empezando en el directorio actual o el último usado
@@ -154,15 +142,12 @@ class MappingWindow(QWidget):
         else:
             print("Selección de archivo cancelada.")
 
-    # --- MÉTODO RENOMBRADO Y MODIFICADO ---
     def load_document_text(self):
         """Realiza OCR en el PDF (self.file_path) y muestra el texto."""
         if not self.file_path or not os.path.exists(self.file_path):
              error_msg = "Por favor, selecciona un archivo PDF válido primero."
              print(f"load_document_text: {error_msg}")
              self.text_edit.setPlainText(error_msg)
-             # Podrías mostrar un QMessageBox también
-             # QMessageBox.warning(self, "Archivo no válido", error_msg)
              return
 
         print(f"load_document_text: Intentando cargar y hacer OCR en: {self.file_path}") # DEBUG
@@ -199,7 +184,6 @@ class MappingWindow(QWidget):
             print(f"load_document_types: {len(types)} tipos recibidos.")
             # Ordenar por nombre para facilitar la búsqueda
             try:
-                # Usar lower() para ordenación insensible a mayúsculas/minúsculas
                 types_sorted = sorted(types, key=lambda x: str(x.get('name', '')).lower())
             except TypeError: # Por si algún nombre no es string o comparable
                 print("load_document_types: Advertencia - No se pudo ordenar los tipos por nombre.")
@@ -215,9 +199,6 @@ class MappingWindow(QWidget):
             print(f"load_document_types: {len(self.document_types_data)} tipos añadidos al ComboBox.")
         else: # Si la API devolvió [] por error o no encontró tipos
             print("load_document_types: No se encontraron tipos o hubo un error al cargarlos.")
-            # Podrías mostrar un mensaje en la UI o deshabilitar el combo
-            # self.type_combo.addItem("Error al cargar tipos")
-            # self.type_combo.setEnabled(False)
         self.type_combo.blockSignals(False) # Desbloquear señales
 
     @pyqtSlot(int) # Decorador para indicar que es un slot de Qt
@@ -250,9 +231,7 @@ class MappingWindow(QWidget):
                      error_detail = f"No se pudo obtener detalles para el tipo ID {selected_id}."
                      print(f"Error cargando detalles: {error_detail}")
                      QMessageBox.warning(self, "Error", error_detail)
-                     self.clear_type_fields() # Limpiar si falla la carga
-                     # Podrías volver a seleccionar "-- Crear Nuevo Tipo --"
-                     # self.type_combo.setCurrentIndex(0)
+                     self.clear_type_fields() 
 
     def clear_type_fields(self):
         """Limpia los campos de entrada de reglas."""
@@ -260,9 +239,6 @@ class MappingWindow(QWidget):
         self.identifier_keyword_input.clear()
         self.date_regex_input.clear()
         self.total_regex_input.clear()
-        # Limpiar otros campos de reglas que añadas
-        # Limpiar también la selección de cuenta si la usas asociada al tipo
-        self.account_combo.setCurrentIndex(1) # Asumiendo que el índice 0 es "-- Sin asignar --"
         print("clear_type_fields: Campos limpiados.")
 
     def populate_type_fields(self, type_data):
@@ -276,23 +252,14 @@ class MappingWindow(QWidget):
         identifier_rule = rules.get('identifier', {})
         if identifier_rule.get('type') == 'keyword':
             self.identifier_keyword_input.setText(identifier_rule.get('value', ''))
-        # Añadir lógica para otros tipos de identificador si los tienes (ej. regex)
-        # elif identifier_rule.get('type') == 'regex':
-        #     self.identifier_regex_input.setText(identifier_rule.get('pattern', ''))
 
         date_rule = rules.get('date', {})
         if date_rule.get('type') == 'regex':
             self.date_regex_input.setText(date_rule.get('pattern', ''))
-        # Añadir lógica para otros tipos de regla de fecha (ej. keyword_proximity)
 
         total_rule = rules.get('total', {})
         if total_rule.get('type') == 'regex':
             self.total_regex_input.setText(total_rule.get('pattern', ''))
-        # Añadir lógica para otros tipos de regla de total
-
-        # Rellenar otros campos que tengas...
-
-        # Seleccionar la cuenta asociada si existe en el tipo y en el combo
         account_id = type_data.get('account') # Si el tipo tiene un campo 'account'
         if account_id is not None:
             index = self.account_combo.findData(account_id)
@@ -356,7 +323,6 @@ class MappingWindow(QWidget):
             # ---------------------------------------------
 
         except Exception as e:
-            # ... (manejo de excepción sin cambios) ...
             self.account_combo.clear()
             self.account_combo.addItem("Error crítico al cargar cuentas", userData=None)
 
@@ -389,13 +355,6 @@ class MappingWindow(QWidget):
         if not name:
             QMessageBox.warning(self, "Faltan Datos", "Introduce un nombre para el tipo.")
             return
-        # Considera si quieres permitir guardar sin reglas
-        # if not rules:
-        #      reply = QMessageBox.question(self, "Sin Reglas",
-        #                                   "¿Guardar tipo sin reglas de extracción definidas?",
-        #                                   QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        #      if reply == QMessageBox.No:
-        #          return
 
         payload = {
             "name": name,
@@ -506,7 +465,6 @@ class MappingWindow(QWidget):
                 result_text += f"{field_name}: {field_value}\n"
         QMessageBox.information(self, "Resultado Prueba Local", result_text.strip())
 
-
 # --- Bloque Principal (con manejo de errores y prints) ---
 if __name__ == '__main__':
    app = QApplication.instance()
@@ -515,17 +473,6 @@ if app is None:
     app = QApplication(sys.argv)
 else:
     print("__main__: Usando QApplication existente.") # DEBUG
-
-# --- Ya no se define el archivo aquí ---
-# test_file_path = r"G:\Mi unidad\Pruebas\Factura Vizenter-1.pdf"
-# print(f"__main__: Verificando archivo de prueba: {test_file_path}")
-# if not os.path.exists(test_file_path):
-#      print(f"__main__: Error: Archivo de prueba no existe: {test_file_path}")
-#      QMessageBox.critical(None, "Error Archivo", f"Archivo de prueba no existe:\n{test_file_path}")
-#      sys.exit(1)
-# else:
-#      print("__main__: Archivo de prueba encontrado.")
-# -------------------------------------------
 
 print("__main__: Creando ApiClient...") # DEBUG
 api = ApiClient()

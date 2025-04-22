@@ -11,17 +11,23 @@ class ApiClient:
     def __init__(self, base_url="http://127.0.0.1:8585/"):
         self.base_url = base_url.rstrip('/')
         self.api_base = f"{self.base_url}/api"
-        
-        # URLs de Endpoints (combinación de ambas clases)
+
+        # URLs de Endpoints
         self.documents_url = f"{self.api_base}/documents"
-        self.accounts_url = f"{self.base_url}/accounts/" # Nota: usa base_url directamente
+        self.accounts_url = f"{self.base_url}/accounts/"
         self.document_types_url = f"{self.documents_url}/document-types/"
         self.list_documents_url = f"{self.documents_url}/documents/"
+
+        # --- AÑADIR ESTA LÍNEA ---
+        self.document_detail_url_template = f"{self.documents_url}/documents/{{id}}/"
+        # -------------------------
+
         self.reprocess_document_url_template = f"{self.documents_url}/documents/{{id}}/reprocess/"
         self.create_document_ocr_url = f"{self.documents_url}/documents/create_with_ocr/"
-        self.search_entries_url = f"{self.base_url}/entries/search/" # Nota: usa base_url directamente
+        self.search_entries_url = f"{self.base_url}/entries/search/"
         self.finalize_attachment_url_template = f"{self.documents_url}/documents/{{document_id}}/finalize_attachment/{{entry_id}}/"
         self.test_rules_url = f"{self.documents_url}/test-rules/"
+
         
     def _make_request(self, method, url, **kwargs):
         """
@@ -216,7 +222,13 @@ class ApiClient:
         result = self._make_request('post', url) 
         return result
 
-    # --- Métodos de garca_client_api ---
+    def delete_document(self, document_id):
+        """Elimina un documento específico."""
+        url = self.document_detail_url_template.format(id=document_id)
+        # _make_request debería devolver True si la respuesta es 204 No Content
+        result = self._make_request('delete', url)
+        # Devuelve True en éxito (204), False o dict de error en fallo
+        return result if result is True else (result if isinstance(result, dict) else False)
 
     def test_rules(self, file_path, rules):
         """Prueba reglas de extracción enviando un archivo y las reglas en formato JSON."""
