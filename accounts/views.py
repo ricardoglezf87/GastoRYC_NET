@@ -2,11 +2,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from GARCA.utils import add_breadcrumb, clear_breadcrumbs, remove_breadcrumb
+from accounts.serializers import AccountSerializer
 from .models import Account, AccountKeyword
 from .forms import AccountForm
 import json
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from rest_framework import generics
 
 
 def account_tree_view(request):
@@ -168,3 +170,8 @@ def get_account_transactions(request, account_id):
             'total': 0,
             'error': str(e)
         })
+    
+
+class AccountListView(generics.ListAPIView): # Solo permite listar (GET)
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
