@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
     QMessageBox # <-- Importar QMessageBox de PyQt5
 )
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QObject
-import requests
+from .bulk_matcher_api_client import ApiClient
 
 # --- Inicializar Django ---
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GARCA.settings')
@@ -25,139 +25,6 @@ except Exception as e:
 
 from .processing_logic import perform_ocr
 
-# --- ApiClient (Asumiendo que está bien o es un placeholder intencionado) ---
-class ApiClient:
-    def __init__(self, base_url="http://127.0.0.1:8000/"):
-        self.base_url = base_url.rstrip('/')
-        self.api_base = f"{self.base_url}/api"
-        self.invoices_url = f"{self.api_base}/invoices"
-        self.accounts_url = f"{self.api_base}/accounts/"
-        self.invoice_types_url = f"{self.invoices_url}/invoice-types/"
-        self.list_documents_url = f"{self.invoices_url}/documents/"
-        self.reprocess_document_url_template = f"{self.invoices_url}/documents/{{id}}/reprocess/"
-        self.create_document_ocr_url = f"{self.invoices_url}/documents/create_with_ocr/"
-        self.search_entries_url = f"{self.invoices_url}/entries/search/" # URL corregida
-        self.associate_entry_url = f"{self.invoices_url}/documents/associate_entry/"
-
-    def _make_request(self, method, url, **kwargs):
-        # ... (código sin cambios) ...
-        print(f"API Request: {method.upper()} {url}")
-        files = kwargs.get('files')
-        if files:
-            print(f"API Request Files: {list(files.keys())}")
-            kwargs.pop('json', None)
-        else:
-            headers = kwargs.get('headers', {})
-            if 'Content-Type' not in headers and 'json' in kwargs:
-                 headers['Content-Type'] = 'application/json'
-            kwargs['headers'] = headers
-
-        try:
-            response = requests.request(method, url, timeout=60, **kwargs)
-            response.raise_for_status()
-
-            if response.status_code == 204:
-                 print("API Response: Success (204 No Content)")
-                 return True
-
-            if response.content:
-                try:
-                    json_response = response.json()
-                    print(f"API Response (JSON): {json_response}")
-                    return json_response
-                except requests.exceptions.JSONDecodeError:
-                    print(f"API Response: Success (Status {response.status_code}, No JSON Content)")
-                    return True # O response.text si prefieres
-            else:
-                 print(f"API Response: Success (Status {response.status_code}, Empty Content)")
-                 return True
-
-        except requests.exceptions.HTTPError as e:
-            error_detail = ""
-            try:
-                error_data = e.response.json()
-                if isinstance(error_data, dict):
-                    error_detail = " - " + "; ".join([f"{k}: {v[0] if isinstance(v, list) else v}" for k, v in error_data.items()])
-                else: error_detail = f" - {error_data}"
-            except: error_detail = f" - {e.response.text}"
-            print(f"Error HTTP: {e}{error_detail}")
-            return {"error": f"Error del servidor ({e.response.status_code}): {error_detail.strip(' -')}"}
-        except requests.exceptions.ConnectionError as e:
-            print(f"Error de Conexión: {e}")
-            return {"error": f"No se pudo conectar al servidor: {self.base_url}"}
-        except requests.exceptions.Timeout as e:
-            print(f"Error de Timeout: {e}")
-            return {"error": "La petición al servidor tardó demasiado."}
-        except requests.exceptions.RequestException as e:
-            print(f"Error Inesperado de Requests: {e}")
-            return {"error": f"Error de red inesperado: {e}"}
-
-    def get_documents(self):
-        url = self.list_documents_url
-        result = self._make_request('get', url)
-        if isinstance(result, dict) and "error" in result: return []
-        return result if isinstance(result, list) else []
-
-    def reprocess_document(self, document_id):
-        url = self.reprocess_document_url_template.format(id=document_id)
-        result = self._make_request('post', url)
-        return result
-
-    def get_accounts(self):
-        url = self.accounts_url
-        result = self._make_request('get', url)
-        if isinstance(result, dict) and "error" in result: return []
-        return result if isinstance(result, list) else []
-
-    def get_invoice_types(self):
-        result = self._make_request('get', self.invoice_types_url)
-        if isinstance(result, dict) and "error" in result: return []
-        return result if isinstance(result, list) else []
-
-    def get_invoice_type(self, type_id):
-        url = f"{self.invoice_types_url}{type_id}/"
-        result = self._make_request('get', url)
-        return result if isinstance(result, dict) and "error" not in result else None
-
-    def create_invoice_type(self, payload):
-        result = self._make_request('post', self.invoice_types_url, json=payload)
-        return result if isinstance(result, dict) else None
-
-    def update_invoice_type(self, type_id, payload):
-        url = f"{self.invoice_types_url}{type_id}/"
-        result = self._make_request('patch', url, json=payload)
-        return result if isinstance(result, dict) else None
-
-    def create_document_with_ocr(self, file_path, ocr_text):
-        url = self.create_document_ocr_url
-        try:
-            with open(file_path, 'rb') as f:
-                files_payload = {'file': (os.path.basename(file_path), f)}
-                data_payload = {'extracted_text': ocr_text}
-                result = self._make_request('post', url, files=files_payload, data=data_payload)
-                return result
-        except FileNotFoundError:
-             print(f"Error: Archivo no encontrado en create_document_with_ocr: {file_path}")
-             return {"error": f"Archivo no encontrado: {file_path}"}
-        except Exception as e:
-             print(f"Error abriendo o enviando archivo en create_document_with_ocr: {e}")
-             traceback.print_exc()
-             return {"error": f"Error al procesar archivo local: {e}"}
-
-    def get_accounting_entries(self, account_id, start_date, end_date, amount=None):
-        url = self.search_entries_url
-        params = {'account_id': account_id, 'start_date': start_date, 'end_date': end_date}
-        if amount is not None: params['amount'] = amount
-        print(f"Buscando asientos contables: {params}") # DEBUG
-        result = self._make_request('get', url, params=params)
-        if isinstance(result, dict) and "error" in result: return []
-        return result if isinstance(result, list) else []
-
-    def associate_entry(self, document_id, entry_id):
-        url = self.associate_entry_url
-        payload = {'document_id': document_id, 'entry_id': entry_id}
-        result = self._make_request('post', url, json=payload)
-        return result
 
 # --- Workers (ReprocessingWorker, ProcessingWorker - Asumiendo sin cambios) ---
 class ReprocessingWorker(QObject):
