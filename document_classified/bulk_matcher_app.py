@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import (
     QMessageBox 
 )
 from PyQt5.QtCore import Qt, QThread
-from .bulk_matcher_api_client import ApiClient
+from .garca_api_client import ApiClient
 
 from .bulk_matcher_ProcessWoker import ProcessingWorker, ReprocessingWorker
 

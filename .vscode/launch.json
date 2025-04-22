@@ -16,7 +16,7 @@
             "name": "Python: Ejecutar Gestor Tipos", // La nueva configuración
             "type": "debugpy", // Usar debugpy
             "request": "launch",
-            "module": "document_classified.desktop", // Apunta al módulo desktop.py
+            "module": "document_classified.types_manager_app", // Apunta al módulo desktop.py
             "console": "integratedTerminal",
             "justMyCode": true
         }

@@ -1,21 +1,16 @@
-# desktop.py (con depuración adicional)
-import json
-import re
+# types_manager_app.py 
 import django
 import sys
 import os
-from tkinter import Image
 import traceback # Para imprimir errores detallados
 from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel,
                              QLineEdit, QPushButton, QComboBox, QMessageBox,
                              QTextEdit,QFileDialog)
-import pytesseract
-import requests
-from PIL import Image 
-from pdf2image import convert_from_bytes, convert_from_path, exceptions as pdf2image_exceptions
+ 
 from PyQt5.QtCore import Qt,pyqtSlot, QStringListModel
 from PyQt5.QtWidgets import QCompleter
 
+from .garca_api_client import ApiClient
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GARCA.settings')
 try:
@@ -27,141 +22,6 @@ except Exception as e:
 from .processing_logic import extract_document_data, perform_ocr
 
 # --- Clase ApiClient (Añadido timeout y prints) ---
-class ApiClient:
-    def __init__(self, base_url="http://127.0.0.1:8000/"):
-        self.base_url = base_url.rstrip('/')
-        self.api_base = f"{self.base_url}/api" # Punto base de la API
-        self.documents_url = f"{self.api_base}/documents"
-        # CORRECCIÓN IMPORTANTE: La URL de accounts debe usar api_base
-        self.accounts_url = f"{self.base_url}/accounts/" # URL corregida
-        self.document_types_url = f"{self.documents_url}/document-types/" # URL base para tipos
-
-    def _make_request(self, method, url, **kwargs):
-        """Método auxiliar para manejar errores comunes de requests."""
-        print(f"API Request: {method.upper()} {url}") # DEBUG
-        # Determinar si se envían archivos
-        files = kwargs.get('files')
-        if files:
-            print(f"API Request Files: {list(files.keys())}") # DEBUG
-            # No establecer Content-Type manualmente, requests lo hace para multipart
-            kwargs.pop('json', None) # Asegurar que no se envíe json si hay files
-        else:
-            # Establecer Content-Type para JSON si no hay archivos
-            headers = kwargs.get('headers', {})
-            if 'Content-Type' not in headers and 'json' in kwargs:
-                 headers['Content-Type'] = 'application/json'
-            kwargs['headers'] = headers
-
-        try:
-            response = requests.request(method, url, timeout=30, **kwargs) # Aumentar timeout para posible OCR
-            response.raise_for_status()
-
-            if response.status_code == 204:
-                 print("API Response: Success (204 No Content)")
-                 return True
-
-            if response.content:
-                try:
-                    json_response = response.json()
-                    print(f"API Response (JSON): {json_response}")
-                    return json_response
-                except requests.exceptions.JSONDecodeError:
-                    print(f"API Response: Success (Status {response.status_code}, No JSON Content)")
-                    return True
-            else:
-                 print(f"API Response: Success (Status {response.status_code}, Empty Content)")
-                 return True
-
-        except requests.exceptions.HTTPError as e:
-            error_detail = ""
-            try:
-                error_data = e.response.json()
-                if isinstance(error_data, dict):
-                    error_detail = " - " + "; ".join([f"{k}: {v[0] if isinstance(v, list) else v}" for k, v in error_data.items()])
-                else:
-                    error_detail = f" - {error_data}"
-            except requests.exceptions.JSONDecodeError:
-                error_detail = f" - {e.response.text}"
-            print(f"Error HTTP: {e}{error_detail}")
-            return {"error": f"Error del servidor ({e.response.status_code}): {error_detail.strip(' -')}"}
-        except requests.exceptions.ConnectionError as e:
-            print(f"Error de Conexión: {e}")
-            return {"error": f"No se pudo conectar al servidor: {self.base_url}"}
-        except requests.exceptions.Timeout as e:
-            print(f"Error de Timeout: {e}")
-            return {"error": "La petición al servidor tardó demasiado (posiblemente OCR)."}
-        except requests.exceptions.RequestException as e:
-            print(f"Error Inesperado de Requests: {e}")
-            return {"error": f"Error de red inesperado: {e}"}
-
-
-    def get_accounts(self):
-        """Obtiene la lista de cuentas contables."""
-        url = self.accounts_url # Usar la variable de instancia corregida
-        result = self._make_request('get', url)
-        # Si _make_request devuelve un dict con 'error', retornar lista vacía
-        if isinstance(result, dict) and "error" in result:
-            print(f"get_accounts: Error recibido - {result['error']}") # Loguear el error
-            return []
-        # Asegurarse de devolver siempre una lista
-        return result if isinstance(result, list) else []
-
-    # --- Métodos para documentType ---
-    def get_document_types(self):
-        """Obtiene la lista de todos los tipos de factura."""
-        result = self._make_request('get', self.document_types_url)
-        if isinstance(result, dict) and "error" in result:
-            print(f"get_document_types: Error recibido - {result['error']}")
-            return []
-        return result if isinstance(result, list) else []
-
-    def get_document_type(self, type_id):
-        """Obtiene los detalles de un tipo de factura específico."""
-        url = f"{self.document_types_url}{type_id}/"
-        result = self._make_request('get', url)
-        # Devuelve el diccionario si es exitoso, o None si hubo error o no es dict
-        return result if isinstance(result, dict) and "error" not in result else None
-
-    def create_document_type(self, payload):
-        """Crea un nuevo tipo de factura."""
-        result = self._make_request('post', self.document_types_url, json=payload)
-        # Devuelve el diccionario de respuesta (puede contener errores de validación)
-        return result if isinstance(result, dict) else None
-
-    def update_document_type(self, type_id, payload):
-        """Actualiza un tipo de factura existente usando PATCH."""
-        url = f"{self.document_types_url}{type_id}/"
-        result = self._make_request('patch', url, json=payload)
-        # Devuelve el diccionario de respuesta (puede contener errores de validación)
-        return result if isinstance(result, dict) else None
-    # --- Fin métodos documentType ---
-
-    def test_rules(self, file_path, rules):
-        """Prueba reglas de extracción enviando el archivo y las reglas."""
-        url = f"{self.documents_url}/test-rules/"
-        try:
-            # Convertir las reglas a una cadena JSON
-            rules_json_string = json.dumps(rules)
-        except TypeError as e:
-            print(f"Error convirtiendo reglas a JSON: {e}")
-            return {"error": f"Error interno al preparar reglas: {e}"}
-
-        try:
-            # Abrir el archivo en modo binario para enviarlo
-            with open(file_path, 'rb') as f:
-                # Preparar datos multipart/form-data
-                files_payload = {'file': (os.path.basename(file_path), f)}
-                data_payload = {'rules': rules_json_string}
-
-                # Enviar usando _make_request con 'files' y 'data'
-                result = self._make_request('post', url, files=files_payload, data=data_payload)
-
-        except FileNotFoundError:
-             print(f"Error: Archivo no encontrado en test_rules: {file_path}")
-             return {"error": f"Archivo no encontrado: {file_path}"}
-        except Exception as e:
-             print(f"Error abriendo o enviando archivo en test_rules: {e}")
-             return {"error": f"Error al procesar archivo local: {e}"}
 
 
 class MappingWindow(QWidget):
