@@ -1,9 +1,9 @@
 # invoice_processor/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (
-    AssociateEntryView,
+from .views import (    
     CreateDocumentWithOCRView,
+    FinalizeInvoiceAttachmentView,
     InvoiceDocumentUploadView,
     InvoiceTypeViewSet,
     ExtractedDataViewSet,
@@ -26,7 +26,7 @@ urlpatterns = [
     path('documents/<int:id>/reprocess/', ReprocessDocumentView.as_view(), name='invoice-document-reprocess'), 
     path('documents/create_with_ocr/', CreateDocumentWithOCRView.as_view(), name='create-document-with-ocr'),
     path('documents/<int:id>/status/', InvoiceDocumentStatusView.as_view(), name='invoice-document-status'),
-    path('entries/search/', SearchAccountingEntriesView.as_view(), name='search-accounting-entries'), # Ajusta prefijo si quieres
-    path('documents/associate_entry/', AssociateEntryView.as_view(), name='associate-entry'),
+    path('entries/search/', SearchAccountingEntriesView.as_view(), name='search-accounting-entries'),     
+    path('documents/<int:document_id>/finalize_attachment/<int:entry_id>/',FinalizeInvoiceAttachmentView.as_view(),name='finalize_invoice_attachment'),
 ]
 

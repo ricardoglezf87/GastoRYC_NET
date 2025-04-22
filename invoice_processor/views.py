@@ -1,6 +1,9 @@
 # invoice_processor/views.py
 import json
+import os
 import traceback
+from attachments.models import Attachment
+from django.contrib.contenttypes.models import ContentType
 from entries.models import Entry 
 from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
@@ -306,38 +309,60 @@ class SearchAccountingEntriesView(generics.ListAPIView):
              traceback.print_exc()
              return Entry.objects.none()
 
-# --- NUEVA VISTA para asociar documento y asiento ---
-class AssociateEntryView(APIView):
-    def post(self, request, *args, **kwargs):
-        document_id = request.data.get('document_id')
-        entry_id = request.data.get('entry_id')
-
-        if not document_id or not entry_id:
-            return Response({"error": "Faltan document_id o entry_id"}, status=status.HTTP_400_BAD_REQUEST)
+class FinalizeInvoiceAttachmentView(APIView):
+    """
+    Crea un Attachment para un Entry usando el archivo de un InvoiceDocument,
+    y luego elimina el InvoiceDocument.
+    """
+    def post(self, request, document_id, entry_id, *args, **kwargs):
+        # Usar get_object_or_404 es más seguro y devuelve 404 si no existen
+        print(f"Finalizando adjunto para Documento ID: {document_id} y Asiento ID: {entry_id}!!!")
+        try:
+            invoice_document = InvoiceDocument.objects.get(id=document_id)
+        except InvoiceDocument.DoesNotExist:
+             return Response({"error": f"Documento {document_id} no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
         try:
-            document = InvoiceDocument.objects.get(id=document_id)
-            # Reemplaza 'Entry' con tu modelo de asiento real
             entry = Entry.objects.get(id=entry_id)
+        except Entry.DoesNotExist:
+             return Response({"error": f"Asiento {entry_id} no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-            # --- Establecer la relación ---
-            # Asume que tienes un campo ForeignKey 'associated_entry' en InvoiceDocument
-            document.associated_entry = entry
-            document.status = 'ASSOCIATED' # Actualizar estado
-            document.save()
-            # -----------------------------
+        if not invoice_document.file or not invoice_document.file.name:
+            return Response(
+                {"error": f"El documento {document_id} no tiene archivo asociado."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-            print(f"Documento {document_id} asociado con Asiento {entry_id}")
-            # Devolver el estado actualizado o un mensaje de éxito
-            serializer = InvoiceDocumentSerializer(document, context={'request': request})
-            # O simplemente: return Response({"status": "ASSOCIATED"}, status=status.HTTP_200_OK)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        invoice_file = invoice_document.file
+        invoice_filename = os.path.basename(invoice_file.name)
 
-        except InvoiceDocument.DoesNotExist:
-            return Response({"error": f"Documento con id {document_id} no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-        except Entry.DoesNotExist: # Reemplaza 'Entry'
-            return Response({"error": f"Asiento contable con id {entry_id} no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+        try:
+
+            entry_content_type = ContentType.objects.get_for_model(Entry)
+
+            # 1. Crear Attachment referenciando el archivo existente
+            #    (Verificar duplicados es opcional pero recomendado)
+            if not Attachment.objects.filter(content_type=entry_content_type, object_id=entry.id, file=invoice_file.name).exists():
+                attachment = Attachment.objects.create(
+                    content_type=entry_content_type, # <-- Usar ContentType
+                    object_id=entry.id,             # <-- Usar object_id (el ID del asiento)
+                    file=invoice_file,              # Asigna el FileField existente
+                    description=f"Factura: {invoice_filename}"
+                )
+                print(f"Adjunto creado (ID: {attachment.id}) para Asiento {entry_id} usando archivo de Doc {document_id}")
+            else:
+                print(f"Info: El archivo '{invoice_filename}' ya estaba adjunto al asiento {entry_id}. Procediendo a eliminar documento original.")
+
+           # 2. Eliminar InvoiceDocument original (sin cambios aquí)
+            doc_id_deleted = invoice_document.id
+            invoice_document.delete()
+            print(f"InvoiceDocument ID {doc_id_deleted} eliminado.")
+
+            # 3. Devolver éxito (sin cambios aquí)
+            return Response({"status": "ATTACHED_AND_DELETED"}, status=status.HTTP_200_OK)
+
         except Exception as e:
-            print(f"Error asociando documento {document_id} con asiento {entry_id}: {e}")
+            # ... (manejo de excepción sin cambios aquí) ...
+            print(f"Error al crear adjunto o eliminar Doc para Asiento {entry_id} desde Documento {document_id}: {e}")
             traceback.print_exc()
-            return Response({"error": f"Error interno del servidor al asociar: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": f"Error interno durante la finalización: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

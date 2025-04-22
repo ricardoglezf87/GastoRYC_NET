@@ -13,8 +13,8 @@ class ApiClient:
         self.list_documents_url = f"{self.invoices_url}/documents/"
         self.reprocess_document_url_template = f"{self.invoices_url}/documents/{{id}}/reprocess/"
         self.create_document_ocr_url = f"{self.invoices_url}/documents/create_with_ocr/"
-        self.search_entries_url = f"{self.invoices_url}/entries/search/" # URL corregida
-        self.associate_entry_url = f"{self.invoices_url}/documents/associate_entry/"
+        self.search_entries_url = f"{self.invoices_url}/entries/search/"
+        self.finalize_attachment_url_template = f"{self.invoices_url}/documents/{{document_id}}/finalize_attachment/{{entry_id}}/"
 
     def _make_request(self, method, url, **kwargs):
         # ... (código sin cambios) ...
@@ -134,4 +134,10 @@ class ApiClient:
         url = self.associate_entry_url
         payload = {'document_id': document_id, 'entry_id': entry_id}
         result = self._make_request('post', url, json=payload)
+        return result
+    
+    def finalize_invoice_attachment(self, document_id, entry_id):
+        """Solicita al backend adjuntar archivo a entry y eliminar invoice doc."""
+        url = self.finalize_attachment_url_template.format(document_id=document_id, entry_id=entry_id)
+        result = self._make_request('post', url) # Petición POST sin cuerpo
         return result

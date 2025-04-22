@@ -364,34 +364,35 @@ class MainWindow(QMainWindow):
         entry_id = button.property("entry_id")
         if doc_id is None or entry_id is None: return
 
-        print(f"Intentando asociar Documento ID: {doc_id} con Asiento ID: {entry_id}")
-        self.status_label.setText(f"Asociando doc {doc_id}...")
+        print(f"Intentando FINALIZAR adjunto para Doc ID: {doc_id} a Asiento ID: {entry_id}")
+        self.status_label.setText(f"Finalizando doc {doc_id}...")
         QApplication.processEvents()
+        button.setEnabled(False)
 
-        response = self.api_client.associate_entry(doc_id, entry_id)
+        # --- LLAMAR AL NUEVO MÉTODO API ---
+        response = self.api_client.finalize_invoice_attachment(doc_id, entry_id)
+        # ---------------------------------
 
-        if response and isinstance(response, dict) and response.get("status") == "ASSOCIATED":
-            print("Asociación exitosa.")
-            self.status_label.setText(f"Documento {doc_id} asociado.")
+        # Verificar la respuesta del backend
+        if response and isinstance(response, dict) and "error" not in response and response.get("status") == "ATTACHED_AND_DELETED":
+            print(f"Documento {doc_id} finalizado (adjuntado a asiento {entry_id} y eliminado).")
+            self.status_label.setText(f"Documento {doc_id} finalizado.")
+
+            # Actualizar UI (Eliminar fila)
             for row in range(self.table_widget.rowCount()):
                 id_item = self.table_widget.item(row, 0)
                 if id_item and int(id_item.text()) == doc_id:
-                    self.table_widget.setItem(row, 2, QTableWidgetItem("Asociado"))
-                    self.table_widget.removeCellWidget(row, 10) # Columna 10 ahora
-                    if doc_id in self.documents_data:
-                        self.documents_data[doc_id]["status"] = "ASSOCIATED"
-                    # Cambiar color a verde
-                    for col in range(self.table_widget.columnCount()):
-                         item = self.table_widget.item(row, col)
-                         if item: item.setBackground(Qt.green)
+                    self.table_widget.removeRow(row)
                     break
-        else:
-            error_msg = response.get("error", "Error desconocido") if isinstance(response, dict) else "Respuesta inválida"
-            print(f"Error en asociación: {error_msg}")
-            # --- USAR QMessageBox ---
-            QMessageBox.warning(self, "Error Asociación", f"No se pudo asociar el documento {doc_id}:\n{error_msg}")
-            # -----------------------
-            self.status_label.setText(f"Error al asociar doc {doc_id}.")
+            if doc_id in self.documents_data:
+                del self.documents_data[doc_id]
+
+        else: # Falló la operación en el backend
+            error_msg = response.get("error", "Error desconocido al finalizar") if isinstance(response, dict) else "Respuesta inválida de API"
+            print(f"Error al finalizar Doc ID {doc_id}: {error_msg}")
+            QMessageBox.warning(self, "Error Finalización", f"No se pudo finalizar el documento {doc_id}:\n{error_msg}")
+            self.status_label.setText(f"Error al finalizar doc {doc_id}.")
+            button.setEnabled(True) # Habilitar botón de nuevo si falló
 
     # --- ELIMINAR LA SEGUNDA DEFINICIÓN DE on_associate_button_clicked ---
 

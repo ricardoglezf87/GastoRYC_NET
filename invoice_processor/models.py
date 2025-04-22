@@ -61,7 +61,7 @@ class InvoiceDocument(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Subida")
     # Puedes relacionarlo con el usuario que lo subió si tienes autenticación
     # uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
-    file = models.FileField(upload_to='invoices/%Y/%m/%d/', verbose_name="Archivo de Factura")
+    file = models.FileField(upload_to='invoices', verbose_name="Archivo de Factura")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING', verbose_name="Estado")
     # Guarda el texto extraído por OCR
     extracted_text = models.TextField(blank=True, null=True, verbose_name="Texto Extraído (OCR)")
