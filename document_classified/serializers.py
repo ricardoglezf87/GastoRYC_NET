@@ -1,34 +1,11 @@
 # document_classified/serializers.py
 from rest_framework import serializers
-
-from entries.models import Entry
-from transactions.models import Transaction
 from .models import documentInfo, documentType, ExtractedData
 
 class ExtractedDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExtractedData
         fields = '__all__' # O lista explícitamente los campos que quieres exponer
-
-class TransactionSerializer(serializers.ModelSerializer):
-    # Opcional: Mostrar nombre de cuenta en lugar de ID
-    account_name = serializers.CharField(source='account.get_full_hierarchy', read_only=True)
-
-    class Meta:
-        model = Transaction
-        # Incluye los campos que quieres de cada transacción
-        fields = ['id', 'account', 'account_name', 'debit', 'credit']
-        read_only_fields = ['account_name'] 
-class EntrySerializer(serializers.ModelSerializer):
-    # Puedes añadir campos extra o modificar la representación aquí si es necesario
-    
-    transactions = TransactionSerializer(many=True, read_only=True)
-    
-    class Meta:
-        model = Entry
-        fields = ['id', 'date', 'description', 'transactions']
-
-    
 
 class documentTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -71,7 +48,6 @@ class documentInfoSerializer(serializers.ModelSerializer):
             'document_type_account_id', # <-- AÑADIR ESTE CAMPO A LA LISTA
             'extracted_data', # Datos extraídos anidados (solo lectura)
         ]
-        # Mueve document_type_account_id a read_only_fields si ya estaba definido como read_only
         read_only_fields = ['id', 'uploaded_at', 'status', 'get_status_display', 'extracted_text', 'extracted_data', 'document_type_name', 'file_url', 'document_type_account_id']
 
     def get_file_url(self, obj):
@@ -81,6 +57,4 @@ class documentInfoSerializer(serializers.ModelSerializer):
         return None
 
     def create(self, validated_data):
-        # DRF maneja la subida del archivo automáticamente si usas FileField
-        # La lógica de procesamiento se llama desde la vista (perform_create)
         return super().create(validated_data)

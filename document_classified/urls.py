@@ -7,7 +7,6 @@ from .views import (
     documentTypeViewSet,
     ExtractedDataViewSet,
     documentInfoStatusView,
-    SearchAccountingEntriesView,
     documentInfoListView,
     ReprocessDocumentView,
     TestExtractionRulesView
@@ -23,8 +22,7 @@ urlpatterns = [
     path('documents/', documentInfoListView.as_view(), name='document-document-list'), 
     path('documents/<int:id>/reprocess/', ReprocessDocumentView.as_view(), name='document-document-reprocess'), 
     path('documents/create_with_ocr/', CreateDocumentWithOCRView.as_view(), name='create-document-with-ocr'),
-    path('documents/<int:id>/status/', documentInfoStatusView.as_view(), name='document-document-status'),
-    path('entries/search/', SearchAccountingEntriesView.as_view(), name='search-accounting-entries'),     
+    path('documents/<int:id>/status/', documentInfoStatusView.as_view(), name='document-document-status'),    
     path('documents/<int:document_id>/finalize_attachment/<int:entry_id>/',FinalizedocumentAttachmentView.as_view(),name='finalize_document_attachment'),
 ]
 

@@ -13,7 +13,7 @@ class ApiClient:
         self.list_documents_url = f"{self.documents_url}/documents/"
         self.reprocess_document_url_template = f"{self.documents_url}/documents/{{id}}/reprocess/"
         self.create_document_ocr_url = f"{self.documents_url}/documents/create_with_ocr/"
-        self.search_entries_url = f"{self.documents_url}/entries/search/"
+        self.search_entries_url = f"{self.base_url}/entries/search/"
         self.finalize_attachment_url_template = f"{self.documents_url}/documents/{{document_id}}/finalize_attachment/{{entry_id}}/"
 
     def _make_request(self, method, url, **kwargs):

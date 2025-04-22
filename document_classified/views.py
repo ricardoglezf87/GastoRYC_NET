@@ -9,11 +9,10 @@ from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
-from datetime import datetime, timedelta
 from django.db import transaction
 from document_classified.processing_logic import extract_document_data, identify_document_type, perform_ocr, process_document_document
 from .models import documentInfo, documentType, ExtractedData
-from .serializers import EntrySerializer, documentInfoSerializer, documentTypeSerializer, ExtractedDataSerializer
+from .serializers import documentInfoSerializer, documentTypeSerializer, ExtractedDataSerializer
 # --- Importa la tarea Celery ---
 
 # -----------------------------
@@ -225,57 +224,7 @@ class CreateDocumentWithOCRView(APIView):
 
 # --- NUEVA VISTA para buscar asientos (Ejemplo básico) ---
 # Necesitarás adaptar esto a tu modelo real de Asientos Contables ('Entry')
-class SearchAccountingEntriesView(generics.ListAPIView):
-    serializer_class = EntrySerializer # Reemplaza con tu serializer de asientos
-    queryset = None # Se filtrará dinámicamente
 
-    def get_serializer_context(self):
-        """
-        Añade el account_id del filtro al contexto del serializer.
-        """
-        context = super().get_serializer_context()
-        try:
-            # Obtener account_id de los parámetros de la query
-            context['account_id'] = int(self.request.query_params.get('account_id'))
-        except (TypeError, ValueError):
-            context['account_id'] = None
-        return context
-
-    def get_queryset(self):
-        # ... (tu lógica de filtrado existente para obtener el queryset de Entry) ...
-        # Asegúrate que esta lógica filtre por account_id usando la relación
-        # a través de Transaction, por ejemplo:
-        # queryset = Entry.objects.filter(transactions__account_id=account_id, ...)
-        # --------------------------------------------------------------------
-        account_id = self.request.query_params.get('account_id')
-        start_date_str = self.request.query_params.get('start_date')
-        end_date_str = self.request.query_params.get('end_date')
-
-        if not account_id or not start_date_str or not end_date_str:
-            return Entry.objects.none()
-
-        try:
-            account_id = int(account_id)
-            start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
-            end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date()
-
-            # Filtrar Entry basado en la transacción y la fecha
-            queryset = Entry.objects.filter(
-                transactions__account_id=account_id,
-                date__gte=start_date,
-                date__lte=end_date
-            ).distinct() # distinct() es importante si un Entry pudiera coincidir múltiples veces
-
-            print(f"Buscando asientos para cuenta {account_id} entre {start_date} y {end_date}")
-            return queryset
-
-        except (ValueError, TypeError) as e:
-            print(f"Error en parámetros de búsqueda de asientos: {e}")
-            return Entry.objects.none()
-        except Exception as e:
-             print(f"Error inesperado buscando asientos: {e}")
-             traceback.print_exc()
-             return Entry.objects.none()
 
 class FinalizedocumentAttachmentView(APIView):
     """
