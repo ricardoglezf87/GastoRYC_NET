@@ -8,7 +8,7 @@
             "name": "Python: Ejecutar Bulk Matcher", // Tu configuración existente
             "type": "debugpy", // Cambiado a debugpy que es más común ahora
             "request": "launch",
-            "module": "invoice_processor.bulk_matcher_app",
+            "module": "document_classified.bulk_matcher_app",
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -16,7 +16,7 @@
             "name": "Python: Ejecutar Gestor Tipos", // La nueva configuración
             "type": "debugpy", // Usar debugpy
             "request": "launch",
-            "module": "invoice_processor.desktop", // Apunta al módulo desktop.py
+            "module": "document_classified.desktop", // Apunta al módulo desktop.py
             "console": "integratedTerminal",
             "justMyCode": true
         }
