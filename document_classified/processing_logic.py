@@ -64,7 +64,7 @@ def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo
             for i, img in enumerate(images):
                 print(f"perform_ocr_local: Procesando imagen {i+1}/{len(images)} del PDF...")
                 # Asegúrate que Tesseract esté configurado o en el PATH
-                config = '--psm 6'
+                config = '--psm 3 --oem 3'
                 full_text += pytesseract.image_to_string(img, lang='spa', config=config) + "\n\n"
             text = full_text.strip()
 
