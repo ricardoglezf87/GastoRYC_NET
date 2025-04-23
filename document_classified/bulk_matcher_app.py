@@ -1,4 +1,5 @@
 # bulk_matcher_app.py
+
 import sys
 import os
 import traceback
@@ -6,15 +7,98 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
     QProgressBar, QLabel, QFileDialog, QSpinBox, QAbstractItemView,
-    QMessageBox 
+    QMessageBox
 )
-from PyQt5.QtCore import Qt, QThread,QUrl
+# Asegúrate de importar QUrl
+from PyQt5.QtCore import Qt, QThread, QUrl, pyqtSignal 
 from PyQt5.QtGui import QDesktopServices
 from .garca_api_client import ApiClient
 
 from .bulk_matcher_ProcessWoker import ProcessingWorker, ReprocessingWorker
 
+class DropTableWidget(QTableWidget):
+    filesDropped = pyqtSignal(list)
 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAcceptDrops(True)
+        print("DropTableWidget: __init__ - Drops habilitados.") # DEBUG
+
+    def dragEnterEvent(self, event):
+        print("DropTableWidget: dragEnterEvent triggered") # DEBUG
+        mime_data = event.mimeData()
+        print(f"  Mime formats: {mime_data.formats()}") # DEBUG
+        print(f"  Mime URLs: {mime_data.urls()}") # DEBUG
+
+        if mime_data.hasUrls():
+            # Comprobación simplificada temporalmente: Aceptar cualquier archivo
+            print("  Tiene URLs. Aceptando acción propuesta.") # DEBUG
+            event.acceptProposedAction()
+            self.setStyleSheet("background-color: #e0f0ff;") # Azul claro para feedback
+            # --- Comentamos la comprobación de PDF temporalmente ---
+            # has_pdf = False
+            # for url in mime_data.urls():
+            #     if url.isLocalFile() and url.toLocalFile().lower().endswith('.pdf'):
+            #         has_pdf = True
+            #         break
+            # if has_pdf:
+            #     print("  Tiene PDF. Aceptando acción propuesta.") # DEBUG
+            #     event.acceptProposedAction()
+            #     self.setStyleSheet("background-color: #e0f0ff;") # Azul claro
+            # else:
+            #     print("  No tiene PDF. Ignorando.") # DEBUG
+            #     event.ignore()
+            # -----------------------------------------------------
+        else:
+            print("  No tiene URLs. Ignorando.") # DEBUG
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        # Este evento es crucial. Si no se acepta aquí, el cursor puede seguir prohibido.
+        print("DropTableWidget: dragMoveEvent triggered") # DEBUG
+        if event.mimeData().hasUrls():
+            # print("  dragMove: Aceptando") # DEBUG (puede ser muy verboso)
+            event.acceptProposedAction()
+        else:
+            # print("  dragMove: Ignorando") # DEBUG
+            event.ignore()
+
+    def dragLeaveEvent(self, event):
+        print("DropTableWidget: dragLeaveEvent triggered") # DEBUG
+        self.setStyleSheet("")
+        event.accept()
+
+    def dropEvent(self, event):
+        print("DropTableWidget: dropEvent triggered") # DEBUG
+        self.setStyleSheet("")
+        mime_data = event.mimeData()
+        print(f"  Drop Mime URLs: {mime_data.urls()}") # DEBUG
+
+        if mime_data.hasUrls():
+            event.acceptProposedAction()
+            file_paths = []
+            for url in mime_data.urls():
+                if url.isLocalFile():
+                    file_path = url.toLocalFile()
+                    print(f"  Archivo local detectado: {file_path}") # DEBUG
+                    # Volvemos a poner la comprobación de PDF aquí, en el drop final
+                    if os.path.isfile(file_path) and file_path.lower().endswith('.pdf'):
+                        print(f"    -> Es PDF válido. Añadiendo.") # DEBUG
+                        file_paths.append(file_path)
+                    else:
+                        print(f"    -> Ignorado (no es PDF válido).") # DEBUG
+                else:
+                    print(f"  URL ignorada (no local): {url.toString()}") # DEBUG
+
+
+            if file_paths:
+                print(f"  Emitiendo señal filesDropped con: {file_paths}") # DEBUG
+                self.filesDropped.emit(file_paths)
+            else:
+                print("  No se encontraron archivos PDF válidos para emitir.") # DEBUG
+        else:
+            print("  Drop ignorado (no tiene URLs).") # DEBUG
+            event.ignore()
 
 # --- Ventana Principal ---
 class MainWindow(QMainWindow):
@@ -41,7 +125,7 @@ class MainWindow(QMainWindow):
         # --- Sección Superior: Controles ---
         controls_layout = QHBoxLayout()
         self.load_button = QPushButton("Cargar documentos PDF")
-        self.load_button.clicked.connect(self.load_files)
+        self.load_button.clicked.connect(self.load_files_dialog) # Renombrar para claridad
         controls_layout.addWidget(self.load_button)
 
         controls_layout.addWidget(QLabel("Tolerancia Días:"))
@@ -65,23 +149,27 @@ class MainWindow(QMainWindow):
         # --- FIN Sección Superior ---
 
         # --- Sección Media: Tabla de Documentos ---
-        self.table_widget = QTableWidget()
-        # --- CORREGIR NÚMERO DE COLUMNAS ---
-        self.table_widget.setColumnCount(11) # ID(oculto), Archivo, Estado, Tipo, FechaFac, ImpFac, CuentaFac, ID Asiento, Desc Asiento, Cuentas Asiento, Acción
-        # ------------------------------------
+        self.table_widget = DropTableWidget()
+        self.table_widget.filesDropped.connect(self.start_processing_files)
+        self.table_widget.setColumnCount(11)
         self.table_widget.setHorizontalHeaderLabels([
             "ID", "Archivo", "Estado", "Tipo", "Fecha Factura",
             "Importe Factura", "Cuenta Doc.", "ID Asiento", "Desc. Asiento", "Cuentas Asiento", "Acción"
         ])
-        self.table_widget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch) # Archivo
-        self.table_widget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents) # Estado
-        self.table_widget.horizontalHeader().setSectionResizeMode(8, QHeaderView.Stretch) # Desc. Asiento
-        self.table_widget.horizontalHeader().setSectionResizeMode(9, QHeaderView.Stretch) # Cuentas Asiento
-        self.table_widget.horizontalHeader().setSectionResizeMode(10, QHeaderView.ResizeToContents) # Acción
+        self.table_widget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.table_widget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
+        self.table_widget.horizontalHeader().setSectionResizeMode(8, QHeaderView.Stretch)
+        self.table_widget.horizontalHeader().setSectionResizeMode(9, QHeaderView.Stretch)
+        self.table_widget.horizontalHeader().setSectionResizeMode(10, QHeaderView.ResizeToContents)
         self.table_widget.setColumnHidden(0, True)
         self.table_widget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table_widget.itemSelectionChanged.connect(self.on_selection_changed)
         self.table_widget.cellClicked.connect(self.on_selection_changed)
+
+        # <<<--- CAMBIO 1: Habilitar Drag and Drop en la tabla --->>>
+        self.table_widget.setAcceptDrops(True)
+        # <<<----------------------------------------------------->>>
+
         main_layout.addWidget(self.table_widget)
         # --- FIN Sección Media ---
 
@@ -89,12 +177,51 @@ class MainWindow(QMainWindow):
         status_layout = QHBoxLayout()
         self.progress_bar = QProgressBar()
         status_layout.addWidget(self.progress_bar)
-        self.status_label = QLabel("Listo.")
+        self.status_label = QLabel("Listo. Puedes arrastrar archivos PDF a la tabla.") # Mensaje actualizado
         status_layout.addWidget(self.status_label)
         main_layout.addLayout(status_layout)
         # --- FIN Sección Inferior ---
 
     # --- Slots y Métodos ---
+
+    # <<<--- CAMBIO 3: Renombrar y refactorizar la carga de archivos --->>>
+    def load_files_dialog(self):
+        """Abre el diálogo para seleccionar archivos."""
+        options = QFileDialog.Options()
+        files, _ = QFileDialog.getOpenFileNames(self,"Seleccionar documentos PDF","", "Archivos PDF (*.pdf);;Todos los archivos (*)", options=options)
+        if files:
+            self.start_processing_files(files) # Llamar a la nueva función
+        else:
+            print("Selección de archivo cancelada.")
+
+    def start_processing_files(self, file_paths):
+        """Inicia el hilo de procesamiento para una lista de rutas de archivo."""
+        if not file_paths:
+            return
+
+        # Evitar iniciar si ya está procesando
+        if self.processing_thread and self.processing_thread.isRunning():
+            QMessageBox.warning(self, "Proceso en Curso", "Ya hay un proceso de carga en ejecución.")
+            return
+
+        print(f"Iniciando procesamiento para {len(file_paths)} archivos.")
+        self.load_button.setEnabled(False)
+        self.find_match_button.setEnabled(False) # Deshabilitar mientras procesa
+        self.reprocess_button.setEnabled(False) # Deshabilitar mientras procesa
+        self.status_label.setText("Iniciando procesamiento..."); self.progress_bar.setValue(0)
+
+        # Crear e iniciar el hilo (como ya lo hacías)
+        self.processing_thread = QThread()
+        self.processing_worker = ProcessingWorker(file_paths, self.api_client)
+        self.processing_worker.moveToThread(self.processing_thread)
+        self.processing_worker.progress_updated.connect(self.update_progress)
+        self.processing_worker.file_processed.connect(self.update_document_table)
+        self.processing_worker.error_occurred.connect(self.handle_processing_error)
+        self.processing_worker.finished.connect(self.on_processing_finished)
+        self.processing_thread.started.connect(self.processing_worker.run)
+        self.processing_thread.start()
+    # <<<------------------------------------------------------------->>>
+
     def handle_reprocessing_error(self, doc_id, error_msg):
         # ... (código sin cambios) ...
         print(f"Error reprocesando ID {doc_id}: {error_msg}")
@@ -117,6 +244,12 @@ class MainWindow(QMainWindow):
                 try: doc_ids_to_reprocess.append(int(id_item.text()))
                 except ValueError: print(f"ID inválido en fila {index.row()}: {id_item.text()}")
         if not doc_ids_to_reprocess: return
+
+        # Evitar iniciar si ya está procesando/reprocesando
+        if (self.processing_thread and self.processing_thread.isRunning()) or \
+           (self.reprocessing_thread and self.reprocessing_thread.isRunning()):
+            QMessageBox.warning(self, "Proceso en Curso", "Ya hay un proceso de carga o reproceso en ejecución.")
+            return
 
         print(f"Iniciando reproceso para IDs: {doc_ids_to_reprocess}")
         self.load_button.setEnabled(False); self.find_match_button.setEnabled(False); self.reprocess_button.setEnabled(False)
@@ -149,10 +282,15 @@ class MainWindow(QMainWindow):
         selected_rows = self.table_widget.selectionModel().selectedRows()
         has_selection = bool(selected_rows)
         print(f"on_selection_changed llamado. Filas seleccionadas: {len(selected_rows)}, Habilitar botones: {has_selection}")
-        self.find_match_button.setEnabled(has_selection)
-        self.reprocess_button.setEnabled(has_selection)
+        # Solo habilitar si no hay un proceso en curso
+        is_processing = (self.processing_thread and self.processing_thread.isRunning()) or \
+                        (self.reprocessing_thread and self.reprocessing_thread.isRunning())
+        self.find_match_button.setEnabled(has_selection and not is_processing)
+        self.reprocess_button.setEnabled(has_selection and not is_processing)
+
 
     def load_initial_documents(self):
+        # ... (código sin cambios) ...
         self.status_label.setText("Cargando documentos existentes...")
         QApplication.processEvents()
         try:
@@ -166,41 +304,23 @@ class MainWindow(QMainWindow):
                          try: doc_info['filename'] = os.path.basename(doc_info['file_url'])
                          except: doc_info['filename'] = 'Nombre Desconocido'
                     self.update_document_table(doc_info)
-                self.status_label.setText(f"{len(documents)} documentos cargados.")
+                self.status_label.setText(f"{len(documents)} documentos cargados. Puedes arrastrar archivos PDF a la tabla.") # Mensaje actualizado
             else:
                 self.status_label.setText("No se encontraron documentos existentes o hubo un error.")
         except Exception as e:
             print(f"Error cargando documentos iniciales: {e}")
             traceback.print_exc()
             self.status_label.setText("Error al cargar documentos.")
-            # --- USAR QMessageBox ---
             QMessageBox.critical(self, "Error de Carga", f"No se pudieron cargar los documentos:\n{e}")
-            # -----------------------
 
-    def load_files(self):
-        # ... (código sin cambios) ...
-        options = QFileDialog.Options()
-        files, _ = QFileDialog.getOpenFileNames(self,"Seleccionar documentos PDF","", "Archivos PDF (*.pdf);;Todos los archivos (*)", options=options)
-        if files:
-            print(f"Archivos seleccionados: {len(files)}")
-            self.load_button.setEnabled(False)
-            self.status_label.setText("Iniciando procesamiento..."); self.progress_bar.setValue(0)
-            self.processing_thread = QThread()
-            self.processing_worker = ProcessingWorker(files, self.api_client)
-            self.processing_worker.moveToThread(self.processing_thread)
-            self.processing_worker.progress_updated.connect(self.update_progress)
-            self.processing_worker.file_processed.connect(self.update_document_table)
-            self.processing_worker.error_occurred.connect(self.handle_processing_error)
-            self.processing_worker.finished.connect(self.on_processing_finished)
-            self.processing_thread.started.connect(self.processing_worker.run)
-            self.processing_thread.start()
-        else: print("Selección de archivo cancelada.")
+    # --- load_files ahora es load_files_dialog ---
 
     def update_progress(self, value, text):
         # ... (código sin cambios) ...
         self.progress_bar.setValue(value); self.status_label.setText(text)
 
     def update_document_table(self, doc_info):
+        # ... (código sin cambios) ...
         doc_id = doc_info.get("id")
         if not doc_id: print("Error: doc_info recibido sin ID."); return
 
@@ -230,10 +350,8 @@ class MainWindow(QMainWindow):
         total_amount = extracted_data.get("total_amount") if extracted_data else None
         total_str = f"{float(total_amount):.2f}" if total_amount is not None else ""
         self.table_widget.setItem(row_index, 5, QTableWidgetItem(total_str))
-        # --- CORREGIR DUPLICACIÓN ---
         account_id_from_type = doc_info.get("document_type_account_id", "")
         self.table_widget.setItem(row_index, 6, QTableWidgetItem(str(account_id_from_type) or ""))
-        # --- FIN CORRECCIÓN ---
         self.table_widget.setItem(row_index, 7, QTableWidgetItem("")) # ID Asiento
         self.table_widget.setItem(row_index, 8, QTableWidgetItem("")) # Desc. Asiento
         self.table_widget.setItem(row_index, 9, QTableWidgetItem("")) # Cuentas Asiento
@@ -284,6 +402,7 @@ class MainWindow(QMainWindow):
                 if item: item.setBackground(Qt.white) # O el color por defecto
 
     def find_matching_entries(self):
+        # ... (código sin cambios) ...
         selected_rows = self.table_widget.selectionModel().selectedRows()
         if not selected_rows: return
         tolerance_days = self.days_spinbox.value()
@@ -498,6 +617,7 @@ class MainWindow(QMainWindow):
 
 
     def on_delete_button_clicked(self):
+        # ... (código sin cambios) ...
         button = self.sender()
         if not button: return
         doc_id = button.property("doc_id")
@@ -576,6 +696,7 @@ class MainWindow(QMainWindow):
                      btn.setEnabled(True)
 
     def on_view_button_clicked(self):
+        # ... (código sin cambios) ...
         button = self.sender()
         if not button: return
         file_url = button.property("file_url")
@@ -592,8 +713,8 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Sin Archivo", f"No hay URL de archivo asociada al documento ID {doc_id}.")
             print(f"No file_url para Doc ID {doc_id}")
 
-    # --- SOLO UNA DEFINICIÓN DE on_associate_button_clicked ---
     def on_associate_button_clicked(self):
+        # ... (código sin cambios) ...
         button = self.sender()
         if not button: return
         doc_id = button.property("doc_id")
@@ -630,8 +751,6 @@ class MainWindow(QMainWindow):
             self.status_label.setText(f"Error al finalizar doc {doc_id}.")
             button.setEnabled(True) # Habilitar botón de nuevo si falló
 
-    # --- ELIMINAR LA SEGUNDA DEFINICIÓN DE on_associate_button_clicked ---
-
     def handle_processing_error(self, filename, error_msg):
         # ... (código sin cambios) ...
         print(f"Error procesando {filename}: {error_msg}")
@@ -647,12 +766,12 @@ class MainWindow(QMainWindow):
         # ... (código sin cambios) ...
         self.status_label.setText("Proceso de carga y OCR completado.")
         self.load_button.setEnabled(True)
+        # Habilitar botones de acción si hay selección
+        self.on_selection_changed()
         if self.processing_thread:
             self.processing_thread.quit(); self.processing_thread.wait()
         self.processing_thread = None; self.processing_worker = None
         print("Hilo de procesamiento terminado.")
-
-    # --- ELIMINAR LA SEGUNDA DEFINICIÓN DE on_processing_finished ---
 
     def closeEvent(self, event):
         # ... (código sin cambios) ...
