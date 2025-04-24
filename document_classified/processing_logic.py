@@ -274,35 +274,67 @@ def extract_document_data(text, rules_or_type):
 def process_document_document(document_id):
     """
     Función principal que orquesta el procesamiento de un documentInfo.
+    Ahora reutiliza el texto OCR existente si está disponible.
     """
     try:
+        # Obtener el documento y marcar como 'PROCESSING'
         doc = documentInfo.objects.get(id=document_id)
-        print(f"Procesando Documento ID: {doc.id}, Archivo: {doc.file.name}")
+        print(f"Procesando/Reprocesando Documento ID: {doc.id}, Archivo: {doc.file.name}")
         doc.status = 'PROCESSING'
-        doc.save()
+        # Guardar el estado 'PROCESSING' inmediatamente
+        doc.save(update_fields=['status'])
 
-        extracted_text = perform_ocr(doc.file.path)
-        if extracted_text is None:
-            doc.status = 'FAILED'; doc.extracted_text = "Error durante OCR"; doc.save()
-            print(f"Fallo OCR para Documento ID: {doc.id}")
-            return False, "Error OCR"
-        doc.extracted_text = extracted_text
+        extracted_text = None
+
+        # --- INICIO MODIFICACIÓN: Reutilizar OCR existente ---
+        if doc.extracted_text and doc.extracted_text.strip():
+            print(f"Reprocesando: Usando texto OCR existente para Doc ID: {doc.id}")
+            extracted_text = doc.extracted_text
+        else:
+            # Si no hay texto previo (o está vacío), intentar OCR
+            print(f"Procesando/Reprocesando: Realizando OCR para Doc ID: {doc.id} (no hay texto previo o está vacío)")
+            # Asegurarse que el archivo existe antes de intentar OCR
+            if not doc.file or not hasattr(doc.file, 'path') or not os.path.exists(doc.file.path):
+                 error_msg = "Archivo no encontrado o inaccesible para OCR"
+                 print(f"{error_msg} para Documento ID: {doc.id}")
+                 doc.status = 'FAILED'
+                 doc.extracted_text = error_msg # Guardar el error específico
+                 doc.save(update_fields=['status', 'extracted_text'])
+                 return False, error_msg # Devolver el error específico
+
+            extracted_text = perform_ocr(doc.file.path)
+
+            if extracted_text is None:
+                # Si el OCR falla ahora
+                error_msg = "Error durante OCR"
+                print(f"Fallo OCR para Documento ID: {doc.id}")
+                doc.status = 'FAILED'
+                doc.extracted_text = error_msg # Guardar el error específico
+                doc.save(update_fields=['status', 'extracted_text'])
+                return False, error_msg # Devolver el error específico
+            else:
+                # Si el OCR fue exitoso ahora, guardar el texto nuevo
+                doc.extracted_text = extracted_text
+                # No guardamos aquí todavía, se guarda al final con el estado
+        # --- FIN MODIFICACIÓN ---
+
+        # --- Lógica de Identificación y Extracción (sin cambios) ---
+        # Ahora SIEMPRE tenemos algo en 'extracted_text' si llegamos aquí
+        # (ya sea el texto previo o el recién extraído)
 
         document_type = identify_document_type(extracted_text)
         if document_type:
             doc.document_type = document_type
-            # --- LLAMAR A LA NUEVA FUNCIÓN ---
             data = extract_document_data(extracted_text, document_type)
-            # -------------------------------
-            if data.get('document_date') or data.get('total_amount'): # Si se extrajo algo útil
+            if data.get('document_date') or data.get('total_amount'):
                 ExtractedData.objects.update_or_create(
                     document=doc,
                     defaults={
-                        'document_date': data.get('document_date'), # Ya es objeto date
+                        'document_date': data.get('document_date'),
                         'total_amount': data.get('total_amount'),
                     }
                 )
-                doc.status = 'PROCESSED' # O 'NEEDS_MATCHING' si ese es tu flujo
+                doc.status = 'PROCESSED'
                 print(f"Datos extraídos para Documento ID: {doc.id}")
             else:
                 doc.status = 'NEEDS_MAPPING'
@@ -311,16 +343,30 @@ def process_document_document(document_id):
             doc.status = 'NEEDS_MAPPING'
             print(f"Documento ID: {doc.id} necesita mapeo manual.")
 
-        doc.save()
+        # Guardar el estado final y el texto (si se acaba de extraer)
+        doc.save() # Guarda todos los campos modificados (status, document_type, extracted_text si cambió)
         print(f"Procesamiento finalizado para Documento ID: {doc.id}. Estado: {doc.status}")
         return True, doc.status
-    # ... (manejo de excepciones sin cambios) ...
+
+    except documentInfo.DoesNotExist: # Manejo específico si el ID no existe
+        print(f"Error: Documento con ID {document_id} no encontrado.")
+        # No hay objeto 'doc' para guardar aquí
+        return False, "Documento no encontrado"
     except Exception as e:
         print(f"Error procesando documento {document_id}: {e}")
+        traceback.print_exc() # Imprime el traceback completo en la consola del servidor
         try:
+            # Intenta marcar como FAILED si el objeto 'doc' existe
             doc = documentInfo.objects.get(id=document_id)
-            doc.status = 'FAILED'; doc.extracted_text = f"Error inesperado: {e}"; doc.save()
-        except: pass
+            doc.status = 'FAILED'
+            # Guardar un mensaje de error más genérico si no es el de OCR
+            if not doc.extracted_text or "Error durante OCR" not in doc.extracted_text:
+                 doc.extracted_text = f"Error inesperado: {e}"
+            doc.save(update_fields=['status', 'extracted_text'])
+        except documentInfo.DoesNotExist:
+            pass # El documento no existe, no hay nada que guardar
+        except Exception as save_err:
+             print(f"Error adicional al intentar guardar estado FAILED para {document_id}: {save_err}")
         return False, f"Error inesperado: {e}"
     
 
