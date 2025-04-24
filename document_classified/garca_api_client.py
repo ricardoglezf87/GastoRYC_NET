@@ -13,21 +13,24 @@ class ApiClient:
         self.api_base = f"{self.base_url}/api"
 
         # URLs de Endpoints
-        self.documents_url = f"{self.api_base}/documents"
+        self.documents_url = f"{self.api_base}/documents" # URL base para el ViewSet de documentos
+
+        # URLs que se mantienen igual o no cambian por el ViewSet
         self.accounts_url = f"{self.base_url}/accounts/"
-        self.document_types_url = f"{self.documents_url}/document-types/"
-        self.list_documents_url = f"{self.documents_url}/documents/"
-
-        # --- AÑADIR ESTA LÍNEA ---
-        self.document_detail_url_template = f"{self.documents_url}/documents/{{id}}/"
-        # -------------------------
-
-        self.reprocess_document_url_template = f"{self.documents_url}/documents/{{id}}/reprocess/"
-        self.create_document_ocr_url = f"{self.documents_url}/documents/create_with_ocr/"
+        self.document_types_url = f"{self.api_base}/document-types/" # Ajustado por Opción 1
         self.search_entries_url = f"{self.base_url}/entries/search/"
-        self.finalize_attachment_url_template = f"{self.documents_url}/documents/{{document_id}}/finalize_attachment/{{entry_id}}/"
-        self.test_rules_url = f"{self.documents_url}/test-rules/"
-        self.update_extracted_data_url_template = f"{self.documents_url}/extracted-data/{{document_id}}/"
+        self.test_rules_url = f"{self.api_base}/test-rules/" # Ajustado por Opción 1
+
+        # --- CORRECCIÓN AQUÍ ---
+        # La URL debe ser relativa a self.api_base, no a self.documents_url
+        self.update_extracted_data_url_template = f"{self.api_base}/extracted-data/{{document_id}}/" # Vista separada
+        # -----------------------
+
+        self.list_documents_url = f"{self.documents_url}/" # Raíz del ViewSet
+        self.document_detail_url_template = f"{self.documents_url}/{{id}}/" # Detalle del ViewSet
+        self.reprocess_document_url_template = f"{self.documents_url}/{{id}}/reprocess/" # Acción 'reprocess'
+        self.create_document_ocr_url = f"{self.documents_url}/" # Creación es POST a la raíz
+        self.finalize_attachment_url_template = f"{self.documents_url}/{{document_id}}/finalize-attachment/{{entry_id}}/" # Acción 'finalize_attachment'
 
         
     def _make_request(self, method, url, **kwargs):
@@ -167,27 +170,26 @@ class ApiClient:
 
     def get_documents(self):
         """Obtiene la lista de documentos procesados."""
-        url = self.list_documents_url
+        url = self.list_documents_url # Usa la URL actualizada
         result = self._make_request('get', url)
-        if isinstance(result, dict) and "error" in result: 
+        if isinstance(result, dict) and "error" in result:
             print(f"get_documents: Error recibido - {result['error']}")
             return []
         return result if isinstance(result, list) else []
 
     def reprocess_document(self, document_id):
         """Solicita el reprocesamiento de un documento existente."""
-        url = self.reprocess_document_url_template.format(id=document_id)
+        url = self.reprocess_document_url_template.format(id=document_id) # Usa la URL actualizada
         result = self._make_request('post', url)
-        return result # Devuelve la respuesta de la API (éxito/error)
+        return result
 
     def create_document_with_ocr(self, file_path, ocr_text):
         """Crea un documento enviando un archivo y su texto OCR extraído."""
-        url = self.create_document_ocr_url
+        url = self.create_document_ocr_url # Usa la URL actualizada
         try:
             with open(file_path, 'rb') as f:
                 files_payload = {'file': (os.path.basename(file_path), f)}
-                # Asegúrate que el backend espera 'extracted_text' en 'data' y no en 'json'
-                data_payload = {'extracted_text': ocr_text} 
+                data_payload = {'extracted_text': ocr_text}
                 result = self._make_request('post', url, files=files_payload, data=data_payload)
                 return result
         except FileNotFoundError:
@@ -197,7 +199,6 @@ class ApiClient:
              print(f"Error de I/O abriendo archivo en create_document_with_ocr: {file_path} - {e}")
              return {"error": f"Error al leer archivo local: {e}"}
         except Exception as e:
-             # Captura otros posibles errores (permisos, etc.)
              print(f"Error procesando archivo en create_document_with_ocr: {e}")
              traceback.print_exc()
              return {"error": f"Error al procesar archivo local: {e}"}
@@ -230,17 +231,15 @@ class ApiClient:
 
     def finalize_document_attachment(self, document_id, entry_id):
         """Solicita al backend adjuntar el archivo de un documento a un asiento y eliminar el documento."""
-        url = self.finalize_attachment_url_template.format(document_id=document_id, entry_id=entry_id)
-        # Es una petición POST sin cuerpo de datos (la información va en la URL)
-        result = self._make_request('post', url) 
+        # ¡OJO! El pk en la URL del ViewSet es 'document_id' aquí
+        url = self.finalize_attachment_url_template.format(document_id=document_id, entry_id=entry_id) # Usa la URL actualizada
+        result = self._make_request('post', url)
         return result
 
     def delete_document(self, document_id):
         """Elimina un documento específico."""
-        url = self.document_detail_url_template.format(id=document_id)
-        # _make_request debería devolver True si la respuesta es 204 No Content
+        url = self.document_detail_url_template.format(id=document_id) # Usa la URL actualizada
         result = self._make_request('delete', url)
-        # Devuelve True en éxito (204), False o dict de error en fallo
         return result if result is True else (result if isinstance(result, dict) else False)
 
     def test_rules(self, file_path, rules):
