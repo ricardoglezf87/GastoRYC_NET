@@ -8,7 +8,7 @@ class ApiClient:
     Cliente API unificado que combina la funcionalidad de 
     garca_client_api.py y bulk_matcher_api_client.py.
     """
-    def __init__(self, base_url="http://127.0.0.1:8000/"):
+    def __init__(self, base_url="http://127.0.0.1:8585/"):
         self.base_url = base_url.rstrip('/')
         self.api_base = f"{self.base_url}/api"
 
