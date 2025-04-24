@@ -9,7 +9,7 @@ from PIL import Image
 import re
 import io
 import os
-import json 
+import json
 from django.utils.dateparse import parse_date
 
 from .models import documentInfo, documentType, ExtractedData
@@ -19,6 +19,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 poppler_bin_path = os.path.join(script_dir, 'poppler', 'Library', 'bin')
 pytesseract.pytesseract.tesseract_cmd = os.path.join(script_dir,'tesseract', 'tesseract.exe')
 
+# ... (perform_ocr y identify_document_type sin cambios) ...
 def perform_ocr(file_input): # Renombrar para evitar conflictos si importas algo más
     """
     Realiza OCR en un archivo (ruta, objeto UploadedFile, bytes).
@@ -131,6 +132,7 @@ def identify_document_type(text):
     print("No se pudo identificar el tipo de factura automáticamente usando reglas.")
     return None
 
+
 def extract_document_data(text, rules_or_type):
     """
     Extrae datos usando reglas (de un dict o un documentType) y parsea la fecha.
@@ -182,6 +184,7 @@ def extract_document_data(text, rules_or_type):
     date_rule = rules.get('date')
     if date_rule:
         rule_type = date_rule.get('type')
+        original_locale = None # Para restaurarlo después
         try:
             if rule_type == 'regex':
                 pattern = date_rule.get('pattern')
@@ -194,7 +197,6 @@ def extract_document_data(text, rules_or_type):
 
                         if not parsed_date:
                             # --- Configurar locale ANTES de strptime con %B ---
-                            original_locale = None # Para restaurarlo después
                             try:
                                 # Intenta establecer locale español (ajusta según tu OS)
                                 # Para Linux/macOS:
@@ -204,7 +206,8 @@ def extract_document_data(text, rules_or_type):
                             except locale.Error:
                                 try:
                                     # Para Windows:
-                                    original_locale = locale.getlocale(locale.LC_TIME)
+                                    if not original_locale: # Solo guarda si no se guardó antes
+                                        original_locale = locale.getlocale(locale.LC_TIME)
                                     locale.setlocale(locale.LC_TIME, 'Spanish_Spain.1252')
                                     print("Locale español (Spanish_Spain.1252) establecido temporalmente.")
                                 except locale.Error:
@@ -214,38 +217,37 @@ def extract_document_data(text, rules_or_type):
                             formats_to_try = [
                                 '%d/%m/%Y', '%d.%m.%Y', '%d-%m-%Y',
                                 '%d/%m/%y', '%d.%m.%y', '%d-%m-%y',
-                                '%d de %B de %Y', # Ahora debería funcionar con locale español
-                                '%d %b %Y',
+                                '%d de %B de %Y', # Para "31 de JULIO de 2022"
+                                '%d %B %Y',       # <<<--- AÑADIDO: Para "31 JULIO 2022"
+                                '%d %b %Y',       # Para "31 JUL 2022" (abreviatura)
                             ]
 
                             for fmt in formats_to_try:
                                 try:
                                     parsed_date = datetime.strptime(date_str, fmt).date()
-                                    break
+                                    print(f"Fecha parseada con formato '{fmt}'") # Log para saber qué formato funcionó
+                                    break # Salir del bucle si se parsea correctamente
                                 except ValueError:
-                                    continue
-
-                            # --- Restaurar locale original ---
-                            if original_locale:
-                                try:
-                                    locale.setlocale(locale.LC_TIME, original_locale)
-                                    print("Locale original restaurado.")
-                                except locale.Error:
-                                     print("Advertencia: No se pudo restaurar el locale original.")
-                            # -------------------------------
+                                    continue # Probar el siguiente formato
 
                         if parsed_date:
                             extracted['document_date'] = parsed_date
-                            print(f"Fecha parseada ({document_type_name}): {parsed_date}")
+                            print(f"Fecha parseada final ({document_type_name}): {parsed_date}")
                         else:
-                            print(f"No se pudo parsear la fecha '{date_str}' ({document_type_name}).")
+                            print(f"No se pudo parsear la fecha '{date_str}' ({document_type_name}) con los formatos probados.")
+
         except Exception as e:
             print(f"Error aplicando regla de fecha ({document_type_name}): {e}")
             traceback.print_exc()
-            # Asegurarse de restaurar locale si hubo error
-            if 'original_locale' in locals() and original_locale:
-                 try: locale.setlocale(locale.LC_TIME, original_locale)
-                 except: pass
+        finally:
+            # --- Restaurar locale original (mejor en finally) ---
+            if original_locale:
+                try:
+                    locale.setlocale(locale.LC_TIME, original_locale)
+                    print("Locale original restaurado.")
+                except locale.Error:
+                     print("Advertencia: No se pudo restaurar el locale original.")
+            # -------------------------------
 
     # --- Extracción de Total ---
     total_rule = rules.get('total')
@@ -255,22 +257,43 @@ def extract_document_data(text, rules_or_type):
             if rule_type == 'regex':
                 pattern = total_rule.get('pattern')
                 if pattern:
-                     matches = re.findall(pattern, text, re.IGNORECASE)
+                     # Usar findall para encontrar todas las ocurrencias y quedarse con la última
+                     # Esto es útil si el total aparece varias veces (ej. base, iva, total)
+                     matches = re.findall(pattern, text, re.IGNORECASE | re.MULTILINE) # Añadir MULTILINE por si acaso
                      if matches:
-                         amount_str = matches[-1].replace('.', '').replace(',', '.')
+                         # Limpiar el último match encontrado: quitar puntos de miles, cambiar coma decimal
+                         # Ser más robusto con la limpieza
+                         amount_str_raw = matches[-1]
+                         # Quitar espacios
+                         amount_str_cleaned = amount_str_raw.replace(' ', '')
+                         # Quitar puntos de miles (si los hay antes de una coma)
+                         if ',' in amount_str_cleaned and '.' in amount_str_cleaned:
+                             if amount_str_cleaned.rfind('.') < amount_str_cleaned.rfind(','):
+                                 amount_str_cleaned = amount_str_cleaned.replace('.', '')
+                         # Reemplazar la coma decimal por punto
+                         amount_str_final = amount_str_cleaned.replace(',', '.')
+                         # Quitar símbolos de moneda si los hubiera (ej. €) - opcional
+                         amount_str_final = re.sub(r'[^\d.-]', '', amount_str_final)
+
                          try:
-                             extracted['total_amount'] = float(amount_str) # O Decimal
-                             print(f"Total encontrado ({document_type_name}, regex '{pattern}'): {extracted['total_amount']}")
+                             extracted['total_amount'] = float(amount_str_final) # O Decimal(amount_str_final)
+                             print(f"Total encontrado ({document_type_name}, regex '{pattern}', raw '{amount_str_raw}'): {extracted['total_amount']}")
                          except ValueError:
-                             print(f"Error convirtiendo total ({document_type_name}, regex): {matches[-1]}")
+                             print(f"Error convirtiendo total '{amount_str_final}' (desde '{amount_str_raw}') a número ({document_type_name}, regex).")
+                     else:
+                        print(f"Total NO encontrado ({document_type_name}, regex '{pattern}')")
+
         except Exception as e:
             print(f"Error aplicando regla de total ({document_type_name}): {e}")
+            traceback.print_exc()
+
 
     # ... (Extraer otros campos si los tienes) ...
 
     print(f"Datos extraídos finales ({document_type_name}): {extracted}")
     return extracted
 
+# ... (process_document_document sin cambios) ...
 def process_document_document(document_id):
     """
     Función principal que orquesta el procesamiento de un documentInfo.
@@ -368,5 +391,3 @@ def process_document_document(document_id):
         except Exception as save_err:
              print(f"Error adicional al intentar guardar estado FAILED para {document_id}: {save_err}")
         return False, f"Error inesperado: {e}"
-    
-
