@@ -26,6 +26,7 @@ class DropTableWidget(QTableWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setAcceptDrops(True)
+        self.is_saving_edit = False
         print("DropTableWidget: __init__ - Drops habilitados.") # DEBUG
 
     def dragEnterEvent(self, event):
@@ -115,6 +116,7 @@ class MainWindow(QMainWindow):
         self.processing_worker = None
         self.reprocessing_thread = None
         self.reprocessing_worker = None
+        self.is_saving_edit = False
 
         self.init_ui()
         self.load_initial_documents()
@@ -180,6 +182,7 @@ class MainWindow(QMainWindow):
         self.table_widget.cellClicked.connect(self.on_selection_changed)
 
         self.table_widget.setAcceptDrops(True)
+        self.table_widget.itemChanged.connect(self.handle_item_changed)
 
         main_layout.addWidget(self.table_widget)
         # --- FIN Sección Media ---
@@ -324,6 +327,85 @@ class MainWindow(QMainWindow):
     def update_progress(self, value, text):
         self.progress_bar.setValue(value); self.status_label.setText(text)
 
+    def handle_item_changed(self, item):
+        if self.is_saving_edit: # Evitar bucle si el cambio fue programático
+            return
+
+        row = item.row()
+        col = item.column()
+
+        # Solo actuar si se editó Fecha (4) o Importe (5)
+        if col not in [4, 5]:
+            return
+
+        # Obtener ID del documento
+        id_item = self.table_widget.item(row, 0)
+        if not id_item or not id_item.text().isdigit():
+            print(f"Error: No se pudo obtener ID válido en fila {row}")
+            return
+        doc_id = int(id_item.text())
+
+        # Obtener datos actuales del documento localmente
+        original_doc_info = self.documents_data.get(doc_id)
+        if not original_doc_info:
+             print(f"Error: No se encontraron datos locales para Doc ID {doc_id}")
+             return # O intentar recargar desde API?
+
+        # Determinar campo y valor
+        new_value_str = item.text().strip()
+        field_name = None
+        original_value_str = "" # Para poder restaurar en caso de error
+
+        # --- INICIO MODIFICACIÓN: Manejar None para extracted_data ---
+        extracted_data_original = original_doc_info.get("extracted_data") # Obtener sin default primero
+
+        if col == 4: # Fecha Factura
+            field_name = "document_date"
+            # Comprobar si extracted_data_original es None antes de usar .get()
+            original_value_str = extracted_data_original.get("document_date", "") if extracted_data_original else ""
+            original_value_str = original_value_str or "" # Asegurar que sea string si es None/vacío
+        elif col == 5: # Importe Factura
+            field_name = "total_amount"
+            # Comprobar si extracted_data_original es None
+            original_amount = extracted_data_original.get("total_amount") if extracted_data_original else None
+            original_value_str = f"{float(original_amount):.2f}" if original_amount is not None else ""
+        # --- FIN MODIFICACIÓN ---
+
+        # Evitar llamada a API si el valor no cambió realmente
+        if new_value_str == original_value_str:
+            print(f"Valor no cambiado para Doc ID {doc_id}, Campo {field_name}. Ignorando.")
+            return
+
+        print(f"Item cambiado: Fila {row}, Col {col}, Doc ID {doc_id}, Campo: {field_name}, Nuevo Valor: '{new_value_str}'")
+
+        # --- Llamada a la API para guardar ---
+        self.is_saving_edit = True # Activar flag antes de la llamada
+        self.status_label.setText(f"Guardando {field_name} para Doc ID {doc_id}...")
+        QApplication.processEvents()
+
+        response = self.api_client.update_extracted_data(doc_id, field_name, new_value_str)
+
+        if response and isinstance(response, dict) and "id" in response and "error" not in response:
+            # Éxito: API devuelve el documentInfo actualizado
+            print(f"Guardado exitoso para Doc ID {doc_id}. Respuesta: {response}")
+            self.status_label.setText(f"{field_name} para Doc ID {doc_id} guardado.")
+
+            # Actualizar datos locales y la tabla completa para esa fila
+            # La respuesta contiene el docInfo completo, así que podemos reusar update_document_table
+            self.update_document_table(response)
+
+        else:
+            # Error
+            error_msg = response.get("error", "Error desconocido al guardar") if isinstance(response, dict) else "Respuesta inválida de API"
+            print(f"Error guardando {field_name} para Doc ID {doc_id}: {error_msg}")
+            self.status_label.setText(f"Error al guardar Doc ID {doc_id}: {error_msg}")
+            QMessageBox.warning(self, "Error al Guardar", f"No se pudo guardar el cambio para Doc ID {doc_id}:\n{error_msg}\n\nRestaurando valor original.")
+
+            # Restaurar valor original en la celda
+            item.setText(original_value_str)
+
+        self.is_saving_edit = False
+
     def update_document_table(self, doc_info):
         """Actualiza o inserta una fila en la tabla con la información del documento."""
         doc_id = doc_info.get("id")
@@ -331,13 +413,17 @@ class MainWindow(QMainWindow):
             print("Error: doc_info recibido sin ID.")
             return
 
+        # Si el doc_info viene de un proceso (create_with_ocr) puede no tener filename
+        # pero sí lo tenemos guardado localmente si ya existía.
         if 'filename' not in doc_info:
             existing_data = self.documents_data.get(doc_id, {})
             doc_info['filename'] = existing_data.get('filename', f"ID {doc_id}")
 
+        # Actualizar o añadir los datos locales
         self.documents_data[doc_id] = doc_info
         print(f"Actualizando tabla para Doc ID: {doc_id}, Info: {doc_info}")
 
+        # Buscar si la fila ya existe
         row_index = -1
         for row in range(self.table_widget.rowCount()):
             id_item = self.table_widget.item(row, 0)
@@ -345,87 +431,115 @@ class MainWindow(QMainWindow):
                 row_index = row
                 break
 
+        # Si no existe, insertar una nueva fila
         if row_index == -1:
             row_index = self.table_widget.rowCount()
             self.table_widget.insertRow(row_index)
+            # Columna 0: ID (oculta)
             id_item = QTableWidgetItem(str(doc_id))
-            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable)
+            id_item.setFlags(id_item.flags() & ~Qt.ItemIsEditable) # No editable
             self.table_widget.setItem(row_index, 0, id_item)
 
         # --- Rellenar/Actualizar todas las celdas ---
+
+        # Determinar si la fila es editable basado en el estado
+        status_text = doc_info.get("get_status_display", doc_info.get("status", ""))
+        # Define qué estados permiten la edición manual de Fecha/Importe
+        editable_statuses = ['Necesita Mapeo Manual', 'Error en Procesamiento', 'Faltan Datos Extracción', 'Procesado', 'Error Fecha', 'Error Búsqueda'] # Ajusta según necesidad
+        can_edit_row = status_text in editable_statuses
+
+        # Columna 1: Archivo
         filename_item = QTableWidgetItem(doc_info.get("filename", ""))
-        filename_item.setFlags(filename_item.flags() & ~Qt.ItemIsEditable)
+        filename_item.setFlags(filename_item.flags() & ~Qt.ItemIsEditable) # No editable
         self.table_widget.setItem(row_index, 1, filename_item)
 
-        status_text = doc_info.get("get_status_display", doc_info.get("status", ""))
+        # Columna 2: Estado
         status_item = QTableWidgetItem(status_text)
-        status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable)
+        status_item.setFlags(status_item.flags() & ~Qt.ItemIsEditable) # No editable
         self.table_widget.setItem(row_index, 2, status_item)
 
+        # Columna 3: Tipo
         type_name = doc_info.get("document_type_name", "") or ""
         type_item = QTableWidgetItem(type_name)
-        type_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable)
+        type_item.setFlags(type_item.flags() & ~Qt.ItemIsEditable) # No editable
         self.table_widget.setItem(row_index, 3, type_item)
 
+        # Columna 4: Fecha Factura (Potencialmente editable)
         extracted_data = doc_info.get("extracted_data", {})
         document_date_str = extracted_data.get("document_date", "") if extracted_data else ""
-        total_amount = extracted_data.get("total_amount") if extracted_data else None
-        total_str = f"{float(total_amount):.2f}" if total_amount is not None else ""
-
         date_item = QTableWidgetItem(document_date_str or "")
-        date_item.setFlags(date_item.flags() & ~Qt.ItemIsEditable)
+        if can_edit_row:
+            date_item.setFlags(date_item.flags() | Qt.ItemIsEditable) # Añadir flag editable
+            date_item.setToolTip("Editable (Formato YYYY-MM-DD)")
+        else:
+            date_item.setFlags(date_item.flags() & ~Qt.ItemIsEditable) # Asegurar no editable
         self.table_widget.setItem(row_index, 4, date_item)
 
+        # Columna 5: Importe Factura (Potencialmente editable)
+        total_amount = extracted_data.get("total_amount") if extracted_data else None
+        total_str = f"{float(total_amount):.2f}" if total_amount is not None else ""
         amount_item = QTableWidgetItem(total_str)
-        amount_item.setFlags(amount_item.flags() & ~Qt.ItemIsEditable)
+        if can_edit_row:
+            amount_item.setFlags(amount_item.flags() | Qt.ItemIsEditable) # Añadir flag editable
+            amount_item.setToolTip("Editable (Ej: 123.45)")
+        else:
+            amount_item.setFlags(amount_item.flags() & ~Qt.ItemIsEditable) # Asegurar no editable
         self.table_widget.setItem(row_index, 5, amount_item)
 
+        # Columna 6: Cuenta Doc.
         account_id_from_type = doc_info.get("document_type_account_id", "")
         account_item = QTableWidgetItem(str(account_id_from_type) or "")
-        account_item.setFlags(account_item.flags() & ~Qt.ItemIsEditable)
+        account_item.setFlags(account_item.flags() & ~Qt.ItemIsEditable) # No editable
         self.table_widget.setItem(row_index, 6, account_item)
 
         # Columnas de Asiento (7 a 10 ahora) - Limpiar por defecto
         # <<<--- CAMBIO: Ajustar rango del bucle --->>>
         for col_idx in [7, 8, 9, 10]: # Antes era [7, 8, 9, 10, 11]
-             item = QTableWidgetItem("")
-             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-             self.table_widget.setItem(row_index, col_idx, item)
+            item = QTableWidgetItem("")
+            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+            self.table_widget.setItem(row_index, col_idx, item)
 
         # Columna 11: Acción (Botones)
         # <<<--- CAMBIO: Índice de columna de acción --->>>
         existing_widget = self.table_widget.cellWidget(row_index, 11) # Antes era 12
         if existing_widget:
+            # Si ya existe un widget (posiblemente de una actualización previa),
+            # lo eliminamos para crear uno nuevo. deleteLater es más seguro.
             existing_widget.deleteLater()
 
         action_widget = QWidget()
         action_layout = QHBoxLayout(action_widget)
-        action_layout.setContentsMargins(2, 2, 2, 2)
-        action_layout.setSpacing(5)
+        action_layout.setContentsMargins(2, 2, 2, 2) # Márgenes pequeños
+        action_layout.setSpacing(5) # Espacio entre botones
 
+        # Botón Ver
         view_button = QPushButton("Ver")
         view_button.setToolTip("Abrir el archivo del documento")
-        view_button.setProperty("doc_id", doc_id)
+        view_button.setProperty("doc_id", doc_id) # Guardar ID para el slot
         file_url = doc_info.get("file_url")
         if file_url:
-            view_button.setProperty("file_url", file_url)
+            view_button.setProperty("file_url", file_url) # Guardar URL para el slot
             view_button.clicked.connect(self.on_view_button_clicked)
         else:
-            view_button.setEnabled(False)
+            view_button.setEnabled(False) # Deshabilitar si no hay URL
         action_layout.addWidget(view_button)
 
+        # Botón Borrar
         delete_button = QPushButton("Borrar")
         delete_button.setToolTip("Eliminar este documento de la base de datos")
-        delete_button.setProperty("doc_id", doc_id)
+        delete_button.setProperty("doc_id", doc_id) # Guardar ID para el slot
         delete_button.clicked.connect(self.on_delete_button_clicked)
         action_layout.addWidget(delete_button)
 
+        # Añadir un espacio flexible para empujar los botones a la izquierda
         action_layout.addStretch()
+
         # <<<--- CAMBIO: Índice de columna de acción --->>>
         self.table_widget.setCellWidget(row_index, 11, action_widget) # Antes era 12
 
         # --- Aplicar Coloreado ---
         self.apply_row_coloring(row_index, status_text)
+
 
     def apply_row_coloring(self, row_index, status_text):
         """Aplica color de fondo a una fila basado en el texto del estado."""

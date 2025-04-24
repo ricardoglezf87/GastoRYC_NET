@@ -8,7 +8,7 @@ class ApiClient:
     Cliente API unificado que combina la funcionalidad de 
     garca_client_api.py y bulk_matcher_api_client.py.
     """
-    def __init__(self, base_url="http://127.0.0.1:8585/"):
+    def __init__(self, base_url="http://127.0.0.1:8000/"):
         self.base_url = base_url.rstrip('/')
         self.api_base = f"{self.base_url}/api"
 
@@ -27,6 +27,7 @@ class ApiClient:
         self.search_entries_url = f"{self.base_url}/entries/search/"
         self.finalize_attachment_url_template = f"{self.documents_url}/documents/{{document_id}}/finalize_attachment/{{entry_id}}/"
         self.test_rules_url = f"{self.documents_url}/test-rules/"
+        self.update_extracted_data_url_template = f"{self.documents_url}/extracted-data/{{document_id}}/"
 
         
     def _make_request(self, method, url, **kwargs):
@@ -151,6 +152,18 @@ class ApiClient:
         return result if isinstance(result, dict) else None
 
     # --- Métodos de bulk_matcher_api_client ---
+
+    def update_extracted_data(self, document_id, field_name, value):
+        """Actualiza un campo específico ('document_date' o 'total_amount') para un documento."""
+        if field_name not in ['document_date', 'total_amount']:
+            print(f"Error: Intento de actualizar campo no soportado: {field_name}")
+            return {"error": f"Campo '{field_name}' no soportado para edición."}
+
+        url = self.update_extracted_data_url_template.format(document_id=document_id)
+        payload = {field_name: value}
+        print(f"API Request: PATCH {url} con payload: {payload}")
+        result = self._make_request('patch', url, json=payload)
+        return result
 
     def get_documents(self):
         """Obtiene la lista de documentos procesados."""
