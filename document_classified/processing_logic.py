@@ -218,8 +218,9 @@ def extract_document_data(text, rules_or_type):
                                 '%d/%m/%Y', '%d.%m.%Y', '%d-%m-%Y',
                                 '%d/%m/%y', '%d.%m.%y', '%d-%m-%y',
                                 '%d de %B de %Y', # Para "31 de JULIO de 2022"
-                                '%d %B %Y',       # <<<--- AÑADIDO: Para "31 JULIO 2022"
-                                '%d %b %Y',       # Para "31 JUL 2022" (abreviatura)
+                                '%d %B %Y',       # Para "31 JULIO 2022"
+                                '%d %b %Y',       # Para "31 JUL 2022" (abreviatura con espacio)
+                                '%d-%b-%Y',       # Para "31 JUL 2022" (abreviatura)
                             ]
 
                             for fmt in formats_to_try:
