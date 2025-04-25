@@ -196,17 +196,21 @@ def extract_document_data(text, rules_or_type):
                         parsed_date = parse_date(date_str) # Intenta primero con parse_date
 
                         if not parsed_date:
-                            # --- Configurar locale ANTES de strptime con %B ---
+                            # Convertir a minúsculas ANTES de probar strptime con %b o %B
+                            # Guardamos la original por si acaso o para logs
+                            date_str_original = date_str
+                            date_str_lower = date_str_original.lower()
+                            print(f"Intentando parsear versión en minúsculas: '{date_str_lower}'")
+
+                            # --- Configurar locale (tu código existente) ---
                             try:
                                 # Intenta establecer locale español (ajusta según tu OS)
-                                # Para Linux/macOS:
-                                original_locale = locale.getlocale(locale.LC_TIME) # Guarda el actual
+                                original_locale = locale.getlocale(locale.LC_TIME)
                                 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
                                 print("Locale español (es_ES.UTF-8) establecido temporalmente.")
                             except locale.Error:
                                 try:
-                                    # Para Windows:
-                                    if not original_locale: # Solo guarda si no se guardó antes
+                                    if not original_locale:
                                         original_locale = locale.getlocale(locale.LC_TIME)
                                     locale.setlocale(locale.LC_TIME, 'Spanish_Spain.1252')
                                     print("Locale español (Spanish_Spain.1252) establecido temporalmente.")
@@ -217,19 +221,21 @@ def extract_document_data(text, rules_or_type):
                             formats_to_try = [
                                 '%d/%m/%Y', '%d.%m.%Y', '%d-%m-%Y',
                                 '%d/%m/%y', '%d.%m.%y', '%d-%m-%y',
-                                '%d de %B de %Y', # Para "31 de JULIO de 2022"
-                                '%d %B %Y',       # Para "31 JULIO 2022"
-                                '%d %b %Y',       # Para "31 JUL 2022" (abreviatura con espacio)
-                                '%d-%b-%Y',       # Para "31 JUL 2022" (abreviatura)
+                                '%d de %B de %Y', # Para "31 de julio de 2022"
+                                '%d %B %Y',       # Para "31 julio 2022"
+                                '%d %b %Y',       # Para "31 jul 2022" (abreviatura con espacio)
+                                '%d-%b-%Y',       # Para "31-oct-2013" (abreviatura con guion)
+                                # Podrías añadir '%d-%b-%y' si esperas años cortos también
                             ]
 
                             for fmt in formats_to_try:
                                 try:
-                                    parsed_date = datetime.strptime(date_str, fmt).date()
-                                    print(f"Fecha parseada con formato '{fmt}'") # Log para saber qué formato funcionó
-                                    break # Salir del bucle si se parsea correctamente
+                                    # *** USA LA VERSIÓN EN MINÚSCULAS AQUÍ ***
+                                    parsed_date = datetime.strptime(date_str_lower, fmt).date()
+                                    print(f"Fecha parseada con formato '{fmt}' usando '{date_str_lower}'")
+                                    break
                                 except ValueError:
-                                    continue # Probar el siguiente formato
+                                    continue
 
                         if parsed_date:
                             extracted['document_date'] = parsed_date
