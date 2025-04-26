@@ -138,28 +138,38 @@ def extract_document_data(text, rules_or_type):
     Extrae datos usando reglas (de un dict o un documentType) y parsea la fecha.
     """
     if not text:
-        print("Texto de entrada faltante.")
+        print("extract_document_data: Texto de entrada faltante.") # DEBUG
         return {}
 
     rules = None
     document_type_name = "Reglas directas" # Nombre por defecto para logs
+    rules_source = "Desconocida" # Para saber de dónde vienen
 
     # Determinar si recibimos un diccionario de reglas o un objeto documentType
     if isinstance(rules_or_type, documentType):
+        rules_source = f"documentType ID: {rules_or_type.id} ({rules_or_type.name})" # DEBUG
         if rules_or_type.extraction_rules:
             rules = rules_or_type.extraction_rules
             document_type_name = rules_or_type.name
         else:
-            print(f"documentType {rules_or_type.name} no tiene reglas de extracción.")
+            print(f"extract_document_data: {rules_source} no tiene reglas de extracción.") # DEBUG
             return {}
     elif isinstance(rules_or_type, dict):
+        rules_source = "Diccionario directo (Probablemente desde Test Rules)" # DEBUG
         rules = rules_or_type
     else:
-        print("Entrada de reglas inválida (ni dict ni documentType).")
+        print(f"extract_document_data: Entrada de reglas inválida (Tipo: {type(rules_or_type)}).") # DEBUG
         return {}
 
+    # <<<--- NUEVO PRINT: Mostrar la fuente y las reglas que se usarán --->>>
+    print(f"--- extract_document_data ---")
+    print(f"Fuente de Reglas: {rules_source}")
+    print(f"Reglas a Aplicar: {json.dumps(rules, indent=2)}") # Usar json.dumps para formato legible
+    print(f"-----------------------------")
+    # <<<----------------------------------------------------------------->>>
+
     if not rules:
-        print("Reglas de extracción vacías o no encontradas.")
+        print("extract_document_data: Reglas de extracción vacías o no encontradas.") # DEBUG
         return {}
 
     extracted = {}
@@ -175,10 +185,12 @@ def extract_document_data(text, rules_or_type):
                     extracted['identifier_found'] = rule_value
                     print(f"Identificador encontrado ({document_type_name}, keyword '{rule_value}')")
                 else:
-                    extracted['identifier_found'] = None
+                    # No añadir 'identifier_found': None si no se encuentra, es implícito
                     print(f"Identificador NO encontrado ({document_type_name}, keyword '{rule_value}')")
+            # Añadir más lógica si hay otros tipos de reglas de identificador
         except Exception as e:
             print(f"Error aplicando regla de identificador ({document_type_name}): {e}")
+
 
     # --- Extracción de Fecha (con parseo) ---
     date_rule = rules.get('date')
@@ -192,9 +204,15 @@ def extract_document_data(text, rules_or_type):
             if rule_type == 'regex':
                 pattern = date_rule.get('pattern')
                 if pattern:
+                    # <<<--- MODIFICACIÓN: Usar findall para fecha también? O quedarse con el primero? --->>>
+                    # re.search encuentra la primera. Si puede haber varias fechas válidas y quieres
+                    # una específica, podrías necesitar ajustar esto (ej. buscar cerca de una palabra clave).
+                    # Por ahora, mantenemos re.search para la primera.
                     match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
                     if match:
-                        date_str = match.group(1).strip()
+                        # Asumir que la fecha está en el grupo 1 si la regex tiene paréntesis
+                        # Si no, usar el match completo (grupo 0)
+                        date_str = match.group(1).strip() if match.groups() else match.group(0).strip()
                         print(f"Cadena de fecha encontrada ({document_type_name}, regex '{pattern}'): '{date_str}'")
 
                         # 1. Intento inicial con parse_date (maneja formatos comunes ISO-like)
@@ -202,6 +220,9 @@ def extract_document_data(text, rules_or_type):
 
                         # <<<--- NUEVO: 2. Si parse_date falla, intentar formatos numéricos comunes explícitamente --->>>
                         if not parsed_date:
+                            # --- INICIO DEBUG ---
+                            print(f"DEBUG: parse_date falló. Intentando formatos numéricos comunes para '{date_str}' (repr: {repr(date_str)})")
+                            # --- FIN DEBUG ---
                             common_numeric_formats = [
                                 '%d/%m/%Y', # <-- El formato del log
                                 '%d-%m-%Y',
@@ -211,12 +232,23 @@ def extract_document_data(text, rules_or_type):
                                 '%d.%m.%y',
                             ]
                             for fmt in common_numeric_formats:
+                                # --- INICIO DEBUG ---
+                                print(f"DEBUG: Intentando formato '{fmt}'...")
+                                # --- FIN DEBUG ---
                                 try:
                                     parsed_date = datetime.strptime(date_str, fmt).date()
                                     print(f"Fecha parseada (numérica común) con formato '{fmt}' usando '{date_str}'")
                                     break # Salir si se parsea
-                                except ValueError:
+                                except ValueError as ve:
+                                    # --- INICIO DEBUG ---
+                                    print(f"DEBUG: Formato '{fmt}' falló para '{date_str}'. Error: {ve}")
+                                    # --- FIN DEBUG ---
                                     continue
+                                except Exception as e_inner: # Capturar otros errores
+                                    # --- INICIO DEBUG ---
+                                    print(f"DEBUG: Error inesperado intentando formato '{fmt}' para '{date_str}'. Error: {type(e_inner).__name__}: {e_inner}")
+                                    # --- FIN DEBUG ---
+                                    continue # Intentar siguiente formato
                         # <<<------------------------------------------------------------------------------------->>>
 
                         # 3. Si aún falla, intentar reemplazo de mes y formatos numéricos (si aplica)
@@ -292,6 +324,8 @@ def extract_document_data(text, rules_or_type):
                         else:
                             # Solo si todos los intentos fallaron
                             print(f"No se pudo parsear la fecha '{date_str}' ({document_type_name}) con ningún método.")
+                    else:
+                         print(f"Fecha NO encontrada ({document_type_name}, regex '{pattern}')") # DEBUG
 
         except Exception as e:
             print(f"Error aplicando regla de fecha ({document_type_name}): {e}")
@@ -314,12 +348,17 @@ def extract_document_data(text, rules_or_type):
                 pattern = total_rule.get('pattern')
                 if pattern:
                      # Usar findall para encontrar todas las ocurrencias
+                     # <<<--- MODIFICACIÓN: Asegurarse que findall captura el grupo correcto --->>>
+                     # Si el patrón tiene un grupo de captura (paréntesis), findall devuelve
+                     # solo el contenido de ese grupo. Si no tiene grupo, devuelve la coincidencia completa.
+                     # El patrón \b(\d+,\d{2})(?=€) tiene un grupo, así que findall devolverá ['19,60', '0,16'].
                      matches = re.findall(pattern, text, re.IGNORECASE | re.MULTILINE)
                      if matches:
                          potential_amounts = []
                          original_strings = {} # Para guardar el string original asociado a cada valor numérico
 
-                         for amount_str_raw in matches:
+                         # <<<--- MODIFICACIÓN: Iterar sobre los strings encontrados por findall --->>>
+                         for amount_str_raw in matches: # 'matches' ya contiene los strings ['19,60', '0,16']
                              # Limpiar cada match encontrado
                              amount_str_cleaned = amount_str_raw.replace(' ', '')
                              if ',' in amount_str_cleaned and '.' in amount_str_cleaned:
@@ -361,7 +400,7 @@ def extract_document_data(text, rules_or_type):
 
     # ... (Extraer otros campos si los tienes) ...
 
-    print(f"Datos extraídos finales ({document_type_name}): {extracted}")
+    print(f"Datos extraídos finales ({document_type_name}): {extracted}") # DEBUG
     return extracted
 
 # ... (process_document_document sin cambios) ...
