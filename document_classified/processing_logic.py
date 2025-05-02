@@ -138,28 +138,38 @@ def extract_document_data(text, rules_or_type):
     Extrae datos usando reglas (de un dict o un documentType) y parsea la fecha.
     """
     if not text:
-        print("Texto de entrada faltante.")
+        print("extract_document_data: Texto de entrada faltante.") # DEBUG
         return {}
 
     rules = None
     document_type_name = "Reglas directas" # Nombre por defecto para logs
+    rules_source = "Desconocida" # Para saber de dónde vienen
 
     # Determinar si recibimos un diccionario de reglas o un objeto documentType
     if isinstance(rules_or_type, documentType):
+        rules_source = f"documentType ID: {rules_or_type.id} ({rules_or_type.name})" # DEBUG
         if rules_or_type.extraction_rules:
             rules = rules_or_type.extraction_rules
             document_type_name = rules_or_type.name
         else:
-            print(f"documentType {rules_or_type.name} no tiene reglas de extracción.")
+            print(f"extract_document_data: {rules_source} no tiene reglas de extracción.") # DEBUG
             return {}
     elif isinstance(rules_or_type, dict):
+        rules_source = "Diccionario directo (Probablemente desde Test Rules)" # DEBUG
         rules = rules_or_type
     else:
-        print("Entrada de reglas inválida (ni dict ni documentType).")
+        print(f"extract_document_data: Entrada de reglas inválida (Tipo: {type(rules_or_type)}).") # DEBUG
         return {}
 
+    # <<<--- NUEVO PRINT: Mostrar la fuente y las reglas que se usarán --->>>
+    print(f"--- extract_document_data ---")
+    print(f"Fuente de Reglas: {rules_source}")
+    print(f"Reglas a Aplicar: {json.dumps(rules, indent=2)}") # Usar json.dumps para formato legible
+    print(f"-----------------------------")
+    # <<<----------------------------------------------------------------->>>
+
     if not rules:
-        print("Reglas de extracción vacías o no encontradas.")
+        print("extract_document_data: Reglas de extracción vacías o no encontradas.") # DEBUG
         return {}
 
     extracted = {}
@@ -175,79 +185,159 @@ def extract_document_data(text, rules_or_type):
                     extracted['identifier_found'] = rule_value
                     print(f"Identificador encontrado ({document_type_name}, keyword '{rule_value}')")
                 else:
-                    extracted['identifier_found'] = None
+                    # No añadir 'identifier_found': None si no se encuentra, es implícito
                     print(f"Identificador NO encontrado ({document_type_name}, keyword '{rule_value}')")
+            # Añadir más lógica si hay otros tipos de reglas de identificador
         except Exception as e:
             print(f"Error aplicando regla de identificador ({document_type_name}): {e}")
+
 
     # --- Extracción de Fecha (con parseo) ---
     date_rule = rules.get('date')
     if date_rule:
         rule_type = date_rule.get('type')
         original_locale = None # Para restaurarlo después
+        parsed_date = None # Inicializar fuera del try
+        date_str = ""      # Inicializar fuera del try
+
         try:
             if rule_type == 'regex':
                 pattern = date_rule.get('pattern')
                 if pattern:
+                    # <<<--- MODIFICACIÓN: Usar findall para fecha también? O quedarse con el primero? --->>>
+                    # re.search encuentra la primera. Si puede haber varias fechas válidas y quieres
+                    # una específica, podrías necesitar ajustar esto (ej. buscar cerca de una palabra clave).
+                    # Por ahora, mantenemos re.search para la primera.
                     match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
                     if match:
-                        date_str = match.group(1).strip()
+                        # Asumir que la fecha está en el grupo 1 si la regex tiene paréntesis
+                        # Si no, usar el match completo (grupo 0)
+                        date_str = match.group(1).strip() if match.groups() else match.group(0).strip()
                         print(f"Cadena de fecha encontrada ({document_type_name}, regex '{pattern}'): '{date_str}'")
-                        parsed_date = parse_date(date_str) # Intenta primero con parse_date
 
+                        # 1. Intento inicial con parse_date (maneja formatos comunes ISO-like)
+                        parsed_date = parse_date(date_str)
+
+                        # <<<--- NUEVO: 2. Si parse_date falla, intentar formatos numéricos comunes explícitamente --->>>
                         if not parsed_date:
-                            # --- Configurar locale ANTES de strptime con %B ---
+                            # --- INICIO DEBUG ---
+                            print(f"DEBUG: parse_date falló. Intentando formatos numéricos comunes para '{date_str}' (repr: {repr(date_str)})")
+                            # --- FIN DEBUG ---
+                            common_numeric_formats = [
+                                '%d/%m/%Y', # <-- El formato del log
+                                '%d-%m-%Y',
+                                '%d.%m.%Y',
+                                '%d/%m/%y', # Formatos con año corto
+                                '%d-%m-%y',
+                                '%d.%m.%y',
+                            ]
+                            for fmt in common_numeric_formats:
+                                # --- INICIO DEBUG ---
+                                print(f"DEBUG: Intentando formato '{fmt}'...")
+                                # --- FIN DEBUG ---
+                                try:
+                                    parsed_date = datetime.strptime(date_str, fmt).date()
+                                    print(f"Fecha parseada (numérica común) con formato '{fmt}' usando '{date_str}'")
+                                    break # Salir si se parsea
+                                except ValueError as ve:
+                                    # --- INICIO DEBUG ---
+                                    print(f"DEBUG: Formato '{fmt}' falló para '{date_str}'. Error: {ve}")
+                                    # --- FIN DEBUG ---
+                                    continue
+                                except Exception as e_inner: # Capturar otros errores
+                                    # --- INICIO DEBUG ---
+                                    print(f"DEBUG: Error inesperado intentando formato '{fmt}' para '{date_str}'. Error: {type(e_inner).__name__}: {e_inner}")
+                                    # --- FIN DEBUG ---
+                                    continue # Intentar siguiente formato
+                        # <<<------------------------------------------------------------------------------------->>>
+
+                        # 3. Si aún falla, intentar reemplazo de mes y formatos numéricos (si aplica)
+                        if not parsed_date:
+                            date_str_lower = date_str.lower()
+                            date_str_numeric = date_str_lower
+                            month_map = {'ene': 1, 'feb': 2, 'mar': 3, 'abr': 4, 'may': 5, 'jun': 6,
+                                         'jul': 7, 'ago': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dic': 12}
+                            replacement_done = False
+                            for abbr, num in month_map.items():
+                                # Buscar el patrón con guiones (más seguro que solo la abreviatura)
+                                # Podrías hacerlo más robusto para buscar con / o . también si es necesario
+                                pattern_to_replace = f"-{abbr}-"
+                                if pattern_to_replace in date_str_numeric:
+                                    replacement_value = f"-{num:02d}-" # Formatear con cero: 01, 02, ..., 10
+                                    date_str_numeric = date_str_numeric.replace(pattern_to_replace, replacement_value)
+                                    print(f"Mes reemplazado: '{abbr}' -> '{num:02d}'. Resultado: '{date_str_numeric}'")
+                                    replacement_done = True
+                                    break # Solo debe haber un mes
+
+                            # Intentar parsear la versión numérica con formatos estándar si hubo reemplazo
+                            if replacement_done:
+                                # Usamos los mismos formatos comunes, pero con la cadena modificada
+                                numeric_formats_after_replace = ['%d-%m-%Y', '%d/%m/%Y', '%d.%m.%Y', '%d-%m-%y', '%d/%m/%y', '%d.%m.%y']
+                                for fmt in numeric_formats_after_replace:
+                                    try:
+                                        parsed_date = datetime.strptime(date_str_numeric, fmt).date()
+                                        print(f"Fecha parseada (numérica post-reemplazo) con formato '{fmt}' usando '{date_str_numeric}'")
+                                        break # Salir si se parsea
+                                    except ValueError:
+                                        continue
+
+                        # 4. Si aún no se parseó (ni con parse_date, ni numérico común, ni con reemplazo numérico),
+                        #    intentar con locale y formatos con nombre/abreviatura
+                        if not parsed_date:
+                            print(f"Parseo numérico/reemplazo falló o no aplicó. Intentando con locale para '{date_str.lower()}'...")
+                            # --- Configurar locale ---
                             try:
-                                # Intenta establecer locale español (ajusta según tu OS)
-                                # Para Linux/macOS:
-                                original_locale = locale.getlocale(locale.LC_TIME) # Guarda el actual
+                                original_locale = locale.getlocale(locale.LC_TIME)
                                 locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
                                 print("Locale español (es_ES.UTF-8) establecido temporalmente.")
                             except locale.Error:
                                 try:
-                                    # Para Windows:
-                                    if not original_locale: # Solo guarda si no se guardó antes
-                                        original_locale = locale.getlocale(locale.LC_TIME)
+                                    if not original_locale: original_locale = locale.getlocale(locale.LC_TIME)
                                     locale.setlocale(locale.LC_TIME, 'Spanish_Spain.1252')
                                     print("Locale español (Spanish_Spain.1252) establecido temporalmente.")
                                 except locale.Error:
-                                    print("Advertencia: No se pudo establecer locale español para parsear fecha con nombre de mes.")
+                                    print("Advertencia: No se pudo establecer locale español.")
                             # ----------------------------------------------------
 
-                            formats_to_try = [
-                                '%d/%m/%Y', '%d.%m.%Y', '%d-%m-%Y',
-                                '%d/%m/%y', '%d.%m.%y', '%d-%m-%y',
-                                '%d de %B de %Y', # Para "31 de JULIO de 2022"
-                                '%d %B %Y',       # <<<--- AÑADIDO: Para "31 JULIO 2022"
-                                '%d %b %Y',       # Para "31 JUL 2022" (abreviatura)
+                            # Formatos que dependen del locale o nombres/abreviaturas
+                            # Asegúrate de que estos NO se solapen con los common_numeric_formats ya probados
+                            locale_formats = [
+                                '%d de %B de %Y', # "31 de julio de 2022"
+                                '%d %B %Y',       # "31 julio 2022"
+                                '%d %b %Y',       # "31 jul 2022"
+                                '%d-%b-%Y',       # "31-jul-2022"
+                                # Añadir más si es necesario
                             ]
-
-                            for fmt in formats_to_try:
+                            for fmt in locale_formats:
                                 try:
-                                    parsed_date = datetime.strptime(date_str, fmt).date()
-                                    print(f"Fecha parseada con formato '{fmt}'") # Log para saber qué formato funcionó
-                                    break # Salir del bucle si se parsea correctamente
+                                    # Usar date_str_lower aquí puede ser más robusto para nombres de meses
+                                    parsed_date = datetime.strptime(date_str.lower(), fmt).date()
+                                    print(f"Fecha parseada (locale) con formato '{fmt}' usando '{date_str.lower()}'")
+                                    break
                                 except ValueError:
-                                    continue # Probar el siguiente formato
+                                    continue
 
+                        # 5. Resultado final
                         if parsed_date:
                             extracted['document_date'] = parsed_date
                             print(f"Fecha parseada final ({document_type_name}): {parsed_date}")
                         else:
-                            print(f"No se pudo parsear la fecha '{date_str}' ({document_type_name}) con los formatos probados.")
+                            # Solo si todos los intentos fallaron
+                            print(f"No se pudo parsear la fecha '{date_str}' ({document_type_name}) con ningún método.")
+                    else:
+                         print(f"Fecha NO encontrada ({document_type_name}, regex '{pattern}')") # DEBUG
 
         except Exception as e:
             print(f"Error aplicando regla de fecha ({document_type_name}): {e}")
             traceback.print_exc()
         finally:
-            # --- Restaurar locale original (mejor en finally) ---
+            # --- Restaurar locale original ---
             if original_locale:
                 try:
                     locale.setlocale(locale.LC_TIME, original_locale)
                     print("Locale original restaurado.")
                 except locale.Error:
                      print("Advertencia: No se pudo restaurar el locale original.")
-            # -------------------------------
 
     # --- Extracción de Total ---
     total_rule = rules.get('total')
@@ -257,29 +347,49 @@ def extract_document_data(text, rules_or_type):
             if rule_type == 'regex':
                 pattern = total_rule.get('pattern')
                 if pattern:
-                     # Usar findall para encontrar todas las ocurrencias y quedarse con la última
-                     # Esto es útil si el total aparece varias veces (ej. base, iva, total)
-                     matches = re.findall(pattern, text, re.IGNORECASE | re.MULTILINE) # Añadir MULTILINE por si acaso
+                     # Usar findall para encontrar todas las ocurrencias
+                     # <<<--- MODIFICACIÓN: Asegurarse que findall captura el grupo correcto --->>>
+                     # Si el patrón tiene un grupo de captura (paréntesis), findall devuelve
+                     # solo el contenido de ese grupo. Si no tiene grupo, devuelve la coincidencia completa.
+                     # El patrón \b(\d+,\d{2})(?=€) tiene un grupo, así que findall devolverá ['19,60', '0,16'].
+                     matches = re.findall(pattern, text, re.IGNORECASE | re.MULTILINE)
                      if matches:
-                         # Limpiar el último match encontrado: quitar puntos de miles, cambiar coma decimal
-                         # Ser más robusto con la limpieza
-                         amount_str_raw = matches[-1]
-                         # Quitar espacios
-                         amount_str_cleaned = amount_str_raw.replace(' ', '')
-                         # Quitar puntos de miles (si los hay antes de una coma)
-                         if ',' in amount_str_cleaned and '.' in amount_str_cleaned:
-                             if amount_str_cleaned.rfind('.') < amount_str_cleaned.rfind(','):
-                                 amount_str_cleaned = amount_str_cleaned.replace('.', '')
-                         # Reemplazar la coma decimal por punto
-                         amount_str_final = amount_str_cleaned.replace(',', '.')
-                         # Quitar símbolos de moneda si los hubiera (ej. €) - opcional
-                         amount_str_final = re.sub(r'[^\d.-]', '', amount_str_final)
+                         potential_amounts = []
+                         original_strings = {} # Para guardar el string original asociado a cada valor numérico
 
-                         try:
-                             extracted['total_amount'] = float(amount_str_final) # O Decimal(amount_str_final)
-                             print(f"Total encontrado ({document_type_name}, regex '{pattern}', raw '{amount_str_raw}'): {extracted['total_amount']}")
-                         except ValueError:
-                             print(f"Error convirtiendo total '{amount_str_final}' (desde '{amount_str_raw}') a número ({document_type_name}, regex).")
+                         # <<<--- MODIFICACIÓN: Iterar sobre los strings encontrados por findall --->>>
+                         for amount_str_raw in matches: # 'matches' ya contiene los strings ['19,60', '0,16']
+                             # Limpiar cada match encontrado
+                             amount_str_cleaned = amount_str_raw.replace(' ', '')
+                             if ',' in amount_str_cleaned and '.' in amount_str_cleaned:
+                                 if amount_str_cleaned.rfind('.') < amount_str_cleaned.rfind(','):
+                                     amount_str_cleaned = amount_str_cleaned.replace('.', '')
+                             amount_str_final = amount_str_cleaned.replace(',', '.')
+                             amount_str_final = re.sub(r'[^\d.-]', '', amount_str_final)
+
+                             try:
+                                 # Convertir a float para comparación
+                                 numeric_value = float(amount_str_final)
+                                 potential_amounts.append(numeric_value)
+                                 # Guardar el string original asociado a este valor (si no existe ya, para evitar duplicados si el valor se repite)
+                                 if numeric_value not in original_strings:
+                                     original_strings[numeric_value] = amount_str_raw
+                             except ValueError:
+                                 print(f"Advertencia: No se pudo convertir '{amount_str_final}' (desde '{amount_str_raw}') a número durante la búsqueda del mayor total.")
+                                 continue # Saltar este match si no se puede convertir
+
+                         if potential_amounts:
+                             # Encontrar el mayor importe
+                             largest_amount = max(potential_amounts)
+                             extracted['total_amount'] = largest_amount # Guardar el mayor
+
+                             # Obtener el string original que corresponde al mayor importe (para el log)
+                             original_raw_string = original_strings.get(largest_amount, "N/A")
+
+                             print(f"Total encontrado (mayor de {len(potential_amounts)} coincidencias con '{pattern}', raw '{original_raw_string}'): {extracted['total_amount']}")
+                         else:
+                             print(f"Total NO encontrado ({document_type_name}, regex '{pattern}' - ninguna coincidencia pudo convertirse a número)")
+
                      else:
                         print(f"Total NO encontrado ({document_type_name}, regex '{pattern}')")
 
@@ -290,7 +400,7 @@ def extract_document_data(text, rules_or_type):
 
     # ... (Extraer otros campos si los tienes) ...
 
-    print(f"Datos extraídos finales ({document_type_name}): {extracted}")
+    print(f"Datos extraídos finales ({document_type_name}): {extracted}") # DEBUG
     return extracted
 
 # ... (process_document_document sin cambios) ...

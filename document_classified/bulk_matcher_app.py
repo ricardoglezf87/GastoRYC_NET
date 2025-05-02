@@ -184,6 +184,8 @@ class MainWindow(QMainWindow):
         self.table_widget.setAcceptDrops(True)
         self.table_widget.itemChanged.connect(self.handle_item_changed)
 
+        self.table_widget.setSortingEnabled(True)
+
         main_layout.addWidget(self.table_widget)
         # --- FIN Sección Media ---
 
