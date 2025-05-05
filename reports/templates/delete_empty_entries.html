@@ -21,11 +21,11 @@
         document.addEventListener('DOMContentLoaded', (event) => {
 
             // Funcionalidad "Seleccionar todos"
-            const selectAllCheckbox = document.getElementById('select-all-empty');
+            const selectAllCheckbox = document.getElementById('select-all-checkbox'); // <-- Usar el ID correcto del checkbox de la cabecera
             if (selectAllCheckbox) {
                 selectAllCheckbox.addEventListener('change', function() {
                     const isChecked = this.checked;
-                    document.querySelectorAll('.empty-entry-checkbox').forEach(function(checkbox) {
+                    document.querySelectorAll('.entry-checkbox').forEach(function(checkbox) { // <-- Usar la clase correcta de los checkboxes de fila
                         checkbox.checked = isChecked;
                     });
                 });
@@ -35,8 +35,8 @@
             const processBtn = document.getElementById('process-delete-empty-btn');
             if (processBtn) {
                 processBtn.addEventListener('click', function() {
-                    const selectedEntryIds = [];
-                    document.querySelectorAll('.empty-entry-checkbox:checked').forEach(function(checkbox) {
+                    const selectedEntryIds = []; // <-- Asegurarse que la clase aquí coincide con la usada arriba y en el HTML
+                    document.querySelectorAll('.entry-checkbox:checked').forEach(function(checkbox) { // <-- CORRECCIÓN: Usar la clase correcta '.entry-checkbox'
                         selectedEntryIds.push(parseInt(checkbox.value));
                     });
 
@@ -109,8 +109,8 @@
             <table class="table table-bordered table-striped table-sm">
                 <thead class="table-light">
                     <tr>
-                        <th><input type="checkbox" id="select-all-empty" class="form-check-input"></th>
-                        <th>Asiento ID</th>
+                        <th><input type="checkbox" id="select-all-checkbox"></th> 
+                        <th>Asiento ID</th> 
                         <th>Fecha</th>
                         <th>Descripción</th>
                     </tr>
@@ -118,10 +118,7 @@
                 <tbody>
                     {% for entry in empty_entries %}
                         <tr>
-                            <td>
-                                <input type="checkbox" class="form-check-input empty-entry-checkbox"
-                                       value="{{ entry.id }}">
-                            </td>
+                            <td><input type="checkbox" class="entry-checkbox" value="{{ entry.id }}"></td> <!-- <-- Quitar el ID duplicado -->
                              <td><a href="{% url 'edit_entry' entry.id %}" target="_blank">{{ entry.id }}</a></td>
                             <td>{{ entry.date|date:"Y-m-d" }}</td>
                             <td>{{ entry.description }}</td>

@@ -20,6 +20,20 @@
 
         // Espera a que el DOM esté listo para añadir listeners
         document.addEventListener('DOMContentLoaded', (event) => {
+
+            // --- Funcionalidad "Seleccionar todos" para unificar ---
+            const selectAllMergeCheckbox = document.getElementById('select-all-merge-checkbox');
+            if (selectAllMergeCheckbox) {
+                selectAllMergeCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    document.querySelectorAll('.merge-checkbox').forEach(function(checkbox) {
+                        checkbox.checked = isChecked;
+                    });
+                });
+            }
+            // --- Fin Funcionalidad "Seleccionar todos" ---
+
+            // Lógica específica del botón de unificar
             const processBtn = document.getElementById('process-merge-btn');
             if (processBtn) {
                 processBtn.addEventListener('click', function() {
@@ -104,7 +118,7 @@
             <table class="table table-bordered table-striped table-sm">
                 <thead class="table-light">
                     <tr>
-                        <th>Seleccionar</th>
+                        <th><input type="checkbox" id="select-all-merge-checkbox"></th> {# <-- Checkbox "Seleccionar todo" añadido #}
                         <th>Asiento ID</th>
                         <th>Fecha</th>
                         <th>Descripción Asiento</th>
@@ -119,7 +133,7 @@
                         {% for duplicate_group in entry_data.duplicates %}
                             <tr>
                                 <td>
-                                    <input type="checkbox" class="form-check-input merge-checkbox"
+                                    <input type="checkbox" class="merge-checkbox"
                                            data-entry-id="{{ entry_data.entry.id }}"
                                            data-account-id="{{ duplicate_group.account.id }}"
                                            data-transaction-ids="[{% for tx in duplicate_group.transactions %}{{ tx.id }}{% if not forloop.last %},{% endif %}{% endfor %}]">
@@ -148,5 +162,3 @@
         <div class="alert alert-info">No se encontraron asientos con transacciones duplicadas para el periodo seleccionado.</div>
     {% endif %}
 {% endblock %}
-
-
