@@ -182,7 +182,7 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="reportsDropdown">
             {# Asegúrate que las URLs sean correctas o usa {% url 'app_name:url_name' %} #}
-            <a class="dropdown-item" href="/reports/unbalanced_entries/"> {# Asumiendo que 'unbalanced_entries' está en la app 'report' #}
+            <a class="dropdown-item" href="{% url 'reports:unbalanced_entries' %}"> {# Usar la etiqueta url es más robusto #}
                 <i class="fas fa-balance-scale-left mr-2"></i>Movimientos Descuadrados
             </a>
             <a class="dropdown-item" href="/reports/merge_transactions/">

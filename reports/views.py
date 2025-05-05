@@ -18,6 +18,8 @@ from .forms import PeriodFilterForm
 from async_tasks.tasks import recalculate_balances_after_date 
 from decimal import Decimal
 from django.conf import settings
+from django.db.models import Sum, F, DecimalField
+from django.db.models.functions import Coalesce, Abs # Importar Abs
 import json
 
 from transactions.models import Transaction
@@ -95,50 +97,53 @@ def recategorized_entries(request):
             account_id
         )
 
-    return redirect('unbalanced_entries_report')
+    return redirect('unbalanced_entries_view')
 
-def unbalanced_entries_report(request):
+def unbalanced_entries_view(request):
+    unbalanced_entries = None
+    form = PeriodFilterForm(request.GET or None)
+    start_date_filter = None
+    end_date_filter = None
 
-    clear_breadcrumbs(request)
-    add_breadcrumb(request, 'Entradas descuadradas' , request.path)
+    if form.is_valid():
+        # Obtener el rango de fechas del formulario (usando el método auxiliar o lógica aquí)
+        start_date_filter, end_date_filter = form.get_date_range() # Usando el método del form
 
-    period = request.GET.get('period', 'last_60_days')
-    today = datetime.now().date()
-    
-    # Definir la fecha de inicio según el período
-    date_filters = {
-        'current_month': today.replace(day=1),
-        'last_month': (today.replace(day=1) - timedelta(days=1)).replace(day=1),
-        'last_30_days': today - timedelta(days=30),
-        'last_60_days': today - timedelta(days=60),
-        'last_180_days': today - timedelta(days=180),
-        'current_year': today.replace(month=1, day=1),
-        'last_year': (today - relativedelta(years=1)).replace(month=1, day=1),
-        'year_before': (today - relativedelta(years=2)).replace(month=1, day=1),
-        'last_3_years': (today - relativedelta(years=3)).replace(month=1, day=1),
-        'last_5_years': (today - relativedelta(years=5)).replace(month=1, day=1),
-        'last_10_years': (today - relativedelta(years=10)).replace(month=1, day=1),
-        'all': None
+        # Si tenemos un rango de fechas, filtramos
+        if start_date_filter and end_date_filter:
+            # Filtrar asientos dentro del rango de fechas
+            entries_in_period = Entry.objects.filter(
+                date__gte=start_date_filter,
+                date__lte=end_date_filter
+            )
+        else:
+             # Si no hay rango válido (p.ej., selección inicial vacía), no filtramos por fecha
+             entries_in_period = Entry.objects.all() # O podrías decidir no mostrar nada
+
+        # Anotar totales y filtrar los descuadrados
+        unbalanced_entries = entries_in_period.annotate(
+            total_debit=Coalesce(Sum('transactions__debit'), Decimal('0.00'), output_field=DecimalField()),
+            total_credit=Coalesce(Sum('transactions__credit'), Decimal('0.00'), output_field=DecimalField()),
+            # Calcular explícitamente la diferencia
+            difference=F('total_debit') - F('total_credit')
+        ).annotate(
+            # Calcular el valor absoluto para comparar fácilmente con un umbral
+            abs_difference=Abs('difference')
+        ).filter(
+            # Filtrar donde la diferencia absoluta sea >= 0.01 (un céntimo)
+            abs_difference__gte=Decimal('0.01')
+        ).order_by('-date') # Ordenar como prefieras
+
+    context = {
+        'form': form,
+        'unbalanced_entries': unbalanced_entries,
+        'site_title': 'Admin GARCA',
+        'site_header': 'Administración GARCA',
+        'title': 'Entradas Descuadradas',
+        # Añade cualquier otro contexto necesario para base_site.html
+        'has_permission': True, # Asumiendo que el usuario tiene permiso
     }
-
-    if period not in date_filters:
-        period = 'last_60_days'    
-
-    start_date = date_filters.get(period)
-    entries = Entry.objects.all()
-
-    if start_date:
-            entries_filtered = entries.filter(date__gte=start_date)
-
-    unbalanced_entries = []
-    
-    for entry in entries_filtered:
-        total_debit = sum(transaction.debit for transaction in entry.transactions.all())
-        total_credit = sum(transaction.credit for transaction in entry.transactions.all())
-        if total_debit != total_credit:
-            unbalanced_entries.append(entry)
-
-    return render(request, 'unbalanced_entries_report.html', {'selected_period':period,'unbalanced_entries': unbalanced_entries})
+    return render(request, 'unbalanced_entries.html', context)
 
 
 

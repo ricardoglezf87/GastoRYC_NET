@@ -4,7 +4,7 @@ from . import views
 app_name = 'reports' 
 
 urlpatterns = [
-    path('unbalanced_entries/', views.unbalanced_entries_report, name='unbalanced_entries_report'),
+    path('unbalanced_entries/', views.unbalanced_entries_view, name='unbalanced_entries'), # Changed name to match the template tag
     path('recategorized_entries/', views.recategorized_entries, name='recategorized_entries'),
     path('merge_transactions/', views.merge_transactions_view, name='merge_transactions'),
     path('detect_transfers/', views.detect_transfers_view, name='detect_transfers'),

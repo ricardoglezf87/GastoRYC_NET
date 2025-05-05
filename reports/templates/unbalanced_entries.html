@@ -1,0 +1,115 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Entradas Descuadradas{% endblock %}
+
+{% block header %}
+    {{ block.super }} {# Importante para incluir el contenido original del header del padre #}
+
+    {# --- Estilos CSS específicos --- #}
+    <style>
+        .form-filter label { font-weight: bold; margin-bottom: .5rem; display: block; }
+        .form-filter select { display: block; width: 100%; padding: .375rem .75rem; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #495057; background-color: #fff; background-clip: padding-box; border: 1px solid #ced4da; border-radius: .25rem; transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; }
+        /* Estilos adicionales si son necesarios */
+        .action-buttons .btn { margin-left: 0.5rem; } /* Espacio entre botones de acción */
+    </style>
+
+    {# --- Script JavaScript específico de esta página --- #}
+    <script>
+        // Espera a que el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // No necesitamos JS específico para el filtro si usamos el submit estándar del form
+            // Si quisiéramos recarga automática al cambiar el select (sin botón Filtrar):
+            /*
+            const periodSelector = document.getElementById('{{ form.period.id_for_label }}'); // Usa el ID del form
+            if (periodSelector) {
+                periodSelector.addEventListener('change', function() {
+                    this.form.submit(); // Envía el formulario al cambiar la selección
+                });
+            }
+            */
+        });
+    </script>
+{% endblock header %}
+
+{% block content %}
+<h1 class="mb-4">Entradas Contables Descuadradas</h1>
+
+    {# --- INICIO: Formulario de Filtro --- #}
+    <form method="get" class="form-filter row g-3 align-items-end mb-4 p-3 border rounded bg-light">
+        {% csrf_token %} {# Aunque es GET, buena práctica mantenerlo si se reutiliza #}
+        <div class="col-md-4"> {# Ajustado para dar espacio a las fechas #}
+            <label for="{{ form.period.id_for_label }}" class="form-label">{{ form.period.label }}</label>
+            {{ form.period }} {# Usamos el widget del formulario Django #}
+        </div>
+        {# --- INICIO: Campos de Fecha Adicionales --- #}
+        {# Asegúrate que form.start_date y form.end_date existan en tu clase de formulario Django #}
+        <div class="col-md-2">
+            <label for="{{ form.start_date.id_for_label }}" class="form-label">{{ form.start_date.label }}</label>
+            {{ form.start_date }}
+        </div>
+        <div class="col-md-2">
+            <label for="{{ form.end_date.id_for_label }}" class="form-label">{{ form.end_date.label }}</label>
+            {{ form.end_date }}
+        </div>
+        {# --- FIN: Campos de Fecha Adicionales --- #}
+        <div class="col-md-2"> {# Ajustado para dar espacio a las fechas #}
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+         {% if form.errors %}
+            <div class="col-12 mt-2">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <div class="alert alert-danger p-1 mb-1" role="alert">{{ field }}: {{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </form>
+    {# --- FIN: Formulario de Filtro --- #}
+
+    {# --- Contenido específico: Tabla de resultados --- #}
+    {% if unbalanced_entries %}
+    <div class="alert alert-warning">Se encontraron las siguientes entradas cuyos totales de débito y crédito no coinciden.</div>
+    <table class="table table-striped table-bordered table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th>Débito</th>
+                <th>Crédito</th>
+                <th>Diferencia</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in unbalanced_entries %}
+            <tr>
+                <td>{{ entry.date }}</td>
+                <td>{{ entry.description }}</td>
+                <td>{{ entry.total_debit|floatformat:2 }}</td>
+                <td>{{ entry.total_credit|floatformat:2 }}</td>
+                <td>
+                    {# Mostrar la diferencia calculada #}
+                    {% with diff=entry.difference %}
+                        {% if diff > 0 %}
+                            <span class="text-danger">Descuadre (D > C): {{ diff|floatformat:2 }}</span>
+                        {% elif diff < 0 %}
+                            <span class="text-danger">Descuadre (C > D): {{ diff|floatformat:2 }}</span>
+                        {% endif %}
+                    {% endwith %}
+                </td>
+                <td><a href="/entries/edit_entry/{{entry.id}}" target="_blank" class="btn btn-sm btn-outline-primary">Editar</a></td>
+            </tr>
+            {% empty %} {# Se mueve el mensaje 'empty' aquí dentro por si la variable existe pero está vacía #}
+             <tr>
+                 <td colspan="3" class="text-center">No se encontraron entradas descuadradas para el periodo seleccionado.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+         {# Este bloque ahora solo se muestra si la variable unbalanced_entries no existe o es None #}
+         <div class="alert alert-info">No se encontraron entradas descuadradas para el periodo seleccionado.</div>
+    {% endif %}
+{% endblock %}

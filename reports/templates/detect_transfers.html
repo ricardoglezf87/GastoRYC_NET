@@ -38,6 +38,20 @@
         // Espera a que el DOM esté listo para añadir listeners
         document.addEventListener('DOMContentLoaded', (event) => {
             const processBtn = document.getElementById('process-transfer-btn');
+
+            // --- Funcionalidad "Seleccionar todos" para transferencias ---
+            const selectAllTransfersCheckbox = document.getElementById('select-all-transfers-checkbox');
+            if (selectAllTransfersCheckbox) {
+                selectAllTransfersCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    // Asegúrate que la clase aquí coincide con la de los checkboxes de fila
+                    document.querySelectorAll('.transfer-checkbox').forEach(function(checkbox) {
+                        checkbox.checked = isChecked;
+                    });
+                });
+            }
+            // --- Fin Funcionalidad "Seleccionar todos" ---
+
             if (processBtn) {
                 processBtn.addEventListener('click', function() {
                     const selectedTransfers = [];
@@ -123,7 +137,7 @@
             <table class="table table-bordered table-striped table-sm">
                 <thead class="table-light">
                     <tr>
-                        <th>Seleccionar</th>
+                        <th><input type="checkbox" id="select-all-transfers-checkbox"></th> {# <-- Checkbox "Seleccionar todo" añadido #}
                         <th>Fecha</th>
                         <th>Monto</th>
                         <th>Cuenta Origen</th>
@@ -136,7 +150,7 @@
                     {% for transfer in potential_transfers %}
                         <tr>
                             <td>
-                                <input type="checkbox" class="form-check-input transfer-checkbox"
+                                <input type="checkbox" class="transfer-checkbox"
                                        data-entry-from-id="{{ transfer.entry_from.id }}"
                                        data-entry-to-id="{{ transfer.entry_to.id }}">
                             </td>
