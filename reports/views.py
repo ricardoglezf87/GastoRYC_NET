@@ -26,122 +26,131 @@ from transactions.models import Transaction
 
 
 def recategorized_entries(request):
-    
-    period = request.GET.get('period', 'last_60_days')
-    today = datetime.now().date()
-    
-    # Definir la fecha de inicio según el período
-    date_filters = {
-        'current_month': today.replace(day=1),
-        'last_month': (today.replace(day=1) - timedelta(days=1)).replace(day=1),
-        'last_30_days': today - timedelta(days=30),
-        'last_60_days': today - timedelta(days=60),
-        'last_180_days': today - timedelta(days=180),
-        'current_year': today.replace(month=1, day=1),
-        'last_year': (today - relativedelta(years=1)).replace(month=1, day=1),
-        'year_before': (today - relativedelta(years=2)).replace(month=1, day=1),
-        'last_3_years': (today - relativedelta(years=3)).replace(month=1, day=1),
-        'last_5_years': (today - relativedelta(years=5)).replace(month=1, day=1),
-        'last_10_years': (today - relativedelta(years=10)).replace(month=1, day=1),
-        'all': None
-    }
-
-    if period not in date_filters:
-        period = 'last_60_days'    
-
-    start_date = date_filters.get(period)
-    entries = Entry.objects.all()
-
-    if start_date:
-            entries_filtered = entries.filter(date__gte=start_date)
-
-
-    unbalanced_entries = []
+    # Usar el formulario para obtener el periodo y las fechas
+    form = PeriodFilterForm(request.GET or None)
     min_date = None
     affected_accounts = set()
-    
-    for entry in entries_filtered:
-        total_debit = sum(transaction.debit for transaction in entry.transactions.all())
-        total_credit = sum(transaction.credit for transaction in entry.transactions.all())
-        if total_debit != total_credit:
-            unbalanced_entries.append(entry)
+    period_value = '' # Para el redirect
 
-    for movement in unbalanced_entries:
+    # Validar el formulario (aunque no lo mostremos, usamos su lógica)
+    if form.is_valid():
+        start_date, end_date = form.get_date_range()
+        period_value = form.cleaned_data.get('period', '') # Guardar el periodo validado
 
-        if min_date is None or movement.date < min_date:
-            min_date = movement.date
+        # --- Lógica de filtrado por fecha ---
+        if start_date and end_date:
+            entries_in_period = Entry.objects.filter(date__gte=start_date, date__lte=end_date)
+        else: # 'all' o sin selección
+            entries_in_period = Entry.objects.all()
 
-        for t in movement.transactions.all():
-            affected_accounts.add(t.account_id)
+        # --- Encontrar asientos descuadrados eficientemente ---
+        unbalanced_entries_qs = entries_in_period.annotate(
+            total_debit=Coalesce(Sum('transactions__debit'), Decimal('0.00'), output_field=DecimalField()),
+            total_credit=Coalesce(Sum('transactions__credit'), Decimal('0.00'), output_field=DecimalField()),
+            difference=F('total_debit') - F('total_credit')
+        ).annotate(
+            abs_difference=Abs('difference')
+        ).filter(
+            abs_difference__gte=Decimal('0.01') # Mismo filtro que en unbalanced_entries_view
+        ).prefetch_related('transactions') # Prefetch para el bucle siguiente
 
-        # Buscar cuenta de contrapartida
-        counterpart_account = None
-        for keyword in AccountKeyword.objects.all():
-            if keyword.keyword.lower() in movement.description.lower():
-                counterpart_account = keyword.account
-                break                                 
+        # --- Procesar los asientos descuadrados encontrados ---
+        for entry in unbalanced_entries_qs:
+            if min_date is None or entry.date < min_date:
+                min_date = entry.date
 
-        if counterpart_account:
-            affected_accounts.add(counterpart_account.id)
-            Transaction.objects.create(
-                entry=movement,
-                account=counterpart_account,
-                debit=sum(transaction.credit for transaction in movement.transactions.all()),
-                credit=sum(transaction.debit for transaction in movement.transactions.all())
+            for t in entry.transactions.all(): # Usar las transacciones precargadas
+                affected_accounts.add(t.account_id)
+
+            # Buscar cuenta de contrapartida (esta lógica se mantiene)
+            counterpart_account = None
+            for keyword in AccountKeyword.objects.all():
+                if keyword.keyword.lower() in entry.description.lower():
+                    counterpart_account = keyword.account
+                    break
+
+            if counterpart_account:
+                # Calcular sumas aquí, ya que no las tenemos de la agregación inicial
+                current_debit = sum(t.debit for t in entry.transactions.all())
+                current_credit = sum(t.credit for t in entry.transactions.all())
+
+                affected_accounts.add(counterpart_account.id)
+                Transaction.objects.create(
+                    entry=entry,
+                    account=counterpart_account,
+                    debit=current_credit, # El débito de la contrapartida es el crédito actual
+                    credit=current_debit  # El crédito de la contrapartida es el débito actual
+                )
+    else:
+        # Si el formulario no es válido (poco probable aquí), redirigir sin periodo
+        if form.is_bound:
+            # El formulario tenía datos GET, pero el valor de 'period' no fue válido
+            invalid_period = request.GET.get('period', '[Valor no encontrado]') # Debería existir si is_bound es True
+            messages.error(request, f"Error al procesar el periodo seleccionado: '{invalid_period}' no es una opción válida.")
+        else:
+            # El formulario no tenía datos GET (ej. acceso directo a la URL sin parámetros)
+            messages.error(request, "No se especificó un periodo para procesar. Por favor, use el filtro en la página anterior.")
+        return redirect('reports:unbalanced_entries')
+
+    # Recalcular saldos solo si se modificó algo
+    for account_id in affected_accounts:
+        if min_date: # Asegurarse de que min_date se estableció
+            recalculate_balances_after_date.delay(
+                min_date.strftime('%Y-%m-%d'), # Pasar fecha como string
+                account_id
             )
 
-
-    for account_id in affected_accounts:
-        recalculate_balances_after_date.delay(
-            min_date,
-            account_id
-        )
-
-    return redirect('unbalanced_entries_view')
+    # Llamar a unbalanced_entries_view para obtener el contexto actualizado
+    # y renderizar la plantilla directamente
+    request.GET = request.GET.copy()  # Hacer el QueryDict mutable
+    if period_value:
+        request.GET['period'] = period_value # Asegurar que el periodo se pasa
+    response = unbalanced_entries_view(request) # Llamar a la vista
+    return response # Devolver la respuesta de la otra vista
 
 def unbalanced_entries_view(request):
+    add_breadcrumb(request, "Reporte de Descuadres", request.path)
+
     unbalanced_entries = None
-    form = PeriodFilterForm(request.GET or None)
+    form = PeriodFilterForm(request.GET or None) # Instancia el form con datos GET si existen
     start_date_filter = None
     end_date_filter = None
 
-    if form.is_valid():
-        # Obtener el rango de fechas del formulario (usando el método auxiliar o lógica aquí)
-        start_date_filter, end_date_filter = form.get_date_range() # Usando el método del form
+    if form.is_valid(): # Valida el formulario (ahora solo valida la opción 'period')
+        # Obtiene el rango de fechas calculado por el método del formulario
+        start_date_filter, end_date_filter = form.get_date_range()
 
-        # Si tenemos un rango de fechas, filtramos
+        # --- Lógica de filtrado por fecha ---
         if start_date_filter and end_date_filter:
-            # Filtrar asientos dentro del rango de fechas
+            # Si get_date_range devolvió fechas (ej. 'Este Mes', 'Últimos 3 Años')
+            # Filtra el queryset por ese rango
             entries_in_period = Entry.objects.filter(
                 date__gte=start_date_filter,
                 date__lte=end_date_filter
             )
         else:
-             # Si no hay rango válido (p.ej., selección inicial vacía), no filtramos por fecha
-             entries_in_period = Entry.objects.all() # O podrías decidir no mostrar nada
+            # Si get_date_range devolvió (None, None) (porque se eligió 'Todas las Fechas'
+            # o es la carga inicial sin filtro), no se aplica filtro de fecha.
+            entries_in_period = Entry.objects.all()
+        # --- Fin lógica de filtrado por fecha ---
 
-        # Anotar totales y filtrar los descuadrados
+        # --- Lógica para encontrar asientos descuadrados (ya revisada) ---
         unbalanced_entries = entries_in_period.annotate(
             total_debit=Coalesce(Sum('transactions__debit'), Decimal('0.00'), output_field=DecimalField()),
             total_credit=Coalesce(Sum('transactions__credit'), Decimal('0.00'), output_field=DecimalField()),
-            # Calcular explícitamente la diferencia
             difference=F('total_debit') - F('total_credit')
         ).annotate(
-            # Calcular el valor absoluto para comparar fácilmente con un umbral
             abs_difference=Abs('difference')
         ).filter(
-            # Filtrar donde la diferencia absoluta sea >= 0.01 (un céntimo)
-            abs_difference__gte=Decimal('0.01')
-        ).order_by('-date') # Ordenar como prefieras
+            abs_difference__gte=Decimal('0.01') # Filtra por diferencia significativa
+        ).order_by('-date')
+        # --- Fin lógica descuadrados ---
 
+    # ... resto del contexto ...
     context = {
         'form': form,
         'unbalanced_entries': unbalanced_entries,
-        'site_title': 'Admin GARCA',
-        'site_header': 'Administración GARCA',
-        'title': 'Entradas Descuadradas',
-        # Añade cualquier otro contexto necesario para base_site.html
-        'has_permission': True, # Asumiendo que el usuario tiene permiso
+        # ... otros datos de contexto ...
     }
     return render(request, 'unbalanced_entries.html', context)
 
