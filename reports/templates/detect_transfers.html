@@ -1,0 +1,160 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Detectar Transferencias{% endblock %}
+
+{# Mueve el contenido de extra_js al bloque header #}
+{% block header %}
+    {{ block.super }} {# Importante para incluir el contenido original del header del padre #}
+
+    {# --- Estilos CSS específicos --- #}
+    <style>
+        .form-filter label {
+            font-weight: bold;
+            margin-bottom: .5rem;
+            display: block;
+        }
+        /* Asegurar que el select use clases de Bootstrap si no lo hace automáticamente */
+        .form-filter select {
+             display: block;
+             width: 100%;
+             padding: .375rem .75rem;
+             font-size: 1rem;
+             font-weight: 400;
+             line-height: 1.5;
+             color: #495057;
+             background-color: #fff;
+             background-clip: padding-box;
+             border: 1px solid #ced4da;
+             border-radius: .25rem;
+             transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+    </style>
+
+    {# --- Script JavaScript específico de esta página --- #}
+    <script>
+        // Las funciones getCookie, postData, reloadWithFilters DEBEN estar definidas globalmente (en base_site.html)
+
+        // Espera a que el DOM esté listo para añadir listeners
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const processBtn = document.getElementById('process-transfer-btn');
+            if (processBtn) {
+                processBtn.addEventListener('click', function() {
+                    const selectedTransfers = [];
+                    document.querySelectorAll('.transfer-checkbox:checked').forEach(function(checkbox) {
+                        selectedTransfers.push({
+                            entry_from_id: parseInt(checkbox.dataset.entryFromId),
+                            entry_to_id: parseInt(checkbox.dataset.entryToId)
+                        });
+                    });
+
+                    if (selectedTransfers.length === 0) {
+                        alert('Por favor, selecciona al menos una transferencia para simplificar.');
+                        return;
+                    }
+
+                    // Confirmación (opcional pero recomendada)
+                    if (!confirm(`¿Estás seguro de que deseas simplificar ${selectedTransfers.length} transferencia(s)?`)) {
+                        return;
+                    }
+
+
+                    this.disabled = true;
+                    this.textContent = 'Procesando...';
+
+                    // Asegúrate que la URL se genera correctamente
+                    const url = "{% url 'reports:process_simplify_transfers' %}";
+                    console.log("Enviando a URL:", url); // Verifica la URL en consola
+
+                    postData(url, { transfers: selectedTransfers })
+                        .then(data => {
+                            console.log('Respuesta del servidor (simplify transfers):', data);
+                             if (data.message) {
+                                // alert(data.message); // O usa un sistema de notificaciones mejor
+                            }
+                            reloadWithFilters();
+                        })
+                        .catch(error => {
+                            console.error('Error en postData (simplify transfers):', error);
+                            alert(`Ocurrió un error al procesar la solicitud: ${error.message}`);
+                            this.disabled = false;
+                            this.textContent = 'Simplificar Seleccionados';
+                        });
+                });
+            }
+        });
+    </script>
+{% endblock header %}
+
+
+{% block content %}
+    <h1 class="mb-4">Detectar y Simplificar Transferencias (vía Cuenta Puente)</h1>
+
+    {# --- INICIO: Formulario de Filtro (Simplificado) --- #}
+    <form method="get" class="form-filter row g-3 align-items-end mb-4 p-3 border rounded bg-light">
+        {% csrf_token %} {# Buena práctica mantenerlo #}
+        <div class="col-md-8"> {# Ajusta el ancho como prefieras #}
+            <label for="{{ form.period.id_for_label }}" class="form-label">{{ form.period.label }}</label>
+            {{ form.period }}
+        </div>
+        {# Eliminamos los campos start_date y end_date #}
+        <div class="col-md-4"> {# Ajusta el ancho como prefieras #}
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+         {% if form.errors %}
+            <div class="col-12 mt-2">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <div class="alert alert-danger p-1 mb-1" role="alert">{{ field }}: {{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </form>
+    {# --- FIN: Formulario de Filtro --- #}
+
+
+    {# --- Contenido específico de la página (tabla, etc.) --- #}
+    {% if error %}
+        <div class="alert alert-danger">Error: La cuenta puente no está configurada correctamente en los ajustes.</div>
+    {% elif potential_transfers %}
+        <form id="transfer-form">
+            <div class="alert alert-info">Se encontraron los siguientes pares de asientos que parecen ser transferencias a través de la cuenta puente. Selecciónalos para simplificarlos en un solo asiento.</div>
+            <table class="table table-bordered table-striped table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Seleccionar</th>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                        <th>Cuenta Origen</th>
+                        <th>Asiento Origen (ID)</th>
+                        <th>Cuenta Destino</th>
+                        <th>Asiento Destino (ID)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transfer in potential_transfers %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="form-check-input transfer-checkbox"
+                                       data-entry-from-id="{{ transfer.entry_from.id }}"
+                                       data-entry-to-id="{{ transfer.entry_to.id }}">
+                            </td>
+                            <td>{{ transfer.date|date:"Y-m-d" }}</td>
+                            <td>{{ transfer.amount }}</td>
+                            <td>{{ transfer.account_from.get_full_hierarchy }}</td>
+                            <td><a href="{% url 'edit_entry' transfer.entry_from.id %}" target="_blank">{{ transfer.entry_from.id }}</a> ({{ transfer.entry_from.description }})</td>
+                            <td>{{ transfer.account_to.get_full_hierarchy }}</td>
+                            <td><a href="{% url 'edit_entry' transfer.entry_to.id %}" target="_blank">{{ transfer.entry_to.id }}</a> ({{ transfer.entry_to.description }})</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="button" id="process-transfer-btn" class="btn btn-success action-button mt-3">Simplificar Seleccionados</button>
+        </form>
+    {% else %}
+        <div class="alert alert-info">No se encontraron transferencias potenciales para simplificar en el periodo seleccionado.</div>
+    {% endif %}
+{% endblock %}
+
+{# Ya no necesitas el bloque extra_js aquí abajo #}

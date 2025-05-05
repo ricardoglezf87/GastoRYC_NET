@@ -1,0 +1,152 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Unificar Transacciones{% endblock %}
+
+{% block header %}
+    {{ block.super }} {# Importante para incluir el contenido original del header del padre #}
+
+    {# --- Estilos CSS específicos (si los necesitas aquí) --- #}
+    <style>
+        .form-filter label { font-weight: bold; margin-bottom: .5rem; display: block; }
+        .form-filter select { display: block; width: 100%; padding: .375rem .75rem; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #495057; background-color: #fff; background-clip: padding-box; border: 1px solid #ced4da; border-radius: .25rem; transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; }
+        /* Puedes añadir más estilos específicos aquí si es necesario */
+    </style>
+
+    {# --- Script JavaScript específico de esta página --- #}
+    <script>
+        // Asegúrate que jQuery esté cargado antes si usas $(document).ready
+        // Las funciones getCookie, postData, reloadWithFilters DEBEN estar definidas globalmente (en base_site.html)
+
+        // Espera a que el DOM esté listo para añadir listeners
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const processBtn = document.getElementById('process-merge-btn');
+            if (processBtn) {
+                processBtn.addEventListener('click', function() {
+                    const selectedGroups = [];
+                    document.querySelectorAll('.merge-checkbox:checked').forEach(function(checkbox) {
+                        try {
+                            selectedGroups.push({
+                                entry_id: parseInt(checkbox.dataset.entryId),
+                                account_id: parseInt(checkbox.dataset.accountId),
+                                transaction_ids: JSON.parse(checkbox.dataset.transactionIds.replace(/'/g, '"'))
+                            });
+                        } catch (e) {
+                            console.error("Error parsing transaction IDs for checkbox:", checkbox, e);
+                            // Considera notificar al usuario o saltar este checkbox
+                        }
+                    });
+
+                    if (selectedGroups.length === 0) {
+                        alert('Por favor, selecciona al menos un grupo de transacciones para unificar.');
+                        return;
+                    }
+
+                    if (!confirm(`¿Estás seguro de que deseas unificar ${selectedGroups.length} grupo(s) de transacciones?`)) {
+                        return;
+                    }
+
+                    this.disabled = true;
+                    this.textContent = 'Procesando...';
+
+                    // Asegúrate que la URL se genera correctamente
+                    const url = "{% url 'reports:process_merge_transactions' %}";
+                    console.log("Enviando a URL:", url); // Verifica la URL en consola
+
+                    postData(url, { groups: selectedGroups })
+                        .then(data => {
+                            console.log('Respuesta del servidor (merge):', data);
+                            if (data.message) {
+                                // alert(data.message); // O usa un sistema de notificaciones mejor
+                            }
+                            reloadWithFilters();
+                        })
+                        .catch(error => {
+                            console.error('Error en postData (merge):', error);
+                            alert(`Ocurrió un error al procesar la solicitud: ${error.message}`);
+                            this.disabled = false;
+                            this.textContent = 'Unificar Seleccionados';
+                        });
+                });
+            }
+        });
+    </script>
+{% endblock header %}
+
+{% block content %}
+    <h1 class="mb-4">Unificar Transacciones Duplicadas por Cuenta en Asiento</h1>
+
+    {# --- INICIO: Formulario de Filtro (Simplificado) --- #}
+    <form method="get" class="form-filter row g-3 align-items-end mb-4 p-3 border rounded bg-light">
+        {% csrf_token %}
+        <div class="col-md-8">
+            <label for="{{ form.period.id_for_label }}" class="form-label">{{ form.period.label }}</label>
+            {{ form.period }}
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+         {% if form.errors %}
+            <div class="col-12 mt-2">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <div class="alert alert-danger p-1 mb-1" role="alert">{{ field }}: {{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </form>
+    {# --- FIN: Formulario de Filtro --- #}
+
+    {# --- Contenido específico de la página (tabla, etc.) --- #}
+    {% if entries_to_merge %}
+        <form id="merge-form">
+            <table class="table table-bordered table-striped table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th>Seleccionar</th>
+                        <th>Asiento ID</th>
+                        <th>Fecha</th>
+                        <th>Descripción Asiento</th>
+                        <th>Cuenta Afectada</th>
+                        <th>Transacciones</th>
+                        <th>Total Débito</th>
+                        <th>Total Crédito</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry_data in entries_to_merge %}
+                        {% for duplicate_group in entry_data.duplicates %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="form-check-input merge-checkbox"
+                                           data-entry-id="{{ entry_data.entry.id }}"
+                                           data-account-id="{{ duplicate_group.account.id }}"
+                                           data-transaction-ids="[{% for tx in duplicate_group.transactions %}{{ tx.id }}{% if not forloop.last %},{% endif %}{% endfor %}]">
+                                </td>
+                                <td><a href="{% url 'edit_entry' entry_data.entry.id %}" target="_blank">{{ entry_data.entry.id }}</a></td>
+                                <td>{{ entry_data.entry.date|date:"Y-m-d" }}</td>
+                                <td>{{ entry_data.entry.description }}</td>
+                                <td>{{ duplicate_group.account.get_full_hierarchy }}</td>
+                                <td>
+                                    <ul class="list-unstyled mb-0">
+                                    {% for tx in duplicate_group.transactions %}
+                                        <li>ID: {{ tx.id }} | D: {{ tx.debit }} | C: {{ tx.credit }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                </td>
+                                <td>{{ duplicate_group.total_debit }}</td>
+                                <td>{{ duplicate_group.total_credit }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="button" id="process-merge-btn" class="btn btn-success action-button mt-3">Unificar Seleccionados</button>
+        </form>
+    {% else %}
+        <div class="alert alert-info">No se encontraron asientos con transacciones duplicadas para el periodo seleccionado.</div>
+    {% endif %}
+{% endblock %}
+
+

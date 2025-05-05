@@ -79,6 +79,67 @@
                 });
             });
         });
+
+
+        function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken'); // Obtener el token CSRF globalmente
+
+    // Función genérica para enviar datos POST como JSON usando Fetch API
+    async function postData(url = '', data = {}) {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken // Usar el token CSRF obtenido globalmente
+                },
+                body: JSON.stringify(data)
+            });
+
+            // Intenta parsear la respuesta como JSON, incluso si no es 'ok'
+            // para obtener mensajes de error del backend si los hay.
+            const responseData = await response.json().catch(() => ({})); // Devuelve {} si no es JSON válido
+
+            if (!response.ok) {
+                // Si la respuesta no es OK, construye un mensaje de error
+                // Prioriza el mensaje del backend si existe
+                const errorMessage = responseData.message || `Error ${response.status}: ${response.statusText}`;
+                throw new Error(errorMessage);
+            }
+
+            // Si la respuesta es OK, devuelve los datos (puede incluir mensajes de éxito)
+            return responseData;
+
+        } catch (error) {
+            // Captura errores de red o errores lanzados arriba
+            console.error('Error en postData:', error);
+            // Re-lanza el error para que sea capturado por el .catch() en la llamada original
+            throw error;
+        }
+    }
+
+    // Función para recargar la página manteniendo los parámetros GET actuales
+    function reloadWithFilters() {
+        // Obtiene los parámetros GET de la URL actual
+        const searchParams = window.location.search;
+        // Recarga la página con la misma ruta y los mismos parámetros
+        window.location.href = window.location.pathname + searchParams;
+    }
+
     </script>
 
     {# --- Estilos adicionales si son necesarios para el dropdown --- #}
@@ -114,7 +175,27 @@
     <a href="/accounts/add_account/">Nueva cuenta</a>
     <a href="/entries/add_entry/">Nueva entrada</a>
     <a href="/bank_imports/import_movements/">Importar movimientos</a>
-    <a href="/reports/unbalanced_entries/">Movimientos descuadrados</a>
+
+    <div class="dropdown nav-global-dropdown" style="display: inline-block;">
+        <a class="nav-link dropdown-toggle" href="#" id="reportsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-chart-bar mr-1"></i> Reportes y Limpieza 
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="reportsDropdown">
+            {# Asegúrate que las URLs sean correctas o usa {% url 'app_name:url_name' %} #}
+            <a class="dropdown-item" href="/reports/unbalanced_entries/"> {# Asumiendo que 'unbalanced_entries' está en la app 'report' #}
+                <i class="fas fa-balance-scale-left mr-2"></i>Movimientos Descuadrados
+            </a>
+            <a class="dropdown-item" href="/reports/merge_transactions/">
+                <i class="fas fa-compress-arrows-alt mr-2"></i>Unificar Transacciones
+            </a>
+            <a class="dropdown-item" href="/reports/detect_transfers/">
+                <i class="fas fa-exchange-alt mr-2"></i>Simplificar Transferencias
+            </a>
+            <a class="dropdown-item" href="/reports/delete_empty_entries/">
+                <i class="fas fa-trash-alt mr-2"></i>Eliminar Asientos Vacíos
+            </a>
+        </div>
+    </div>
 	
     <div class="dropdown nav-global-dropdown" style="display: inline-block;">
         <a class="nav-link dropdown-toggle" href="#" id="optionsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
