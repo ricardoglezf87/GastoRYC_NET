@@ -23,12 +23,12 @@ logger = logging.getLogger(__name__)
 # --- hello_world, calculate_inicial_balances, recalculate_balances_after_date sin cambios ---
 @shared_task(bind=True)
 def hello_world(self):
-    print("¡Hola Mundo!")
+    logger.info("¡Hola Mundo! desde Celery")
     return "¡Hola Mundo!"
 
 @shared_task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5, 'countdown': 1})
 def calculate_inicial_balances(self):
-    print ('Calcula los balances iniciales para todas las cuentas')
+    logger.info('Calculando los balances iniciales para todas las cuentas')
     # Es más eficiente empezar desde las hojas (cuentas sin hijos) hacia arriba,
     # pero recalcular todo desde una fecha muy antigua también funciona.
     # La implementación actual llama a recalculate_balances_after_date para cada cuenta,

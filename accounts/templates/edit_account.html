@@ -4,7 +4,6 @@
 {% block content %}
 
 <div class="row">
-  <!-- Descripción y Padre a la izquierda -->
   <div class="col-md-8">
     <h1>Editar Cuenta</h1>
     <form method="post" enctype="multipart/form-data" id="accountForm">
@@ -28,7 +27,7 @@
         <label for="id_name">Ruta por defecto</label>
         <input type="text" class="form-control" id="id_default_path" name="default_path" value="{{ account.default_path }}">
       </div>
-      <div class="form-group form-check col-md-6 ">
+      <div class="form-group form-check col-md-6">
         <div class="ml-4">
           <input type="checkbox" class="form-check-input" id="id_closed" name="closed" {% if account.closed %}checked{% endif %}>
           <label class="form-check-label" for="id_closed">Cerrada</label>
@@ -38,10 +37,9 @@
     </form>
   </div>
 
-  <!-- Adjuntos -->
   <div class="col-md-4">
     <h2>Adjuntos</h2>
-    <div class="scrollable-section"> <!-- Contenedor con scroll -->
+    <div class="scrollable-section">
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
@@ -76,11 +74,7 @@
   </div>
 </div>
 
-
-
-<!-- Transacciones a la izquierda y Adjuntos a la derecha -->
 <div class="row mt-4">
-  <!-- Transacciones -->
   <div class="col-md-8">
     <div class="d-flex justify-content-between align-items-center">
       <h2>Transacciones</h2>
@@ -100,18 +94,16 @@
           <option value="all">Todos los registros</option>
         </select>
         <a href="/entries/add_entry/" class="btn btn-sm">
-          <i class="bi bi-plus-circle"></i> <!-- Plus circle icon -->
+          <i class="bi bi-plus-circle"></i>
         </a>
       </div>
     </div>    
     <div id="transactionsTable"></div>
   </div>
 
-  
-  <!-- Palabras asociadas a la derecha -->
   <div class="col-md-4">
     <h2>Palabras Asociadas</h2>
-    <div class="scrollable-section"> <!-- Contenedor con scroll -->
+    <div class="scrollable-section">
       <table id="keywordsTable" class="table table-striped table-bordered">
         <thead>
           <tr>
@@ -143,7 +135,6 @@
     </div>
   </div>
 </div>
-  
 <style>
   .drop-area {
     border: 2px dashed #ccc;
@@ -158,169 +149,185 @@
     border-color: #000;
     background-color: #f0f0f0;
   }
+
   .transaction-row {
-    cursor: pointer; /* Change cursor to indicate it's a drop zone */
-    transition: background-color 0.2s ease, box-shadow 0.2s ease; /* Add transitions for smooth effect */
+    cursor: pointer;
+    /* Change cursor to indicate it's a drop zone */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    /* Add transitions for smooth effect */
   }
 
   .transaction-row.dragover {
-    background-color: #e0f0ff; /* Light blue background */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    background-color: #e0f0ff;
+    /* Light blue background */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    /* Add a subtle shadow */
   }
+
   .attachment-indicator {
     text-align: center;
-    width: 20px; /* Adjust width as needed */
+    width: 20px;
+    /* Adjust width as needed */
   }
+
   .attachment-indicator i {
-    font-size: 1.2em; /* Adjust icon size as needed */
+    font-size: 1.2em;
+    /* Adjust icon size as needed */
   }
+
   .scrollable-section {
-    max-height: 300px; /* Ajusta la altura según sea necesario */
+    max-height: 300px;
+    /* Ajusta la altura según sea necesario */
     overflow-y: auto;
-    border: 1px solid #ddd; /* Opcional: para resaltar el área desplazable */
-    padding: 10px; /* Opcional: para agregar espacio interno */
-    background-color: #f9f9f9; /* Opcional: para diferenciar el fondo */
+    border: 1px solid #ddd;
+    /* Opcional: para resaltar el área desplazable */
+    padding: 10px;
+    /* Opcional: para agregar espacio interno */
+    background-color: #f9f9f9;
+    /* Opcional: para diferenciar el fondo */
   }
 
   .scrollable-section-big {
-    max-height: 2000px!important;
+    max-height: 2000px !important;
   }
 
   /* Estilos modernos para DataTables */
   .dataTables_wrapper .dataTables_length,
   .dataTables_wrapper .dataTables_filter {
-      margin-bottom: 1rem;
+    margin-bottom: 1rem;
   }
 
   .dataTables_wrapper .dataTables_length select {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 4px;
-      background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
+    background-color: white;
   }
 
   .dataTables_wrapper .dataTables_filter input {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 6px 12px;
-      margin-left: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-left: 8px;
   }
 
   .dataTables_wrapper .dataTables_paginate {
-      margin-top: 1rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid #eee;
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #eee;
   }
 
   .dataTables_wrapper .dataTables_paginate .paginate_button {
-      border: none !important;
-      padding: 8px 16px !important;
-      margin: 0 2px;
-      border-radius: 4px;
-      background: transparent !important;
-      color: #666 !important;
-      transition: all 0.2s;
+    border: none !important;
+    padding: 8px 16px !important;
+    margin: 0 2px;
+    border-radius: 4px;
+    background: transparent !important;
+    color: #666 !important;
+    transition: all 0.2s;
   }
 
   .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-      background: #f0f0f0 !important;
-      color: #333 !important;
+    background: #f0f0f0 !important;
+    color: #333 !important;
   }
 
   .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-      background: #007bff !important;
-      color: white !important;
-      border: none !important;
+    background: #007bff !important;
+    color: white !important;
+    border: none !important;
   }
 
   .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
-      background: #0056b3 !important;
+    background: #0056b3 !important;
   }
 
   .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-      color: #ccc !important;
-      cursor: not-allowed;
+    color: #ccc !important;
+    cursor: not-allowed;
   }
 
   .dataTables_wrapper .dataTables_info {
-      color: #666;
-      padding-top: 1rem;
+    color: #666;
+    padding-top: 1rem;
   }
 
   /* Estilos para la tabla */
   .table {
-      border-collapse: separate;
-      border-spacing: 0;
-      border: 1px solid #dee2e6;
-      border-radius: 8px;
-      overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
   }
 
   .table thead th {
-      background-color: #f8f9fa;
-      border-bottom: 2px solid #dee2e6;
-      padding: 12px;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    padding: 12px;
   }
 
   .table tbody td {
-      padding: 12px;
-      vertical-align: middle;
+    padding: 12px;
+    vertical-align: middle;
   }
 
   .table-striped tbody tr:nth-of-type(odd) {
-      background-color: rgba(0,0,0,.02);
+    background-color: rgba(0, 0, 0, .02);
   }
 
   /* Estilos adicionales para DataTables */
   .dataTables_wrapper .dataTables_filter {
-      float: none;
-      text-align: left;
-      margin-bottom: 1rem;
+    float: none;
+    text-align: left;
+    margin-bottom: 1rem;
   }
 
   .dataTables_wrapper .dataTables_filter input {
-      width: 300px;
-      margin-left: 0.5em;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      padding: 0.375rem 0.75rem;
+    width: 300px;
+    margin-left: 0.5em;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
   }
 
   .dataTables_wrapper .dataTables_length {
-      float: left;
-      margin-top: 0.5rem;
+    float: left;
+    margin-top: 0.5rem;
   }
 
   .dataTables_wrapper .dataTables_info {
-      text-align: right;
-      padding-top: 0.85em;
+    text-align: right;
+    padding-top: 0.85em;
   }
 
   .dataTables_wrapper .dataTables_paginate {
-      float: center;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
+    float: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 
   /* Estilo para el contenedor de la tabla */
   .dataTables_wrapper {
-      padding: 1rem;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   /* Estilo para el input de búsqueda cuando tiene foco */
   .dataTables_wrapper .dataTables_filter input:focus {
-      border-color: #80bdff;
-      box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-      outline: 0;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+    outline: 0;
   }
 
   .tabulator-row.uploading {
     opacity: 0.6;
-    pointer-events: none; /* Evita interacciones mientras sube */
+    pointer-events: none;
+    /* Evita interacciones mientras sube */
   }
+
   .tabulator-row .upload-indicator {
     /* Estilo para un pequeño icono de carga si lo deseas */
     margin-left: 5px;
@@ -338,7 +345,7 @@
   }
 
   .tabulator-loader {
-    background: rgba(255,255,255,0.8);
+    background: rgba(255, 255, 255, 0.8);
   }
 
   .tabulator-placeholder {
@@ -348,7 +355,7 @@
   }
 
   .tabulator-loading-overlay {
-    background: rgba(255,255,255,0.8);
+    background: rgba(255, 255, 255, 0.8);
   }
 </style>
 
@@ -460,46 +467,46 @@
       });
   });
 
-  function handleTransactionFiles(files, entryId, tabulatorRow) { 
+  function handleTransactionFiles(files, entryId, tabulatorRow) {
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
-        formData.append('files', files[i]);
+      formData.append('files', files[i]);
     }
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
 
     if (tabulatorRow) {
-        const rowElement = tabulatorRow.getElement();
-        rowElement.classList.add('uploading');
+      const rowElement = tabulatorRow.getElement();
+      rowElement.classList.add('uploading');
     }
 
     fetch(`/attachments/upload_entry_attachments/${entryId}/`, {
-        method: 'POST',
-        body: formData
+      method: 'POST',
+      body: formData
     })
-    .then(response => response.json())
-    .then(data => {
+      .then(response => response.json())
+      .then(data => {
         if (data.success) {
-            if (tabulatorRow) {
-                tabulatorRow.update({ has_attachments: true });
-                console.log(`Adjunto añadido a la entrada ${entryId}`);
-            } else {
-                 alert('Archivo subido. Refresca la tabla si no ves el cambio.');
-            }
+          if (tabulatorRow) {
+            tabulatorRow.update({ has_attachments: true });
+            console.log(`Adjunto añadido a la entrada ${entryId}`);
+          } else {
+            alert('Archivo subido. Refresca la tabla si no ves el cambio.');
+          }
         } else {
-            alert('Error al subir archivos: ' + (data.error || 'Error desconocido'));
+          alert('Error al subir archivos: ' + (data.error || 'Error desconocido'));
         }
-    })
-    .catch(error => {
+      })
+      .catch(error => {
         console.error('Error en fetch:', error);
         alert('Error de red al subir archivos.');
-    })
-    .finally(() => {
+      })
+      .finally(() => {
         if (tabulatorRow) {
-            const rowElement = tabulatorRow.getElement();
-            rowElement.classList.remove('uploading');
+          const rowElement = tabulatorRow.getElement();
+          rowElement.classList.remove('uploading');
         }
-    });
-}
+      });
+  }
 
   const transactionRows = document.querySelectorAll('.transaction-row');
   transactionRows.forEach(row => {
@@ -613,164 +620,164 @@
 
   // Configuración de Tabulator
   var table = new Tabulator("#transactionsTable", {
-      ajaxURL: "{% url 'get_account_transactions' account.id %}",
-      ajaxResponse: function(url, params, response) {
-          return response.data || response;
-      },
-      ajaxConfig: {
-          method: "GET",
-      },
-      layout: "fitColumns",
-      height: "600px",
-      placeholder: "No se encontraron transacciones",
+    ajaxURL: "{% url 'get_account_transactions' account.id %}",
+    ajaxResponse: function (url, params, response) {
+      return response.data || response;
+    },
+    ajaxConfig: {
+      method: "GET",
+    },
+    layout: "fitColumns",
+    height: "600px",
+    placeholder: "No se encontraron transacciones",
 
-      ajaxURLGenerator:function(url, config, params){
-          const urlParams = new URLSearchParams();
-          const period = document.getElementById('periodSelector').value;
-          urlParams.append("period", period);
+    ajaxURLGenerator: function (url, config, params) {
+      const urlParams = new URLSearchParams();
+      const period = document.getElementById('periodSelector').value;
+      urlParams.append("period", period);
 
-          if (this.initialized) {
-              try {
-                  const filters = {};
-                  const headerFilters = this.getHeaderFilters();
-                  headerFilters.forEach(function(filter) {
-                      const value = filter.getValue();
-                      if (value !== null && typeof value !== 'undefined' && value !== '') {
-                          filters[filter.getField()] = value;
-                      }
-                  });
+      if (this.initialized) {
+        try {
+          const filters = {};
+          const headerFilters = this.getHeaderFilters();
+          headerFilters.forEach(function (filter) {
+            const value = filter.getValue();
+            if (value !== null && typeof value !== 'undefined' && value !== '') {
+              filters[filter.getField()] = value;
+            }
+          });
 
-                  if (Object.keys(filters).length > 0) {
-                      urlParams.append("filters", JSON.stringify(filters));
-                  }
-              } catch (error) {
-                  console.error("Error al procesar filtros:", error);
-              }
+          if (Object.keys(filters).length > 0) {
+            urlParams.append("filters", JSON.stringify(filters));
           }
+        } catch (error) {
+          console.error("Error al procesar filtros:", error);
+        }
+      }
 
-          return `${url}?${urlParams.toString()}`;
-      },
+      return `${url}?${urlParams.toString()}`;
+    },
 
-      rowFormatter:function(row){
-          var data = row.getData();
-          var element = row.getElement();
+    rowFormatter: function (row) {
+      var data = row.getData();
+      var element = row.getElement();
 
-          // Asegúrate de que 'entry_id' existe en tus datos
-          if(data.entry_id) {
-              element.dataset.entryId = data.entry_id; // Guardar el ID para usarlo en el drop
+      // Asegúrate de que 'entry_id' existe en tus datos
+      if (data.entry_id) {
+        element.dataset.entryId = data.entry_id; // Guardar el ID para usarlo en el drop
 
-              element.addEventListener('dragover', (event) => {
-                  event.preventDefault(); // Necesario para permitir el drop
-                  element.classList.add('dragover'); // Estilo visual
-              });
+        element.addEventListener('dragover', (event) => {
+          event.preventDefault(); // Necesario para permitir el drop
+          element.classList.add('dragover'); // Estilo visual
+        });
 
-              element.addEventListener('dragleave', () => {
-                  element.classList.remove('dragover'); // Quitar estilo visual
-              });
+        element.addEventListener('dragleave', () => {
+          element.classList.remove('dragover'); // Quitar estilo visual
+        });
 
-              element.addEventListener('drop', (event) => {
-                  event.preventDefault();
-                  element.classList.remove('dragover');
-                  const files = event.dataTransfer.files;
-                  const entryId = element.dataset.entryId; // Obtener el ID guardado
+        element.addEventListener('drop', (event) => {
+          event.preventDefault();
+          element.classList.remove('dragover');
+          const files = event.dataTransfer.files;
+          const entryId = element.dataset.entryId; // Obtener el ID guardado
 
-                  // ¡Importante! Pasa la instancia de la fila de Tabulator (`row`)
-                  // a handleTransactionFiles.
-                  const tabulatorRow = row; // 'row' es el componente de fila de Tabulator
+          // ¡Importante! Pasa la instancia de la fila de Tabulator (`row`)
+          // a handleTransactionFiles.
+          const tabulatorRow = row; // 'row' es el componente de fila de Tabulator
 
-                  if (files.length > 0 && entryId) {
-                      handleTransactionFiles(files, entryId, tabulatorRow); // Pasa la fila aquí
-                  } else {
-                      console.warn("Drop event sin archivos o sin entryId", {files, entryId});
-                  }
-              });
+          if (files.length > 0 && entryId) {
+            handleTransactionFiles(files, entryId, tabulatorRow); // Pasa la fila aquí
           } else {
-              console.warn("Fila sin entry_id:", data);
+            console.warn("Drop event sin archivos o sin entryId", { files, entryId });
           }
+        });
+      } else {
+        console.warn("Fila sin entry_id:", data);
+      }
+    },
+
+    columns: [
+      {
+        title: "Fecha",
+        field: "date",
+        formatter: function (cell, formatterParams, onRendered) {
+          const date = cell.getValue();
+          const link = cell.getRow().getData().date_link;
+          return link ? `<a href="${link}" class="text-primary">${date}</a>` : date;
+        },
+        headerFilter: "input",
+        width: 120
       },
-
-      columns: [
-          {
-              title: "Fecha",
-              field: "date",
-              formatter: function(cell, formatterParams, onRendered) {
-                  const date = cell.getValue();
-                  const link = cell.getRow().getData().date_link;
-                  return link ? `<a href="${link}" class="text-primary">${date}</a>` : date;
-              },
-              headerFilter: "input",
-              width: 120
-          },
-          {
-              title: "Descripción",
-              field: "description",
-              headerFilter: "input",
-              widthGrow: 2
-          },
-          {
-              title: "Contrapartidas",
-              field: "counterparts",
-              headerFilter: "input",
-              widthGrow: 2
-          },
-          {
-              title: "Debe",
-              field: "debit",
-              hozAlign: "right",
-              formatter: "money",
-              formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
-              headerFilter: "number",
-              headerFilterFunc: ">=",
-              width: 120
-          },
-          {
-              title: "Haber",
-              field: "credit",
-              hozAlign: "right",
-              formatter: "money",
-              formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
-              headerFilter: "number",
-              headerFilterFunc: ">=",
-              width: 120
-          },
-          {
-              title: "Saldo",
-              field: "balance",
-              hozAlign: "right",
-              formatter: "money",
-              formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
-              width: 120
-          },
-          {
-              title: "Adj.",
-              field: "has_attachments", 
-              formatter: function(cell, formatterParams, onRendered) {
-                  // El formateador mostrará el icono si el valor es true
-                  return cell.getValue() ? '<i class="fas fa-paperclip attachment-icon"></i>' : '';
-              },
-              hozAlign: "center",
-              width: 60,
-              headerSort: false
-          }
-      ],
-      initialSort:[
-          {column:"date", dir:"desc"},
-      ]
+      {
+        title: "Descripción",
+        field: "description",
+        headerFilter: "input",
+        widthGrow: 2
+      },
+      {
+        title: "Contrapartidas",
+        field: "counterparts",
+        headerFilter: "input",
+        widthGrow: 2
+      },
+      {
+        title: "Debe",
+        field: "debit",
+        hozAlign: "right",
+        formatter: "money",
+        formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+        headerFilter: "number",
+        headerFilterFunc: ">=",
+        width: 120
+      },
+      {
+        title: "Haber",
+        field: "credit",
+        hozAlign: "right",
+        formatter: "money",
+        formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+        headerFilter: "number",
+        headerFilterFunc: ">=",
+        width: 120
+      },
+      {
+        title: "Saldo",
+        field: "balance",
+        hozAlign: "right",
+        formatter: "money",
+        formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+        width: 120
+      },
+      {
+        title: "Adj.",
+        field: "has_attachments",
+        formatter: function (cell, formatterParams, onRendered) {
+          // El formateador mostrará el icono si el valor es true
+          return cell.getValue() ? '<i class="fas fa-paperclip attachment-icon"></i>' : '';
+        },
+        hozAlign: "center",
+        width: 60,
+        headerSort: false
+      }
+    ],
+    initialSort: [
+      { column: "date", dir: "desc" },
+    ]
   });
 
-  document.getElementById('periodSelector').addEventListener('change', function() {
+  document.getElementById('periodSelector').addEventListener('change', function () {
+    table.setData();
+  });
+
+  table.on("tableBuilt", function () {
+    this.initialized = true;
+  });
+
+  table.on("headerFilterChanged", function (headerValue, field) {
+    clearTimeout(window.filterTimer);
+    window.filterTimer = setTimeout(() => {
       table.setData();
-  });
-
-  table.on("tableBuilt", function(){
-      this.initialized = true;
-  });
-
-  table.on("headerFilterChanged", function(headerValue, field){
-      clearTimeout(window.filterTimer);
-      window.filterTimer = setTimeout(() => {
-          table.setData();
-      }, 500);
+    }, 500);
   });
 
 </script>

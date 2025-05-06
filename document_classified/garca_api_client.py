@@ -20,11 +20,8 @@ class ApiClient:
         self.document_types_url = f"{self.api_base}/document-types/" # Ajustado por Opción 1
         self.search_entries_url = f"{self.base_url}/entries/search/"
         self.test_rules_url = f"{self.api_base}/test-rules/" # Ajustado por Opción 1
-
-        # --- CORRECCIÓN AQUÍ ---
         # La URL debe ser relativa a self.api_base, no a self.documents_url
         self.update_extracted_data_url_template = f"{self.api_base}/extracted-data/{{document_id}}/" # Vista separada
-        # -----------------------
 
         self.list_documents_url = f"{self.documents_url}/" # Raíz del ViewSet
         self.document_detail_url_template = f"{self.documents_url}/{{id}}/" # Detalle del ViewSet
@@ -39,10 +36,8 @@ class ApiClient:
         manejando la lógica común y los errores.
         (Basado en la versión de bulk_matcher_api_client.py por su timeout más largo y manejo de errores)
         """
-        print(f"API Request: {method.upper()} {url}")
         files = kwargs.get('files')
         if files:
-            print(f"API Request Files: {list(files.keys())}")
             # requests maneja Content-Type para multipart/form-data automáticamente
             kwargs.pop('json', None) # Evitar conflicto si se pasan files y json
         else:
@@ -59,7 +54,6 @@ class ApiClient:
 
             # Manejo de respuesta exitosa sin contenido (204 No Content)
             if response.status_code == 204:
-                 print("API Response: Success (204 No Content)")
                  return True # O None, según la semántica deseada
 
             # Manejo de respuesta con contenido
@@ -67,16 +61,12 @@ class ApiClient:
                 try:
                     # Intenta decodificar JSON
                     json_response = response.json()
-                    print(f"API Response (JSON): {json_response}")
                     return json_response
                 except requests.exceptions.JSONDecodeError:
                     # Éxito pero no es JSON (podría ser texto plano, HTML, etc.)
-                    print(f"API Response: Success (Status {response.status_code}, No JSON Content)")
-                    # Devolver True o response.text según lo que se espere
                     return True 
             else:
                  # Éxito pero sin contenido (ej. 200 OK con cuerpo vacío)
-                 print(f"API Response: Success (Status {response.status_code}, Empty Content)")
                  return True
 
         except requests.exceptions.HTTPError as e:
@@ -164,7 +154,6 @@ class ApiClient:
 
         url = self.update_extracted_data_url_template.format(document_id=document_id)
         payload = {field_name: value}
-        print(f"API Request: PATCH {url} con payload: {payload}")
         result = self._make_request('patch', url, json=payload)
         return result
 
@@ -209,7 +198,6 @@ class ApiClient:
         params = {'account_id': account_id, 'start_date': start_date, 'end_date': end_date}
         if amount is not None: 
             params['amount'] = amount
-        print(f"Buscando asientos contables con params: {params}") # DEBUG
         result = self._make_request('get', url, params=params)
         if isinstance(result, dict) and "error" in result: 
             print(f"get_accounting_entries: Error recibido - {result['error']}")
@@ -278,4 +266,3 @@ class ApiClient:
              print(f"Error procesando archivo o enviando en test_rules: {e}")
              traceback.print_exc()
              return {"error": f"Error al procesar archivo local o enviar petición: {e}"}
-

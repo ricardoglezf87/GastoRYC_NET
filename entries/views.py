@@ -38,7 +38,6 @@ def delete_entry(request, entry_id):
 
     go_back_breadcrumb(request)
     breadcrumbs = get_breadcrumbs(request)
-    print(breadcrumbs)
 
     if breadcrumbs:
         # Redirige al usuario al último breadcrumb restante
@@ -167,7 +166,7 @@ class SearchEntries(generics.ListAPIView):
         # Validaciones básicas de parámetros obligatorios
         if not account_id_str or not start_date_str or not end_date_str:
             print("SearchEntries: Faltan parámetros obligatorios (account_id, start_date, end_date).")
-            return Entry.objects.none() # Devuelve queryset vacío si faltan
+            return Entry.objects.none()
 
         try:
             # Conversión y validación de tipos
@@ -192,11 +191,9 @@ class SearchEntries(generics.ListAPIView):
                 date__lte=end_date
             ).distinct() # distinct() es crucial si un Entry tiene múltiples transacciones con la misma cuenta
 
-            print(f"SearchEntries: Filtro base -> Cuenta={account_id}, Rango={start_date} a {end_date}. Asientos encontrados: {queryset.count()}")
-
             # --- Filtrado Opcional por Importe ---
             if amount_decimal is not None:
-                print(f"SearchEntries: Aplicando filtro de importe: {amount_decimal}")
+                # print(f"SearchEntries: Aplicando filtro de importe: {amount_decimal}")
                 # Anotar la suma de débitos y créditos para cada Entry
                 # Nota: Esto puede ser menos eficiente si tienes muchos asientos.
                 # Considera almacenar total_debit/total_credit en el modelo Entry si el rendimiento es crítico.
@@ -215,8 +212,6 @@ class SearchEntries(generics.ListAPIView):
                 # Alternativa (si solo buscas que *alguna* transacción en esa cuenta tenga ese importe, lo cual es diferente):
                 # queryset = queryset.filter(transactions__account_id=account_id,
                 #                            transactions__debit=amount_decimal) # O credit
-
-                print(f"SearchEntries: Tras filtro de importe -> Asientos encontrados: {queryset.count()}")
 
             # Ordenar resultados (opcional, por fecha por ejemplo)
             queryset = queryset.order_by('date', 'id')

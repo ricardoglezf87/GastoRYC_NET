@@ -23,7 +23,6 @@
 </div>
 
 <style>
-    /* Add some basic styling */
     #accountTree {
         list-style-type: none;
         padding-left: 0; /* Remove default padding */
@@ -84,15 +83,12 @@
 <script>
 
 $(document).ready(function() {
-    console.log("Document ready, attaching keyup listener...");
-
     var $accountTree = $("#accountTree");
     var $accountSearch = $("#accountSearch");
     var $showClosedCheckbox = $("#showClosedCheckbox");
 
     $accountSearch.on("keyup", function() {
         var value = $(this).val().toLowerCase().trim();
-        console.log("Search Value:", value);
 
         var $allItems = $accountTree.find(".list-group-item");
 
@@ -110,7 +106,7 @@ $(document).ready(function() {
 
         // 2. Si la búsqueda está vacía, mostrar TODOS los elementos, pero colapsados
         if (value === "") {
-            $allItems.removeClass('hidden'); // <--- !! CAMBIO AQUÍ !! Muestra todos los items
+            $allItems.removeClass('hidden');
             // El reseteo de carets y nested ya se hizo justo arriba, así que el árbol aparecerá colapsado.
             return; // Salir, no hacer más filtrado
         }
@@ -143,7 +139,7 @@ $(document).ready(function() {
     });
 
     $showClosedCheckbox.on("change", function() {
-        var url = window.location.pathname; 
+        var url = window.location.pathname;
         var params = new URLSearchParams(window.location.search);
         if (this.checked) {
             params.set('show_closed', 'on');
@@ -156,7 +152,6 @@ $(document).ready(function() {
     // --- Manejador de clic para expandir/colapsar ---
     $accountTree.on('click', '.caret', function(event) {
         event.stopPropagation();
-        console.log("Caret clicked!");
 
         var caret = $(this);
         var parentItemDiv = caret.closest('.list-group-item');

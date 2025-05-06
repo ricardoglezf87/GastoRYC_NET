@@ -16,6 +16,7 @@ from django.db import transaction
 from django.views import View
 from django.utils.decorators import method_decorator
 
+
 class ImportMovementsMixin:
     @transaction.atomic
     def import_movements(self, account, import_data):
@@ -75,13 +76,13 @@ class ImportMovementsMixin:
 
 class BankImportView(ImportMovementsMixin, View):
     template_name = 'import_movements.html'
-    
+
     def get(self, request):
         clear_breadcrumbs(request)
         add_breadcrumb(request, 'Importar movimientos' , request.path)
         form = BankImportForm()
         return render(request, self.template_name, {'form': form})
-    
+
     def post(self, request):
         form = BankImportForm(request.POST, request.FILES)
         if form.is_valid():
@@ -142,7 +143,7 @@ class BankImportView(ImportMovementsMixin, View):
             debit=movement['amount'] if movement['amount'] > 0 else 0,
             credit=abs(movement['amount']) if movement['amount'] < 0 else 0
         ).exists()
-    
+
     def process_ing_file(self, file):
         """Procesa un archivo CSV de ING Direct"""
         # Decodificar el archivo
@@ -201,7 +202,7 @@ class BankImportView(ImportMovementsMixin, View):
                 except:
                     # Ignorar líneas con formato incorrecto
                     pass
-                    
+
         return csv_data, import_data
     
     def find_duplicates(self, account, import_data):
@@ -219,6 +220,7 @@ class BankImportView(ImportMovementsMixin, View):
                 duplicates.append(movement)
         return duplicates
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class BankImportPreviewView(View):
     def post(self, request):
@@ -232,6 +234,7 @@ class BankImportPreviewView(View):
                     preview_data, _ = BankImportView().process_ing_file(file)
                     return JsonResponse({'success': True, 'preview_data': preview_data})
         return JsonResponse({'success': False})
+
 
 class BankImportDuplicatesView(ImportMovementsMixin, View):
     template_name = 'import_duplicates.html'

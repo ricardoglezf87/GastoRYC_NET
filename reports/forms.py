@@ -1,4 +1,3 @@
-# reports/forms.py (o donde esté tu formulario)
 from django import forms
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta # Necesitarás instalar: pip install python-dateutil
@@ -14,8 +13,7 @@ class PeriodFilterForm(forms.Form):
         ('this_year', 'Este Año'),        
         ('last_year', 'Año Pasado'),
         ('last_3_years', 'Últimos 3 Años'), # Nueva opción
-        ('last_5_years', 'Últimos 5 Años'), # Nueva opción
-        # ('custom', 'Personalizado...'), # Eliminamos la opción personalizada
+        ('last_5_years', 'Últimos 5 Años'), 
         ('all', 'Todas las Fechas'), # Añadimos opción para todo
     ]
 
@@ -25,54 +23,19 @@ class PeriodFilterForm(forms.Form):
         label="Periodo Predefinido",
         widget=forms.Select(attrs={'class': 'form-control'}) # Asegúrate de que tenga clases de Bootstrap si es necesario
     )
-    # Eliminamos los campos de fecha ya que no hay opción personalizada
-    # start_date = forms.DateField(
-    #     required=False,
-    #     widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-    #     label="Fecha Inicio"
-    # )
-    # end_date = forms.DateField(
-    #     required=False,
-    #     widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-    #     label="Fecha Fin"
-    # )
 
     def clean(self):
         cleaned_data = super().clean()
-        period = cleaned_data.get('period')
-        start_date = cleaned_data.get('start_date')
-        end_date = cleaned_data.get('end_date')
-
-        # Eliminamos la validación para 'custom'
-        # if period == 'custom' and not (start_date and end_date):
-        #     raise forms.ValidationError(
-        #         "Si seleccionas 'Personalizado', debes especificar Fecha Inicio y Fecha Fin."
-        #     )
-
-        # Eliminamos la validación de fechas ya que no existen los campos
-        # if start_date and end_date and start_date > end_date:
-        #     raise forms.ValidationError("La Fecha Inicio no puede ser posterior a la Fecha Fin.")
-
-        # Podrías añadir lógica aquí para calcular start/end date basado en 'period'
-        # si no quieres hacerlo en la vista, pero generalmente es más claro en la vista.
-
+        # La validación de periodo se maneja por las opciones del ChoiceField.
+        # No se necesita validación adicional aquí ya que 'start_date' y 'end_date'
+        # fueron eliminados.
         return cleaned_data
 
-    # Función auxiliar (opcional, podrías tenerla en la vista)
-    # para obtener el rango de fechas basado en la selección del periodo
     def get_date_range(self):
         cleaned_data = self.cleaned_data
         period = cleaned_data.get('period')
-        # Ya no necesitamos obtener start_date/end_date del form
-        # start_date = cleaned_data.get('start_date')
-        # end_date = cleaned_data.get('end_date')
         today = date.today()
 
-        # Eliminamos la lógica para 'custom'
-        # if (period == 'custom' or not period) and start_date and end_date:
-        #      # Asegurarse de que end_date incluya todo el día si es necesario (depende de tu lógica de filtrado)
-        #      # Si filtras por fecha exacta, esto está bien. Si es un rango, podrías necesitar ajustar.
-        #     return start_date, end_date
         if period == 'today':
             return today, today
         elif period == 'this_week':
@@ -103,6 +66,5 @@ class PeriodFilterForm(forms.Form):
             return start, today
         elif period == 'all': # Nueva opción para todas las fechas
             return None, None # Indica que no hay filtro de fecha
-        else: # Caso por defecto (selección vacía inicial)
-            # Caso por defecto o si no hay selección válida, quizás devolver None o un rango por defecto
+        else: # Caso por defecto (selección vacía inicial o inválida)
             return None, None

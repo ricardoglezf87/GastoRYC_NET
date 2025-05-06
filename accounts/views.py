@@ -10,11 +10,11 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from rest_framework import generics
 
+import logging
+logger = logging.getLogger(__name__)
 
 def account_tree_view(request):
-
     clear_breadcrumbs(request)
-
     show_closed_flag = request.GET.get('show_closed') == 'on'
     accounts = Account.objects.filter(parent=None).prefetch_related('children')
     return render(request, 'account_tree.html', {'accounts': accounts, 'show_closed': show_closed_flag})
@@ -24,9 +24,8 @@ def edit_account(request, account_id):
     parents = Account.objects.exclude(pk=account_id)
     parents_with_hierarchy = sorted([
         (parent.id, parent.get_full_hierarchy()) for parent in parents
-    ],key=lambda x: x[1])        
+    ], key=lambda x: x[1])
 
-    # Add breadcrumb
     add_breadcrumb(request, 'Editar cuenta ' + str(account_id), request.path)
 
     if request.method == 'POST':
@@ -36,28 +35,26 @@ def edit_account(request, account_id):
             return redirect('account_tree')
     else:
         form = AccountForm(instance=account)
-              
+
     return render(request, 'edit_account.html', {'form': form, 'account': account, 'parents': parents_with_hierarchy})
 
 def add_account(request):
-
     parents = Account.objects.all()
     parents_with_hierarchy = sorted([
         (parent.id, parent.get_full_hierarchy()) for parent in parents
-    ],key=lambda x: x[1])
+    ], key=lambda x: x[1])
 
-    # Add breadcrumb
-    add_breadcrumb(request, 'Nueva cuenta' , request.path)
+    add_breadcrumb(request, 'Nueva cuenta', request.path)
 
     if request.method == 'POST':
         form = AccountForm(request.POST)
         if form.is_valid():
             account = form.save()
-            remove_breadcrumb(request, 'Nueva cuenta' , request.path)
+            remove_breadcrumb(request, 'Nueva cuenta', request.path)
             return redirect('edit_account', account_id=account.id)
     else:
         form = AccountForm()
-    return render(request, 'add_account.html', {'form': form, 'parents': parents_with_hierarchy,})
+    return render(request, 'add_account.html', {'form': form, 'parents': parents_with_hierarchy})
 
 @csrf_exempt
 def add_keyword(request, account_id):
@@ -89,12 +86,9 @@ def delete_keyword(request, keyword_id):
 def get_account_transactions(request, account_id):
     try:
         account = get_object_or_404(Account, id=account_id)
-        
-        # Cambiar el valor por defecto a 'last_60_days'
         period = request.GET.get('period', 'last_60_days')
         today = datetime.now().date()
-        
-        # Definir la fecha de inicio según el período
+
         date_filters = {
             'current_month': today.replace(day=1),
             'last_month': (today.replace(day=1) - timedelta(days=1)).replace(day=1),
@@ -110,18 +104,15 @@ def get_account_transactions(request, account_id):
             'all': None
         }
 
-        # Query base
         transactions = account.transaction_set.all()\
             .select_related('entry')\
             .prefetch_related('entry__transactions', 'entry__attachments')\
             .order_by('-entry__date', '-id')
 
-        # Aplicar filtro de fecha si no es 'all'
         start_date = date_filters.get(period)
         if start_date:
             transactions = transactions.filter(entry__date__gte=start_date)
 
-        # Aplicar filtros de búsqueda
         filters_json = request.GET.get('filters', '{}')
         try:
             filters = json.loads(filters_json)
@@ -137,15 +128,14 @@ def get_account_transactions(request, account_id):
             pass
 
         transactions = transactions.distinct()
-        
-        # Preparar datos
+
         data = []
         for transaction in transactions:
             filtered_transactions = [
-                t for t in transaction.entry.transactions.all() 
+                t for t in transaction.entry.transactions.all()
                 if t.account_id != account.id
             ]
-            
+
             data.append({
                 "date": transaction.entry.date.strftime('%Y-%m-%d'),
                 "date_link": f"/entries/edit_entry/{transaction.entry.id}/",
@@ -157,21 +147,20 @@ def get_account_transactions(request, account_id):
                 "has_attachments": bool(transaction.entry.attachments.exists()),
                 "entry_id": transaction.entry.id
             })
-        
+
         return JsonResponse({
             'data': data,
             'total': len(data)
         })
-        
+
     except Exception as e:
-        print(f"Error: {str(e)}")  # Para debugging
+        logger.error(f"Error en get_account_transactions para cuenta {account_id}: {str(e)}", exc_info=True)
         return JsonResponse({
             'data': [],
             'total': 0,
             'error': str(e)
         })
-    
 
-class AccountListView(generics.ListAPIView): # Solo permite listar (GET)
+class AccountListView(generics.ListAPIView):
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
