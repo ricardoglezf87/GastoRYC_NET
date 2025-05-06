@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 # --- hello_world, calculate_inicial_balances, recalculate_balances_after_date sin cambios ---
 @shared_task(bind=True)
 def hello_world(self):
-    print("¡Hola Mundo!")
+    logger.info("¡Hola Mundo! desde Celery")
     return "¡Hola Mundo!"
 
 @shared_task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 5, 'countdown': 1})

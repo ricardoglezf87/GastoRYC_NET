@@ -21,8 +21,10 @@ from django.conf import settings
 from django.db.models import Sum, F, DecimalField
 from django.db.models.functions import Coalesce, Abs # Importar Abs
 import json
+import logging
 
 from transactions.models import Transaction
+logger = logging.getLogger(__name__)
 
 
 def recategorized_entries(request):
@@ -298,7 +300,7 @@ def process_merge_transactions(request):
          return JsonResponse({'success': False, 'message': 'Error en los datos recibidos.'})
     except Exception as e:
         # Loggear el error e
-        print(f"Error processing merge transactions: {e}") # Mejor usar logging
+        logger.error(f"Error processing merge transactions: {e}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'Ocurrió un error inesperado: {e}'})
 
 #228	Transferencias
@@ -500,7 +502,7 @@ def process_simplify_transfers(request):
 
                 # Verificar el conteo REAL en la base de datos AHORA MISMO
                 real_transaction_count = Transaction.objects.filter(entry=entry_to).count()
-                print(f"DEBUG: Real transaction count for entry {entry_to.id} in DB: {real_transaction_count}")
+                logger.debug(f"Real transaction count for entry {entry_to.id} in DB before delete: {real_transaction_count}")
 
                 if real_transaction_count == 0:
                     entry_to_date = entry_to.date # Guardar fecha antes de borrar
@@ -544,7 +546,7 @@ def process_simplify_transfers(request):
     except json.JSONDecodeError:
          return JsonResponse({'success': False, 'message': 'Error en los datos recibidos.'})
     except Exception as e:
-        print(f"Error processing simplify transfers: {e}") # Logging
+        logger.error(f"Error processing simplify transfers: {e}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'Ocurrió un error inesperado: {e}'})
 
 
@@ -613,5 +615,5 @@ def process_delete_empty_entries(request):
     except json.JSONDecodeError:
          return JsonResponse({'success': False, 'message': 'Error en los datos recibidos.'})
     except Exception as e:
-        print(f"Error processing delete empty entries: {e}") # Logging
+        logger.error(f"Error processing delete empty entries: {e}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'Ocurrió un error inesperado: {e}'})

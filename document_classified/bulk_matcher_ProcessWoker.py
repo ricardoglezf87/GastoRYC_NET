@@ -2,14 +2,16 @@ from PyQt5.QtCore import pyqtSignal, QObject
 import os
 import traceback
 import django
+import logging
 
 # --- Inicializar Django ---
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GARCA.settings')
 try:
     django.setup()
-    # print("DJANGO SETUP: Django inicializado correctamente.") # Mensaje de confirmación
 except Exception as e:
-    print(f"DJANGO SETUP ERROR: No se pudo inicializar Django: {e}")
+    # Usar logging aquí sería mejor si el logger está configurado antes de este punto.
+    # Por ahora, mantenemos el print para errores críticos de inicialización.
+    logging.error(f"DJANGO SETUP ERROR: No se pudo inicializar Django: {e}", exc_info=True)
 # --------------------------
 
 from .processing_logic import perform_ocr
@@ -43,7 +45,7 @@ class ReprocessingWorker(QObject):
                     error_msg = response.get("error", "Error desconocido de API al reprocesar") if isinstance(response, dict) else "Respuesta inválida de API"
                     self.error_occurred.emit(doc_id, error_msg)
             except Exception as e:
-                print(f"Error reprocesando {doc_id}: {e}")
+                logging.error(f"Error reprocesando {doc_id}: {e}", exc_info=True)
                 traceback.print_exc()
                 self.error_occurred.emit(doc_id, f"Error inesperado: {e}")
             self.progress_updated.emit(int(((i + 1) / total_docs) * 100), f"Reprocesado: {filename}")
@@ -89,7 +91,7 @@ class ProcessingWorker(QObject):
                 else:
                     self.error_occurred.emit(filename, "Fallo durante el OCR")
             except Exception as e:
-                print(f"Error procesando {filename}: {e}")
+                logging.error(f"Error procesando {filename}: {e}", exc_info=True)
                 traceback.print_exc()
                 self.error_occurred.emit(filename, f"Error inesperado: {e}")
 

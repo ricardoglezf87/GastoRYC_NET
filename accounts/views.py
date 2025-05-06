@@ -10,6 +10,9 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from rest_framework import generics
 
+import logging
+logger = logging.getLogger(__name__)
+
 def account_tree_view(request):
     clear_breadcrumbs(request)
     show_closed_flag = request.GET.get('show_closed') == 'on'
@@ -151,7 +154,7 @@ def get_account_transactions(request, account_id):
         })
 
     except Exception as e:
-        print(f"Error: {str(e)}")
+        logger.error(f"Error en get_account_transactions para cuenta {account_id}: {str(e)}", exc_info=True)
         return JsonResponse({
             'data': [],
             'total': 0,
