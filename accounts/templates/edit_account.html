@@ -135,4 +135,650 @@
     </div>
   </div>
 </div>
+<style>
+  .drop-area {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+    cursor: pointer;
+  }
+
+  .drop-area.dragover {
+    border-color: #000;
+    background-color: #f0f0f0;
+  }
+
+  .transaction-row {
+    cursor: pointer;
+    /* Change cursor to indicate it's a drop zone */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    /* Add transitions for smooth effect */
+  }
+
+  .transaction-row.dragover {
+    background-color: #e0f0ff;
+    /* Light blue background */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    /* Add a subtle shadow */
+  }
+
+  .attachment-indicator {
+    text-align: center;
+    width: 20px;
+    /* Adjust width as needed */
+  }
+
+  .attachment-indicator i {
+    font-size: 1.2em;
+    /* Adjust icon size as needed */
+  }
+
+  .scrollable-section {
+    max-height: 300px;
+    /* Ajusta la altura según sea necesario */
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    /* Opcional: para resaltar el área desplazable */
+    padding: 10px;
+    /* Opcional: para agregar espacio interno */
+    background-color: #f9f9f9;
+    /* Opcional: para diferenciar el fondo */
+  }
+
+  .scrollable-section-big {
+    max-height: 2000px !important;
+  }
+
+  /* Estilos modernos para DataTables */
+  .dataTables_wrapper .dataTables_length,
+  .dataTables_wrapper .dataTables_filter {
+    margin-bottom: 1rem;
+  }
+
+  .dataTables_wrapper .dataTables_length select {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 4px;
+    background-color: white;
+  }
+
+  .dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-left: 8px;
+  }
+
+  .dataTables_wrapper .dataTables_paginate {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #eee;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button {
+    border: none !important;
+    padding: 8px 16px !important;
+    margin: 0 2px;
+    border-radius: 4px;
+    background: transparent !important;
+    color: #666 !important;
+    transition: all 0.2s;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #f0f0f0 !important;
+    color: #333 !important;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #007bff !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: #0056b3 !important;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    color: #ccc !important;
+    cursor: not-allowed;
+  }
+
+  .dataTables_wrapper .dataTables_info {
+    color: #666;
+    padding-top: 1rem;
+  }
+
+  /* Estilos para la tabla */
+  .table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    padding: 12px;
+  }
+
+  .table tbody td {
+    padding: 12px;
+    vertical-align: middle;
+  }
+
+  .table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, .02);
+  }
+
+  /* Estilos adicionales para DataTables */
+  .dataTables_wrapper .dataTables_filter {
+    float: none;
+    text-align: left;
+    margin-bottom: 1rem;
+  }
+
+  .dataTables_wrapper .dataTables_filter input {
+    width: 300px;
+    margin-left: 0.5em;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+  }
+
+  .dataTables_wrapper .dataTables_length {
+    float: left;
+    margin-top: 0.5rem;
+  }
+
+  .dataTables_wrapper .dataTables_info {
+    text-align: right;
+    padding-top: 0.85em;
+  }
+
+  .dataTables_wrapper .dataTables_paginate {
+    float: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Estilo para el contenedor de la tabla */
+  .dataTables_wrapper {
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Estilo para el input de búsqueda cuando tiene foco */
+  .dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+    outline: 0;
+  }
+
+  .tabulator-row.uploading {
+    opacity: 0.6;
+    pointer-events: none;
+    /* Evita interacciones mientras sube */
+  }
+
+  .tabulator-row .upload-indicator {
+    /* Estilo para un pequeño icono de carga si lo deseas */
+    margin-left: 5px;
+    color: blue;
+  }
+
+  .tabulator-row.dragover {
+    background-color: #f0f0f0 !important;
+    border: 2px dashed #666;
+  }
+
+  .attachment-icon {
+    color: #666;
+    margin-left: 5px;
+  }
+
+  .tabulator-loader {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .tabulator-placeholder {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+  }
+
+  .tabulator-loading-overlay {
+    background: rgba(255, 255, 255, 0.8);
+  }
+</style>
+
+<script>
+  const dropArea = document.getElementById('dropArea');
+  const fileInput = document.getElementById('fileInput');
+
+  dropArea.addEventListener('click', () => fileInput.click());
+
+  dropArea.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    dropArea.classList.add('dragover');
+  });
+
+  dropArea.addEventListener('dragleave', () => {
+    dropArea.classList.remove('dragover');
+  });
+
+  dropArea.addEventListener('drop', (event) => {
+    event.preventDefault();
+    dropArea.classList.remove('dragover');
+    const files = event.dataTransfer.files;
+    handleFiles(files);
+  });
+
+  fileInput.addEventListener('change', (event) => {
+    const files = event.target.files;
+    handleFiles(files);
+  });
+
+  function handleFiles(files) {
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append('files', file);
+    }
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    fetch("{% url 'upload_attachments' account.id %}", {
+      method: 'POST',
+      body: formData
+    }).then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Error al subir archivos');
+        }
+      });
+  }
+
+  // Funcionalidad para editar la descripción
+  document.querySelectorAll('.editable-description').forEach(cell => {
+    cell.addEventListener('blur', function () {
+      const attachmentId = this.closest('tr').dataset.attachmentId;
+      const description = this.textContent.trim();
+      fetch(`/attachments/update_attachment_description/${attachmentId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ description })
+      }).then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            alert('Error al actualizar la descripción');
+          }
+        });
+    });
+  });
+
+  // Funcionalidad para borrar adjuntos
+  document.querySelectorAll('.delete-attachment').forEach(button => {
+    button.addEventListener('click', function () {
+      const row = this.closest('tr');
+      const attachmentId = row.dataset.attachmentId;
+      if (confirm('¿Estás seguro de que deseas eliminar este adjunto?')) {
+        fetch(`/attachments/delete_attachment/${attachmentId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          }
+        }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              row.remove();
+            } else {
+              alert('Error al eliminar adjunto');
+            }
+          });
+      }
+    });
+  });
+
+  // Guardado automático del formulario
+  $('#accountForm').on('change', 'input, select', function () {
+    const formData = new FormData($('#accountForm')[0]);
+    fetch("{% url 'edit_account' account.id %}", {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    }).then(response => response.json())
+      .then(data => {
+        if (!data.success) {
+          alert('Error al guardar los cambios');
+        }
+      });
+  });
+
+  function handleTransactionFiles(files, entryId, tabulatorRow) {
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    if (tabulatorRow) {
+      const rowElement = tabulatorRow.getElement();
+      rowElement.classList.add('uploading');
+    }
+
+    fetch(`/attachments/upload_entry_attachments/${entryId}/`, {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          if (tabulatorRow) {
+            tabulatorRow.update({ has_attachments: true });
+            console.log(`Adjunto añadido a la entrada ${entryId}`);
+          } else {
+            alert('Archivo subido. Refresca la tabla si no ves el cambio.');
+          }
+        } else {
+          alert('Error al subir archivos: ' + (data.error || 'Error desconocido'));
+        }
+      })
+      .catch(error => {
+        console.error('Error en fetch:', error);
+        alert('Error de red al subir archivos.');
+      })
+      .finally(() => {
+        if (tabulatorRow) {
+          const rowElement = tabulatorRow.getElement();
+          rowElement.classList.remove('uploading');
+        }
+      });
+  }
+
+  const transactionRows = document.querySelectorAll('.transaction-row');
+  transactionRows.forEach(row => {
+    const entryId = row.dataset.entryId;
+
+    row.addEventListener('dragover', (event) => {
+      event.preventDefault();
+      row.classList.add('dragover');
+    });
+
+    row.addEventListener('dragleave', () => {
+      row.classList.remove('dragover');
+    });
+
+    row.addEventListener('drop', (event) => {
+      event.preventDefault();
+      row.classList.remove('dragover');
+      const files = event.dataTransfer.files;
+      handleTransactionFiles(files, entryId);
+    });
+  });
+
+  document.querySelectorAll('.keyword-input').forEach(input => {
+    input.addEventListener('blur', function () {
+      const row = this.closest('tr');
+      const keywordId = row.dataset.keywordId;
+      const keyword = this.value.trim();
+
+      // Evitar guardar líneas vacías
+      if (!keyword) {
+        if (keywordId === "None") {
+          return; // No guardar si es una línea nueva vacía
+        } else {
+          alert('No se puede guardar una palabra vacía.');
+          this.value = row.dataset.originalKeyword || ''; // Restaurar el valor original
+          return;
+        }
+      }
+
+      const url = keywordId === "None" ? "{% url 'add_keyword' account.id %}" : "{% url 'update_keyword' 0 %}".replace('0', keywordId);
+
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ keyword })
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            if (keywordId === "None") {
+              // Actualizar el ID de la palabra clave en la fila
+              row.dataset.keywordId = data.keyword_id;
+              row.dataset.originalKeyword = keyword; // Guardar el valor original
+
+              // Añadir el botón de borrado a la fila actual
+              row.querySelector('td:last-child').innerHTML = `
+                <button type="button" class="btn btn-danger btn-sm delete-keyword">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              `;
+              row.querySelector('.delete-keyword').addEventListener('click', deleteKeyword);
+
+              // Añadir una nueva fila vacía al final
+              const newRow = document.createElement('tr');
+              newRow.dataset.keywordId = "None";
+              newRow.innerHTML = `
+                <td>
+                  <input type="text" class="form-control keyword-input" placeholder="Nueva palabra">
+                </td>
+                <td></td>
+              `;
+              document.querySelector('#keywordsTable tbody').appendChild(newRow);
+
+              // Asignar el evento `blur` a la nueva celda
+              newRow.querySelector('.keyword-input').addEventListener('blur', arguments.callee);
+            }
+          } else {
+            alert('Error al guardar la palabra clave.');
+          }
+        });
+    });
+  });
+
+  function deleteKeyword() {
+    const row = this.closest('tr');
+    const keywordId = row.dataset.keywordId;
+
+    if (confirm('¿Estás seguro de que deseas eliminar esta palabra clave?')) {
+      fetch("{% url 'delete_keyword' 0 %}".replace('0', keywordId), {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            row.remove();
+          } else {
+            alert('Error al eliminar la palabra clave.');
+          }
+        });
+    }
+  }
+
+  // Asignar el evento `click` a los botones de borrado existentes
+  document.querySelectorAll('.delete-keyword').forEach(button => {
+    button.addEventListener('click', deleteKeyword);
+  });
+
+  // Configuración de Tabulator
+  var table = new Tabulator("#transactionsTable", {
+    ajaxURL: "{% url 'get_account_transactions' account.id %}",
+    ajaxResponse: function (url, params, response) {
+      return response.data || response;
+    },
+    ajaxConfig: {
+      method: "GET",
+    },
+    layout: "fitColumns",
+    height: "600px",
+    placeholder: "No se encontraron transacciones",
+
+    ajaxURLGenerator: function (url, config, params) {
+      const urlParams = new URLSearchParams();
+      const period = document.getElementById('periodSelector').value;
+      urlParams.append("period", period);
+
+      if (this.initialized) {
+        try {
+          const filters = {};
+          const headerFilters = this.getHeaderFilters();
+          headerFilters.forEach(function (filter) {
+            const value = filter.getValue();
+            if (value !== null && typeof value !== 'undefined' && value !== '') {
+              filters[filter.getField()] = value;
+            }
+          });
+
+          if (Object.keys(filters).length > 0) {
+            urlParams.append("filters", JSON.stringify(filters));
+          }
+        } catch (error) {
+          console.error("Error al procesar filtros:", error);
+        }
+      }
+
+      return `${url}?${urlParams.toString()}`;
+    },
+
+    rowFormatter: function (row) {
+      var data = row.getData();
+      var element = row.getElement();
+
+      // Asegúrate de que 'entry_id' existe en tus datos
+      if (data.entry_id) {
+        element.dataset.entryId = data.entry_id; // Guardar el ID para usarlo en el drop
+
+        element.addEventListener('dragover', (event) => {
+          event.preventDefault(); // Necesario para permitir el drop
+          element.classList.add('dragover'); // Estilo visual
+        });
+
+        element.addEventListener('dragleave', () => {
+          element.classList.remove('dragover'); // Quitar estilo visual
+        });
+
+        element.addEventListener('drop', (event) => {
+          event.preventDefault();
+          element.classList.remove('dragover');
+          const files = event.dataTransfer.files;
+          const entryId = element.dataset.entryId; // Obtener el ID guardado
+
+          // ¡Importante! Pasa la instancia de la fila de Tabulator (`row`)
+          // a handleTransactionFiles.
+          const tabulatorRow = row; // 'row' es el componente de fila de Tabulator
+
+          if (files.length > 0 && entryId) {
+            handleTransactionFiles(files, entryId, tabulatorRow); // Pasa la fila aquí
+          } else {
+            console.warn("Drop event sin archivos o sin entryId", { files, entryId });
+          }
+        });
+      } else {
+        console.warn("Fila sin entry_id:", data);
+      }
+    },
+
+    columns: [
+      {
+        title: "Fecha",
+        field: "date",
+        formatter: function (cell, formatterParams, onRendered) {
+          const date = cell.getValue();
+          const link = cell.getRow().getData().date_link;
+          return link ? `<a href="${link}" class="text-primary">${date}</a>` : date;
+        },
+        headerFilter: "input",
+        width: 120
+      },
+      {
+        title: "Descripción",
+        field: "description",
+        headerFilter: "input",
+        widthGrow: 2
+      },
+      {
+        title: "Contrapartidas",
+        field: "counterparts",
+        headerFilter: "input",
+        widthGrow: 2
+      },
+      {
+        title: "Debe",
+        field: "debit",
+        hozAlign: "right",
+        formatter: "money",
+        formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+        headerFilter: "number",
+        headerFilterFunc: ">=",
+        width: 120
+      },
+      {
+        title: "Haber",
+        field: "credit",
+        hozAlign: "right",
+        formatter: "money",
+        formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+        headerFilter: "number",
+        headerFilterFunc: ">=",
+        width: 120
+      },
+      {
+        title: "Saldo",
+        field: "balance",
+        hozAlign: "right",
+        formatter: "money",
+        formatterParams: { decimal: ",", thousand: ".", symbol: "€", symbolAfter: true, precision: 2 },
+        width: 120
+      },
+      {
+        title: "Adj.",
+        field: "has_attachments",
+        formatter: function (cell, formatterParams, onRendered) {
+          // El formateador mostrará el icono si el valor es true
+          return cell.getValue() ? '<i class="fas fa-paperclip attachment-icon"></i>' : '';
+        },
+        hozAlign: "center",
+        width: 60,
+        headerSort: false
+      }
+    ],
+    initialSort: [
+      { column: "date", dir: "desc" },
+    ]
+  });
+
+  document.getElementById('periodSelector').addEventListener('change', function () {
+    table.setData();
+  });
+
+  table.on("tableBuilt", function () {
+    this.initialized = true;
+  });
+
+  table.on("headerFilterChanged", function (headerValue, field) {
+    clearTimeout(window.filterTimer);
+    window.filterTimer = setTimeout(() => {
+      table.setData();
+    }, 500);
+  });
+
+</script>
 {% endblock %}
