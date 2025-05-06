@@ -159,6 +159,8 @@
             <button type="button" id="process-merge-btn" class="btn btn-success action-button mt-3">Unificar Seleccionados</button>
         </form>
     {% else %}
-        <div class="alert alert-info">No se encontraron asientos con transacciones duplicadas para el periodo seleccionado.</div>
+        {% if request.GET.period %}
+            <div class="alert alert-info">No se encontraron asientos con transacciones duplicadas para el periodo seleccionado.</div>
+        {% endif %}
     {% endif %}
 {% endblock %}

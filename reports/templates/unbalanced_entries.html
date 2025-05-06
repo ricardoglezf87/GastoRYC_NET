@@ -61,8 +61,7 @@
     {# --- FIN: Formulario de Filtro --- #}
 
     {# --- Contenido específico: Tabla de resultados --- #}
-    {% if unbalanced_entries %}
-    <div class="alert alert-warning">Se encontraron las siguientes entradas cuyos totales de débito y crédito no coinciden.</div>
+    {% if unbalanced_entries %}    
     <table class="table table-striped table-bordered table-sm">
         <thead class="table-light">
             <tr>
@@ -101,7 +100,8 @@
         </tbody>
     </table>
     {% else %}
-         {# Este bloque ahora solo se muestra si la variable unbalanced_entries no existe o es None #}
-         <div class="alert alert-info">No se encontraron entradas descuadradas para el periodo seleccionado.</div>
+        {% if request.GET.period %}
+            <div class="alert alert-info">No se encontraron entradas descuadradas para el periodo seleccionado.</div>
+        {% endif %}        
     {% endif %}
 {% endblock %}

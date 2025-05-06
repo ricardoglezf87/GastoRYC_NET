@@ -104,8 +104,7 @@
 
     {# --- Contenido específico de la página (tabla, etc.) --- #}
     {% if empty_entries %}
-        <form id="delete-empty-form">
-             <div class="alert alert-warning">Se encontraron los siguientes asientos sin transacciones. Selecciónalos para eliminarlos permanentemente.</div>
+        <form id="delete-empty-form">            
             <table class="table table-bordered table-striped table-sm">
                 <thead class="table-light">
                     <tr>
@@ -129,7 +128,9 @@
             <button type="button" id="process-delete-empty-btn" class="btn btn-danger action-button mt-3">Eliminar Seleccionados</button>
         </form>
     {% else %}
-        <div class="alert alert-info">No se encontraron asientos vacíos en el periodo seleccionado.</div>
+        {% if request.GET.period %}
+            <div class="alert alert-info">No se encontraron asientos vacíos en el periodo seleccionado.</div>
+        {% endif %}    
     {% endif %}
 {% endblock %}
 

@@ -132,8 +132,7 @@
     {% if error %}
         <div class="alert alert-danger">Error: La cuenta puente no está configurada correctamente en los ajustes.</div>
     {% elif potential_transfers %}
-        <form id="transfer-form">
-            <div class="alert alert-info">Se encontraron los siguientes pares de asientos que parecen ser transferencias a través de la cuenta puente. Selecciónalos para simplificarlos en un solo asiento.</div>
+        <form id="transfer-form">            
             <table class="table table-bordered table-striped table-sm">
                 <thead class="table-light">
                     <tr>
@@ -166,8 +165,10 @@
             </table>
             <button type="button" id="process-transfer-btn" class="btn btn-success action-button mt-3">Simplificar Seleccionados</button>
         </form>
-    {% else %}
-        <div class="alert alert-info">No se encontraron transferencias potenciales para simplificar en el periodo seleccionado.</div>
+    {% else %}            
+        {% if request.GET.period %}
+            <div class="alert alert-info">No se encontraron transferencias potenciales para simplificar en el periodo seleccionado.</div>
+        {% endif %}        
     {% endif %}
 {% endblock %}
 
