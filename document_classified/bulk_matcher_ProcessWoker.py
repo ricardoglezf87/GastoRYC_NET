@@ -7,7 +7,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GARCA.settings')
 try:
     django.setup()
-    print("DJANGO SETUP: Django inicializado correctamente.") # Mensaje de confirmación
+    # print("DJANGO SETUP: Django inicializado correctamente.") # Mensaje de confirmación
 except Exception as e:
     print(f"DJANGO SETUP ERROR: No se pudo inicializar Django: {e}")
 # --------------------------

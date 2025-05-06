@@ -496,8 +496,7 @@ def process_simplify_transfers(request):
                 #    Hay que asegurarse que no tenga otras transacciones no relacionadas.
                 #    Si entry_to tiene más transacciones, esta lógica falla.
                 #    Por seguridad, verificamos si está vacía antes de borrar.
-                # print (entry_from.transactions.count()) # Count sobre objeto en memoria
-                # print (entry_to.transactions.count()) # Count sobre objeto en memoria (puede estar desactualizado)
+
 
                 # Verificar el conteo REAL en la base de datos AHORA MISMO
                 real_transaction_count = Transaction.objects.filter(entry=entry_to).count()
