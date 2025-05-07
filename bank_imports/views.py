@@ -15,6 +15,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.views import View
 from django.utils.decorators import method_decorator
+import os # Ensure os is imported
 import openpyxl
 
 class ImportMovementsMixin:
@@ -90,31 +91,56 @@ class BankImportView(ImportMovementsMixin, View):
             account = form.cleaned_data['account']
             file = request.FILES['file']
             
+            bank_provider_display_name = dict(form.fields['bank_provider'].choices).get(bank_provider, bank_provider)
+
             preview_data = None
             import_data = None
 
-            allowed_extensions = ['.csv', '.txt']
-            if bank_provider == 'edenred':
-                allowed_extensions.append('.xlsx')
+            # Refined file extension validation
+            _, file_ext_from_name = os.path.splitext(file.name)
+            file_extension_lower = file_ext_from_name.lower()
 
-            file_name_lower = file.name.lower()
-            if any(file_name_lower.endswith(ext) for ext in allowed_extensions):
-                try:
-                    if bank_provider == 'ing':
-                        preview_data, import_data = BankImportView.process_ing_file(file)
-                    elif bank_provider == 'edenred':
-                        preview_data, import_data = BankImportView.process_edenred_file(file)
-                        if not preview_data and not import_data: 
-                            messages.error(request, "Error al procesar el archivo Edenred. Verifique el formato y la codificación del archivo (UTF-8 o Latin-1 para TXT/CSV, o que sea un XLSX válido).")
-                            return render(request, self.template_name, {'form': form})
-                    else:
-                        messages.error(request, "Proveedor bancario no soportado para la importación.")
+            provider_specific_allowed_extensions = {
+                'ing': ['.csv', '.txt'], # Based on original logic for ING
+                'edenred': ['.csv', '.txt', '.xlsx'],
+                'paypal': ['.csv'],
+            }
+
+            current_allowed_extensions = provider_specific_allowed_extensions.get(bank_provider)
+
+            if not current_allowed_extensions:
+                messages.error(request, f"Proveedor bancario '{bank_provider_display_name}' no tiene configuración de extensiones permitidas.")
+                return render(request, self.template_name, {'form': form})
+
+            if file_extension_lower not in current_allowed_extensions:
+                expected_extensions_str = ", ".join(current_allowed_extensions)
+                messages.error(request, f"Para {bank_provider_display_name}, el archivo debe ser de tipo {expected_extensions_str}. Archivo proporcionado: {file.name}")
+                return render(request, self.template_name, {'form': form})
+            
+            # Proceed with file processing if extension is valid
+            try:
+                if bank_provider == 'ing':
+                    preview_data, import_data = BankImportView.process_ing_file(file)
+                elif bank_provider == 'edenred':
+                    preview_data, import_data = BankImportView.process_edenred_file(file)
+                    if not preview_data and not import_data: 
+                        messages.error(request, "Error al procesar el archivo Edenred. Verifique el formato y la codificación del archivo (UTF-8 o Latin-1 para TXT/CSV, o que sea un XLSX válido).")
                         return render(request, self.template_name, {'form': form})
-                except Exception as e: 
-                    messages.error(request, f"Error inesperado al procesar el archivo: {e}")
+                elif bank_provider == 'paypal':
+                    preview_data, import_data = BankImportView.process_paypal_file(file)
+                    if not preview_data and not import_data:
+                        messages.error(request, "Error al procesar el archivo PayPal. Verifique que sea un CSV válido (UTF-8 o Latin-1) y que contenga transacciones 'Completado'.")
+                        return render(request, self.template_name, {'form': form})
+                else:
+                    # This case should ideally be caught by form validation, but as a safeguard
+                    messages.error(request, f"Proveedor bancario '{bank_provider_display_name}' no soportado para la importación.")
                     return render(request, self.template_name, {'form': form})
+            except Exception as e: 
+                messages.error(request, f"Error inesperado al procesar el archivo para {bank_provider_display_name}: {e}")
+                return render(request, self.template_name, {'form': form})
 
-                if 'import' in request.POST and import_data:
+            if 'import' in request.POST and import_data:
+                try:
                     duplicates = []
                     non_duplicates = []
                     
@@ -144,12 +170,11 @@ class BankImportView(ImportMovementsMixin, View):
                             'duplicates': session_duplicates
                         }
                         return redirect('bank_import_duplicates')
-                    
                     return redirect('bank_import')
-                
-            else:
-                messages.error(request, f"El archivo debe ser de tipo {', '.join(allowed_extensions)}.")
-                
+                except Exception as e:
+                    messages.error(request, f"Error durante el proceso de importación o verificación de duplicados: {e}")
+                    return render(request, self.template_name, {'form': form})
+
         return render(request, self.template_name, {'form': form})
 
     def is_duplicate(self, account, movement):
@@ -347,6 +372,69 @@ class BankImportView(ImportMovementsMixin, View):
             return BankImportView._process_edenred_text(file)
         return [], [] # Tipo de archivo no soportado para Edenred
 
+    @staticmethod
+    def process_paypal_file(file):
+        preview_data = []
+        import_data = []
+        
+        try:
+            file.seek(0)
+            content = file.read().decode('utf-8-sig') # Handles UTF-8 with BOM
+        except UnicodeDecodeError:
+            file.seek(0)
+            try:
+                content = file.read().decode('latin-1') # Fallback encoding
+            except UnicodeDecodeError:
+                # Could log this error
+                return [], [] 
+
+        csv_file_like = io.StringIO(content)
+        csv_reader = csv.reader(csv_file_like)
+        
+        try:
+            header = next(csv_reader) # Skip header row
+            # Optional: Add header validation if needed
+            # expected_header_min_fields = ["Fecha", "Nombre", "Estado", "Importe"]
+            # if not all(field in header for field in expected_header_min_fields):
+            #     return [], [] # Header mismatch
+        except StopIteration:
+            return [], [] # Empty file
+
+        for row_number, row in enumerate(csv_reader, start=2): # For logging/debugging
+            if len(row) < 8: # PayPal CSV has "Importe" at index 7
+                # Log or skip short rows
+                continue
+
+            try:
+                date_str = row[0].strip()
+                name_description = row[3].strip()  # "Nombre" field
+                status = row[5].strip()
+                amount_str = row[7].strip()  # "Importe" field
+
+                if status.lower() != "completado":
+                    continue # Process only completed transactions
+
+                if not date_str or not name_description or not amount_str:
+                    continue # Skip rows with missing essential data
+                
+                parsed_date = datetime.strptime(date_str, '%d/%m/%Y').date()
+                amount = Decimal(amount_str.replace(',', '.')) # PayPal uses comma as decimal separator
+                
+                movement_data = {
+                    'date': parsed_date,
+                    'description': name_description,
+                    'amount': amount,
+                    'category': '', # Placeholder, adapt if PayPal provides categories
+                    'subcategory': '', # Placeholder
+                    'comment': '' # Placeholder
+                }
+                preview_data.append(movement_data)
+                import_data.append(movement_data)
+            except (ValueError, InvalidOperation):
+                # Log row_number and row data for debugging if parsing fails
+                pass 
+        return preview_data, import_data
+
 @method_decorator(csrf_exempt, name='dispatch')
 class BankImportPreviewView(View):
     def post(self, request):
@@ -354,40 +442,55 @@ class BankImportPreviewView(View):
         if form.is_valid():
             bank_provider = form.cleaned_data['bank_provider']
             file = request.FILES['file'] 
+            bank_provider_display_name = dict(form.fields['bank_provider'].choices).get(bank_provider, bank_provider)
             
             preview_data = None
             
-            allowed_extensions = ['.csv', '.txt']
-            if bank_provider == 'edenred':
-                allowed_extensions.append('.xlsx')
+            # Refined file extension validation
+            _, file_ext_from_name = os.path.splitext(file.name)
+            file_extension_lower = file_ext_from_name.lower()
 
-            file_name_lower = file.name.lower()
-            if any(file_name_lower.endswith(ext) for ext in allowed_extensions):
-                try:
-                    if bank_provider == 'ing':
-                        preview_data, _ = BankImportView.process_ing_file(file)
-                    elif bank_provider == 'edenred':
-                        preview_data, _ = BankImportView.process_edenred_file(file)
-                        if not preview_data and not _: 
-                             return JsonResponse({'success': False, 'error': 'Error al procesar el archivo Edenred. Verifique el formato.'})
-                    else:
-                        return JsonResponse({'success': False, 'error': 'Proveedor bancario no soportado.'})
-                    
-                    if preview_data is not None:
-                        serializable_preview_data = []
-                        for item in preview_data:
-                            item_copy = item.copy()
-                            item_copy['date'] = item_copy['date'].strftime('%Y-%m-%d')
-                            item_copy['amount'] = str(item_copy['amount'])
-                            serializable_preview_data.append(item_copy)
-                        return JsonResponse({'success': True, 'preview_data': serializable_preview_data})
-                    else: 
-                        return JsonResponse({'success': False, 'error': 'No se pudieron generar datos de vista previa.'})
+            provider_specific_allowed_extensions = {
+                'ing': ['.csv', '.txt'],
+                'edenred': ['.csv', '.txt', '.xlsx'],
+                'paypal': ['.csv'],
+            }
+            current_allowed_extensions = provider_specific_allowed_extensions.get(bank_provider)
 
-                except Exception as e: 
-                    return JsonResponse({'success': False, 'error': f'Error al procesar el archivo para vista previa: {e}'})
-            else:
-                return JsonResponse({'success': False, 'error': f"El archivo debe ser de tipo {', '.join(allowed_extensions)}."})
+            if not current_allowed_extensions:
+                 return JsonResponse({'success': False, 'error': f"Proveedor bancario '{bank_provider_display_name}' no tiene configuración de extensiones."})
+
+            if file_extension_lower not in current_allowed_extensions:
+                expected_extensions_str = ", ".join(current_allowed_extensions)
+                return JsonResponse({'success': False, 'error': f"Para {bank_provider_display_name}, el archivo debe ser de tipo {expected_extensions_str}. Archivo: {file.name}"})
+
+            try:
+                if bank_provider == 'ing':
+                    preview_data, _ = BankImportView.process_ing_file(file)
+                elif bank_provider == 'edenred':
+                    preview_data, _ = BankImportView.process_edenred_file(file)
+                    if not preview_data and not _: 
+                         return JsonResponse({'success': False, 'error': 'Error al procesar el archivo Edenred. Verifique el formato y codificación.'})
+                elif bank_provider == 'paypal':
+                    preview_data, _ = BankImportView.process_paypal_file(file)
+                    if not preview_data and not _:
+                        return JsonResponse({'success': False, 'error': "Error al procesar el archivo PayPal. Verifique que sea un CSV válido y contenga transacciones 'Completado'."})
+                else:
+                    return JsonResponse({'success': False, 'error': f"Proveedor bancario '{bank_provider_display_name}' no soportado para vista previa."})
+                
+                if preview_data is not None: # preview_data can be an empty list if file is valid but has no data
+                    serializable_preview_data = []
+                    for item in preview_data:
+                        item_copy = item.copy()
+                        item_copy['date'] = item_copy['date'].strftime('%Y-%m-%d')
+                        item_copy['amount'] = str(item_copy['amount'])
+                        serializable_preview_data.append(item_copy)
+                    return JsonResponse({'success': True, 'preview_data': serializable_preview_data})
+                else: # Should not be reached if process methods return ([],[]) on error, caught by earlier checks
+                    return JsonResponse({'success': False, 'error': 'No se pudieron generar datos de vista previa.'})
+
+            except Exception as e: 
+                return JsonResponse({'success': False, 'error': f'Error al procesar el archivo para vista previa ({bank_provider_display_name}): {e}'})
         
         errors = form.errors.as_json()
         return JsonResponse({'success': False, 'errors': errors})

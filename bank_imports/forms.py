@@ -4,7 +4,8 @@ from accounts.models import Account
 class BankImportForm(forms.Form):
     BANK_CHOICES = [ # Changed to list to make it easier to extend
         ('ing', 'ING Direct'),
-        ('edenred', 'Edenred'), # Added Edenred
+        ('edenred', 'Edenred'),
+        ('paypal', 'PayPal'), # Added PayPal
     ]
     
     bank_provider = forms.ChoiceField(choices=BANK_CHOICES, label="Proveedor bancario")
@@ -12,7 +13,7 @@ class BankImportForm(forms.Form):
         queryset=Account.objects.all().order_by('name'),
         label="Cuenta destino"
     )
-    file = forms.FileField(label="Archivo (CSV, TXT, XLSX para Edenred)")
+    file = forms.FileField(label="Archivo (CSV, TXT o XLSX según proveedor)")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
