@@ -74,18 +74,14 @@
         const previewData = document.getElementById('preview-data');
         const importButton = document.getElementById('import-button');
 
-        // Inicializar Select2 en el selector de cuenta
         $(document).ready(function() {
             $('#id_account').select2({
                 width: '100%',
                 placeholder: 'Selecciona una cuenta',
                 allowClear: true
             }).on('select2:select select2:unselect', function (e) {
-                // Manejar el cambio usando el evento de Select2
                 fileInput.disabled = !this.value;
-                // Reiniciar el input de archivo cuando se cambia la cuenta
                 fileInput.value = '';
-                // Ocultar la vista previa y el botón de importar
                 previewCard.style.display = 'none';
                 importButton.style.display = 'none';
             });
@@ -93,16 +89,19 @@
 
         // Initially disable the file input
         fileInput.disabled = true;
-
-        // Listen for changes in the account selection
         accountInput.addEventListener('change', function () {
-            // Enable the file input only if an account is selected
             fileInput.disabled = (accountInput.value === '');
         });
 
         fileInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
-            if (file && file.name.toLowerCase().endsWith('.csv')) {
+            const bankProvider = document.getElementById('id_bank_provider').value;
+            let allowedExtensions = ['.csv', '.txt'];
+            if (bankProvider === 'edenred') {
+                allowedExtensions.push('.xlsx');
+            }
+            // Allow specified extensions for preview, matching backend capabilities
+            if (file && allowedExtensions.some(ext => file.name.toLowerCase().endsWith(ext))) {
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('bank_provider', document.getElementById('id_bank_provider').value);
@@ -132,15 +131,19 @@
                         previewCard.style.display = 'block';
                         importButton.style.display = 'block';
                     } else {
-                        alert('Error al procesar el archivo');
+                        // Display specific error from backend if available
+                        const errorMessage = data.error || 'Error al procesar el archivo para la vista previa.';
+                        alert(errorMessage);
+                        previewCard.style.display = 'none';
+                        importButton.style.display = 'none';
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Error al procesar el archivo');
+                    alert('Error de conexión o al procesar el archivo para la vista previa.');
                 });
             } else {
-                alert('Por favor, selecciona un archivo CSV');
+                alert('Por favor, selecciona un archivo con una extensión válida: ' + allowedExtensions.join(', '));
             }
         });
     });
