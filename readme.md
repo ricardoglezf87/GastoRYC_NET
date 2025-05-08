@@ -83,6 +83,8 @@ pip install djangorestframework
 pip install pytesseract 
 pip install pdf2image
 pip install PyQt5
+pip install xlrd
+pip install openpyxl
 
 ##### 7. Otros datos de interés
 [⇑Indice⇑](#indice)

@@ -1,0 +1,137 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Eliminar Asientos Vacíos{% endblock %}
+
+{# Mueve el contenido de extra_js al bloque header #}
+{% block header %}
+    {{ block.super }} {# Importante para incluir el contenido original del header del padre #}
+
+    {# --- Estilos CSS específicos --- #}
+    <style>
+        .form-filter label { font-weight: bold; margin-bottom: .5rem; display: block; }
+        .form-filter select { display: block; width: 100%; padding: .375rem .75rem; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #495057; background-color: #fff; background-clip: padding-box; border: 1px solid #ced4da; border-radius: .25rem; transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; }
+    </style>
+
+    {# --- Script JavaScript específico de esta página --- #}
+    <script>
+        // Las funciones getCookie, postData, reloadWithFilters DEBEN estar definidas globalmente (en base_site.html)
+
+        // Espera a que el DOM esté listo para añadir listeners
+        document.addEventListener('DOMContentLoaded', (event) => {
+
+            // Funcionalidad "Seleccionar todos"
+            const selectAllCheckbox = document.getElementById('select-all-checkbox'); // <-- Usar el ID correcto del checkbox de la cabecera
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+                    document.querySelectorAll('.entry-checkbox').forEach(function(checkbox) { // <-- Usar la clase correcta de los checkboxes de fila
+                        checkbox.checked = isChecked;
+                    });
+                });
+            }
+
+            // Lógica específica del botón de eliminar
+            const processBtn = document.getElementById('process-delete-empty-btn');
+            if (processBtn) {
+                processBtn.addEventListener('click', function() {
+                    const selectedEntryIds = []; // <-- Asegurarse que la clase aquí coincide con la usada arriba y en el HTML
+                    document.querySelectorAll('.entry-checkbox:checked').forEach(function(checkbox) { // <-- CORRECCIÓN: Usar la clase correcta '.entry-checkbox'
+                        selectedEntryIds.push(parseInt(checkbox.value));
+                    });
+
+                    if (selectedEntryIds.length === 0) {
+                        alert('Por favor, selecciona al menos un asiento vacío para eliminar.');
+                        return;
+                    }
+
+                    if (!confirm(`¿Estás seguro de que deseas eliminar ${selectedEntryIds.length} asiento(s) vacío(s)? Esta acción no se puede deshacer.`)) {
+                        return;
+                    }
+
+                    this.disabled = true;
+                    this.textContent = 'Eliminando...';
+
+                    // Asegúrate que la URL se genera correctamente
+                    const url = "{% url 'reports:process_delete_empty_entries' %}";
+                    console.log("Enviando a URL:", url); // Verifica la URL en consola
+
+                    postData(url, { entry_ids: selectedEntryIds })
+                        .then(data => {
+                            console.log('Respuesta del servidor (delete empty):', data);
+                            if (data.message) {
+                                // alert(data.message); // O usa un sistema de notificaciones mejor
+                            }
+                            reloadWithFilters();
+                        })
+                        .catch(error => {
+                            console.error('Error en postData (delete empty):', error);
+                            alert(`Ocurrió un error al procesar la solicitud: ${error.message}`);
+                            this.disabled = false;
+                            this.textContent = 'Eliminar Seleccionados';
+                        });
+                });
+            }
+        });
+    </script>
+{% endblock header %}
+
+
+{% block content %}
+    <h1 class="mb-4">Eliminar Asientos Contables Vacíos</h1>
+
+    {# --- INICIO: Formulario de Filtro (Simplificado) --- #}
+    <form method="get" class="form-filter row g-3 align-items-end mb-4 p-3 border rounded bg-light">
+        {% csrf_token %}
+        <div class="col-md-8">
+            <label for="{{ form.period.id_for_label }}" class="form-label">{{ form.period.label }}</label>
+            {{ form.period }}
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+         {% if form.errors %}
+            <div class="col-12 mt-2">
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <div class="alert alert-danger p-1 mb-1" role="alert">{{ field }}: {{ error }}</div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </form>
+    {# --- FIN: Formulario de Filtro --- #}
+
+    {# --- Contenido específico de la página (tabla, etc.) --- #}
+    {% if empty_entries %}
+        <form id="delete-empty-form">            
+            <table class="table table-bordered table-striped table-sm">
+                <thead class="table-light">
+                    <tr>
+                        <th><input type="checkbox" id="select-all-checkbox"></th> 
+                        <th>Asiento ID</th> 
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in empty_entries %}
+                        <tr>
+                            <td><input type="checkbox" class="entry-checkbox" value="{{ entry.id }}"></td> <!-- <-- Quitar el ID duplicado -->
+                             <td><a href="{% url 'edit_entry' entry.id %}" target="_blank">{{ entry.id }}</a></td>
+                            <td>{{ entry.date|date:"Y-m-d" }}</td>
+                            <td>{{ entry.description }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="button" id="process-delete-empty-btn" class="btn btn-danger action-button mt-3">Eliminar Seleccionados</button>
+        </form>
+    {% else %}
+        {% if request.GET.period %}
+            <div class="alert alert-info">No se encontraron asientos vacíos en el periodo seleccionado.</div>
+        {% endif %}    
+    {% endif %}
+{% endblock %}
+
+{# Ya no necesitas el bloque extra_js aquí abajo #}

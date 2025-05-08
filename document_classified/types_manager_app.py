@@ -6,10 +6,7 @@ import traceback # Para imprimir errores detallados
 from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel,
                              QLineEdit, QPushButton, QComboBox, QMessageBox,
                              QTextEdit,QFileDialog)
-
-# <<<--- CAMBIO 1: Importar QUrl --->>>
 from PyQt5.QtCore import Qt, pyqtSlot, QStringListModel, QUrl
-# <<<-------------------------------->>>
 from PyQt5.QtWidgets import QCompleter
 
 from .garca_api_client import ApiClient
@@ -17,7 +14,7 @@ from .garca_api_client import ApiClient
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'GARCA.settings')
 try:
     django.setup()
-    print("DJANGO SETUP: Django inicializado correctamente.") # Mensaje de confirmación
+    # print("DJANGO SETUP: Django inicializado correctamente.")
 except Exception as e:
     print(f"DJANGO SETUP ERROR: No se pudo inicializar Django: {e}")
 
@@ -26,7 +23,6 @@ from .processing_logic import extract_document_data, perform_ocr
 class MappingWindow(QWidget):
     def __init__(self, document_id, initial_file_path, api_client, parent=None):
         super().__init__(parent)
-        print("MappingWindow __init__ started") # DEBUG
         self.document_id = document_id
         self.file_path = initial_file_path
         self.api_client = api_client
@@ -37,12 +33,8 @@ class MappingWindow(QWidget):
         self.layout = QVBoxLayout(self)
         self.setMinimumSize(700, 800)
 
-        # <<<--- CAMBIO 2: Habilitar Drag and Drop en la ventana --->>>
         self.setAcceptDrops(True)
-        # <<<------------------------------------------------------>>>
-
-        print("MappingWindow basic setup done") # DEBUG
-
+        
         # --- Sección de Selección de Archivo ---
         self.file_select_button = QPushButton("Seleccionar Archivo PDF")
         self.file_select_button.clicked.connect(self.select_file)
@@ -59,7 +51,6 @@ class MappingWindow(QWidget):
         self.type_combo.addItem("-- Crear Nuevo Tipo --", userData=None)
         self.layout.addWidget(self.type_combo)
         self.type_combo.currentIndexChanged.connect(self.on_type_selected)
-        print("MappingWindow type combo setup done") # DEBUG
 
         # --- Visor de Texto OCR (sin cambios) ---
         self.layout.addWidget(QLabel("Texto Extraído (OCR):"))
@@ -68,7 +59,6 @@ class MappingWindow(QWidget):
         self.text_edit.setLineWrapMode(QTextEdit.NoWrap)
         self.text_edit.setFontFamily("Courier New")
         self.layout.addWidget(self.text_edit, 1)
-        print("MappingWindow text viewer setup done") # DEBUG
 
         # --- Campos de Reglas (sin cambios) ---
         self.layout.addWidget(QLabel("Nombre del Tipo:"))
@@ -83,7 +73,6 @@ class MappingWindow(QWidget):
         self.layout.addWidget(QLabel("Regla Total (Regex):"))
         self.total_regex_input = QLineEdit()
         self.layout.addWidget(self.total_regex_input)
-        print("MappingWindow rules fields setup done") # DEBUG
 
         # --- Selección de Cuenta (sin cambios) ---
         self.layout.addWidget(QLabel("Cuenta Contable (Filtrable):"))
@@ -97,7 +86,6 @@ class MappingWindow(QWidget):
         self.account_completer.setCaseSensitivity(Qt.CaseInsensitive)
         self.account_combo.setCompleter(self.account_completer)
         self.layout.addWidget(self.account_combo)
-        print("MappingWindow account combo setup done") # DEBUG
 
         # --- Botones (sin cambios) ---
         self.save_button = QPushButton("Guardar Tipo")
@@ -106,22 +94,14 @@ class MappingWindow(QWidget):
         self.test_button = QPushButton("Probar Reglas con Texto Actual")
         self.test_button.clicked.connect(self.test_template_rules)
         self.layout.addWidget(self.test_button)
-        print("MappingWindow buttons setup done") # DEBUG
 
         # Actualizar label si se pasó una ruta inicial
         if self.file_path:
              self.selected_file_label.setText(f"Archivo: {os.path.basename(self.file_path)}")
 
-        print("Calling load_document_types...")
         self.load_document_types()
-        print("Finished load_document_types call.")
-
-        print("Calling load_accounts...")
         self.load_accounts()
-        print("Finished load_accounts call.")
-        print("MappingWindow __init__ finished") # DEBUG
 
-    # <<<--- CAMBIO 3: Añadir manejadores de eventos Drag and Drop --->>>
     def dragEnterEvent(self, event):
         mime_data = event.mimeData()
         # Aceptar solo si contiene URLs y al menos una es un archivo PDF local
@@ -164,22 +144,16 @@ class MappingWindow(QWidget):
                 file_path = urls[0].toLocalFile()
                 if os.path.isfile(file_path) and file_path.lower().endswith('.pdf'):
                     event.acceptProposedAction()
-                    print(f"Archivo PDF soltado: {file_path}")
-                    # --- Lógica para procesar el archivo soltado ---
                     self.file_path = file_path
                     self.selected_file_label.setText(f"Archivo: {os.path.basename(self.file_path)}")
                     self.load_document_text() # Cargar y hacer OCR
-                    # -----------------------------------------------
                 else:
-                    print("Drop ignorado: No es un archivo PDF válido.")
                     event.ignore()
             else:
-                print("Drop ignorado: Solo se permite soltar un único archivo PDF.")
                 event.ignore()
         else:
             event.ignore()
-    # <<<--------------------------------------------------------->>>
-
+            
     def select_file(self):
         """Abre un diálogo para seleccionar un archivo PDF."""
         options = QFileDialog.Options()
@@ -192,25 +166,20 @@ class MappingWindow(QWidget):
         )
 
         if file_path:
-            print(f"Archivo seleccionado: {file_path}")
             self.file_path = file_path
             # Actualiza el label para mostrar el nombre del archivo
             self.selected_file_label.setText(f"Archivo: {os.path.basename(self.file_path)}")
             self.load_document_text()
-        else:
-            print("Selección de archivo cancelada.")
 
     def load_document_text(self):
         """Realiza OCR en el PDF (self.file_path) y muestra el texto."""
         if not self.file_path or not os.path.exists(self.file_path):
              error_msg = "Por favor, selecciona un archivo PDF válido primero (o arrástralo aquí)."
-             print(f"load_document_text: {error_msg}")
              self.text_edit.setPlainText(error_msg)
              # Actualizar también la etiqueta del archivo
              self.selected_file_label.setText("Archivo: Ninguno (o arrastra un PDF aquí)")
              return
 
-        print(f"load_document_text: Intentando cargar y hacer OCR en: {self.file_path}") # DEBUG
         self.text_edit.setPlainText("Realizando OCR, por favor espera...") # Mensaje temporal
         QApplication.processEvents() # Forzar actualización de la UI
 
@@ -218,21 +187,17 @@ class MappingWindow(QWidget):
             extracted_text = perform_ocr(self.file_path)
             if extracted_text is not None:
                 self.text_edit.setPlainText(extracted_text)
-                print("load_document_text: Texto OCR cargado en la interfaz.") # DEBUG
             else:
                 error_msg = "Error durante el OCR. Revisa la consola para más detalles."
-                print(f"load_document_text: {error_msg}") # DEBUG
                 self.text_edit.setPlainText(error_msg)
         except Exception as e:
              error_msg = f"Error inesperado al cargar texto OCR: {e.__class__.__name__}: {e}"
-             print(f"load_document_text: {error_msg}") # DEBUG
              traceback.print_exc()
              self.text_edit.setPlainText(error_msg)
              QMessageBox.critical(self, "Error Crítico OCR", error_msg)
 
     def load_document_types(self):
         """Carga los tipos de factura desde la API y los añade al ComboBox."""
-        print("load_document_types: Cargando tipos...")
         self.type_combo.blockSignals(True)
         while self.type_combo.count() > 1:
             self.type_combo.removeItem(1)
@@ -240,7 +205,6 @@ class MappingWindow(QWidget):
 
         types = self.api_client.get_document_types()
         if types:
-            print(f"load_document_types: {len(types)} tipos recibidos.")
             try:
                 types_sorted = sorted(types, key=lambda x: str(x.get('name', '')).lower())
             except TypeError:
@@ -253,29 +217,23 @@ class MappingWindow(QWidget):
                 if type_id is not None and type_name:
                     self.type_combo.addItem(type_name, userData=type_id)
                     self.document_types_data[type_id] = inv_type
-            print(f"load_document_types: {len(self.document_types_data)} tipos añadidos al ComboBox.")
-        else:
-            print("load_document_types: No se encontraron tipos o hubo un error al cargarlos.")
         self.type_combo.blockSignals(False)
 
     @pyqtSlot(int)
     def on_type_selected(self, index):
         """Se ejecuta cuando el usuario selecciona un item en el ComboBox de tipos."""
         selected_id = self.type_combo.itemData(index)
-        print(f"on_type_selected: Índice {index}, ID seleccionado: {selected_id}")
 
         if selected_id is None:
             self.current_document_type_id = None
             self.clear_type_fields()
-            print("on_type_selected: Preparado para crear nuevo tipo.")
         else:
             self.current_document_type_id = selected_id
             type_data = self.document_types_data.get(selected_id)
             if type_data and 'extraction_rules' in type_data:
-                 print(f"on_type_selected: Cargando datos desde caché para tipo ID: {selected_id}")
                  self.populate_type_fields(type_data)
             else:
-                 print(f"on_type_selected: Obteniendo detalles de API para tipo ID: {selected_id}")
+                 # print(f"on_type_selected: Obteniendo detalles de API para tipo ID: {selected_id}")
                  type_details = self.api_client.get_document_type(selected_id)
                  if type_details:
                      self.document_types_data[selected_id] = type_details
@@ -294,7 +252,6 @@ class MappingWindow(QWidget):
         self.total_regex_input.clear()
         # Resetear ComboBox de cuenta a "-- Sin asignar --"
         self.account_combo.setCurrentIndex(0)
-        print("clear_type_fields: Campos limpiados.")
 
     def populate_type_fields(self, type_data):
         """Rellena los campos de entrada con los datos de un documentType."""
@@ -326,11 +283,8 @@ class MappingWindow(QWidget):
         else:
             self.account_combo.setCurrentIndex(0)
 
-        print(f"populate_type_fields: Campos rellenados para tipo: {type_data.get('name')}")
-
     def load_accounts(self):
         """Carga las cuentas contables desde la API y las añade al ComboBox."""
-        print("load_accounts: Cargando cuentas contables...") # DEBUG
         self.account_combo.clear()
         self.account_combo.setEnabled(False)
         account_display_names = []
@@ -338,7 +292,6 @@ class MappingWindow(QWidget):
         try:
             accounts = self.api_client.get_accounts()
             if accounts:
-                print(f"load_accounts: Cuentas recibidas: {len(accounts)}") # DEBUG
                 try:
                     accounts_sorted = sorted(accounts, key=lambda x: str(x.get('get_full_hierarchy', x.get('name', ''))))
                 except TypeError:
@@ -356,9 +309,6 @@ class MappingWindow(QWidget):
                         self.account_combo.addItem(display_name, userData=acc_id)
                         account_display_names.append(display_name)
                         added_count += 1
-                    else:
-                        print(f"load_accounts: Advertencia: Cuenta omitida por ID o nombre nulo: {acc}") # DEBUG
-                print(f"load_accounts: {added_count} cuentas cargadas en el ComboBox.") # DEBUG
 
                 if added_count > 0:
                     self.account_combo.setEnabled(True)
@@ -368,7 +318,6 @@ class MappingWindow(QWidget):
                     account_display_names = ["No hay cuentas disponibles"]
 
             else:
-                print("load_accounts: Error al cargar cuentas (revisar error API previo).") # DEBUG
                 self.account_combo.addItem("Error al cargar cuentas", userData=None)
                 account_display_names = ["Error al cargar cuentas"]
 
@@ -376,7 +325,6 @@ class MappingWindow(QWidget):
             self.account_completer.setModel(self.account_model)
 
         except Exception as e:
-            print(f"load_accounts: Error crítico cargando cuentas: {e}") # DEBUG
             traceback.print_exc()
             self.account_combo.clear()
             self.account_combo.addItem("Error crítico al cargar cuentas", userData=None)
@@ -393,12 +341,10 @@ class MappingWindow(QWidget):
         if date_val: rules["date"] = {"type": "regex", "pattern": date_val}
         if total_val: rules["total"] = {"type": "regex", "pattern": total_val}
 
-        print(f"_build_rules_payload: Reglas construidas: {rules}") # DEBUG
         return rules
 
     def save_type(self):
         """Guarda el tipo actual (crea uno nuevo o actualiza uno existente)."""
-        print("save_type: Intentando guardar tipo...")
         rules = self._build_rules_payload()
         name = self.name_input.text().strip()
         account_id = self.account_combo.currentData()
@@ -412,13 +358,10 @@ class MappingWindow(QWidget):
             "extraction_rules": rules,
             "account": account_id
         }
-        print(f"save_type: Payload construido: {payload}")
 
         result = None
         if self.current_document_type_id is None:
-            print(f"save_type: Llamando a create_document_type...")
             result = self.api_client.create_document_type(payload)
-            print(f"save_type: Respuesta de create_document_type: {result}")
 
             if isinstance(result, dict) and 'id' in result and "error" not in result:
                  new_id = result['id']
@@ -432,9 +375,7 @@ class MappingWindow(QWidget):
                  QMessageBox.critical(self, "Error API", error_msg)
 
         else:
-            print(f"save_type: Llamando a update_document_type para ID: {self.current_document_type_id}...")
             result = self.api_client.update_document_type(self.current_document_type_id, payload)
-            print(f"save_type: Respuesta de update_document_type: {result}")
 
             if isinstance(result, dict) and 'id' in result and "error" not in result:
                  updated_id = result['id']
@@ -471,7 +412,6 @@ class MappingWindow(QWidget):
 
     def test_template_rules(self):
         """Prueba las reglas actuales contra el texto mostrado en el QTextEdit."""
-        print("test_template_rules: Iniciando prueba local con texto actual...") # DEBUG
         rules = self._build_rules_payload()
         if not rules:
              QMessageBox.warning(self, "Sin Reglas", "Define al menos una regla para probar.")
@@ -483,9 +423,7 @@ class MappingWindow(QWidget):
              QMessageBox.warning(self, "Sin Texto", "No hay texto OCR válido cargado para probar.")
              return
 
-        print("test_template_rules: Extrayendo datos localmente del texto actual...") # DEBUG
         extracted_data = extract_document_data(current_text, rules)
-        print(f"test_template_rules: Datos extraídos localmente: {extracted_data}") # DEBUG
 
         result_text = "Resultado de la Prueba Local:\n\n"
         if not extracted_data:
@@ -502,34 +440,21 @@ class MappingWindow(QWidget):
                 result_text += f"{field_name}: {field_value}\n"
         QMessageBox.information(self, "Resultado Prueba Local", result_text.strip())
 
-# --- Bloque Principal (sin cambios) ---
 if __name__ == '__main__':
    app = QApplication.instance()
 if app is None:
-    print("__main__: Creando nueva QApplication.") # DEBUG
     app = QApplication(sys.argv)
-else:
-    print("__main__: Usando QApplication existente.") # DEBUG
 
-print("__main__: Creando ApiClient...") # DEBUG
 api = ApiClient()
 
 try:
-    print("__main__: Creando MappingWindow...") # DEBUG
     mapper = MappingWindow(document_id=None, initial_file_path=None, api_client=api)
-    print("__main__: MappingWindow creado.") # DEBUG
-    print("__main__: Llamando a mapper.show()...") # DEBUG
     mapper.show()
-    print("__main__: mapper.show() llamado.") # DEBUG
 
-    print("__main__: Iniciando bucle de eventos app.exec_()...") # DEBUG
     exit_code = app.exec_()
-    print(f"__main__: app.exec_() finalizado con código: {exit_code}") # DEBUG
     sys.exit(exit_code)
 
 except Exception as e:
-    print(f"__main__: Error crítico al inicializar/mostrar ventana: {e}") # DEBUG
     traceback.print_exc()
     QMessageBox.critical(None, "Error Crítico", f"No se pudo iniciar la aplicación:\n{e}")
     sys.exit(1)
-

@@ -79,8 +79,6 @@ class documentInfoViewSet(mixins.ListModelMixin,
             )
             document.save() # Guardar para obtener ID y que el archivo se almacene
 
-            print(f"documentInfoViewSet.create: Documento ID {document.id} creado, iniciando procesamiento...")
-
             # --- LÓGICA DE IDENTIFICACIÓN Y EXTRACCIÓN ---
             identified_type = None
             extracted_data_dict = {}
@@ -92,7 +90,6 @@ class documentInfoViewSet(mixins.ListModelMixin,
 
                 if identified_type:
                     document.document_type = identified_type
-                    print(f"Tipo identificado: {identified_type.name}. Intentando extraer datos...")
                     extracted_data_dict = extract_document_data(document.extracted_text, identified_type)
 
                     # Comprobar si se extrajo al menos un dato útil
@@ -106,10 +103,8 @@ class documentInfoViewSet(mixins.ListModelMixin,
                             }
                         )
                         new_status = 'PROCESSED'
-                        print(f"Datos extraídos y guardados para Doc ID: {document.id}")
                     else:
                         new_status = 'NEEDS_MAPPING' # Tipo identificado, pero sin datos clave
-                        print(f"Tipo identificado pero sin datos extraídos para Doc ID: {document.id}")
                 else:
                     new_status = 'NEEDS_MAPPING' # No se pudo identificar el tipo
                     print(f"No se pudo identificar el tipo para Doc ID: {document.id}")
@@ -124,8 +119,6 @@ class documentInfoViewSet(mixins.ListModelMixin,
             # -------------------------------------------------
 
             serializer = self.get_serializer(document)
-            # headers = self.get_success_headers(serializer.data) # <-- ASEGÚRATE DE ELIMINAR ESTA LÍNEA
-            # Simplemente devuelve la respuesta sin intentar generar headers especiales
             return Response(serializer.data, status=status.HTTP_201_CREATED) # <-- SIN 'headers=headers'
 
         except Exception as e:
@@ -149,7 +142,6 @@ class documentInfoViewSet(mixins.ListModelMixin,
         Dispara el reprocesamiento de un documento existente, reutilizando el OCR si existe.
         """
         document = self.get_object() # Obtiene el documentInfo por pk (id)
-        print(f"Solicitud de reprocesamiento (ViewSet action) para Documento ID: {document.id}")
         try:
             # Llamar a la lógica de procesamiento (que ahora reutiliza OCR)
             success, final_status_or_error = process_document_document(document.id)
@@ -204,12 +196,10 @@ class documentInfoViewSet(mixins.ListModelMixin,
             )
             # Guardar el archivo en el adjunto (Django maneja la copia/ruta)
             attachment.file.save(original_filename, source_file_field, save=True) # save=True para guardar el modelo también
-            print(f"Adjunto creado (ID: {attachment.id}) para Asiento {entry_id}. Archivo guardado en: {attachment.file.name}")
 
             # Eliminar el documentInfo original
             doc_id_deleted = document_document.id
             document_document.delete()
-            print(f"documentInfo ID {doc_id_deleted} eliminado.")
 
             return Response({"status": "ATTACHMENT_CREATED_DOC_DELETED", "attachment_id": attachment.id}, status=status.HTTP_200_OK)
 
@@ -271,7 +261,6 @@ class UpdateExtractedDataView(APIView):
 
         try:
             extracted_data.save()
-            print(f"ExtractedData para Doc ID {document_id} actualizado: {field_name}={validated_value}")
 
             # Opcional: Actualizar estado del documento si ahora tiene ambos datos
             # Recargar para asegurar que tenemos los últimos datos guardados
@@ -281,12 +270,9 @@ class UpdateExtractedDataView(APIView):
                 if doc.status in ['NEEDS_MAPPING', 'FAILED', 'Faltan Datos Extracción']: # Ajusta según tus estados
                     doc.status = 'PROCESSED'
                     doc.save(update_fields=['status'])
-                    print(f"Estado de Doc ID {document_id} actualizado a PROCESSED.")
             # Si se borra un dato, quizás debería volver a NEEDS_MAPPING? (Considerar)
             # elif doc.status == 'PROCESSED' and (not extracted_data.document_date or extracted_data.total_amount is None):
             #      doc.status = 'NEEDS_MAPPING'
-            #      doc.save(update_fields=['status'])
-            #      print(f"Estado de Doc ID {document_id} actualizado a NEEDS_MAPPING por falta de datos.")
 
             # Devolver el documentInfo completo y actualizado para refrescar el frontend
             doc.refresh_from_db() # Asegurar que el estado está actualizado
@@ -329,7 +315,6 @@ class TestExtractionRulesView(APIView):
 
         try:
             # Realizar OCR en el archivo subido
-            print(f"TestExtractionRulesView: Realizando OCR en archivo '{uploaded_file.name}'...")
             # perform_ocr debe poder manejar el objeto UploadedFile de Django
             extracted_text = perform_ocr(uploaded_file)
 
@@ -338,12 +323,10 @@ class TestExtractionRulesView(APIView):
                  return Response({"error": "Fallo durante el OCR en el servidor."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             # Ejecutar la extracción con las reglas y el texto OCR
-            print("TestExtractionRulesView: Extrayendo datos con reglas proporcionadas...")
             # Pasamos las reglas directamente, extract_document_data puede manejar un dict
             extracted_data = extract_document_data(extracted_text, rules)
 
             # Devolver los datos extraídos (o un diccionario vacío si no se extrajo nada)
-            print(f"TestExtractionRulesView: Datos extraídos: {extracted_data}")
             # Añadir el texto OCR a la respuesta para que el cliente lo vea también
             response_data = {
                 "extracted_data": extracted_data,
@@ -355,4 +338,3 @@ class TestExtractionRulesView(APIView):
             print(f"Error inesperado en test-rules: {type(e).__name__}: {e}")
             traceback.print_exc()
             return Response({"error": f"Error procesando las reglas en el servidor: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-

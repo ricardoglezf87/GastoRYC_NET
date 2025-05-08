@@ -118,6 +118,32 @@
 </style>
 
 <script>
+  function handleFiles(files) {
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append('files', file);
+    }
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    fetch("{% url 'upload_entry_attachments' entry.id %}", {
+      method: 'POST',
+      body: formData
+    }).then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Append the new attachment to the attachments table
+          const newAttachmentRow = $('<tr></tr>');
+          const attachmentLink = '<a href="' + data.file_url + '" target="_blank">' + data.file_name + '</a>';
+          newAttachmentRow.append('<td>' + attachmentLink + '</td>');
+          newAttachmentRow.append('<td></td>'); // You might want to add a description field here
+          $('table:has(thead:has(th:contains("Archivo")))> tbody').append(newAttachmentRow);
+          location.reload();
+        } else {
+          alert('Error al subir archivos');
+        }
+      });
+  }
+
   $(document).ready(function () {
     const table = $('#transactionTable').DataTable({
       paging: false,
@@ -207,113 +233,11 @@
         }
       }
     });
-  });
 
-  const dropArea = document.getElementById('dropArea');
-  const fileInput = document.getElementById('fileInput');
-
-  dropArea.addEventListener('click', () => fileInput.click());
-
-  dropArea.addEventListener('dragover', (event) => {
-    event.preventDefault();
-    dropArea.classList.add('dragover');
-  });
-
-  dropArea.addEventListener('dragleave', () => {
-    dropArea.classList.remove('dragover');
-  });
-
-  dropArea.addEventListener('drop', (event) => {
-    event.preventDefault();
-    dropArea.classList.remove('dragover');
-    const files = event.dataTransfer.files;
-    handleFiles(files);
-  });
-
-  fileInput.addEventListener('change', (event) => {
-    const files = event.target.files;
-    handleFiles(files);
-  });
-
-  function handleFiles(files) {
-    const formData = new FormData();
-    for (const file of files) {
-      formData.append('files', file);
-    }
-    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-
-    fetch("{% url 'upload_entry_attachments' entry.id %}", {
-      method: 'POST',
-      body: formData
-    }).then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          // Append the new attachment to the attachments table
-          const newAttachmentRow = $('<tr></tr>');
-          const attachmentLink = '<a href="' + data.file_url + '" target="_blank">' + data.file_name + '</a>';
-          newAttachmentRow.append('<td>' + attachmentLink + '</td>');
-          newAttachmentRow.append('<td></td>'); // You might want to add a description field here
-          $('table:has(thead:has(th:contains("Archivo")))> tbody').append(newAttachmentRow);
-          location.reload();
-        } else {
-          alert('Error al subir archivos');
-        }
-      });
-  }
-</script>
-
-<script>
-  // Funcionalidad para editar la descripción
-  document.querySelectorAll('.editable-description').forEach(cell => {
-    cell.addEventListener('blur', function () {
-      const attachmentId = this.closest('tr').dataset.attachmentId;
-      const description = this.textContent.trim();
-      fetch(`/attachments/update_attachment_description/${attachmentId}/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: JSON.stringify({ description })
-      }).then(response => response.json())
-        .then(data => {
-          if (!data.success) {
-            alert('Error al actualizar la descripción');
-          }
-        });
-    });
-  });
-
-  // Funcionalidad para borrar adjuntos
-  document.querySelectorAll('.delete-attachment').forEach(button => {
-    button.addEventListener('click', function () {
-      const row = this.closest('tr');
-      const attachmentId = row.dataset.attachmentId;
-      if (confirm('¿Estás seguro de que deseas eliminar este adjunto?')) {
-        fetch(`/attachments/delete_attachment/${attachmentId}/`, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
-          }
-        }).then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              row.remove();
-            } else {
-              alert('Error al eliminar adjunto');
-            }
-          });
-      }
-    });
-  });
-
-  $(document).ready(function () {
     $('#entryForm').on('change', 'input, select', function (event) {
       $('#entryForm').submit();
     });
-  });
 
-  $(document).ready(function () {
     $('#entryForm').on('submit', function (event) {
       event.preventDefault();
       const formData = new FormData(this);
@@ -327,11 +251,79 @@
         .then(data => {
           if (!data.success) {
             alert('Error al guardar la entrada: ' + JSON.stringify(data.errors));
-            console.log(data);
+            // console.log(data); // Eliminado
           }
         });
     });
-  });
 
+    // Funcionalidad para editar la descripción
+    document.querySelectorAll('.editable-description').forEach(cell => {
+      cell.addEventListener('blur', function () {
+        const attachmentId = this.closest('tr').dataset.attachmentId;
+        const description = this.textContent.trim();
+        fetch(`/attachments/update_attachment_description/${attachmentId}/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({ description })
+        }).then(response => response.json())
+          .then(data => {
+            if (!data.success) {
+              alert('Error al actualizar la descripción');
+            }
+          });
+      });
+    });
+
+    // Funcionalidad para borrar adjuntos
+    document.querySelectorAll('.delete-attachment').forEach(button => {
+      button.addEventListener('click', function () {
+        const row = this.closest('tr');
+        const attachmentId = row.dataset.attachmentId;
+        if (confirm('¿Estás seguro de que deseas eliminar este adjunto?')) {
+          fetch(`/attachments/delete_attachment/${attachmentId}/`, {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}'
+            }
+          }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                row.remove();
+              } else {
+                alert('Error al eliminar adjunto');
+              }
+            });
+        }
+      });
+    });
+
+    // Drop area setup
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+
+    if (dropArea && fileInput) {
+      dropArea.addEventListener('click', () => fileInput.click());
+      dropArea.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropArea.classList.add('dragover');
+      });
+      dropArea.addEventListener('dragleave', () => {
+        dropArea.classList.remove('dragover');
+      });
+      dropArea.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropArea.classList.remove('dragover');
+        const files = event.dataTransfer.files;
+        handleFiles(files);
+      });
+      fileInput.addEventListener('change', (event) => {
+        const files = event.target.files;
+        handleFiles(files);
+      });
+    }
+  }); // Fin de $(document).ready()
 </script>
 {% endblock %}

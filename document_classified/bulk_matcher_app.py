@@ -3,9 +3,7 @@
 import sys
 import os
 import traceback
-# <<<--- Añadir datetime para parsear la fecha del asiento si viene como string --- >>>
 from datetime import datetime
-# <<<--------------------------------------------------------------------------->>>
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QTableWidget, QTableWidgetItem, QHeaderView,
@@ -27,13 +25,9 @@ class DropTableWidget(QTableWidget):
         super().__init__(parent)
         self.setAcceptDrops(True)
         self.is_saving_edit = False
-        print("DropTableWidget: __init__ - Drops habilitados.") # DEBUG
 
     def dragEnterEvent(self, event):
-        print("DropTableWidget: dragEnterEvent triggered") # DEBUG
         mime_data = event.mimeData()
-        print(f"  Mime formats: {mime_data.formats()}") # DEBUG
-        print(f"  Mime URLs: {mime_data.urls()}") # DEBUG
 
         if mime_data.hasUrls():
             has_pdf = False
@@ -42,20 +36,15 @@ class DropTableWidget(QTableWidget):
                     has_pdf = True
                     break
             if has_pdf:
-                print("  Tiene PDF. Aceptando acción propuesta.") # DEBUG
                 event.acceptProposedAction()
                 self.setStyleSheet("background-color: #e0f0ff;") # Azul claro
             else:
-                print("  No tiene PDF. Ignorando.") # DEBUG
                 event.ignore()
         else:
-            print("  No tiene URLs. Ignorando.") # DEBUG
             event.ignore()
 
     def dragMoveEvent(self, event):
-        # Este evento es crucial. Si no se acepta aquí, el cursor puede seguir prohibido.
         if event.mimeData().hasUrls():
-            # Comprobar si tiene PDF para mantener consistencia con dragEnter
             has_pdf = False
             for url in event.mimeData().urls():
                 if url.isLocalFile() and url.toLocalFile().lower().endswith('.pdf'):
@@ -69,15 +58,12 @@ class DropTableWidget(QTableWidget):
             event.ignore()
 
     def dragLeaveEvent(self, event):
-        print("DropTableWidget: dragLeaveEvent triggered") # DEBUG
         self.setStyleSheet("")
         event.accept()
 
     def dropEvent(self, event):
-        print("DropTableWidget: dropEvent triggered") # DEBUG
         self.setStyleSheet("")
         mime_data = event.mimeData()
-        print(f"  Drop Mime URLs: {mime_data.urls()}") # DEBUG
 
         if mime_data.hasUrls():
             event.acceptProposedAction()
@@ -85,22 +71,12 @@ class DropTableWidget(QTableWidget):
             for url in mime_data.urls():
                 if url.isLocalFile():
                     file_path = url.toLocalFile()
-                    print(f"  Archivo local detectado: {file_path}") # DEBUG
                     if os.path.isfile(file_path) and file_path.lower().endswith('.pdf'):
-                        print(f"    -> Es PDF válido. Añadiendo.") # DEBUG
                         file_paths.append(file_path)
-                    else:
-                        print(f"    -> Ignorado (no es PDF válido).") # DEBUG
-                else:
-                    print(f"  URL ignorada (no local): {url.toString()}") # DEBUG
 
             if file_paths:
-                print(f"  Emitiendo señal filesDropped con: {file_paths}") # DEBUG
                 self.filesDropped.emit(file_paths)
-            else:
-                print("  No se encontraron archivos PDF válidos para emitir.") # DEBUG
         else:
-            print("  Drop ignorado (no tiene URLs).") # DEBUG
             event.ignore()
 
 # --- Ventana Principal ---
@@ -155,23 +131,18 @@ class MainWindow(QMainWindow):
         # --- Sección Media: Tabla de Documentos ---
         self.table_widget = DropTableWidget()
         self.table_widget.filesDropped.connect(self.start_processing_files)
-        # <<<--- CAMBIO: Reducir número de columnas a 12 --->>>
         self.table_widget.setColumnCount(12)
-        # <<<--- CAMBIO: Quitar cabecera "Importe Asiento" --->>>
         self.table_widget.setHorizontalHeaderLabels([
             "ID", "Archivo", "Estado", "Tipo", "Fecha Factura",
             "Importe Factura", "Cuenta Doc.", "ID Asiento", "Fecha Asiento", # Col 8
-            # "Importe Asiento", # Col 9 eliminada
             "Desc. Asiento", # Ahora Col 9
             "Cuentas Asiento", # Ahora Col 10
             "Acción" # Ahora Col 11
         ])
-        # <<<-------------------------------------------------------->>>
         # Ajustar resize modes (los índices cambian)
         self.table_widget.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch) # Archivo
         self.table_widget.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents) # Estado
         self.table_widget.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeToContents) # Fecha Asiento
-        # self.table_widget.horizontalHeader().setSectionResizeMode(9, QHeaderView.ResizeToContents) # Importe Asiento (Eliminado)
         self.table_widget.horizontalHeader().setSectionResizeMode(9, QHeaderView.Stretch) # Desc. Asiento (Ahora 9)
         self.table_widget.horizontalHeader().setSectionResizeMode(10, QHeaderView.Stretch) # Cuentas Asiento (Ahora 10)
         self.table_widget.horizontalHeader().setSectionResizeMode(11, QHeaderView.ResizeToContents) # Acción (Ahora 11)
@@ -183,6 +154,8 @@ class MainWindow(QMainWindow):
 
         self.table_widget.setAcceptDrops(True)
         self.table_widget.itemChanged.connect(self.handle_item_changed)
+
+        self.table_widget.setSortingEnabled(True)
 
         main_layout.addWidget(self.table_widget)
         # --- FIN Sección Media ---
@@ -204,8 +177,6 @@ class MainWindow(QMainWindow):
         files, _ = QFileDialog.getOpenFileNames(self,"Seleccionar documentos PDF","", "Archivos PDF (*.pdf);;Todos los archivos (*)", options=options)
         if files:
             self.start_processing_files(files)
-        else:
-            print("Selección de archivo cancelada.")
 
     def start_processing_files(self, file_paths):
         """Inicia el hilo de procesamiento para una lista de rutas de archivo."""
@@ -216,7 +187,6 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Proceso en Curso", "Ya hay un proceso de carga en ejecución.")
             return
 
-        print(f"Iniciando procesamiento para {len(file_paths)} archivos.")
         self.load_button.setEnabled(False)
         self.find_match_button.setEnabled(False)
         self.reprocess_button.setEnabled(False)
@@ -258,7 +228,6 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Proceso en Curso", "Ya hay un proceso de carga o reproceso en ejecución.")
             return
 
-        print(f"Iniciando reproceso para IDs: {doc_ids_to_reprocess}")
         self.load_button.setEnabled(False); self.find_match_button.setEnabled(False); self.reprocess_button.setEnabled(False)
         self.status_label.setText("Iniciando reprocesamiento..."); self.progress_bar.setValue(0)
 
@@ -281,12 +250,10 @@ class MainWindow(QMainWindow):
         if self.reprocessing_thread:
             self.reprocessing_thread.quit(); self.reprocessing_thread.wait()
         self.reprocessing_thread = None; self.reprocessing_worker = None
-        print("Hilo de reprocesamiento terminado.")
 
     def on_selection_changed(self):
         selected_rows = self.table_widget.selectionModel().selectedRows()
         has_selection = bool(selected_rows)
-        print(f"on_selection_changed llamado. Filas seleccionadas: {len(selected_rows)}, Habilitar botones: {has_selection}")
         is_processing = (self.processing_thread and self.processing_thread.isRunning()) or \
                         (self.reprocessing_thread and self.reprocessing_thread.isRunning())
         self.find_match_button.setEnabled(has_selection and not is_processing)
@@ -300,7 +267,6 @@ class MainWindow(QMainWindow):
             if documents:
                 self.table_widget.setRowCount(0)
                 self.documents_data = {}
-                print(f"Cargando {len(documents)} documentos existentes...")
                 for doc_info in documents:
                     if 'filename' not in doc_info and 'file_url' in doc_info:
                          try: doc_info['filename'] = os.path.basename(doc_info['file_url'])
@@ -376,8 +342,6 @@ class MainWindow(QMainWindow):
             print(f"Valor no cambiado para Doc ID {doc_id}, Campo {field_name}. Ignorando.")
             return
 
-        print(f"Item cambiado: Fila {row}, Col {col}, Doc ID {doc_id}, Campo: {field_name}, Nuevo Valor: '{new_value_str}'")
-
         # --- Llamada a la API para guardar ---
         self.is_saving_edit = True # Activar flag antes de la llamada
         self.status_label.setText(f"Guardando {field_name} para Doc ID {doc_id}...")
@@ -387,7 +351,6 @@ class MainWindow(QMainWindow):
 
         if response and isinstance(response, dict) and "id" in response and "error" not in response:
             # Éxito: API devuelve el documentInfo actualizado
-            print(f"Guardado exitoso para Doc ID {doc_id}. Respuesta: {response}")
             self.status_label.setText(f"{field_name} para Doc ID {doc_id} guardado.")
 
             # Actualizar datos locales y la tabla completa para esa fila
@@ -421,7 +384,6 @@ class MainWindow(QMainWindow):
 
         # Actualizar o añadir los datos locales
         self.documents_data[doc_id] = doc_info
-        print(f"Actualizando tabla para Doc ID: {doc_id}, Info: {doc_info}")
 
         # Buscar si la fila ya existe
         row_index = -1
@@ -493,14 +455,10 @@ class MainWindow(QMainWindow):
         self.table_widget.setItem(row_index, 6, account_item)
 
         # Columnas de Asiento (7 a 10 ahora) - Limpiar por defecto
-        # <<<--- CAMBIO: Ajustar rango del bucle --->>>
         for col_idx in [7, 8, 9, 10]: # Antes era [7, 8, 9, 10, 11]
             item = QTableWidgetItem("")
             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
             self.table_widget.setItem(row_index, col_idx, item)
-
-        # Columna 11: Acción (Botones)
-        # <<<--- CAMBIO: Índice de columna de acción --->>>
         existing_widget = self.table_widget.cellWidget(row_index, 11) # Antes era 12
         if existing_widget:
             # Si ya existe un widget (posiblemente de una actualización previa),
@@ -534,7 +492,6 @@ class MainWindow(QMainWindow):
         # Añadir un espacio flexible para empujar los botones a la izquierda
         action_layout.addStretch()
 
-        # <<<--- CAMBIO: Índice de columna de acción --->>>
         self.table_widget.setCellWidget(row_index, 11, action_widget) # Antes era 12
 
         # --- Aplicar Coloreado ---
@@ -554,7 +511,6 @@ class MainWindow(QMainWindow):
         base_color = color if color else Qt.white
 
         # Aplicar color a todas las columnas excepto la de acción
-        # <<<--- CAMBIO: Ajustar rango del bucle --->>>
         for col in range(self.table_widget.columnCount() - 1): # columnCount() ahora es 12
             item = self.table_widget.item(row_index, col)
             if not item:
@@ -582,15 +538,11 @@ class MainWindow(QMainWindow):
             doc_info = self.documents_data.get(doc_id)
 
             # --- Limpiar resultados previos en la fila (Columnas 7 a 10 ahora) ---
-            # <<<--- CAMBIO: Ajustar rango del bucle --->>>
             for col_idx in [7, 8, 9, 10]: # Antes era [7, 8, 9, 10, 11]
                 item = QTableWidgetItem("")
                 item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                 self.table_widget.setItem(row, col_idx, item)
-            # -------------------------------------------------------------
 
-            # --- Recuperar el widget de acción existente ---
-            # <<<--- CAMBIO: Índice de columna de acción --->>>
             action_widget = self.table_widget.cellWidget(row, 11) # Antes era 12
             action_layout = action_widget.layout() if action_widget else None
             if action_layout:
@@ -600,10 +552,8 @@ class MainWindow(QMainWindow):
                     if isinstance(widget, QPushButton) and widget.text() == "Asociar":
                         action_layout.takeAt(i)
                         widget.deleteLater()
-                        print(f"Botón 'Asociar' previo eliminado para fila {row}")
                         break
-            # ------------------------------------------------------------------------------------
-
+            
             if not doc_info:
                 print(f"No se encontraron datos internos para Doc ID: {doc_id}")
                 status_item = QTableWidgetItem("Error Interno")
@@ -622,8 +572,6 @@ class MainWindow(QMainWindow):
                 try: document_total_amount = float(total_amount_str)
                 except (ValueError, TypeError): pass
 
-            print(f"Buscando para Doc ID {doc_id}: Cuenta={account_id_to_match}, Fecha={document_date_str}, Importe={document_total_amount}")
-
             if not account_id_to_match or not document_date_str or document_total_amount is None:
                 print(f"Faltan datos para buscar coincidencias para doc {doc_id}")
                 status_item = self.table_widget.item(row, 2)
@@ -641,7 +589,6 @@ class MainWindow(QMainWindow):
                 document_date = datetime.strptime(document_date_str, "%Y-%m-%d").date()
                 start_date = (document_date - timedelta(days=tolerance_days)).strftime("%Y-%m-%d")
                 end_date = (document_date + timedelta(days=tolerance_days)).strftime("%Y-%m-%d")
-                print(f" -> Rango API: {start_date} a {end_date}")
 
                 entries = self.api_client.get_accounting_entries(
                     account_id=account_id_to_match,
@@ -661,12 +608,8 @@ class MainWindow(QMainWindow):
 
                 if isinstance(entries, list): # Asegurarse que es una lista
                     if entries:
-                        print(f" -> API devolvió {len(entries)} asientos candidatos.")
                         match_found = entries[0]
-                        print(f" -> Coincidencia encontrada por API: Entry ID {match_found.get('id')}")
                         found_count += 1
-                    else:
-                        print(f" -> API devolvió 0 asientos tras filtrar.")
                 else: # Si no es lista ni dict de error
                      print(f" -> Respuesta inesperada de API para doc {doc_id}: {entries}")
                      status_item = QTableWidgetItem("Error Respuesta API")
@@ -689,14 +632,10 @@ class MainWindow(QMainWindow):
                     entry_date_str = match_found.get("date", "")
                     self.table_widget.setItem(row, 8, QTableWidgetItem(entry_date_str))
 
-                    # <<<--- CAMBIO: Bloque de Importe Asiento ELIMINADO --->>>
-
                     # Columna 9: Desc. Asiento (Antes 10)
-                    # <<<--- CAMBIO: Índice de columna --->>>
                     self.table_widget.setItem(row, 9, QTableWidgetItem(match_found.get("description", "")))
 
                     # Columna 10: Cuentas Asiento (Antes 11)
-                    # <<<--- CAMBIO: Índice de columna --->>>
                     accounts_in_entry = []
                     for trans in match_found.get("transactions", []):
                         acc_name = trans.get("account_name", f"ID:{trans.get('account', '?')}")
@@ -723,14 +662,10 @@ class MainWindow(QMainWindow):
                                 break
                         if stretch_index != -1:
                             action_layout.insertWidget(stretch_index, associate_button)
-                            print(f"Botón 'Asociar' insertado en índice {stretch_index} para fila {row}")
                         else:
                             action_layout.addWidget(associate_button)
-                            print(f"Botón 'Asociar' añadido al final para fila {row}")
                     else:
-                        # <<<--- CAMBIO: Índice de columna en mensaje de advertencia (no aplica directamente) --->>>
                         print(f"Advertencia: No se encontró action_layout para fila {row}, no se pudo añadir botón 'Asociar'.")
-                    # -------------------------------------------------
 
                 else: # No se encontró coincidencia
                     current_status_text = "Sin Coincidencia"
@@ -775,8 +710,6 @@ class MainWindow(QMainWindow):
                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
         if reply == QMessageBox.Yes:
-            print(f"Intentando borrar Doc ID: {doc_id}")
-
             target_row = -1
             for row in range(self.table_widget.rowCount()):
                 id_item = self.table_widget.item(row, 0)
@@ -793,7 +726,6 @@ class MainWindow(QMainWindow):
             QApplication.processEvents()
 
             # --- Deshabilitar botones en la fila encontrada ---
-            # <<<--- CAMBIO: Índice de columna de acción --->>>
             action_widget = self.table_widget.cellWidget(target_row, 11) # Antes era 12
             buttons_to_disable = []
             if action_widget:
@@ -801,11 +733,9 @@ class MainWindow(QMainWindow):
                 for btn in buttons_to_disable:
                     btn.setEnabled(False)
             # -------------------------------------------------
-
             response = self.api_client.delete_document(doc_id)
 
             if response is True:
-                print(f"Documento {doc_id} borrado exitosamente.")
                 self.status_label.setText(f"Documento {doc_id} eliminado.")
                 self.table_widget.removeRow(target_row)
                 if doc_id in self.documents_data:
@@ -833,12 +763,10 @@ class MainWindow(QMainWindow):
         doc_id = button.property("doc_id")
 
         if file_url:
-            print(f"Intentando abrir archivo para Doc ID {doc_id}: {file_url}")
             qurl_to_open = QUrl(file_url)
             if not qurl_to_open.isValid() or qurl_to_open.scheme() == "":
                  qurl_to_open = QUrl.fromLocalFile(file_url)
 
-            print(f"  -> Abriendo QUrl: {qurl_to_open.toString()}")
             success = QDesktopServices.openUrl(qurl_to_open)
             if not success:
                 QMessageBox.warning(self, "Error al Abrir", f"No se pudo abrir el archivo o URL:\n{file_url}\n\nAsegúrate de tener un programa asociado o que la ruta sea accesible.")
@@ -854,7 +782,6 @@ class MainWindow(QMainWindow):
         entry_id = button.property("entry_id")
         if doc_id is None or entry_id is None: return
 
-        print(f"Intentando FINALIZAR adjunto para Doc ID: {doc_id} a Asiento ID: {entry_id}")
         self.status_label.setText(f"Finalizando doc {doc_id}...")
         QApplication.processEvents()
         button.setEnabled(False)
@@ -862,7 +789,6 @@ class MainWindow(QMainWindow):
         response = self.api_client.finalize_document_attachment(doc_id, entry_id)
 
         if response and isinstance(response, dict) and "error" not in response and response.get("status") == "ATTACHMENT_CREATED_DOC_DELETED":
-            print(f"Documento {doc_id} finalizado (adjuntado a asiento {entry_id} y eliminado).")
             self.status_label.setText(f"Documento {doc_id} finalizado.")
 
             target_row = -1
@@ -908,7 +834,6 @@ class MainWindow(QMainWindow):
         if self.processing_thread:
             self.processing_thread.quit(); self.processing_thread.wait()
         self.processing_thread = None; self.processing_worker = None
-        print("Hilo de procesamiento terminado.")
 
     def closeEvent(self, event):
         if self.processing_worker: self.processing_worker.stop()
@@ -916,14 +841,8 @@ class MainWindow(QMainWindow):
         if self.reprocessing_worker: self.reprocessing_worker.stop()
         if self.reprocessing_thread and self.reprocessing_thread.isRunning(): self.reprocessing_thread.quit(); self.reprocessing_thread.wait()
         event.accept()
-
-# --- Bloque Principal ---
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    # --- Añadir imports locales aquí si es necesario ---
-    # from garca_api_client import ApiClient
-    # from bulk_matcher_ProcessWoker import ProcessingWorker, ReprocessingWorker
-    # -------------------------------------------------
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())
