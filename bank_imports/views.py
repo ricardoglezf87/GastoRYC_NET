@@ -9,14 +9,18 @@ from transactions.models import Transaction
 from .forms import  BankImportForm
 import io
 import csv
-from decimal import Decimal, InvalidOperation
-from datetime import datetime
+from decimal import Decimal, InvalidOperation 
+from datetime import datetime, timedelta 
 from django.contrib import messages
 from django.db import transaction
 from django.views import View
 from django.utils.decorators import method_decorator
-import os # Ensure os is imported
+import os 
+import logging 
 import openpyxl
+import xlrd 
+
+logger = logging.getLogger(__name__)
 
 class ImportMovementsMixin:
     @transaction.atomic
@@ -101,7 +105,7 @@ class BankImportView(ImportMovementsMixin, View):
             file_extension_lower = file_ext_from_name.lower()
 
             provider_specific_allowed_extensions = {
-                'ing': ['.csv', '.txt'], # Based on original logic for ING
+                'ing': ['.xlsx', '.xls'], # Changed to support Excel files for ING
                 'edenred': ['.csv', '.txt', '.xlsx'],
                 'paypal': ['.csv'],
             }
@@ -121,6 +125,10 @@ class BankImportView(ImportMovementsMixin, View):
             try:
                 if bank_provider == 'ing':
                     preview_data, import_data = BankImportView.process_ing_file(file)
+                    # Esta es la comprobación que muestra tu mensaje de error
+                    if not preview_data and not import_data:
+                        messages.error(request, "Error al procesar el archivo ING. Verifique que sea un archivo Excel (.xlsx o .xls) válido y que el formato de las columnas sea el esperado.")
+                        return render(request, self.template_name, {'form': form})               
                 elif bank_provider == 'edenred':
                     preview_data, import_data = BankImportView.process_edenred_file(file)
                     if not preview_data and not import_data: 
@@ -190,53 +198,278 @@ class BankImportView(ImportMovementsMixin, View):
 
     @staticmethod
     def process_ing_file(file):
-        content = file.read().decode('utf-8') 
-        csv_data = [] 
-        import_data = [] 
-        
-        csv_reader = csv.reader(io.StringIO(content), delimiter=';')
-        
-        for _ in range(5):
-            next(csv_reader, None)
-        
-        for row in csv_reader:
-            if len(row) >= 6:
-                try:
-                    date_str = row[0]
-                    category = row[1]
-                    subcategory = row[2]
-                    description = row[3]
-                    comment = row[4]
-                    amount_str = row[5].replace('.', '').replace(',', '.')
-                    
-                    if date_str:
-                        date = datetime.strptime(date_str, '%d/%m/%Y').date()
-                        
-                        if amount_str:
-                            try:
-                                amount = Decimal(amount_str)
-                                
-                                csv_data.append({
-                                    'date': date,
-                                    'category': f"{category} - {subcategory}",
-                                    'description': description,
-                                    'amount': amount 
-                                })
-                                
-                                import_data.append({
-                                    'date': date,
-                                    'category': category,
-                                    'subcategory': subcategory,
-                                    'description': description,
-                                    'comment': comment,
-                                    'amount': amount 
-                                })
-                            except InvalidOperation:
-                                pass 
-                except Exception:
-                    pass 
+        """
+        Dispatcher for ING file processing. Determines if it's .xls or .xlsx
+        and calls the appropriate handler.
+        """
+        file_name = file.name.lower()
+        if file_name.endswith('.xlsx'):
+            logger.info(f"Processing ING file {file.name} as XLSX.")
+            return BankImportView._process_ing_xlsx(file)
+        elif file_name.endswith('.xls'):
+            logger.info(f"Processing ING file {file.name} as XLS.")
+            return BankImportView._process_ing_xls(file)
+        else:
+            logger.error(f"Unsupported file extension for ING: {file.name}")
+            return [], []
 
-        return csv_data, import_data
+    @staticmethod
+    def _process_ing_xlsx(file_obj): # Renamed from process_ing_file, handles .xlsx
+        preview_data = []
+        import_data = []
+        try:
+            file_obj.seek(0) # Ensure file pointer is at the beginning
+            # data_only=True to get values from cells, not formulas
+            workbook = openpyxl.load_workbook(file_obj, data_only=True)
+            sheet = workbook.active
+            logger.info("Archivo ING Excel abierto correctamente.")
+        except Exception as e: # Broad exception for issues like non-Excel file, corrupted file
+            logger.error(f"Error al abrir el archivo ING Excel: {e}")
+            return [], []
+        header_found = False
+
+        # 1-based index for sheet.iter_rows(min_row=...). Data starts 1 row after header.
+        data_start_actual_row = 0 
+
+        # Expected header texts (order matters for the signature check)
+        # Based on "F. VALOR", "CATEGORÍA", "SUBCATEGORÍA", "DESCRIPCIÓN", "COMENTARIO", "IMAGEN", "IMPORTE (€)"
+        # We will check for "F. VALOR", "CATEGORÍA", "DESCRIPCIÓN", "IMPORTE (€)" at specific positions
+        logger.debug("Iniciando búsqueda de cabecera en archivo ING XLSX.")
+        expected_header_texts = ["F. VALOR", "CATEGORÍA", "DESCRIPCIÓN", "IMPORTE (€)"]
+        # Normalize expected headers to lowercase for case-insensitive comparison
+        expected_header_signature_normalized = [h.strip().lower() for h in expected_header_texts]
+
+        # Search for header in the first 10 rows
+        for i, row_tuple in enumerate(sheet.iter_rows(min_row=1, max_row=10)): 
+            # Normalize actual row values to lowercase strings for comparison
+            row_values_str_normalized = [str(cell.value).strip().lower() if cell.value is not None else "" for cell in row_tuple]
+            
+            # Check if the row has enough columns and if key headers match
+            if len(row_values_str_normalized) >= 7 and \
+               row_values_str_normalized[0] == expected_header_signature_normalized[0] and \
+               row_values_str_normalized[1] == expected_header_signature_normalized[1] and \
+               row_values_str_normalized[3] == expected_header_signature_normalized[2] and \
+               row_values_str_normalized[6] == expected_header_signature_normalized[3]:
+                header_found = True
+                logger.info(f"Cabecera ING (XLSX) encontrada en la fila {i+1}.")
+                # i is 0-based from enumerate, sheet rows are 1-based. Data is next row after header.
+                data_start_actual_row = (i + 1) + 1 
+                break
+            else:
+                logger.debug(f"Fila {i+1} (XLSX) no coincide con la cabecera ING esperada. Valores normalizados: {row_values_str_normalized[:7]}")
+        
+        if not header_found:
+            logger.warning("Cabecera ING (XLSX) no encontrada.")
+            return [], []
+
+        for row_cells_tuple in sheet.iter_rows(min_row=data_start_actual_row):
+            row_values = [cell.value for cell in row_cells_tuple]
+
+            # Stop if the first cell (date) is empty or None, assuming end of data or blank row
+            if not row_values or row_values[0] is None:
+                logger.debug(f"Fila de datos (XLSX) saltada por estar vacía o sin fecha: {row_values}")
+                continue
+
+            try:
+                date_val = row_values[0] # F. VALOR (Column A)
+                category = str(row_values[1]) if row_values[1] is not None else "" # CATEGORÍA (Column B)
+                subcategory = str(row_values[2]) if row_values[2] is not None else "" # SUBCATEGORÍA (Column C)
+                description = str(row_values[3]) if row_values[3] is not None else "" # DESCRIPCIÓN (Column D)
+                comment = str(row_values[4]) if row_values[4] is not None else "" # COMENTARIO (Column E)
+                # row_values[5] is IMAGEN (Column F), skipped for now
+                amount_val = row_values[6] # IMPORTE (€) (Column G)
+
+                parsed_date = None
+                if isinstance(date_val, datetime): # openpyxl might parse it as datetime
+                    parsed_date = date_val.date()
+                elif isinstance(date_val, str):
+                    try:
+                        parsed_date = datetime.strptime(date_val.strip(), '%d/%m/%Y').date()
+                    except ValueError:
+                        logger.warning(f"Error al parsear fecha string (XLSX) '{date_val}' en formato dd/mm/yyyy. Saltando fila. Datos: {row_values}")
+                        # If date string is not in expected format, try to skip or handle
+                        # For now, we skip the row if date is unparseable
+                        continue 
+                elif isinstance(date_val, (int, float)): # Sometimes dates are Excel serial numbers
+                    try:
+                        logger.debug(f"Intentando parsear fecha Excel (XLSX) (número de serie): {date_val}")
+                        # This conversion might need adjustment based on Excel's date system (1900 or 1904)
+                        # openpyxl usually handles this if data_only=True, but as a fallback:
+                        parsed_date = (datetime(1899, 12, 30) + timedelta(days=date_val)).date()
+                    except Exception as e_date_serial:
+                        logger.warning(f"Error al convertir fecha Excel (XLSX) (número de serie) '{date_val}': {e_date_serial}. Saltando fila. Datos: {row_values}")
+                        continue # Skip if conversion fails
+                else:
+                    logger.warning(f"Formato de fecha (XLSX) no reconocido o nulo: '{date_val}' (tipo: {type(date_val)}). Saltando fila. Datos: {row_values}")
+                    continue # Skip if date format is not recognized or None
+
+                amount_decimal = None
+                if amount_val is not None:
+                    logger.debug(f"Procesando importe (XLSX): '{amount_val}'")
+                    if isinstance(amount_val, (float, int)):
+                        amount_decimal = Decimal(str(amount_val))
+                    else: # Assume string, handle European format
+                        amount_str = str(amount_val).replace('.', '').replace(',', '.')
+                        amount_decimal = Decimal(amount_str)
+                else:
+                    logger.warning(f"Importe (XLSX) nulo. Saltando fila. Datos: {row_values}")
+                    continue # Skip if amount is missing
+                
+                logger.debug(f"Fila (XLSX) procesada: Fecha={parsed_date}, Importe={amount_decimal}, Desc={description[:30]}")
+                
+                preview_data.append({
+                    'date': parsed_date,
+                    'category': f"{category} - {subcategory}".strip(" -"), # Avoid " - " if one is empty
+                    'description': description,
+                    'amount': amount_decimal
+                })
+                import_data.append({
+                    'date': parsed_date,
+                    'category': category,
+                    'subcategory': subcategory,
+                    'description': description,
+                    'comment': comment,
+                    'amount': amount_decimal
+                })
+            except (ValueError, TypeError, IndexError, InvalidOperation) as e:
+                logger.warning(f"Skipping row during ING XLSX import due to error: {e}. Row data: {row_values}")
+                pass
+        logger.info(f"Procesamiento de archivo ING XLSX finalizado. Movimientos para vista previa: {len(preview_data)}, Movimientos para importar: {len(import_data)}")
+        return preview_data, import_data
+
+    @staticmethod
+    def _process_ing_xls(file_obj): # Handles .xls files using xlrd
+        preview_data = []
+        import_data = []
+        try:
+            file_obj.seek(0)
+            workbook = xlrd.open_workbook(file_contents=file_obj.read())
+            sheet = workbook.sheet_by_index(0) # Assuming the first sheet
+            logger.info("Archivo ING XLS (Excel 97-2003) abierto correctamente con xlrd.")
+        except xlrd.XLRDError as e:
+            logger.error(f"Error al abrir el archivo ING XLS con xlrd: {e}")
+            return [], []
+        except Exception as e: # Other potential errors
+            logger.error(f"Error inesperado al procesar archivo ING XLS con xlrd: {e}")
+            return [], []
+
+        logger.debug("Iniciando búsqueda de cabecera en archivo ING XLS.")
+        header_found = False
+        data_start_actual_row = 0 # 0-based index for xlrd rows
+
+        expected_header_texts = ["F. VALOR", "CATEGORÍA", "DESCRIPCIÓN", "IMPORTE (€)"]
+        expected_header_signature_normalized = [h.strip().lower() for h in expected_header_texts]
+
+        for i in range(min(sheet.nrows, 10)): # Search in first 10 rows
+            try:
+                row_tuple_values = sheet.row_values(i)
+            except IndexError: # Should not happen if i < sheet.nrows
+                continue
+
+            row_values_str_normalized = [str(cell_value).strip().lower() if cell_value is not None else "" for cell_value in row_tuple_values]
+
+            if len(row_values_str_normalized) >= 7 and \
+               row_values_str_normalized[0] == expected_header_signature_normalized[0] and \
+               row_values_str_normalized[1] == expected_header_signature_normalized[1] and \
+               row_values_str_normalized[3] == expected_header_signature_normalized[2] and \
+               row_values_str_normalized[6] == expected_header_signature_normalized[3]:
+                header_found = True
+                logger.info(f"Cabecera ING (XLS) encontrada en la fila {i+1}.")
+                data_start_actual_row = i + 1 # Data starts on the next row (0-based index)
+                break
+            else:
+                logger.debug(f"Fila {i+1} (XLS) no coincide con la cabecera ING esperada. Valores normalizados: {row_values_str_normalized[:7]}")
+
+        if not header_found:
+            logger.warning("Cabecera ING (XLS) no encontrada.")
+            return [], []
+
+        for row_idx in range(data_start_actual_row, sheet.nrows):
+            try:
+                row_values = sheet.row_values(row_idx)
+            except IndexError:
+                continue
+
+            if not row_values or row_values[0] is None or str(row_values[0]).strip() == "":
+                logger.debug(f"Fila de datos (XLS) saltada por estar vacía o sin fecha: {row_values}")
+                continue
+
+            try:
+                date_val_raw = row_values[0]
+                category = str(row_values[1]) if row_values[1] is not None else ""
+                subcategory = str(row_values[2]) if row_values[2] is not None else ""
+                description = str(row_values[3]) if row_values[3] is not None else ""
+                comment = str(row_values[4]) if row_values[4] is not None else ""
+                amount_val = row_values[6]
+
+                parsed_date = None
+                cell_type_date = sheet.cell_type(row_idx, 0) # Column 0 for date
+
+                if cell_type_date == xlrd.XL_CELL_DATE:
+                    try:
+                        dt_obj = xlrd.xldate_as_datetime(date_val_raw, workbook.datemode)
+                        parsed_date = dt_obj.date()
+                    except Exception as e_date:
+                        logger.warning(f"Error al convertir fecha xlrd (XL_CELL_DATE) '{date_val_raw}': {e_date}. Saltando fila. Datos: {row_values}")
+                        continue
+                elif cell_type_date == xlrd.XL_CELL_TEXT:
+                    try:
+                        parsed_date = datetime.strptime(str(date_val_raw).strip(), '%d/%m/%Y').date()
+                    except ValueError:
+                        logger.warning(f"Error al parsear fecha string (XLS) '{date_val_raw}' en formato dd/mm/yyyy. Saltando fila. Datos: {row_values}")
+                        continue
+                elif cell_type_date == xlrd.XL_CELL_NUMBER: # Could be a date stored as number
+                    try:
+                        dt_obj = xlrd.xldate_as_datetime(date_val_raw, workbook.datemode)
+                        parsed_date = dt_obj.date()
+                        logger.debug(f"Fecha (XLS) parseada de XL_CELL_NUMBER: {date_val_raw} -> {parsed_date}")
+                    except Exception: # If not a valid date serial, try string parse if it looks like one
+                        try:
+                            parsed_date = datetime.strptime(str(date_val_raw).strip(), '%d/%m/%Y').date()
+                        except ValueError:
+                            logger.warning(f"Formato de fecha (XLS) XL_CELL_NUMBER no reconocido como fecha serial o string dd/mm/yyyy: '{date_val_raw}'. Saltando fila. Datos: {row_values}")
+                            continue
+                else:
+                    logger.warning(f"Formato de fecha (XLS) no reconocido o nulo (tipo xlrd: {cell_type_date}, valor: '{date_val_raw}'). Saltando fila. Datos: {row_values}")
+                    continue
+
+                amount_decimal = None
+                if amount_val is not None:
+                    logger.debug(f"Procesando importe (XLS): '{amount_val}' (tipo: {type(amount_val)})")
+                    try:
+                        if isinstance(amount_val, (float, int)):
+                            amount_decimal = Decimal(str(amount_val)) # Convert number directly
+                        else: # Assume string, handle European format
+                            amount_str = str(amount_val).replace('.', '').replace(',', '.')
+                            amount_decimal = Decimal(amount_str)
+                    except InvalidOperation as e_amount:
+                        logger.warning(f"Error al convertir importe (XLS) '{amount_val}' a Decimal: {e_amount}. Saltando fila. Datos: {row_values}")
+                        continue
+                else:
+                    logger.warning(f"Importe (XLS) nulo. Saltando fila. Datos: {row_values}")
+                    continue
+                
+                logger.debug(f"Fila (XLS) procesada: Fecha={parsed_date}, Importe={amount_decimal}, Desc={description[:30]}")
+                
+                preview_data.append({
+                    'date': parsed_date,
+                    'category': f"{category} - {subcategory}".strip(" -"), # Avoid " - " if one is empty
+                    'description': description,
+                    'amount': amount_decimal
+                })
+                import_data.append({
+                    'date': parsed_date,
+                    'category': category,
+                    'subcategory': subcategory,
+                    'description': description,
+                    'comment': comment,
+                    'amount': amount_decimal
+                })
+            except Exception as e: # Catch-all for row processing
+                logger.warning(f"Skipping row during ING XLS import due to unexpected error: {e}. Row data: {row_values}")
+                pass
+        logger.info(f"Procesamiento de archivo ING XLS finalizado. Movimientos para vista previa: {len(preview_data)}, Movimientos para importar: {len(import_data)}")
+        return preview_data, import_data
 
     @staticmethod
     def _parse_edenred_row(row_parts):
@@ -326,14 +559,12 @@ class BankImportView(ImportMovementsMixin, View):
             workbook = openpyxl.load_workbook(file, data_only=True) # data_only=True para obtener valores de fórmulas
             sheet = workbook.active
         except Exception as e:
-            # Consider logging the error e instead of printing
             return [], []
 
         data_start_index = -1
         expected_header_cols = ["Fecha", "Detalle movimiento", "Importe"]
         
         # Iterar sobre las filas para encontrar el encabezado
-        # openpyxl row y column index son 1-based
         for i, row in enumerate(sheet.iter_rows()):
             # Obtener los valores de las celdas, convirtiendo a string y quitando espacios
             # Tomar solo las primeras N celdas necesarias para el encabezado
@@ -346,7 +577,6 @@ class BankImportView(ImportMovementsMixin, View):
             return [], [] # Encabezado no encontrado
 
         # Procesar filas de datos
-        # sheet.iter_rows() devuelve tuplas de celdas. min_row es 1-based.
         for row_idx, row_cells in enumerate(sheet.iter_rows(min_row=data_start_index + 1)): # +1 porque min_row es 1-based
             # Extraer valores de las celdas. openpyxl puede devolver directamente tipos como datetime.
             row_values = [cell.value for cell in row_cells]
@@ -393,10 +623,6 @@ class BankImportView(ImportMovementsMixin, View):
         
         try:
             header = next(csv_reader) # Skip header row
-            # Optional: Add header validation if needed
-            # expected_header_min_fields = ["Fecha", "Nombre", "Estado", "Importe"]
-            # if not all(field in header for field in expected_header_min_fields):
-            #     return [], [] # Header mismatch
         except StopIteration:
             return [], [] # Empty file
 
@@ -431,7 +657,6 @@ class BankImportView(ImportMovementsMixin, View):
                 preview_data.append(movement_data)
                 import_data.append(movement_data)
             except (ValueError, InvalidOperation):
-                # Log row_number and row data for debugging if parsing fails
                 pass 
         return preview_data, import_data
 
@@ -451,7 +676,7 @@ class BankImportPreviewView(View):
             file_extension_lower = file_ext_from_name.lower()
 
             provider_specific_allowed_extensions = {
-                'ing': ['.csv', '.txt'],
+                'ing': ['.xlsx', '.xls'], # Changed to support Excel files for ING
                 'edenred': ['.csv', '.txt', '.xlsx'],
                 'paypal': ['.csv'],
             }
@@ -467,6 +692,8 @@ class BankImportPreviewView(View):
             try:
                 if bank_provider == 'ing':
                     preview_data, _ = BankImportView.process_ing_file(file)
+                    if not preview_data and not _: # Si process_ing_file falla
+                         return JsonResponse({'success': False, 'error': 'Error al procesar el archivo ING. Verifique que sea un archivo Excel (.xlsx o .xls) válido y el formato de columnas.'})
                 elif bank_provider == 'edenred':
                     preview_data, _ = BankImportView.process_edenred_file(file)
                     if not preview_data and not _: 
@@ -527,10 +754,7 @@ class BankImportDuplicatesView(ImportMovementsMixin, View):
         
         # Convert back to Decimal/date for processing, matching the structure used by import_movements
         movements_to_process = []
-        for movement_str_data in session_duplicates_str:
-            movement_data = movement_str_data.copy() # Operate on a copy
-            movement_data['date'] = datetime.strptime(movement_str_data['date'], '%Y-%m-%d').date()
-            movement_data['amount'] = Decimal(movement_str_data['amount'])
+        for movement_data in session_duplicates_str: # Iterate directly over the list of dicts
             movements_to_process.append(movement_data)
 
         selected_movements = []
@@ -538,17 +762,12 @@ class BankImportDuplicatesView(ImportMovementsMixin, View):
             # Key for POST data should match how it's generated in the template
             # The template likely uses date and amount to create a unique key for each checkbox
             # Example key: f"{movement['date'].strftime('%Y-%m-%d')}_{str(movement['amount'])}"
-            # Let's assume the template creates a key like "YYYY-MM-DD_AMOUNT"
-            # The original string versions from session_duplicates_str are good for key matching
+            # The movement dictionary already has date as string and amount as string from the session
             
-            # Find the corresponding string version to build the key as the template would
-            original_str_movement = next(
-                (m for m in session_duplicates_str 
-                 if m['date'] == movement['date'].strftime('%Y-%m-%d') and 
-                    m['amount'] == str(movement['amount'])), None)
-
-            if original_str_movement:
-                movement_key = f"{original_str_movement['date']}_{original_str_movement['amount']}"
+            # Ensure movement['date'] is a string for key generation, which it should be from the session.
+            # Ensure movement['amount'] is a string for key generation, which it should be.
+            if isinstance(movement['date'], str) and isinstance(movement['amount'], str):
+                movement_key = f"{movement['date']}_{movement['amount']}"
                 if request.POST.get(movement_key) == 'import':
                     selected_movements.append(movement) # Add the processed movement (with date/Decimal objects)
 

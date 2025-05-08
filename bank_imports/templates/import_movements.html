@@ -96,11 +96,18 @@
         fileInput.addEventListener('change', function (e) {
             const file = e.target.files[0];
             const bankProvider = document.getElementById('id_bank_provider').value;
-            let allowedExtensions = ['.csv', '.txt'];
-            if (bankProvider === 'edenred') {
-                allowedExtensions.push('.xlsx');
+            let allowedExtensions;
+
+            if (bankProvider === 'ing') {
+                allowedExtensions = ['.xlsx', '.xls'];
+            } else if (bankProvider === 'edenred') {
+                allowedExtensions = ['.csv', '.txt', '.xlsx'];
+            } else if (bankProvider === 'paypal') {
+                allowedExtensions = ['.csv'];
+            } else {
+                // Default for other providers or if none is selected (though file input should be disabled)
+                allowedExtensions = ['.csv', '.txt']; 
             }
-            // Allow specified extensions for preview, matching backend capabilities
             if (file && allowedExtensions.some(ext => file.name.toLowerCase().endsWith(ext))) {
                 const formData = new FormData();
                 formData.append('file', file);

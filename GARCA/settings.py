@@ -137,6 +137,43 @@ DATABASES = {
     # }
 }
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple', # Puedes usar 'verbose' para más detalle
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING', # Nivel por defecto para todos los loggers
+    },
+    'loggers': {
+        'bank_imports': { # Logger específico para tu app bank_imports
+            'handlers': ['console'],
+            'level': 'DEBUG', # Cambia a DEBUG para ver los warnings de filas saltadas
+            'propagate': False, # Evita que el mensaje se envíe también al root logger si ya lo manejaste aquí
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
