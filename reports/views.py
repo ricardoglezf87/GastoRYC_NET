@@ -623,12 +623,14 @@ def process_delete_empty_entries(request):
         logger.error(f"Error processing delete empty entries: {e}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'Ocurrió un error inesperado: {e}'})
 
-def get_looker_studio_data():
+def get_looker_studio_data(task_id):
     """
     Fetches and formats data intended for Looker Studio (via Google Sheets).
     Si start_date y end_date son None, obtiene todos los datos.
     """
-    transactions_qs = Transaction.objects.select_related('entry', 'account').filter(entry__id__lte=50)
+    transactions_qs = Transaction.objects.select_related('entry', 'account')
+    total_records = transactions_qs.count() # Obtener el conteo total antes de iterar
+    processed_count = 0
 
     data_list = []
     for t in transactions_qs:
@@ -644,6 +646,16 @@ def get_looker_studio_data():
             'parent_id': t.account.parent_id,
             'closed': t.account.closed,
         })
+        processed_count += 1
+        # Actualizar progreso cada 500 registros (ajustar según necesidades)
+        if processed_count % 500 == 0 or processed_count == total_records:
+            cache.set(f'sheet_update_progress_{task_id}', {
+                'processed': processed_count,
+                'total': total_records,
+                'status': 'processing',
+                'stage': 'fetching' # Indicar que estamos obteniendo datos
+            }, timeout=3600)
+            logger.debug(f"Task {task_id}: Fetched {processed_count}/{total_records} records.")
     return data_list
 
 def looker_data_viewer(request):
@@ -691,7 +703,7 @@ def trigger_google_sheet_update(request):
     logger.info(f"User {request.user} triggered Google Sheet update. Task ID: {task_id}")
 
     try:
-        all_data_for_sheet = get_looker_studio_data()
+        all_data_for_sheet = get_looker_studio_data(task_id)
         total_records = len(all_data_for_sheet)
         
         cache.set(f'sheet_update_progress_{task_id}', {

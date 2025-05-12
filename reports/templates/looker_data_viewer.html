@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     }
 
-    function updateProgressUI(processed, total, status, message) {
+    function updateProgressUI(processed, total, status, message, stage) { // Añadido 'stage' como parámetro
         if (status === 'pending' && total === 0) {
             progressBar.style.width = '0%';
             progressBar.setAttribute('aria-valuenow', 0);
@@ -67,11 +67,16 @@ document.addEventListener('DOMContentLoaded', function() {
             progressBar.style.width = percentage + '%';
             progressBar.setAttribute('aria-valuenow', percentage);
             progressBar.textContent = percentage + '%';
-            progressText.textContent = `Actualizando... ${processed} de ${total} registros procesados.`;
+            if (stage === 'fetching') { // Usar el parámetro 'stage'
+                progressText.textContent = `Obteniendo datos... ${processed} de ${total} registros.`;
+            } else if (stage === 'uploading') { // Usar el parámetro 'stage'
+                progressText.textContent = `Subiendo datos... ${processed} de ${total} registros.`;
+            } else {
+                progressText.textContent = `Actualizando... ${processed} de ${total} registros procesados.`; // General
+            }
         } else { // Si total es 0 pero no es 'pending' (ej. error antes de conocer total)
              progressText.textContent = `Procesando... (total aún no determinado)`;
         }
-
 
         if (status === 'completed') {
             progressText.textContent = message || `Completado: ${processed} de ${total} registros procesados.`;
@@ -107,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(data => {
                     if (data) { // Si la respuesta fue ok y es JSON
-                        updateProgressUI(data.processed, data.total, data.status, data.message);
+                        updateProgressUI(data.processed, data.total, data.status, data.message, data.stage); // Pasar data.stage
                         if (data.status === 'completed' || data.status === 'error') {
                             clearInterval(progressInterval);
                             // El mensaje final y la UI se manejarán por la respuesta de la petición principal
@@ -131,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             statusMessagesContainer.innerHTML = ''; 
             progressBarContainer.style.display = 'block';
-            updateProgressUI(0, 0, 'pending', 'Iniciando actualización...'); // Estado inicial
+            updateProgressUI(0, 0, 'pending', 'Iniciando actualización...', null); // Estado inicial, stage es null o undefined
 
             pollProgress(currentTaskId); // Iniciar sondeo
 
@@ -151,21 +156,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInterval(progressInterval); // Detener sondeo una vez que la principal termina
 
                 if (ok && body.status === 'completed') {
-                    updateProgressUI(body.processed, body.total, 'completed', body.message);
+                    updateProgressUI(body.processed, body.total, 'completed', body.message, body.stage); // Pasar body.stage
                     statusMessagesContainer.innerHTML = `<div class="alert alert-success mt-2">${body.message || 'Proceso completado exitosamente.'}</div>`;
                 } else {
                     const errorMessage = body.message || `Ocurrió un error (HTTP ${status}).`;
                     // Usar el último estado conocido del polling si está disponible, o 0
                     const lastProgress = progressBar.getAttribute('aria-valuenow');
                     const lastTotal = progressBar.getAttribute('aria-valuemax'); // Asumiendo que se actualizó
-                    updateProgressUI(parseInt(lastProgress) || 0, parseInt(lastTotal) || 0, 'error', errorMessage);
+                    updateProgressUI(parseInt(lastProgress) || 0, parseInt(lastTotal) || 0, 'error', errorMessage, body.stage); // Pasar body.stage
                     statusMessagesContainer.innerHTML = `<div class="alert alert-danger mt-2">Error: ${errorMessage}</div>`;
                 }
             })
             .catch(error => { // Errores de red en la petición principal
                 console.error('Error en la actualización principal:', error);
                 clearInterval(progressInterval);
-                updateProgressUI(0, 0, 'error', 'Error de conexión o del servidor.');
+                updateProgressUI(0, 0, 'error', 'Error de conexión o del servidor.', null);
                 statusMessagesContainer.innerHTML = `<div class="alert alert-danger mt-2">Error de conexión o del servidor: ${error.message}</div>`;
             })
             .finally(() => {
