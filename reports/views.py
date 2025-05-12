@@ -704,9 +704,8 @@ def trigger_google_sheet_update(request):
         
         # --- LÓGICA REAL DE ACTUALIZACIÓN DE GOOGLE SHEETS ---
         header_row = [
-            'Entry ID', 'Fecha', 'Descripción', 'Transaction ID', 
-            'Account ID', 'Jerarquía Cuenta', 'Débito', 'Crédito', 
-            'Parent Account ID', 'Cuenta Cerrada'
+            'id',	'date',	'description',	'transaction_id',	'accountId',	
+            'account',	'debit',	'credit',	'parent_id',	'closed'
         ]
         output_data_to_sheet = [header_row]
         for item in all_data_for_sheet:
