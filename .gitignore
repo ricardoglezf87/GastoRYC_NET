@@ -7,3 +7,4 @@ dist/
 logs/
 garca.sqlite3
 media/
+garca-google-credentials.json
