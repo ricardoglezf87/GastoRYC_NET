@@ -20,18 +20,17 @@
         // Espera a que el DOM esté listo para añadir listeners
         document.addEventListener('DOMContentLoaded', (event) => {
 
-            // Funcionalidad "Seleccionar todos"
-            const selectAllCheckbox = document.getElementById('select-all-checkbox'); // <-- Usar el ID correcto del checkbox de la cabecera
+            
+            const selectAllCheckbox = document.getElementById('select-all-checkbox');
             if (selectAllCheckbox) {
                 selectAllCheckbox.addEventListener('change', function() {
                     const isChecked = this.checked;
-                    document.querySelectorAll('.entry-checkbox').forEach(function(checkbox) { // <-- Usar la clase correcta de los checkboxes de fila
+                    document.querySelectorAll('.entry-checkbox').forEach(function(checkbox) {
                         checkbox.checked = isChecked;
                     });
                 });
             }
 
-            // Lógica específica del botón de eliminar
             const processBtn = document.getElementById('process-delete-empty-btn');
             if (processBtn) {
                 processBtn.addEventListener('click', function() {
@@ -52,8 +51,8 @@
                     this.disabled = true;
                     this.textContent = 'Eliminando...';
 
-                    // Asegúrate que la URL se genera correctamente
-                    const url = "{% url 'reports:process_delete_empty_entries' %}";
+                    
+                    const url = "{% url 'reports:process_delete_empty_entries' %}";                    
                     console.log("Enviando a URL:", url); // Verifica la URL en consola
 
                     postData(url, { entry_ids: selectedEntryIds })

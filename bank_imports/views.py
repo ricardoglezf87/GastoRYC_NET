@@ -31,25 +31,21 @@ class ImportMovementsMixin:
         affected_accounts.add(account.id)
 
         for movement in import_data:
-            # Buscar cuenta de contrapartida
             counterpart_account = None
             for keyword in AccountKeyword.objects.all():
                 if keyword.keyword.lower() in movement['description'].lower():
                     counterpart_account = keyword.account
                     break
 
-            # Crear una entrada por cada movimiento
             entry = Entry.objects.create(
                 date=movement['date'],
                 description=movement['description']
             )
 
-            # Determinar si es débito o crédito
             amount = movement['amount']
             debit = amount if amount > 0 else 0
             credit = abs(amount) if amount < 0 else 0
 
-            # Crear transacciones
             Transaction.objects.create(
                 entry=entry,
                 account=account,
@@ -100,12 +96,11 @@ class BankImportView(ImportMovementsMixin, View):
             preview_data = None
             import_data = None
 
-            # Refined file extension validation
             _, file_ext_from_name = os.path.splitext(file.name)
             file_extension_lower = file_ext_from_name.lower()
 
             provider_specific_allowed_extensions = {
-                'ing': ['.xlsx', '.xls'], # Changed to support Excel files for ING
+                'ing': ['.xlsx', '.xls'], # ING: Soporta archivos Excel
                 'edenred': ['.csv', '.txt', '.xlsx'],
                 'paypal': ['.csv'],
             }
@@ -121,11 +116,9 @@ class BankImportView(ImportMovementsMixin, View):
                 messages.error(request, f"Para {bank_provider_display_name}, el archivo debe ser de tipo {expected_extensions_str}. Archivo proporcionado: {file.name}")
                 return render(request, self.template_name, {'form': form})
             
-            # Proceed with file processing if extension is valid
             try:
                 if bank_provider == 'ing':
                     preview_data, import_data = BankImportView.process_ing_file(file)
-                    # Esta es la comprobación que muestra tu mensaje de error
                     if not preview_data and not import_data:
                         messages.error(request, "Error al procesar el archivo ING. Verifique que sea un archivo Excel (.xlsx o .xls) válido y que el formato de las columnas sea el esperado.")
                         return render(request, self.template_name, {'form': form})               
@@ -140,7 +133,6 @@ class BankImportView(ImportMovementsMixin, View):
                         messages.error(request, "Error al procesar el archivo PayPal. Verifique que sea un CSV válido (UTF-8 o Latin-1) y que contenga transacciones 'Completado'.")
                         return render(request, self.template_name, {'form': form})
                 else:
-                    # This case should ideally be caught by form validation, but as a safeguard
                     messages.error(request, f"Proveedor bancario '{bank_provider_display_name}' no soportado para la importación.")
                     return render(request, self.template_name, {'form': form})
             except Exception as e: 
@@ -217,9 +209,8 @@ class BankImportView(ImportMovementsMixin, View):
     def _process_ing_xlsx(file_obj): # Renamed from process_ing_file, handles .xlsx
         preview_data = []
         import_data = []
-        try:
-            file_obj.seek(0) # Ensure file pointer is at the beginning
-            # data_only=True to get values from cells, not formulas
+        try:            
+            file_obj.seek(0) # Asegurar que el puntero del archivo esté al inicio
             workbook = openpyxl.load_workbook(file_obj, data_only=True)
             sheet = workbook.active
             logger.info("Archivo ING Excel abierto correctamente.")
@@ -228,31 +219,22 @@ class BankImportView(ImportMovementsMixin, View):
             return [], []
         header_found = False
 
-        # 1-based index for sheet.iter_rows(min_row=...). Data starts 1 row after header.
         data_start_actual_row = 0 
 
-        # Expected header texts (order matters for the signature check)
-        # Based on "F. VALOR", "CATEGORÍA", "SUBCATEGORÍA", "DESCRIPCIÓN", "COMENTARIO", "IMAGEN", "IMPORTE (€)"
-        # We will check for "F. VALOR", "CATEGORÍA", "DESCRIPCIÓN", "IMPORTE (€)" at specific positions
         logger.debug("Iniciando búsqueda de cabecera en archivo ING XLSX.")
         expected_header_texts = ["F. VALOR", "CATEGORÍA", "DESCRIPCIÓN", "IMPORTE (€)"]
-        # Normalize expected headers to lowercase for case-insensitive comparison
         expected_header_signature_normalized = [h.strip().lower() for h in expected_header_texts]
 
-        # Search for header in the first 10 rows
         for i, row_tuple in enumerate(sheet.iter_rows(min_row=1, max_row=10)): 
-            # Normalize actual row values to lowercase strings for comparison
             row_values_str_normalized = [str(cell.value).strip().lower() if cell.value is not None else "" for cell in row_tuple]
             
-            # Check if the row has enough columns and if key headers match
             if len(row_values_str_normalized) >= 7 and \
                row_values_str_normalized[0] == expected_header_signature_normalized[0] and \
                row_values_str_normalized[1] == expected_header_signature_normalized[1] and \
                row_values_str_normalized[3] == expected_header_signature_normalized[2] and \
                row_values_str_normalized[6] == expected_header_signature_normalized[3]:
                 header_found = True
-                logger.info(f"Cabecera ING (XLSX) encontrada en la fila {i+1}.")
-                # i is 0-based from enumerate, sheet rows are 1-based. Data is next row after header.
+                logger.info(f"Cabecera ING (XLSX) encontrada en la fila {i+1}.")                
                 data_start_actual_row = (i + 1) + 1 
                 break
             else:
@@ -265,8 +247,7 @@ class BankImportView(ImportMovementsMixin, View):
         for row_cells_tuple in sheet.iter_rows(min_row=data_start_actual_row):
             row_values = [cell.value for cell in row_cells_tuple]
 
-            # Stop if the first cell (date) is empty or None, assuming end of data or blank row
-            if not row_values or row_values[0] is None:
+            if not row_values or row_values[0] is None: # Saltar filas vacías o sin fecha
                 logger.debug(f"Fila de datos (XLSX) saltada por estar vacía o sin fecha: {row_values}")
                 continue
 
@@ -276,7 +257,6 @@ class BankImportView(ImportMovementsMixin, View):
                 subcategory = str(row_values[2]) if row_values[2] is not None else "" # SUBCATEGORÍA (Column C)
                 description = str(row_values[3]) if row_values[3] is not None else "" # DESCRIPCIÓN (Column D)
                 comment = str(row_values[4]) if row_values[4] is not None else "" # COMENTARIO (Column E)
-                # row_values[5] is IMAGEN (Column F), skipped for now
                 amount_val = row_values[6] # IMPORTE (€) (Column G)
 
                 parsed_date = None
@@ -286,29 +266,25 @@ class BankImportView(ImportMovementsMixin, View):
                     try:
                         parsed_date = datetime.strptime(date_val.strip(), '%d/%m/%Y').date()
                     except ValueError:
-                        logger.warning(f"Error al parsear fecha string (XLSX) '{date_val}' en formato dd/mm/yyyy. Saltando fila. Datos: {row_values}")
-                        # If date string is not in expected format, try to skip or handle
-                        # For now, we skip the row if date is unparseable
+                        logger.warning(f"Error al parsear fecha string (XLSX) '{date_val}' en formato dd/mm/yyyy. Saltando fila. Datos: {row_values}")                        
                         continue 
                 elif isinstance(date_val, (int, float)): # Sometimes dates are Excel serial numbers
                     try:
                         logger.debug(f"Intentando parsear fecha Excel (XLSX) (número de serie): {date_val}")
-                        # This conversion might need adjustment based on Excel's date system (1900 or 1904)
-                        # openpyxl usually handles this if data_only=True, but as a fallback:
                         parsed_date = (datetime(1899, 12, 30) + timedelta(days=date_val)).date()
                     except Exception as e_date_serial:
                         logger.warning(f"Error al convertir fecha Excel (XLSX) (número de serie) '{date_val}': {e_date_serial}. Saltando fila. Datos: {row_values}")
-                        continue # Skip if conversion fails
+                        continue
                 else:
                     logger.warning(f"Formato de fecha (XLSX) no reconocido o nulo: '{date_val}' (tipo: {type(date_val)}). Saltando fila. Datos: {row_values}")
-                    continue # Skip if date format is not recognized or None
+                    continue
 
                 amount_decimal = None
                 if amount_val is not None:
                     logger.debug(f"Procesando importe (XLSX): '{amount_val}'")
                     if isinstance(amount_val, (float, int)):
                         amount_decimal = Decimal(str(amount_val))
-                    else: # Assume string, handle European format
+                    else: # Asumir string, manejar formato europeo
                         amount_str = str(amount_val).replace('.', '').replace(',', '.')
                         amount_decimal = Decimal(amount_str)
                 else:
@@ -319,7 +295,7 @@ class BankImportView(ImportMovementsMixin, View):
                 
                 preview_data.append({
                     'date': parsed_date,
-                    'category': f"{category} - {subcategory}".strip(" -"), # Avoid " - " if one is empty
+                    'category': f"{category} - {subcategory}".strip(" -"),
                     'description': description,
                     'amount': amount_decimal
                 })
@@ -344,7 +320,7 @@ class BankImportView(ImportMovementsMixin, View):
         try:
             file_obj.seek(0)
             workbook = xlrd.open_workbook(file_contents=file_obj.read())
-            sheet = workbook.sheet_by_index(0) # Assuming the first sheet
+            sheet = workbook.sheet_by_index(0) # Asumir la primera hoja
             logger.info("Archivo ING XLS (Excel 97-2003) abierto correctamente con xlrd.")
         except xlrd.XLRDError as e:
             logger.error(f"Error al abrir el archivo ING XLS con xlrd: {e}")
@@ -355,14 +331,14 @@ class BankImportView(ImportMovementsMixin, View):
 
         logger.debug("Iniciando búsqueda de cabecera en archivo ING XLS.")
         header_found = False
-        data_start_actual_row = 0 # 0-based index for xlrd rows
+        data_start_actual_row = 0
 
         expected_header_texts = ["F. VALOR", "CATEGORÍA", "DESCRIPCIÓN", "IMPORTE (€)"]
         expected_header_signature_normalized = [h.strip().lower() for h in expected_header_texts]
 
-        for i in range(min(sheet.nrows, 10)): # Search in first 10 rows
+        for i in range(min(sheet.nrows, 10)):
             try:
-                row_tuple_values = sheet.row_values(i)
+                row_tuple_values = sheet.row_values(i) # type: ignore
             except IndexError: # Should not happen if i < sheet.nrows
                 continue
 
@@ -375,7 +351,7 @@ class BankImportView(ImportMovementsMixin, View):
                row_values_str_normalized[6] == expected_header_signature_normalized[3]:
                 header_found = True
                 logger.info(f"Cabecera ING (XLS) encontrada en la fila {i+1}.")
-                data_start_actual_row = i + 1 # Data starts on the next row (0-based index)
+                data_start_actual_row = i + 1
                 break
             else:
                 logger.debug(f"Fila {i+1} (XLS) no coincide con la cabecera ING esperada. Valores normalizados: {row_values_str_normalized[:7]}")
@@ -386,7 +362,7 @@ class BankImportView(ImportMovementsMixin, View):
 
         for row_idx in range(data_start_actual_row, sheet.nrows):
             try:
-                row_values = sheet.row_values(row_idx)
+                row_values = sheet.row_values(row_idx) # type: ignore
             except IndexError:
                 continue
 
@@ -418,7 +394,7 @@ class BankImportView(ImportMovementsMixin, View):
                     except ValueError:
                         logger.warning(f"Error al parsear fecha string (XLS) '{date_val_raw}' en formato dd/mm/yyyy. Saltando fila. Datos: {row_values}")
                         continue
-                elif cell_type_date == xlrd.XL_CELL_NUMBER: # Could be a date stored as number
+                elif cell_type_date == xlrd.XL_CELL_NUMBER: # Podría ser una fecha almacenada como número
                     try:
                         dt_obj = xlrd.xldate_as_datetime(date_val_raw, workbook.datemode)
                         parsed_date = dt_obj.date()
@@ -438,8 +414,8 @@ class BankImportView(ImportMovementsMixin, View):
                     logger.debug(f"Procesando importe (XLS): '{amount_val}' (tipo: {type(amount_val)})")
                     try:
                         if isinstance(amount_val, (float, int)):
-                            amount_decimal = Decimal(str(amount_val)) # Convert number directly
-                        else: # Assume string, handle European format
+                            amount_decimal = Decimal(str(amount_val))
+                        else: # Asumir string, manejar formato europeo
                             amount_str = str(amount_val).replace('.', '').replace(',', '.')
                             amount_decimal = Decimal(amount_str)
                     except InvalidOperation as e_amount:
@@ -453,7 +429,7 @@ class BankImportView(ImportMovementsMixin, View):
                 
                 preview_data.append({
                     'date': parsed_date,
-                    'category': f"{category} - {subcategory}".strip(" -"), # Avoid " - " if one is empty
+                    'category': f"{category} - {subcategory}".strip(" -"),
                     'description': description,
                     'amount': amount_decimal
                 })
@@ -465,7 +441,7 @@ class BankImportView(ImportMovementsMixin, View):
                     'comment': comment,
                     'amount': amount_decimal
                 })
-            except Exception as e: # Catch-all for row processing
+            except Exception as e:
                 logger.warning(f"Skipping row during ING XLS import due to unexpected error: {e}. Row data: {row_values}")
                 pass
         logger.info(f"Procesamiento de archivo ING XLS finalizado. Movimientos para vista previa: {len(preview_data)}, Movimientos para importar: {len(import_data)}")
@@ -474,7 +450,7 @@ class BankImportView(ImportMovementsMixin, View):
     @staticmethod
     def _parse_edenred_row(row_parts):
         """Helper para parsear una fila de datos de Edenred (común a TXT y XLSX)."""
-        if len(row_parts) >= 3:
+        if len(row_parts) >= 3: # type: ignore
             date_str = str(row_parts[0]).strip() # Asegurar que es string para .xlsx
             description = str(row_parts[1]).strip()
             amount_str = str(row_parts[2]).strip()
@@ -554,29 +530,22 @@ class BankImportView(ImportMovementsMixin, View):
         preview_data = []
         import_data = []
         try:
-            # Asegurarse de que el puntero del archivo esté al inicio para openpyxl
             file.seek(0)
-            workbook = openpyxl.load_workbook(file, data_only=True) # data_only=True para obtener valores de fórmulas
+            workbook = openpyxl.load_workbook(file, data_only=True)
             sheet = workbook.active
         except Exception as e:
             return [], []
 
         data_start_index = -1
         expected_header_cols = ["Fecha", "Detalle movimiento", "Importe"]
-        
-        # Iterar sobre las filas para encontrar el encabezado
+
         for i, row in enumerate(sheet.iter_rows()):
-            # Obtener los valores de las celdas, convirtiendo a string y quitando espacios
-            # Tomar solo las primeras N celdas necesarias para el encabezado
             cols = [str(cell.value).strip() if cell.value is not None else "" for cell in row[:len(expected_header_cols)]]
             if cols == expected_header_cols:
-                data_start_index = i + 1 # El índice de la fila de datos es el siguiente al encabezado (0-based para enumerate)
+                data_start_index = i + 1
                 break
-        
         if data_start_index == -1:
-            return [], [] # Encabezado no encontrado
-
-        # Procesar filas de datos
+            return [], []
         for row_idx, row_cells in enumerate(sheet.iter_rows(min_row=data_start_index + 1)): # +1 porque min_row es 1-based
             # Extraer valores de las celdas. openpyxl puede devolver directamente tipos como datetime.
             row_values = [cell.value for cell in row_cells]
@@ -585,7 +554,7 @@ class BankImportView(ImportMovementsMixin, View):
             if all(value is None or str(value).strip() == "" for value in row_values[:3]): # Chequear las primeras 3 columnas
                 continue
 
-            parsed_movement = BankImportView._parse_edenred_row(row_values) # Usar el helper
+            parsed_movement = BankImportView._parse_edenred_row(row_values)
             if parsed_movement:
                 preview_data.append(parsed_movement)
                 import_data.append(parsed_movement)
@@ -598,7 +567,7 @@ class BankImportView(ImportMovementsMixin, View):
         file_name_lower = file.name.lower()
         if file_name_lower.endswith('.xlsx'):
             return BankImportView._process_edenred_xlsx(file)
-        elif file_name_lower.endswith(('.txt', '.csv')): # Asumir CSV es como TXT para Edenred
+        elif file_name_lower.endswith(('.txt', '.csv')): # Asumir que CSV es como TXT para Edenred
             return BankImportView._process_edenred_text(file)
         return [], [] # Tipo de archivo no soportado para Edenred
 
@@ -608,30 +577,26 @@ class BankImportView(ImportMovementsMixin, View):
         import_data = []
         
         try:
-            file.seek(0)
+            file.seek(0) # type: ignore
             content = file.read().decode('utf-8-sig') # Handles UTF-8 with BOM
         except UnicodeDecodeError:
-            file.seek(0)
+            file.seek(0) # type: ignore
             try:
                 content = file.read().decode('latin-1') # Fallback encoding
             except UnicodeDecodeError:
-                # Could log this error
                 return [], [] 
 
         csv_file_like = io.StringIO(content)
         csv_reader = csv.reader(csv_file_like)
-        
         try:
-            header = next(csv_reader) # Skip header row
+            header = next(csv_reader)
         except StopIteration:
-            return [], [] # Empty file
-
-        for row_number, row in enumerate(csv_reader, start=2): # For logging/debugging
-            if len(row) < 8: # PayPal CSV has "Importe" at index 7
-                # Log or skip short rows
+            return [], []
+        for row_number, row in enumerate(csv_reader, start=2):
+            if len(row) < 8: # PayPal CSV tiene "Importe" en el índice 7
                 continue
 
-            try:
+            try: # type: ignore
                 date_str = row[0].strip()
                 name_description = row[3].strip()  # "Nombre" field
                 status = row[5].strip()
@@ -639,20 +604,17 @@ class BankImportView(ImportMovementsMixin, View):
 
                 if status.lower() != "completado":
                     continue # Process only completed transactions
-
                 if not date_str or not name_description or not amount_str:
                     continue # Skip rows with missing essential data
-                
                 parsed_date = datetime.strptime(date_str, '%d/%m/%Y').date()
                 amount = Decimal(amount_str.replace(',', '.')) # PayPal uses comma as decimal separator
-                
                 movement_data = {
                     'date': parsed_date,
                     'description': name_description,
                     'amount': amount,
-                    'category': '', # Placeholder, adapt if PayPal provides categories
-                    'subcategory': '', # Placeholder
-                    'comment': '' # Placeholder
+                    'category': '',
+                    'subcategory': '',
+                    'comment': ''
                 }
                 preview_data.append(movement_data)
                 import_data.append(movement_data)
@@ -669,13 +631,12 @@ class BankImportPreviewView(View):
             file = request.FILES['file'] 
             bank_provider_display_name = dict(form.fields['bank_provider'].choices).get(bank_provider, bank_provider)
             
-            preview_data = None
-            
-            # Refined file extension validation
+            preview_data = None            
+
             _, file_ext_from_name = os.path.splitext(file.name)
             file_extension_lower = file_ext_from_name.lower()
 
-            provider_specific_allowed_extensions = {
+            provider_specific_allowed_extensions = { # type: ignore
                 'ing': ['.xlsx', '.xls'], # Changed to support Excel files for ING
                 'edenred': ['.csv', '.txt', '.xlsx'],
                 'paypal': ['.csv'],
@@ -692,11 +653,11 @@ class BankImportPreviewView(View):
             try:
                 if bank_provider == 'ing':
                     preview_data, _ = BankImportView.process_ing_file(file)
-                    if not preview_data and not _: # Si process_ing_file falla
+                    if not preview_data and not _:
                          return JsonResponse({'success': False, 'error': 'Error al procesar el archivo ING. Verifique que sea un archivo Excel (.xlsx o .xls) válido y el formato de columnas.'})
                 elif bank_provider == 'edenred':
                     preview_data, _ = BankImportView.process_edenred_file(file)
-                    if not preview_data and not _: 
+                    if not preview_data and not _:
                          return JsonResponse({'success': False, 'error': 'Error al procesar el archivo Edenred. Verifique el formato y codificación.'})
                 elif bank_provider == 'paypal':
                     preview_data, _ = BankImportView.process_paypal_file(file)
@@ -705,15 +666,15 @@ class BankImportPreviewView(View):
                 else:
                     return JsonResponse({'success': False, 'error': f"Proveedor bancario '{bank_provider_display_name}' no soportado para vista previa."})
                 
-                if preview_data is not None: # preview_data can be an empty list if file is valid but has no data
+                if preview_data is not None:
                     serializable_preview_data = []
                     for item in preview_data:
                         item_copy = item.copy()
                         item_copy['date'] = item_copy['date'].strftime('%Y-%m-%d')
                         item_copy['amount'] = str(item_copy['amount'])
                         serializable_preview_data.append(item_copy)
-                    return JsonResponse({'success': True, 'preview_data': serializable_preview_data})
-                else: # Should not be reached if process methods return ([],[]) on error, caught by earlier checks
+                    return JsonResponse({'success': True, 'preview_data': serializable_preview_data}) # type: ignore
+                else:
                     return JsonResponse({'success': False, 'error': 'No se pudieron generar datos de vista previa.'})
 
             except Exception as e: 
@@ -730,7 +691,6 @@ class BankImportDuplicatesView(ImportMovementsMixin, View):
         if not pending_import:
             return redirect('bank_import')
 
-        # Convert dates from string to date and amounts from string to Decimal for display
         duplicates_for_template = []
         for movement_str_data in pending_import['duplicates']:
             movement_copy = movement_str_data.copy()
@@ -748,28 +708,20 @@ class BankImportDuplicatesView(ImportMovementsMixin, View):
             return redirect('bank_import')
 
         account = get_object_or_404(Account, id=pending_import['account_id'])
-        
-        # Original duplicates data from session (strings for date/amount)
         session_duplicates_str = pending_import['duplicates']
         
-        # Convert back to Decimal/date for processing, matching the structure used by import_movements
         movements_to_process = []
         for movement_data in session_duplicates_str: # Iterate directly over the list of dicts
             movements_to_process.append(movement_data)
 
         selected_movements = []
         for movement in movements_to_process:
-            # Key for POST data should match how it's generated in the template
-            # The template likely uses date and amount to create a unique key for each checkbox
-            # Example key: f"{movement['date'].strftime('%Y-%m-%d')}_{str(movement['amount'])}"
-            # The movement dictionary already has date as string and amount as string from the session
-            
-            # Ensure movement['date'] is a string for key generation, which it should be from the session.
-            # Ensure movement['amount'] is a string for key generation, which it should be.
+            # La clave para los datos POST debe coincidir con cómo se genera en la plantilla.
+            # El diccionario 'movement' ya tiene 'date' y 'amount' como strings desde la sesión.
             if isinstance(movement['date'], str) and isinstance(movement['amount'], str):
                 movement_key = f"{movement['date']}_{movement['amount']}"
                 if request.POST.get(movement_key) == 'import':
-                    selected_movements.append(movement) # Add the processed movement (with date/Decimal objects)
+                    selected_movements.append(movement)
 
         if selected_movements:
             success_count = self.import_movements(account, selected_movements)

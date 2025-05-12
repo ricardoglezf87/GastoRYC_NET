@@ -33,13 +33,11 @@ logger = logging.getLogger(__name__)
 
 
 def recategorized_entries(request):
-    # Usar el formulario para obtener el periodo y las fechas
     form = PeriodFilterForm(request.GET or None)
     min_date = None
     affected_accounts = set()
     period_value = '' # Para el redirect
 
-    # Validar el formulario (aunque no lo mostremos, usamos su lógica)
     if form.is_valid():
         start_date, end_date = form.get_date_range()
         period_value = form.cleaned_data.get('period', '') # Guardar el periodo validado
@@ -50,7 +48,6 @@ def recategorized_entries(request):
         else: # 'all' o sin selección
             entries_in_period = Entry.objects.all()
 
-        # --- Encontrar asientos descuadrados eficientemente ---
         unbalanced_entries_qs = entries_in_period.annotate(
             total_debit=Coalesce(Sum('transactions__debit'), Decimal('0.00'), output_field=DecimalField()),
             total_credit=Coalesce(Sum('transactions__credit'), Decimal('0.00'), output_field=DecimalField()),
@@ -61,7 +58,6 @@ def recategorized_entries(request):
             abs_difference__gte=Decimal('0.01') # Mismo filtro que en unbalanced_entries_view
         ).prefetch_related('transactions') # Prefetch para el bucle siguiente
 
-        # --- Procesar los asientos descuadrados encontrados ---
         for entry in unbalanced_entries_qs:
             if min_date is None or entry.date < min_date:
                 min_date = entry.date
@@ -69,7 +65,7 @@ def recategorized_entries(request):
             for t in entry.transactions.all(): # Usar las transacciones precargadas
                 affected_accounts.add(t.account_id)
 
-            # Buscar cuenta de contrapartida (esta lógica se mantiene)
+            # Buscar cuenta de contrapartida
             counterpart_account = None
             for keyword in AccountKeyword.objects.all():
                 if keyword.keyword.lower() in entry.description.lower():
@@ -99,14 +95,12 @@ def recategorized_entries(request):
             messages.error(request, "No se especificó un periodo para procesar. Por favor, use el filtro en la página anterior.")
         return redirect('reports:unbalanced_entries')
 
-    # Recalcular saldos solo si se modificó algo
     for account_id in affected_accounts:
         if min_date: # Asegurarse de que min_date se estableció
             recalculate_balances_after_date.delay(
                 min_date.strftime('%Y-%m-%d'), # Pasar fecha como string
                 account_id
             )
-
     # Llamar a unbalanced_entries_view para obtener el contexto actualizado
     # y renderizar la plantilla directamente
     request.GET = request.GET.copy()  # Hacer el QueryDict mutable
@@ -119,18 +113,15 @@ def unbalanced_entries_view(request):
     add_breadcrumb(request, "Reporte de Descuadres", request.path)
 
     unbalanced_entries = None
-    form = PeriodFilterForm(request.GET or None) # Instancia el form con datos GET si existen
+    form = PeriodFilterForm(request.GET or None)
     start_date_filter = None
     end_date_filter = None
 
-    if form.is_valid(): # Valida el formulario (ahora solo valida la opción 'period')
-        # Obtiene el rango de fechas calculado por el método del formulario
+    if form.is_valid():
         start_date_filter, end_date_filter = form.get_date_range()
 
-        # --- Lógica de filtrado por fecha ---
         if start_date_filter and end_date_filter:
             # Si get_date_range devolvió fechas (ej. 'Este Mes', 'Últimos 3 Años')
-            # Filtra el queryset por ese rango
             entries_in_period = Entry.objects.filter(
                 date__gte=start_date_filter,
                 date__lte=end_date_filter
@@ -139,25 +130,18 @@ def unbalanced_entries_view(request):
             # Si get_date_range devolvió (None, None) (porque se eligió 'Todas las Fechas'
             # o es la carga inicial sin filtro), no se aplica filtro de fecha.
             entries_in_period = Entry.objects.all()
-        # --- Fin lógica de filtrado por fecha ---
 
-        # --- Lógica para encontrar asientos descuadrados (ya revisada) ---
         unbalanced_entries = entries_in_period.annotate(
             total_debit=Coalesce(Sum('transactions__debit'), Decimal('0.00'), output_field=DecimalField()),
             total_credit=Coalesce(Sum('transactions__credit'), Decimal('0.00'), output_field=DecimalField()),
             difference=F('total_debit') - F('total_credit')
         ).annotate(
             abs_difference=Abs('difference')
-        ).filter(
-            abs_difference__gte=Decimal('0.01') # Filtra por diferencia significativa
-        ).order_by('-date')
-        # --- Fin lógica descuadrados ---
+        ).filter(abs_difference__gte=Decimal('0.01')).order_by('-date')
 
-    # ... resto del contexto ...
     context = {
         'form': form,
         'unbalanced_entries': unbalanced_entries,
-        # ... otros datos de contexto ...
     }
     return render(request, 'unbalanced_entries.html', context)
 
@@ -169,7 +153,6 @@ def get_dates_from_form(form):
     start_date, end_date = form.get_date_range()
     return start_date, end_date
 
-# --- Funcionalidad 1: Merge Transactions ---
 
 def merge_transactions_view(request):
     form = PeriodFilterForm(request.GET or None)
@@ -188,7 +171,6 @@ def merge_transactions_view(request):
             account_count__gt=1
         )
 
-        # Filtrar por fecha si es necesario
         entry_ids = duplicate_transactions.values_list('entry_id', flat=True)
         queryset = Entry.objects.filter(id__in=entry_ids).prefetch_related('transactions', 'transactions__account')
 
@@ -197,7 +179,6 @@ def merge_transactions_view(request):
         if end_date:
             queryset = queryset.filter(date__lte=end_date)
 
-        # 2. Preparar datos para la plantilla
         for entry in queryset.order_by('-date', 'id'):
             transactions_by_account = {}
             has_duplicates_in_period = False # Verificar si la duplicidad está en el rango
@@ -209,7 +190,7 @@ def merge_transactions_view(request):
             duplicates_in_entry = []
             for account_id, transactions in transactions_by_account.items():
                 if len(transactions) > 1:
-                    has_duplicates_in_period = True # Confirmado
+                    has_duplicates_in_period = True
                     duplicates_in_entry.append({
                         'account': transactions[0].account,
                         'transactions': transactions,
@@ -231,7 +212,7 @@ def merge_transactions_view(request):
     return render(request, 'merge_transactions.html', context)
 
 @require_POST
-@db_transaction.atomic # Asegurar atomicidad
+@db_transaction.atomic
 def process_merge_transactions(request):
     try:
         data = json.loads(request.body)
@@ -249,26 +230,22 @@ def process_merge_transactions(request):
             transaction_ids = group.get('transaction_ids', [])
 
             if not entry_id or not account_id or not transaction_ids or len(transaction_ids) < 2:
-                continue # Ignorar grupos inválidos
+                continue
 
             entry = Entry.objects.get(id=entry_id)
             account = Account.objects.get(id=account_id)
 
-            # Obtener las transacciones a unificar
             transactions = Transaction.objects.filter(id__in=transaction_ids, entry_id=entry_id, account_id=account_id)
 
             if transactions.count() != len(transaction_ids):
-                 # Algo no cuadra, quizá se borró algo mientras tanto
                  messages.warning(request, f"No se pudieron unificar transacciones para la cuenta {account.name} en el asiento {entry_id}. Datos inconsistentes.")
-                 continue # Saltar este grupo
+                 continue
 
-            # Calcular totales
             totals = transactions.aggregate(
                 total_debit=Sum('debit'),
                 total_credit=Sum('credit')
             )
 
-            # Crear la nueva transacción unificada
             Transaction.objects.create(
                 entry=entry,
                 account=account,
@@ -276,15 +253,12 @@ def process_merge_transactions(request):
                 credit=totals['total_credit'] or Decimal('0.00')
             )
 
-            # Eliminar las transacciones originales
             deleted_count, _ = transactions.delete()
-            processed_count += deleted_count # Contar las eliminadas
+            processed_count += deleted_count
 
-            # Registrar para recálculo de saldos
             if account_id not in affected_accounts_dates or entry.date < affected_accounts_dates[account_id]:
                 affected_accounts_dates[account_id] = entry.date
 
-        # Lanzar tareas de recálculo fuera del bucle
         for acc_id, min_date in affected_accounts_dates.items():
              recalculate_balances_after_date.delay(min_date.strftime('%Y-%m-%d'), acc_id) # Asegurar formato fecha
 
@@ -304,12 +278,11 @@ def process_merge_transactions(request):
     except json.JSONDecodeError:
          return JsonResponse({'success': False, 'message': 'Error en los datos recibidos.'})
     except Exception as e:
-        # Loggear el error e
         logger.error(f"Error processing merge transactions: {e}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'Ocurrió un error inesperado: {e}'})
 
-#228	Transferencias
-#234	Cuentas
+# IDs de cuentas relevantes (ejemplos, ajustar según sea necesario)
+# BRIDGE_ACCOUNT_ID para la cuenta puente usada en transferencias.
 
 BRIDGE_ACCOUNT_ID = getattr(settings, 'BRIDGE_ACCOUNT_ID', 234) # Reemplaza None con el ID real si no está en settings
 
@@ -325,7 +298,6 @@ def detect_transfers_view(request):
     if form.is_valid():
         start_date, end_date = get_dates_from_form(form)
 
-        # 1. Buscar transacciones hacia/desde la cuenta puente en el rango
         bridge_transactions = Transaction.objects.filter(
             account_id=BRIDGE_ACCOUNT_ID
         ).select_related('entry', 'account').order_by('entry__date', 'entry_id')
@@ -335,8 +307,7 @@ def detect_transfers_view(request):
         if end_date:
             bridge_transactions = bridge_transactions.filter(entry__date__lte=end_date)
 
-        # 2. Agrupar por fecha y buscar pares (crédito/débito puente por mismo importe)
-        # Esta lógica puede ser compleja y pesada. Optimizar si es necesario.
+        # Agrupar por fecha y buscar pares (crédito/débito en cuenta puente por mismo importe)
         processed_entry_ids = set()
         candidates = {} # { (date, amount): {'credit': [tx1, tx2], 'debit': [tx3]} }
 
@@ -348,7 +319,7 @@ def detect_transfers_view(request):
 
             # Asumimos transferencias simples: 2 transacciones por asiento
             # Una a/desde puente, la otra a/desde origen/destino
-            if len(entry_txs) != 2:
+            if len(entry_txs) != 2: # Ignorar asientos complejos por ahora
                 continue # Ignorar asientos complejos por ahora
 
             other_tx = None
@@ -369,7 +340,6 @@ def detect_transfers_view(request):
             if key not in candidates:
                 candidates[key] = {'credit_bridge': [], 'debit_bridge': []}
 
-            # Clasificar si este asiento acredita o debita la cuenta puente
             if bridge_tx_in_entry.credit > 0: # La cuenta puente recibe dinero (origen -> puente)
                 candidates[key]['credit_bridge'].append({
                     'entry': tx.entry,
@@ -383,9 +353,7 @@ def detect_transfers_view(request):
                     'other_tx': other_tx, # Transacción de la cuenta destino
                 })
  
-        # 3. Formar los pares finales
         for key, groups in candidates.items():
-            # Intentar emparejar cada crédito con cada débito
             for credit_info in groups['credit_bridge']:
                  # Evitar usar el mismo asiento dos veces si hubo error antes
                  if credit_info['entry'].id in processed_entry_ids: continue
@@ -395,7 +363,6 @@ def detect_transfers_view(request):
                      # Evitar emparejar un asiento consigo mismo (improbable pero posible)
                      if credit_info['entry'].id == debit_info['entry'].id: continue
 
-                     # ¡Par encontrado!
                      potential_transfers.append({
                          'date': key[0],
                          'amount': key[1],
@@ -404,7 +371,7 @@ def detect_transfers_view(request):
                          'tx_from': credit_info['origin_tx'], # Débito origen
                          'entry_to': debit_info['entry'],
                          'account_to': debit_info['other_tx'].account,
-                         'tx_to': debit_info['other_tx'], # Crédito destino (cambiado de nombre abajo si aplicas diff)
+                         'tx_to': debit_info['other_tx'], # Crédito destino
                      })
                      # Marcar como procesados para no volver a usarlos en otros pares
                      processed_entry_ids.add(credit_info['entry'].id)
@@ -439,9 +406,6 @@ def process_simplify_transfers(request):
         for transfer_info in transfers_to_simplify:
             entry_from_id = transfer_info.get('entry_from_id')
             entry_to_id = transfer_info.get('entry_to_id')
-            # Podríamos necesitar los IDs de las transacciones origen/destino si la lógica se complica
-            # tx_from_id = transfer_info.get('tx_from_id')
-            # tx_to_id = transfer_info.get('tx_to_id')
 
             if not entry_from_id or not entry_to_id:
                 continue
@@ -450,12 +414,10 @@ def process_simplify_transfers(request):
                 entry_from = Entry.objects.prefetch_related('transactions__account').get(id=entry_from_id)
                 entry_to = Entry.objects.prefetch_related('transactions__account').get(id=entry_to_id)
 
-                # Validaciones básicas (misma fecha, etc.) - Podrían hacerse más robustas
                 if entry_from.date != entry_to.date:
                     messages.warning(request, f"Las entradas {entry_from_id} y {entry_to_id} no tienen la misma fecha.")
                     continue
 
-                # Encontrar las transacciones relevantes (asumiendo estructura simple 2 tx por entry)
                 tx_from_origin = None
                 tx_to_bridge_in_from = None
                 tx_from_bridge_in_to = None
@@ -473,7 +435,6 @@ def process_simplify_transfers(request):
                      else:
                          tx_to_destination = tx
 
-                # Verificar que encontramos todo y los montos cuadran
                 if not all([tx_from_origin, tx_to_bridge_in_from, tx_from_bridge_in_to, tx_to_destination]):
                      messages.warning(request, f"No se encontró la estructura esperada en las entradas {entry_from_id}/{entry_to_id}.")
                      continue
@@ -486,39 +447,29 @@ def process_simplify_transfers(request):
 
                 amount = tx_from_origin.debit # o tx_to_destination.credit
 
-                # --- Lógica de Modificación ---
-                # 1. Eliminar transacciones puente
                 tx_to_bridge_in_from.delete()
                 tx_from_bridge_in_to.delete()
 
-                # 2. Mover la transacción de destino a la entrada origen
                 tx_to_destination.entry = entry_from
                 tx_to_destination.save()
 
-                # 3. Actualizar descripción de la entrada origen (opcional)
                 entry_from.description = f"Transferencia simplificada: {tx_from_origin.account.name} -> {tx_to_destination.account.name} ({entry_from.description} / {entry_to.description})"
                 entry_from.save()
 
-                # 4. Eliminar la entrada 'to' (que ahora debería estar vacía o solo con la tx movida)
-                #    Hay que asegurarse que no tenga otras transacciones no relacionadas.
-                #    Si entry_to tiene más transacciones, esta lógica falla.
-                #    Por seguridad, verificamos si está vacía antes de borrar.
-
-
-                # Verificar el conteo REAL en la base de datos AHORA MISMO
+                # Verificar que la entrada 'to' esté vacía antes de borrarla
                 real_transaction_count = Transaction.objects.filter(entry=entry_to).count()
                 logger.debug(f"Real transaction count for entry {entry_to.id} in DB before delete: {real_transaction_count}")
 
                 if real_transaction_count == 0:
                     entry_to_date = entry_to.date # Guardar fecha antes de borrar
-                    entry_to.delete() # Llamar delete sobre el objeto Entry original
+                    entry_to.delete()
                     processed_count += 1
                 else:
                     # Esto no debería pasar con la lógica actual, pero es una salvaguarda
                     messages.error(request, f"Error: La entrada {entry_to.id} no quedó vacía (tiene {real_transaction_count} transacciones en BD) después de mover la transacción. No se eliminó.")
-                    # Revertir? O dejarlo así? Por ahora lo dejamos y no contamos como procesado.
-                    # Podrías revertir moviendo tx_to_destination de vuelta y recreando las tx puente.
-                    continue # Saltar al siguiente par
+                    # Considerar revertir la operación o manejar el error de otra forma.
+                    # Por ahora, se salta este par y no se cuenta como procesado.
+                    continue
 
                 # Registrar para recálculo (Origen, Destino y Puente)
                 transfer_date = entry_from.date # o entry_to_date
@@ -531,11 +482,9 @@ def process_simplify_transfers(request):
                  messages.warning(request, f"No se encontró una de las entradas ({entry_from_id} o {entry_to_id}).")
                  continue
             except Exception as e_inner:
-                 messages.error(request, f"Error procesando par {entry_from_id}/{entry_to_id}: {e_inner}")
-                 # Considerar si continuar o detener todo el proceso
+                 messages.error(request, f"Error procesando par {entry_from_id}/{entry_to_id}: {e_inner}")                 
                  continue
 
-        # Lanzar tareas de recálculo
         for acc_id, min_date in affected_accounts_dates.items():
              recalculate_balances_after_date.delay(min_date.strftime('%Y-%m-%d'), acc_id)
 
@@ -564,14 +513,12 @@ def delete_empty_entries_view(request):
     if form.is_valid():
         start_date, end_date = get_dates_from_form(form)
 
-        # 1. Encontrar asientos sin transacciones
         queryset = Entry.objects.annotate(
             transaction_count=Count('transactions')
         ).filter(
             transaction_count=0
         )
 
-        # 2. Filtrar por fecha
         if start_date:
             queryset = queryset.filter(date__gte=start_date)
         if end_date:
@@ -597,7 +544,6 @@ def process_delete_empty_entries(request):
         if not entry_ids_to_delete:
              return JsonResponse({'success': False, 'message': 'No se seleccionaron asientos para eliminar.'})
 
-        # Volver a verificar que estén vacíos antes de borrar por seguridad
         queryset = Entry.objects.annotate(
             transaction_count=Count('transactions')
         ).filter(
@@ -610,7 +556,6 @@ def process_delete_empty_entries(request):
         if deleted_count > 0:
             message = f"Se eliminaron {deleted_count} asientos vacíos correctamente."
             messages.success(request, message)
-            # No se necesita recálculo de saldos aquí
             return JsonResponse({'success': True, 'message': message})
         else:
              message = "No se eliminó ningún asiento (quizás ya no estaban vacíos o no existían)."
@@ -626,10 +571,9 @@ def process_delete_empty_entries(request):
 def get_looker_studio_data(task_id):
     """
     Fetches and formats data intended for Looker Studio (via Google Sheets).
-    Si start_date y end_date son None, obtiene todos los datos.
     """
     transactions_qs = Transaction.objects.select_related('entry', 'account')
-    total_records = transactions_qs.count() # Obtener el conteo total antes de iterar
+    total_records = transactions_qs.count()
     processed_count = 0
 
     data_list = []
@@ -647,13 +591,12 @@ def get_looker_studio_data(task_id):
             'closed': t.account.closed,
         })
         processed_count += 1
-        # Actualizar progreso cada 500 registros (ajustar según necesidades)
         if processed_count % 500 == 0 or processed_count == total_records:
             cache.set(f'sheet_update_progress_{task_id}', {
                 'processed': processed_count,
                 'total': total_records,
                 'status': 'processing',
-                'stage': 'fetching' # Indicar que estamos obteniendo datos
+                'stage': 'fetching'
             }, timeout=3600)
             logger.debug(f"Task {task_id}: Fetched {processed_count}/{total_records} records.")
     return data_list
@@ -665,35 +608,10 @@ def looker_data_viewer(request):
 
 @require_POST
 def trigger_google_sheet_update(request):
-    # El task_id ahora vendrá del cliente, o lo generamos aquí y lo devolvemos
-    # para que el cliente lo use en el polling.
-    # Para este modelo, el cliente lo generará y lo enviará.
-    # Si no se envía JSON, se puede pasar como un parámetro POST normal.
-    # Por simplicidad, asumiremos que no se envía JSON por ahora y el JS lo manejará.
-    # El JS generará el task_id y lo usará para el polling. La vista de progreso lo usará.
-    # Esta vista principal usará el task_id que el JS le pase (o uno generado aquí si el JS no lo hace).
-    
-    # Para este ejemplo, vamos a asumir que el JS genera un task_id y lo pasa en el cuerpo de la solicitud
-    # (aunque el JS actual no lo hace, lo adaptaremos).
-    # Si el JS no envía un task_id, esta vista no sabrá cuál usar para actualizar la caché.
-    # Alternativa: esta vista genera el task_id y el JS lo obtiene de la respuesta para el polling.
-    # PERO, si esta vista es síncrona y bloqueante, no puede devolver el task_id hasta el final.
-    
-    # Solución: El JS genera el task_id y lo pasa en un campo oculto del formulario o como data en AJAX.
-    # Para el código actual donde el JS no usa un formulario sino un botón y fetch,
-    # el task_id debe ser generado por el JS y usado consistentemente.
-    # Esta vista necesita saber el task_id para actualizar la caché.
-    # Vamos a asumir que el JS lo enviará en un header o como parte del cuerpo si es JSON.
-    # Por ahora, para que funcione con el JS que se va a proponer:
-    
-    # El cliente debe generar el task_id y esta vista debe recibirlo.
-    # Si usamos un formulario HTML tradicional, sería un input hidden.
-    # Con fetch, se puede enviar en el body o como un custom header.
-    # Para simplificar, el JS generará el task_id y lo usará para el polling.
-    # Esta vista principal también necesitará ese task_id para actualizar la caché.
-    # Lo más fácil es que el JS lo envíe.
-    
-    # Simulación: el JS enviará el task_id en un header personalizado 'X-Task-ID'
+    # El cliente (JavaScript) genera un task_id y lo envía en el header 'X-Task-ID'.
+    # Esta vista utiliza ese task_id para actualizar el progreso en la caché,
+    # y la vista de progreso lo utiliza para consultar dicho progreso.
+
     task_id = request.headers.get('X-Task-ID')
     if not task_id: # Fallback si no viene en header (no ideal para producción)
         task_id = uuid.uuid4().hex
@@ -714,7 +632,6 @@ def trigger_google_sheet_update(request):
 
         logger.info(f"Task {task_id}: Starting processing of {total_records} records.")
         
-        # --- LÓGICA REAL DE ACTUALIZACIÓN DE GOOGLE SHEETS ---
         header_row = [
             'id',	'date',	'description',	'transaction_id',	'accountId',	
             'account',	'debit',	'credit',	'parent_id',	'closed'
@@ -728,16 +645,11 @@ def trigger_google_sheet_update(request):
                 item['transaction_id'],
                 item['accountId'],
                 item['account'],
-                item['debit'], # Ya deberían ser Decimal o None
-                item['credit'],# Ya deberían ser Decimal o None
+                item['debit'],
+                item['credit'],
                 item['parent_id'],
                 'Sí' if item['closed'] else 'No', # Convertir booleano a texto
             ])
-
-        # Simular progreso mientras se sube a Google Sheets (la subida es una operación)
-        # El progreso real aquí es más difícil de granularizar sin subir en lotes pequeños
-        # y actualizar la caché entre lotes. Por ahora, actualizaremos antes y después.
-        
         # Actualizar progreso a "procesando" antes de la llamada larga
         cache.set(f'sheet_update_progress_{task_id}', {
             'processed': total_records // 2 if total_records > 0 else 0, # Simular mitad del progreso
@@ -762,7 +674,6 @@ def trigger_google_sheet_update(request):
                 'total': total_records
             })
         else:
-            # El error ya se logueó en update_google_sheet_with_data
             cache.set(f'sheet_update_progress_{task_id}', {
                 'processed': cache.get(f'sheet_update_progress_{task_id}', {}).get('processed', 0), # Mantener progreso si hubo
                 'total': total_records if total_records > 0 else 1,
@@ -771,9 +682,8 @@ def trigger_google_sheet_update(request):
             }, timeout=3600)
             return JsonResponse({'status': 'error', 'message': message}, status=500)
 
-    except Exception as e: # Captura errores generales de la función trigger_google_sheet_update
+    except Exception as e:
         logger.error(f"Task {task_id}: Error during Google Sheet update process: {e}", exc_info=True)
-        # Leer el último estado conocido para no perder 'total' si ya se estableció
         current_progress = cache.get(f'sheet_update_progress_{task_id}', {'processed': 0, 'total': 0})
         task_total = current_progress.get('total', 0)
         # Si total_records se calculó antes del error, usarlo.

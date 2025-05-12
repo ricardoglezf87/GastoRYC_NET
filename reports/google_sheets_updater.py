@@ -5,7 +5,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 def get_gspread_client():
-    """Autentica y devuelve un cliente gspread."""
     try:
         return gspread.service_account(filename=settings.GOOGLE_CREDENTIALS_FILE_PATH)
     except Exception as e:
@@ -23,13 +22,8 @@ def update_google_sheet_with_data(data_for_sheet):
         sheet_name = settings.GOOGLE_SHEET_NAME
         sheet_id = getattr(settings, 'GOOGLE_SHEET_ID', None) # Obtener el ID si está definido
         worksheet_name = settings.GOOGLE_SHEET_WORKSHEET_NAME
-
-        # 1. Buscar o crear la hoja de cálculo
         spreadsheet = None
         try:
-            # Intenta abrir la hoja de cálculo por su nombre.
-            # gspread.open() puede encontrarla si está compartida con la cuenta de servicio
-            # o si la cuenta de servicio tiene acceso amplio.            
             if sheet_id:
                 try:
                     spreadsheet = gc.open_by_key(sheet_id)
@@ -49,15 +43,12 @@ def update_google_sheet_with_data(data_for_sheet):
             if not sheet_id: # Solo sugerir si no se partió de un ID
                 logger.info(f"Considera añadir GOOGLE_SHEET_ID = '{spreadsheet.id}' a tus settings.py para futuras aperturas directas.")
         
-        # 2. Obtener o crear la pestaña (worksheet) - esta parte no cambia
         try:
             worksheet = spreadsheet.worksheet(worksheet_name)
             logger.info(f"Pestaña '{worksheet_name}' encontrada.")
         except gspread.exceptions.WorksheetNotFound:
             logger.info(f"Pestaña '{worksheet_name}' no encontrada. Creando nueva pestaña...")
             worksheet = spreadsheet.add_worksheet(title=worksheet_name, rows="1", cols="1") # Iniciar pequeña
-
-        # 3. Limpiar la pestaña y escribir los nuevos datos
         worksheet.clear()
         worksheet.update('A1', data_for_sheet, value_input_option='USER_ENTERED')
         logger.info(f"Hoja de cálculo '{sheet_name}' (pestaña '{worksheet_name}') actualizada con {len(data_for_sheet)-1} filas de datos.")

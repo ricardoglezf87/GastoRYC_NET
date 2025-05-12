@@ -15,23 +15,15 @@ except ImportError:
     print("Advertencia: pystray o Pillow no están instalados. La funcionalidad de icono de bandeja no estará disponible.")
     print("Instálalos con: pip install pystray Pillow")
 
-
-# Variables globales para los procesos y threads
 redis_process = None
 celery_process = None
 django_process = None
 redis_thread = None
 celery_thread = None
 django_thread = None
-
-# --- Variables globales para el icono de bandeja ---
 tray_icon = None # Para mantener referencia al objeto Icon
-# --- Fin de variables para icono de bandeja ---
-
-# Cola para comunicar mensajes de los hilos a la GUI
 gui_queue = queue.Queue()
 
-# --- Funciones para manejar procesos (sin cambios respecto a la versión anterior) ---
 
 def iniciar_proceso(comando, text_widget, nombre_proceso):
     """Inicia un proceso y un hilo para leer su salida."""
@@ -88,7 +80,6 @@ def iniciar_proceso(comando, text_widget, nombre_proceso):
 
 
 def detener_proceso(proceso, text_widget, nombre_proceso):
-    """Detiene un proceso de forma segura."""
     if proceso and proceso.poll() is None:
         try:
             if os.name == 'nt':
@@ -115,13 +106,10 @@ def detener_proceso(proceso, text_widget, nombre_proceso):
                 global django_process
                 django_process = None
     else:
-        # Evitar mensaje redundante si ya se mostró que no estaba corriendo
-        # gui_queue.put((text_widget, f"{nombre_proceso} no estaba corriendo o ya fue detenido.\n"))
-        pass # Silencioso si no estaba corriendo
+        pass # No hacer nada si el proceso no estaba corriendo
 
 
 def leer_salida_proceso(proceso, text_widget, nombre_proceso):
-    """Lee la salida (stdout/stderr) de un proceso y la pone en la cola GUI."""
     try:
         for linea in iter(proceso.stdout.readline, ''):
             if not linea:
@@ -135,8 +123,6 @@ def leer_salida_proceso(proceso, text_widget, nombre_proceso):
         exit_code = proceso.poll()
         gui_queue.put((text_widget, f"--- {nombre_proceso} terminado (Código: {exit_code}) ---\n"))
 
-
-# --- Funciones de botones (sin cambios) ---
 
 def iniciar_redis():
     if redis_process and redis_process.poll() is None:
@@ -169,22 +155,17 @@ def detener_celery():
 def detener_django():
     detener_proceso(django_process, django_text, "Django")
 
-# --- Funciones de la GUI (sin cambios en la creación, solo en el manejo de cola y salida) ---
-
 def mostrar_salida(text_widget, mensaje):
-    """Inserta mensaje en el widget de texto y hace scroll."""
     text_widget.configure(state='normal') # Habilitar escritura
     text_widget.insert(tk.END, mensaje)
     text_widget.see(tk.END) # Mueve el scroll al final
     text_widget.configure(state='disabled') # Deshabilitar escritura para evitar edición manual
 
 def procesar_cola_gui():
-    """Procesa mensajes de la cola y actualiza la GUI."""
     try:
         while True:
             widget, mensaje = gui_queue.get_nowait()
             mostrar_salida(widget, mensaje)
-            # No es necesario update_idletasks aquí, Tkinter lo maneja con after
     except queue.Empty:
         pass
     ventana.after(100, procesar_cola_gui) # Volver a llamar después de 100ms
@@ -193,19 +174,17 @@ def crear_interfaz():
     global redis_text, celery_text, django_text, ventana
     ventana = tk.Tk()
     ventana.title("Gestor de Procesos GARCA")
-    ventana.geometry("700x550") # Tamaño inicial un poco más grande
+    ventana.geometry("700x550")
 
-    # --- Frame Redis ---
     redis_frame = tk.LabelFrame(ventana, text="Redis", padx=10, pady=5)
     redis_frame.pack(pady=10, padx=10, fill="x")
-    redis_text = scrolledtext.ScrolledText(redis_frame, width=80, height=6, wrap=tk.WORD, state='disabled') # Iniciar deshabilitado
+    redis_text = scrolledtext.ScrolledText(redis_frame, width=80, height=6, wrap=tk.WORD, state='disabled')
     redis_text.pack(pady=5, fill="x", expand=True)
     btn_frame_redis = tk.Frame(redis_frame)
     btn_frame_redis.pack()
     tk.Button(btn_frame_redis, text="Iniciar Redis", command=iniciar_redis).pack(side=tk.LEFT, padx=5)
     tk.Button(btn_frame_redis, text="Detener Redis", command=detener_redis).pack(side=tk.LEFT, padx=5)
 
-    # --- Frame Celery ---
     celery_frame = tk.LabelFrame(ventana, text="Celery Worker", padx=10, pady=5)
     celery_frame.pack(pady=10, padx=10, fill="x")
     celery_text = scrolledtext.ScrolledText(celery_frame, width=80, height=6, wrap=tk.WORD, state='disabled')
@@ -215,7 +194,6 @@ def crear_interfaz():
     tk.Button(btn_frame_celery, text="Iniciar Celery", command=iniciar_celery).pack(side=tk.LEFT, padx=5)
     tk.Button(btn_frame_celery, text="Detener Celery", command=detener_celery).pack(side=tk.LEFT, padx=5)
 
-    # --- Frame Django ---
     django_frame = tk.LabelFrame(ventana, text="Django Server", padx=10, pady=5)
     django_frame.pack(pady=10, padx=10, fill="x")
     django_text = scrolledtext.ScrolledText(django_frame, width=80, height=6, wrap=tk.WORD, state='disabled')
@@ -227,13 +205,11 @@ def crear_interfaz():
 
     return ventana
 
-# --- Funciones para ocultar/mostrar y salir con icono de bandeja ---
-
 def ocultar_a_bandeja():
     """Oculta la ventana principal y muestra el icono en la bandeja."""
     if not PYSTRAY_AVAILABLE:
         print("Funcionalidad de bandeja no disponible. Saliendo...")
-        salir_aplicacion() # O simplemente no hacer nada: pass
+        salir_aplicacion()
         return
 
     global tray_icon
@@ -241,33 +217,24 @@ def ocultar_a_bandeja():
         ventana.withdraw() # Solo ocultar si el icono ya existe
         return
 
-    ventana.withdraw() # Ocultar la ventana principal
+    ventana.withdraw()
     try:
         # Asegúrate que la ruta al logo es correcta RELATIVA a launcher.py
-        # O usa una ruta absoluta.
         base_path = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(base_path, "GARCA", "static", "img", "logo.png") # Ajusta si es necesario
+        image_path = os.path.join(base_path, "GARCA", "static", "img", "logo.png")
         image = Image.open(image_path)
 
-        # Definir el menú del icono
         menu = Menu(
             MenuItem("Mostrar", mostrar_desde_bandeja, default=True),
             Menu.SEPARATOR,
             MenuItem("Salir", salir_aplicacion)
         )
-
-        # Crear el icono
         tray_icon = SysTrayIcon("GARCA Launcher", image, "GARCA Launcher", menu)
-
-        # Ejecutar el icono en un hilo separado para no bloquear Tkinter
-        # (Aunque la ventana está oculta, el mainloop sigue activo)
         threading.Thread(target=tray_icon.run, daemon=True).start()
         print("Aplicación oculta en la bandeja del sistema.")
-
     except FileNotFoundError:
         print(f"Error: No se encontró el icono en {image_path}")
         print("La aplicación no se ocultará en la bandeja.")
-        # Decidir qué hacer: salir, mostrar ventana de nuevo, etc.
         mostrar_ventana_emergencia() # Mostrarla de nuevo si falla el icono
     except Exception as e:
         print(f"Error al crear el icono de bandeja: {e}")
@@ -279,21 +246,19 @@ def mostrar_desde_bandeja():
     if tray_icon:
         print("Mostrando ventana...")
         tray_icon.stop()
-        tray_icon = None # Limpiar referencia
+        tray_icon = None
     mostrar_ventana_emergencia()
 
 def mostrar_ventana_emergencia():
-    """Función segura para mostrar la ventana."""
     try:
         if ventana.state() == 'withdrawn':
-            ventana.deiconify() # Mostrarla si estaba oculta
-        ventana.lift() # Traerla al frente
-        ventana.focus_force() # Forzar foco
+            ventana.deiconify()
+        ventana.lift()
+        ventana.focus_force()
     except tk.TclError:
-        print("La ventana ya no existe.") # Si se destruyó mientras estaba oculta
+        print("La ventana ya no existe.")
 
 def salir_aplicacion():
-    """Detiene todos los procesos, el icono de bandeja y cierra la aplicación."""
     print("Saliendo...")
     global tray_icon
     if tray_icon:
@@ -304,33 +269,22 @@ def salir_aplicacion():
     detener_django()
     detener_celery()
     detener_redis()
-
-    # Dar tiempo a que los mensajes de detención se procesen en la GUI
-    # y los procesos terminen antes de destruir la ventana
     ventana.after(500, ventana.destroy)
 
 
-# --- Ejecución Principal ---
 if __name__ == "__main__":
     ventana = crear_interfaz()
 
-    # Configurar el cierre de la ventana para ocultar en bandeja
     if PYSTRAY_AVAILABLE:
         ventana.protocol("WM_DELETE_WINDOW", ocultar_a_bandeja)
     else:
-        # Si pystray no está, simplemente salir al cerrar la ventana
         ventana.protocol("WM_DELETE_WINDOW", salir_aplicacion)
 
-    # Iniciar el procesamiento de la cola GUI
     procesar_cola_gui()
-
-    # Iniciar el bucle principal de Tkinter
     ventana.mainloop()
 
-    # Código después de mainloop (se ejecuta al cerrar/destruir la ventana)
     print("Ventana cerrada.")
-    # Asegurarse de que los procesos se detienen si la ventana se cierra
-    # inesperadamente (aunque salir_aplicacion debería manejarlo)
+    # Asegurarse de que los procesos se detienen si la ventana se cierra inesperadamente
     if redis_process and redis_process.poll() is None: detener_redis()
     if celery_process and celery_process.poll() is None: detener_celery()
     if django_process and django_process.poll() is None: detener_django()

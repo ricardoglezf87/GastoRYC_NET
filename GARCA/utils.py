@@ -10,15 +10,12 @@ def add_breadcrumb(request, text, url, max_length=10):
     if new_breadcrumb_str not in breadcrumb_set:
         breadcrumbs.append(new_breadcrumb)
 
-    # Find the index of the new breadcrumb
     new_index = -1
     for i, (t, u) in enumerate(breadcrumbs):
         if f"{t}-{u}" == new_breadcrumb_str:
             new_index = i
             break
-
     if new_index != -1:
-        # Remove breadcrumbs after the new index
         breadcrumbs = breadcrumbs[:new_index + 1]
 
     # Trim breadcrumbs if the length exceeds max_length
@@ -43,14 +40,8 @@ def remove_breadcrumb(request, text, url):
 def go_back_breadcrumb(request):
     breadcrumbs = request.session.get('breadcrumbs', [])
     if len(breadcrumbs) > 1:
-        breadcrumbs.pop()  # Remove the last breadcrumb
+        breadcrumbs.pop()
     request.session['breadcrumbs'] = breadcrumbs
 
 def get_breadcrumbs(request):
     return request.session.get('breadcrumbs', [])
-
-
-
-
-
-
