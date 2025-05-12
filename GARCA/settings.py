@@ -1,12 +1,9 @@
-# GARCA/settings.py
 """
 Configuración base de Django para GARCA project.
 """
 
 import os
 from pathlib import Path
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 # Ajusta el .parent para que apunte correctamente a GastoRYC_NET/
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -45,7 +42,6 @@ ROOT_URLCONF = 'GARCA.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Asegúrate que la ruta a las plantillas base sea correcta
         'DIRS': [BASE_DIR / 'GARCA' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -60,11 +56,8 @@ TEMPLATES = [
     },
 ]
 
-# Cambia la referencia a la carpeta 'settings'
 WSGI_APPLICATION = 'GARCA.wsgi.application'
-ASGI_APPLICATION = 'GARCA.asgi.application' # Añade esto si no lo tenías
-
-
+ASGI_APPLICATION = 'GARCA.asgi.application'
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
@@ -72,7 +65,6 @@ AUTH_PASSWORD_VALIDATORS = [
     { 'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator', },
     { 'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator', },
 ]
-
 
 # Internationalization
 LANGUAGE_CODE = 'es-es'
@@ -82,52 +74,40 @@ USE_L10N  = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'GARCA', 'static'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-
-# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Media files (si los usas para adjuntos, mantenlo)
-MEDIA_ROOT = BASE_DIR / 'media' # Es mejor usar una subcarpeta 'media'
-MEDIA_URL = '/media/'           # Añade la URL para acceder a ellos
+# Media files
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
 
 ADMIN_SITE_TITLE = 'GARCA'
 ADMIN_SITE_HEADER = 'GARCA'
 
-# Configuración de Celery (puede quedarse aquí si es la misma para ambos)
+# Configuración de Celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC' # O tu zona horaria
+CELERY_TIMEZONE = 'UTC'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# Puedes usar una clave simple para desarrollo
 SECRET_KEY = 'django-insecure-u4ih8i#^0=x+j4+*b(7uwf-3m-!jo4e!!p+pww5sns#69g2_j-'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1'] # Permite cualquier host en desarrollo
 
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        # Usamos la variable BASE_DIR importada de base.py
         'NAME': BASE_DIR / 'garca.sqlite3', # <-- Base de datos para producción
     }
-    # Si usaras PostgreSQL o MySQL en producción, la configuración iría aquí,
-    # leyendo credenciales de variables de entorno.
-    # 'default': {
+    # Ejemplo para PostgreSQL en producción (usar variables de entorno para credenciales):
     #     'ENGINE': 'django.db.backends.postgresql',
     #     'NAME': os.environ.get('DB_NAME'),
     #     'USER': os.environ.get('DB_USER'),
@@ -152,16 +132,16 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple', # Puedes usar 'verbose' para más detalle
+            'class': 'logging.StreamHandler', # Puedes usar 'verbose' para más detalle
+            'formatter': 'simple',
         },
     },
     'root': {
         'handlers': ['console'],
-        'level': 'WARNING', # Nivel por defecto para todos los loggers
+        'level': 'WARNING',
     },
     'loggers': {
-        'bank_imports': { # Logger específico para tu app bank_imports
+        'bank_imports': {
             'handlers': ['console'],
             'level': 'DEBUG', # Cambia a DEBUG para ver los warnings de filas saltadas
             'propagate': False, # Evita que el mensaje se envíe también al root logger si ya lo manejaste aquí
@@ -180,3 +160,11 @@ CACHES = {
         'LOCATION': 'unique-snowflake', 
     }
 }
+
+# --- Configuración para Google Sheets ---
+GOOGLE_CREDENTIALS_FILE_PATH = BASE_DIR / 'garca-google-credentials.json' # Asegúrate que este archivo exista en la raíz del proyecto
+GOOGLE_DRIVE_BIARCA_FOLDER_ID = '1DaQKgdiDRiAYee2z-dUB_Wzs_t5Za1ir' # ¡Reemplaza esto con el ID real de tu carpeta BIARCA en Google Drive!
+GOOGLE_SHEET_NAME = 'BIData'
+# GOOGLE_SHEET_ID es el ID de la hoja de cálculo específica. Si se crea una nueva, este ID debe actualizarse.
+GOOGLE_SHEET_ID = '1nK1amy9FPnlBhBZu1yLCHTrHqUrHvWyj7AMUp7B90bc'
+GOOGLE_SHEET_WORKSHEET_NAME = 'Movimientos'

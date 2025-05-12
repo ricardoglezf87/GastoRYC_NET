@@ -85,6 +85,8 @@ pip install pdf2image
 pip install PyQt5
 pip install xlrd
 pip install openpyxl
+pip install gspread google-auth google-auth-oauthlib google-auth-httplib2
+
 
 ##### 7. Otros datos de interés
 [⇑Indice⇑](#indice)

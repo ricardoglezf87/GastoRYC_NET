@@ -56,7 +56,7 @@
                 event.preventDefault();
                 var $link = $(this);
                 var originalText = $link.text();
-                $link.text('Recalculando...'); // Ajustado el texto para que sea más específico
+                $link.text('Recalculando...');
                 $link.css('pointer-events', 'none');
                 $link.css('opacity', '0.6');
 
@@ -85,7 +85,7 @@
         if (document.cookie && document.cookie !== '') {
             const cookies = document.cookie.split(';');
             for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
+                const cookie = cookies[i].trim();                
                 // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -94,31 +94,26 @@
             }
         }
         return cookieValue;
-    }
-    const csrftoken = getCookie('csrftoken'); // Obtener el token CSRF globalmente
+    }    
+    const csrftoken = getCookie('csrftoken');
 
-    // Función genérica para enviar datos POST como JSON usando Fetch API
     async function postData(url = '', data = {}) {
         try {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken // Usar el token CSRF obtenido globalmente
+                    'X-CSRFToken': csrftoken
                 },
                 body: JSON.stringify(data)
             });
 
-            // Intenta parsear la respuesta como JSON, incluso si no es 'ok'
-            // para obtener mensajes de error del backend si los hay.
-            const responseData = await response.json().catch(() => ({})); // Devuelve {} si no es JSON válido
+            const responseData = await response.json().catch(() => ({}));
 
             if (!response.ok) {
-                // Si la respuesta no es OK, construye un mensaje de error
-                // Prioriza el mensaje del backend si existe
                 const errorMessage = responseData.message || `Error ${response.status}: ${response.statusText}`;
                 throw new Error(errorMessage);
-            }
+            }            
 
             // Si la respuesta es OK, devuelve los datos (puede incluir mensajes de éxito)
             return responseData;
@@ -131,7 +126,7 @@
         }
     }
 
-    // Función para recargar la página manteniendo los parámetros GET actuales
+    
     function reloadWithFilters() {
         // Obtiene los parámetros GET de la URL actual
         const searchParams = window.location.search;
@@ -145,10 +140,10 @@
         #user-tools .dropdown {
             margin-left: 10px; /* Ejemplo de espaciado */
         }
-        #user-tools .dropdown-toggle::after {
-             margin-left: .255em; /* Ajuste del icono de flecha de Bootstrap */
+        #user-tools .dropdown-toggle::after {         
+             margin-left: .255em;
         }
-
+       
         .dropdown-item {
             color: #333 !important; /* O el color que prefieras */
             padding: .5rem 1.5rem;
@@ -182,7 +177,7 @@
             <i class="fas fa-chart-bar mr-1"></i> Reportes y Limpieza 
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="reportsDropdown">
-            {# Asegúrate que las URLs sean correctas o usa {% url 'app_name:url_name' %} #}
+
             <a class="dropdown-item" href="{% url 'reports:unbalanced_entries' %}"> {# Usar la etiqueta url es más robusto #}
                 <i class="fas fa-balance-scale-left mr-2"></i>Movimientos Descuadrados
             </a>
@@ -194,6 +189,9 @@
             </a>
             <a class="dropdown-item" href="/reports/delete_empty_entries/">
                 <i class="fas fa-trash-alt mr-2"></i>Eliminar Asientos Vacíos
+            </a>
+            <a class="dropdown-item" href="{% url 'reports:looker_data_viewer' %}">
+                <i class="fas fa-chart-bar me-2"></i>Visor Datos Looker
             </a>
         </div>
     </div>

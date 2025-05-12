@@ -1,9 +1,8 @@
 from django import forms
 from datetime import date, timedelta
-from dateutil.relativedelta import relativedelta # Necesitarás instalar: pip install python-dateutil
+from dateutil.relativedelta import relativedelta # pip install python-dateutil
 
 class PeriodFilterForm(forms.Form):
-    # Opciones de periodo predefinidas
     PERIOD_CHOICES = [
         ('', '---------'), # Opción vacía o por defecto
         ('today', 'Hoy'),
@@ -12,9 +11,9 @@ class PeriodFilterForm(forms.Form):
         ('last_month', 'Mes Pasado'),
         ('this_year', 'Este Año'),        
         ('last_year', 'Año Pasado'),
-        ('last_3_years', 'Últimos 3 Años'), # Nueva opción
+        ('last_3_years', 'Últimos 3 Años'),
         ('last_5_years', 'Últimos 5 Años'), 
-        ('all', 'Todas las Fechas'), # Añadimos opción para todo
+        ('all', 'Todas las Fechas'),
     ]
 
     period = forms.ChoiceField(
@@ -26,9 +25,6 @@ class PeriodFilterForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        # La validación de periodo se maneja por las opciones del ChoiceField.
-        # No se necesita validación adicional aquí ya que 'start_date' y 'end_date'
-        # fueron eliminados.
         return cleaned_data
 
     def get_date_range(self):
@@ -59,12 +55,12 @@ class PeriodFilterForm(forms.Form):
             end = start.replace(day=31, month=12)
             return start, end
         elif period == 'last_3_years':
-            start = today.replace(year=today.year - 3) + timedelta(days=1) # Desde hace 3 años hasta hoy
+            start = today.replace(year=today.year - 3) + timedelta(days=1)
             return start, today
         elif period == 'last_5_years':
-            start = today.replace(year=today.year - 5) + timedelta(days=1) # Desde hace 5 años hasta hoy
+            start = today.replace(year=today.year - 5) + timedelta(days=1)
             return start, today
-        elif period == 'all': # Nueva opción para todas las fechas
-            return None, None # Indica que no hay filtro de fecha
-        else: # Caso por defecto (selección vacía inicial o inválida)
+        elif period == 'all':
+            return None, None # Indica que no se aplica filtro de fecha
+        else: # Caso por defecto o selección vacía
             return None, None
