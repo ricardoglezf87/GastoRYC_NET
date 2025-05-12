@@ -180,3 +180,11 @@ CACHES = {
         'LOCATION': 'unique-snowflake', 
     }
 }
+
+# --- Configuración para Google Sheets ---
+GOOGLE_CREDENTIALS_FILE_PATH = BASE_DIR / 'garca-google-credentials.json' # Asegúrate que este archivo exista en la raíz del proyecto
+GOOGLE_DRIVE_BIARCA_FOLDER_ID = '1DaQKgdiDRiAYee2z-dUB_Wzs_t5Za1ir' # ¡Reemplaza esto con el ID real de tu carpeta BIARCA en Google Drive!
+
+GOOGLE_SHEET_NAME = 'BIData'
+GOOGLE_SHEET_ID = '1nK1amy9FPnlBhBZu1yLCHTrHqUrHvWyj7AMUp7B90bc' # <--- ¡NUEVO!
+GOOGLE_SHEET_WORKSHEET_NAME = 'DatosCompletos'

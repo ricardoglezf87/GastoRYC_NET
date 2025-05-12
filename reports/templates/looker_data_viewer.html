@@ -1,0 +1,185 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Informe Looker Studio{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-3 align-items-center">
+        <div class="col-md-6">
+            <h1>Informe Looker Studio</h1>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <button id="updateSheetButton" class="btn btn-primary" title="Actualizar Google Sheet. Esta operación puede tardar.">
+                Actualizar Google Sheet
+            </button>
+        </div>
+    </div>
+
+    <div id="statusMessages" class="mb-3"></div> <!-- Para mensajes de éxito/error de JS -->
+
+    <div id="progressBarContainer" style="display: none;" class="mb-3">
+        <p id="progressText">Actualizando Google Sheet, por favor espere...</p>
+        <div class="progress">
+            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <iframe width="100%" height="800"
+                src="https://lookerstudio.google.com/embed/reporting/9eda3984-6392-4047-880e-0efa903c77ea/page/mVyJF" 
+                frameborder="0" style="border:0" 
+                allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox">
+            </iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const updateButton = document.getElementById('updateSheetButton');
+    const progressBarContainer = document.getElementById('progressBarContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    const statusMessagesContainer = document.getElementById('statusMessages');
+    let progressInterval;
+    let currentTaskId;
+
+    // Función para generar un UUID v4 (simplificada)
+    function generateUUID() { 
+        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        );
+    }
+
+    function updateProgressUI(processed, total, status, message) {
+        if (status === 'pending' && total === 0) {
+            progressBar.style.width = '0%';
+            progressBar.setAttribute('aria-valuenow', 0);
+            progressBar.textContent = '0%';
+            progressText.textContent = message || 'Iniciando...';
+            return;
+        }
+
+        if (total > 0) {
+            const percentage = Math.min(100, Math.round((processed / total) * 100));
+            progressBar.style.width = percentage + '%';
+            progressBar.setAttribute('aria-valuenow', percentage);
+            progressBar.textContent = percentage + '%';
+            progressText.textContent = `Actualizando... ${processed} de ${total} registros procesados.`;
+        } else { // Si total es 0 pero no es 'pending' (ej. error antes de conocer total)
+             progressText.textContent = `Procesando... (total aún no determinado)`;
+        }
+
+
+        if (status === 'completed') {
+            progressText.textContent = message || `Completado: ${processed} de ${total} registros procesados.`;
+            progressBar.classList.remove('progress-bar-animated');
+            progressBar.classList.add('bg-success');
+        } else if (status === 'error') {
+            progressText.textContent = message || 'Error durante la actualización.';
+            progressBar.classList.remove('progress-bar-animated');
+            progressBar.classList.add('bg-danger');
+        } else { // processing or pending
+            progressBar.classList.remove('bg-success', 'bg-danger');
+            progressBar.classList.add('progress-bar-animated');
+        }
+    }
+
+    function pollProgress(taskId) {
+        // Limpiar intervalo anterior si existe (por si se hace clic múltiples veces rápidamente)
+        if (progressInterval) clearInterval(progressInterval);
+
+        progressInterval = setInterval(function() {
+            
+            const progressUrl = `/reports/get_google_sheet_update_progress/${taskId}/`;
+
+            fetch(progressUrl)
+                .then(response => {
+                    if (!response.ok) { // Errores de red o HTTP
+                        // No necesariamente detener el polling por un error de red, podría ser temporal
+                        console.warn(`Error al obtener progreso (HTTP ${response.status}), reintentando...`);
+                        // Podrías tener un contador de reintentos aquí
+                        return null; // Para que el .then(data => ...) no falle
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data) { // Si la respuesta fue ok y es JSON
+                        updateProgressUI(data.processed, data.total, data.status, data.message);
+                        if (data.status === 'completed' || data.status === 'error') {
+                            clearInterval(progressInterval);
+                            // El mensaje final y la UI se manejarán por la respuesta de la petición principal
+                        }
+                    }
+                })
+                .catch(error => { // Errores de red más serios o de parseo JSON
+                    console.error('Error en sondeo de progreso:', error);
+                    // No cambiar la barra aquí, dejar que la petición principal maneje el estado final
+                    // Podrías mostrar un mensaje de "problema de conexión con el progreso"
+                });
+        }, 1500); // Sondea cada 1.5 segundos
+    }
+
+    if (updateButton) {
+        updateButton.addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Iniciando...';
+            
+            currentTaskId = generateUUID(); // Generar ID único para esta operación
+
+            statusMessagesContainer.innerHTML = ''; 
+            progressBarContainer.style.display = 'block';
+            updateProgressUI(0, 0, 'pending', 'Iniciando actualización...'); // Estado inicial
+
+            pollProgress(currentTaskId); // Iniciar sondeo
+
+            const csrftoken = getCookie('csrftoken'); 
+
+            fetch("{% url 'reports:trigger_google_sheet_update' %}",  {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json', // Aunque no enviemos body, es buena práctica
+                    'X-Task-ID': currentTaskId // Enviar el ID de tarea
+                },
+                // body: JSON.stringify({}) // No necesitamos enviar cuerpo para esta acción
+            })
+            .then(response => response.json().then(data => ({ ok: response.ok, status: response.status, body: data })))
+            .then(({ ok, status, body }) => {
+                clearInterval(progressInterval); // Detener sondeo una vez que la principal termina
+
+                if (ok && body.status === 'completed') {
+                    updateProgressUI(body.processed, body.total, 'completed', body.message);
+                    statusMessagesContainer.innerHTML = `<div class="alert alert-success mt-2">${body.message || 'Proceso completado exitosamente.'}</div>`;
+                } else {
+                    const errorMessage = body.message || `Ocurrió un error (HTTP ${status}).`;
+                    // Usar el último estado conocido del polling si está disponible, o 0
+                    const lastProgress = progressBar.getAttribute('aria-valuenow');
+                    const lastTotal = progressBar.getAttribute('aria-valuemax'); // Asumiendo que se actualizó
+                    updateProgressUI(parseInt(lastProgress) || 0, parseInt(lastTotal) || 0, 'error', errorMessage);
+                    statusMessagesContainer.innerHTML = `<div class="alert alert-danger mt-2">Error: ${errorMessage}</div>`;
+                }
+            })
+            .catch(error => { // Errores de red en la petición principal
+                console.error('Error en la actualización principal:', error);
+                clearInterval(progressInterval);
+                updateProgressUI(0, 0, 'error', 'Error de conexión o del servidor.');
+                statusMessagesContainer.innerHTML = `<div class="alert alert-danger mt-2">Error de conexión o del servidor: ${error.message}</div>`;
+            })
+            .finally(() => {
+                updateButton.disabled = false;
+                updateButton.innerHTML = 'Actualizar Google Sheet';
+                // No ocultar la barra de progreso inmediatamente, dejar que el usuario vea el estado final.
+            });
+        });
+    }
+
+    // Asegúrate que getCookie está definido (debería estar en base_site.html)
+    if (typeof getCookie !== 'function') {
+        console.error("La función getCookie no está definida. Asegúrate que está en base_site.html.");
+    }
+});
+</script>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from GARCA.utils import add_breadcrumb, clear_breadcrumbs
 from accounts.models import AccountKeyword
 from async_tasks.tasks import recalculate_balances_after_date
@@ -20,10 +21,14 @@ from decimal import Decimal
 from django.conf import settings
 from django.db.models import Sum, F, DecimalField
 from django.db.models.functions import Coalesce, Abs # Importar Abs
+from django.core.cache import cache
+import time
 import json
+import uuid
 import logging
 
 from transactions.models import Transaction
+from .google_sheets_updater import update_google_sheet_with_data # Import the function
 logger = logging.getLogger(__name__)
 
 
@@ -617,3 +622,170 @@ def process_delete_empty_entries(request):
     except Exception as e:
         logger.error(f"Error processing delete empty entries: {e}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'Ocurrió un error inesperado: {e}'})
+
+def get_looker_studio_data():
+    """
+    Fetches and formats data intended for Looker Studio (via Google Sheets).
+    Si start_date y end_date son None, obtiene todos los datos.
+    """
+    transactions_qs = Transaction.objects.select_related('entry', 'account').filter(entry__id__lte=50)
+
+    data_list = []
+    for t in transactions_qs:
+        data_list.append({
+            'entry_id': t.entry.id,
+            'date': t.entry.date,
+            'description': t.entry.description,
+            'transaction_id': t.id,
+            'accountId': t.account.id,
+            'account': t.account.get_full_hierarchy(),
+            'debit': t.debit,
+            'credit': t.credit,
+            'parent_id': t.account.parent_id,
+            'closed': t.account.closed,
+        })
+    return data_list
+
+def looker_data_viewer(request):
+    add_breadcrumb(request, "Informe Looker Studio", request.path)
+    context = {}
+    return render(request, 'looker_data_viewer.html', context)
+
+@require_POST
+def trigger_google_sheet_update(request):
+    # El task_id ahora vendrá del cliente, o lo generamos aquí y lo devolvemos
+    # para que el cliente lo use en el polling.
+    # Para este modelo, el cliente lo generará y lo enviará.
+    # Si no se envía JSON, se puede pasar como un parámetro POST normal.
+    # Por simplicidad, asumiremos que no se envía JSON por ahora y el JS lo manejará.
+    # El JS generará el task_id y lo usará para el polling. La vista de progreso lo usará.
+    # Esta vista principal usará el task_id que el JS le pase (o uno generado aquí si el JS no lo hace).
+    
+    # Para este ejemplo, vamos a asumir que el JS genera un task_id y lo pasa en el cuerpo de la solicitud
+    # (aunque el JS actual no lo hace, lo adaptaremos).
+    # Si el JS no envía un task_id, esta vista no sabrá cuál usar para actualizar la caché.
+    # Alternativa: esta vista genera el task_id y el JS lo obtiene de la respuesta para el polling.
+    # PERO, si esta vista es síncrona y bloqueante, no puede devolver el task_id hasta el final.
+    
+    # Solución: El JS genera el task_id y lo pasa en un campo oculto del formulario o como data en AJAX.
+    # Para el código actual donde el JS no usa un formulario sino un botón y fetch,
+    # el task_id debe ser generado por el JS y usado consistentemente.
+    # Esta vista necesita saber el task_id para actualizar la caché.
+    # Vamos a asumir que el JS lo enviará en un header o como parte del cuerpo si es JSON.
+    # Por ahora, para que funcione con el JS que se va a proponer:
+    
+    # El cliente debe generar el task_id y esta vista debe recibirlo.
+    # Si usamos un formulario HTML tradicional, sería un input hidden.
+    # Con fetch, se puede enviar en el body o como un custom header.
+    # Para simplificar, el JS generará el task_id y lo usará para el polling.
+    # Esta vista principal también necesitará ese task_id para actualizar la caché.
+    # Lo más fácil es que el JS lo envíe.
+    
+    # Simulación: el JS enviará el task_id en un header personalizado 'X-Task-ID'
+    task_id = request.headers.get('X-Task-ID')
+    if not task_id: # Fallback si no viene en header (no ideal para producción)
+        task_id = uuid.uuid4().hex
+        logger.warning(f"X-Task-ID header not found, generated task_id: {task_id}")
+
+
+    logger.info(f"User {request.user} triggered Google Sheet update. Task ID: {task_id}")
+
+    try:
+        all_data_for_sheet = get_looker_studio_data()
+        total_records = len(all_data_for_sheet)
+        
+        cache.set(f'sheet_update_progress_{task_id}', {
+            'processed': 0,
+            'total': total_records if total_records > 0 else 1, # Evitar división por cero si no hay datos
+            'status': 'processing'
+        }, timeout=3600) 
+
+        logger.info(f"Task {task_id}: Starting processing of {total_records} records.")
+        
+        # --- LÓGICA REAL DE ACTUALIZACIÓN DE GOOGLE SHEETS ---
+        header_row = [
+            'Entry ID', 'Fecha', 'Descripción', 'Transaction ID', 
+            'Account ID', 'Jerarquía Cuenta', 'Débito', 'Crédito', 
+            'Parent Account ID', 'Cuenta Cerrada'
+        ]
+        output_data_to_sheet = [header_row]
+        for item in all_data_for_sheet:
+            output_data_to_sheet.append([
+                item['entry_id'],
+                item['date'].strftime('%Y-%m-%d') if item['date'] else '',
+                item['description'],
+                item['transaction_id'],
+                item['accountId'],
+                item['account'],
+                item['debit'], # Ya deberían ser Decimal o None
+                item['credit'],# Ya deberían ser Decimal o None
+                item['parent_id'],
+                'Sí' if item['closed'] else 'No', # Convertir booleano a texto
+            ])
+
+        # Simular progreso mientras se sube a Google Sheets (la subida es una operación)
+        # El progreso real aquí es más difícil de granularizar sin subir en lotes pequeños
+        # y actualizar la caché entre lotes. Por ahora, actualizaremos antes y después.
+        
+        # Actualizar progreso a "procesando" antes de la llamada larga
+        cache.set(f'sheet_update_progress_{task_id}', {
+            'processed': total_records // 2 if total_records > 0 else 0, # Simular mitad del progreso
+            'total': total_records if total_records > 0 else 1,
+            'status': 'processing'
+        }, timeout=3600)
+
+        success, message = update_google_sheet_with_data(output_data_to_sheet)
+
+        if success:
+            processed_count = total_records
+            cache.set(f'sheet_update_progress_{task_id}', {
+                'processed': processed_count,
+                'total': total_records,
+                'status': 'completed'
+            }, timeout=3600)
+            logger.info(f"Task {task_id}: Google Sheet update successful. Message: {message}")
+            return JsonResponse({
+                'status': 'completed', 
+                'message': message,
+                'processed': processed_count,
+                'total': total_records
+            })
+        else:
+            # El error ya se logueó en update_google_sheet_with_data
+            cache.set(f'sheet_update_progress_{task_id}', {
+                'processed': cache.get(f'sheet_update_progress_{task_id}', {}).get('processed', 0), # Mantener progreso si hubo
+                'total': total_records if total_records > 0 else 1,
+                'status': 'error',
+                'error_message': message
+            }, timeout=3600)
+            return JsonResponse({'status': 'error', 'message': message}, status=500)
+
+    except Exception as e: # Captura errores generales de la función trigger_google_sheet_update
+        logger.error(f"Task {task_id}: Error during Google Sheet update process: {e}", exc_info=True)
+        # Leer el último estado conocido para no perder 'total' si ya se estableció
+        current_progress = cache.get(f'sheet_update_progress_{task_id}', {'processed': 0, 'total': 0})
+        task_total = current_progress.get('total', 0)
+        # Si total_records se calculó antes del error, usarlo.
+        if task_total == 0 and 'total_records' in locals() and isinstance(total_records, int):
+            task_total = total_records
+
+        cache.set(f'sheet_update_progress_{task_id}', {
+            'processed': current_progress.get('processed', 0),
+            'total': task_total if task_total > 0 else 1, # Evitar 0 para el total en UI
+            'status': 'error',
+            'error_message': str(e)
+        }, timeout=3600)
+        return JsonResponse({'status': 'error', 'message': f"Error durante el proceso de actualización de Google Sheet: {e}"}, status=500)
+
+
+def get_google_sheet_update_progress(request, task_id):
+    progress_data = cache.get(f'sheet_update_progress_{task_id}')
+    if progress_data:
+        return JsonResponse(progress_data)
+    else:
+        return JsonResponse({
+            'processed': 0, 
+            'total': 1, # Evitar división por cero en el frontend si el total es 0
+            'status': 'pending', 
+            'message': 'Esperando inicio de la tarea o tarea no encontrada.'
+            }, status=200)

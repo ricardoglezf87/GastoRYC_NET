@@ -13,4 +13,9 @@ urlpatterns = [
     path('process_merge_transactions/', views.process_merge_transactions, name='process_merge_transactions'),
     path('process_simplify_transfers/', views.process_simplify_transfers, name='process_simplify_transfers'),
     path('process_delete_empty_entries/', views.process_delete_empty_entries, name='process_delete_empty_entries'),
+    # URLs for Looker Studio Data Viewer
+    path('looker_data_viewer/', views.looker_data_viewer, name='looker_data_viewer'),
+    path('trigger_google_sheet_update/', views.trigger_google_sheet_update, name='trigger_google_sheet_update'),
+    path('get_google_sheet_update_progress/<str:task_id>/', views.get_google_sheet_update_progress, name='get_google_sheet_update_progress'),
+
 ]
