@@ -86,6 +86,7 @@ pip install PyQt5
 pip install xlrd
 pip install openpyxl
 pip install gspread google-auth google-auth-oauthlib google-auth-httplib2
+pip install google-api-python-client
 
 
 ##### 7. Otros datos de interés

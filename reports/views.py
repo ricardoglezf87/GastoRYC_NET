@@ -568,11 +568,21 @@ def process_delete_empty_entries(request):
         logger.error(f"Error processing delete empty entries: {e}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'Ocurrió un error inesperado: {e}'})
 
-def get_looker_studio_data(task_id):
+def get_looker_studio_data(task_id, start_date=None, end_date=None):
     """
     Fetches and formats data intended for Looker Studio (via Google Sheets).
     """
     transactions_qs = Transaction.objects.select_related('entry', 'account')
+
+    if start_date and end_date:
+        logger.debug(f"Task {task_id}: Filtering Looker data from {start_date} to {end_date}")
+        transactions_qs = transactions_qs.filter(entry__date__gte=start_date, entry__date__lte=end_date)
+    elif start_date: # Should not happen with PeriodFilterForm but good for robustness
+        transactions_qs = transactions_qs.filter(entry__date__gte=start_date)
+    elif end_date: # Should not happen with PeriodFilterForm but good for robustness
+        transactions_qs = transactions_qs.filter(entry__date__lte=end_date)
+
+
     total_records = transactions_qs.count()
     processed_count = 0
 
@@ -603,7 +613,10 @@ def get_looker_studio_data(task_id):
 
 def looker_data_viewer(request):
     add_breadcrumb(request, "Informe Looker Studio", request.path)
-    context = {}
+    form = PeriodFilterForm(request.GET or None) # Inicializar el formulario
+    context = {
+        'form': form, # Pasar el formulario a la plantilla
+    }
     return render(request, 'looker_data_viewer.html', context)
 
 @require_POST
@@ -620,25 +633,42 @@ def trigger_google_sheet_update(request):
 
     logger.info(f"User {request.user} triggered Google Sheet update. Task ID: {task_id}")
 
+    # Obtener el periodo del request.POST (enviado por JavaScript)
+    period_value = request.POST.get('period')
+    start_date, end_date = None, None
+
+    if period_value: # Si se seleccionó un periodo (incluyendo la opción vacía que es válida)
+        # Usar un diccionario para 'data' al inicializar el formulario programáticamente
+        period_form = PeriodFilterForm(data={'period': period_value})
+        if period_form.is_valid():
+            start_date, end_date = period_form.get_date_range()
+            logger.info(f"Task {task_id}: Applying period filter '{period_value}'. Date range: {start_date} to {end_date}")
+        elif period_value:
+            logger.warning(f"Task {task_id}: Invalid period value '{period_value}' received. Errors: {period_form.errors}")
+            return JsonResponse({
+                'status': 'error', 'message': f'Periodo inválido: {period_form.errors.as_text()}',
+                'processed': 0, 'total': 0, 'stage': 'initialization_error'
+            }, status=400)
+
     try:
-        all_data_for_sheet = get_looker_studio_data(task_id)
-        total_records = len(all_data_for_sheet)
-        
+        # Actualizar caché: Iniciando obtención de datos
         cache.set(f'sheet_update_progress_{task_id}', {
             'processed': 0,
-            'total': total_records if total_records > 0 else 1, # Evitar división por cero si no hay datos
-            'status': 'processing'
-        }, timeout=3600) 
+            'total': 0, # Aún no sabemos el total de registros
+            'status': 'processing',
+            'stage': 'fetching_db_data',
+            'message': 'Obteniendo datos de la base de datos...'
+        }, timeout=3600)
+
+        all_data_for_sheet_from_db = get_looker_studio_data(task_id, start_date=start_date, end_date=end_date)
+        total_records = len(all_data_for_sheet_from_db)
 
         logger.info(f"Task {task_id}: Starting processing of {total_records} records.")
         
-        header_row = [
-            'id',	'date',	'description',	'transaction_id',	'accountId',	
-            'account',	'debit',	'credit',	'parent_id',	'closed'
-        ]
-        output_data_to_sheet = [header_row]
-        for item in all_data_for_sheet:
-            output_data_to_sheet.append([
+        # Preparar solo las filas de datos, la cabecera se manejará en google_sheets_updater.py
+        data_rows_for_sheet = []
+        for item in all_data_for_sheet_from_db:
+            data_rows_for_sheet.append([
                 item['entry_id'],
                 item['date'].strftime('%Y-%m-%d') if item['date'] else '',
                 item['description'],
@@ -650,51 +680,32 @@ def trigger_google_sheet_update(request):
                 item['parent_id'],
                 item['closed'], # Convertir booleano a texto
             ])
-        # Actualizar progreso a "procesando" antes de la llamada larga
+
+        # Actualizar caché: Datos obtenidos, preparando para la hoja de cálculo
         cache.set(f'sheet_update_progress_{task_id}', {
-            'processed': total_records // 2 if total_records > 0 else 0, # Simular mitad del progreso
+            'processed': 0, # Aún no se ha subido nada a la hoja
             'total': total_records if total_records > 0 else 1,
-            'status': 'processing'
+            'status': 'processing',
+            'stage': 'preparing_sheet_upload',
+            'message': f'Se obtuvieron {total_records} registros. Actualizando Google Sheet...'
         }, timeout=3600)
 
-        success, message = update_google_sheet_with_data(output_data_to_sheet)
-
-        if success:
-            processed_count = total_records
-            cache.set(f'sheet_update_progress_{task_id}', {
-                'processed': processed_count,
-                'total': total_records,
-                'status': 'completed'
-            }, timeout=3600)
-            logger.info(f"Task {task_id}: Google Sheet update successful. Message: {message}")
-            return JsonResponse({
-                'status': 'completed', 
-                'message': message,
-                'processed': processed_count,
-                'total': total_records
-            })
-        else:
-            cache.set(f'sheet_update_progress_{task_id}', {
-                'processed': cache.get(f'sheet_update_progress_{task_id}', {}).get('processed', 0), # Mantener progreso si hubo
-                'total': total_records if total_records > 0 else 1,
-                'status': 'error',
-                'error_message': message
-            }, timeout=3600)
-            return JsonResponse({'status': 'error', 'message': message}, status=500)
+        # Llamar a la función de actualización de la hoja, pasando fechas para borrado selectivo
+        # update_google_sheet_with_data ahora maneja sus propias actualizaciones de caché y devuelve un dict
+        update_result = update_google_sheet_with_data(data_rows_for_sheet, task_id, start_date, end_date)
+        
+        logger.info(f"Task {task_id}: Google Sheet update process finished. Result: {update_result.get('status')}, Message: {update_result.get('message')}")
+        return JsonResponse(update_result)
 
     except Exception as e:
         logger.error(f"Task {task_id}: Error during Google Sheet update process: {e}", exc_info=True)
-        current_progress = cache.get(f'sheet_update_progress_{task_id}', {'processed': 0, 'total': 0})
-        task_total = current_progress.get('total', 0)
-        # Si total_records se calculó antes del error, usarlo.
-        if task_total == 0 and 'total_records' in locals() and isinstance(total_records, int):
-            task_total = total_records
-
+        current_progress = cache.get(f'sheet_update_progress_{task_id}', {})
         cache.set(f'sheet_update_progress_{task_id}', {
-            'processed': current_progress.get('processed', 0),
-            'total': task_total if task_total > 0 else 1, # Evitar 0 para el total en UI
+            'processed': current_progress.get('processed', 0), # Mantener el progreso que se tenía
+            'total': current_progress.get('total', 1), # Mantener el total que se tenía, o 1 si no hay
             'status': 'error',
-            'error_message': str(e)
+            'stage': current_progress.get('stage', 'error_view'), # Etapa donde ocurrió el error
+            'message': f"Error durante el proceso de actualización de Google Sheet: {str(e)}"
         }, timeout=3600)
         return JsonResponse({'status': 'error', 'message': f"Error durante el proceso de actualización de Google Sheet: {e}"}, status=500)
 
