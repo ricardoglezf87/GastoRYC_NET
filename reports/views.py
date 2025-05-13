@@ -568,11 +568,21 @@ def process_delete_empty_entries(request):
         logger.error(f"Error processing delete empty entries: {e}", exc_info=True)
         return JsonResponse({'success': False, 'message': f'Ocurrió un error inesperado: {e}'})
 
-def get_looker_studio_data(task_id):
+def get_looker_studio_data(task_id, start_date=None, end_date=None):
     """
     Fetches and formats data intended for Looker Studio (via Google Sheets).
     """
     transactions_qs = Transaction.objects.select_related('entry', 'account')
+
+    if start_date and end_date:
+        logger.debug(f"Task {task_id}: Filtering Looker data from {start_date} to {end_date}")
+        transactions_qs = transactions_qs.filter(entry__date__gte=start_date, entry__date__lte=end_date)
+    elif start_date: # Should not happen with PeriodFilterForm but good for robustness
+        transactions_qs = transactions_qs.filter(entry__date__gte=start_date)
+    elif end_date: # Should not happen with PeriodFilterForm but good for robustness
+        transactions_qs = transactions_qs.filter(entry__date__lte=end_date)
+
+
     total_records = transactions_qs.count()
     processed_count = 0
 
@@ -603,7 +613,10 @@ def get_looker_studio_data(task_id):
 
 def looker_data_viewer(request):
     add_breadcrumb(request, "Informe Looker Studio", request.path)
-    context = {}
+    form = PeriodFilterForm(request.GET or None) # Inicializar el formulario
+    context = {
+        'form': form, # Pasar el formulario a la plantilla
+    }
     return render(request, 'looker_data_viewer.html', context)
 
 @require_POST
@@ -620,8 +633,23 @@ def trigger_google_sheet_update(request):
 
     logger.info(f"User {request.user} triggered Google Sheet update. Task ID: {task_id}")
 
+    # Obtener el periodo del request.POST (enviado por JavaScript)
+    period_value = request.POST.get('period')
+    start_date, end_date = None, None
+
+    if period_value: # Si se seleccionó un periodo (incluyendo la opción vacía que es válida)
+        # Usar un diccionario para 'data' al inicializar el formulario programáticamente
+        period_form = PeriodFilterForm(data={'period': period_value})
+        if period_form.is_valid():
+            start_date, end_date = period_form.get_date_range()
+            logger.info(f"Task {task_id}: Applying period filter '{period_value}'. Date range: {start_date} to {end_date}")
+        else:
+            logger.warning(f"Task {task_id}: Invalid period value '{period_value}' received. Errors: {period_form.errors}")
+            # Opcionalmente, podrías devolver un error aquí si el periodo es crucial y erróneo
+            # return JsonResponse({'status': 'error', 'message': f'Periodo inválido: {period_form.errors.as_text()}'}, status=400)
+
     try:
-        all_data_for_sheet = get_looker_studio_data(task_id)
+        all_data_for_sheet = get_looker_studio_data(task_id, start_date=start_date, end_date=end_date)
         total_records = len(all_data_for_sheet)
         
         cache.set(f'sheet_update_progress_{task_id}', {

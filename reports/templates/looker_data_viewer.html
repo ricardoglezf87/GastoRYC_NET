@@ -5,15 +5,25 @@
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row mb-3 align-items-center">
-        <div class="col-md-6">
+    <div class="row mb-3 align-items-end"> {# Cambiado align-items-center a align-items-end para mejor alineación vertical con el botón #}
+        <div class="col-md-auto"> {# Título en su propia columna para mejor control #}
             <h2>Informe Looker Studio</h2>
         </div>
-        <div class="col-md-6 text-right">
-            <button id="updateSheetButton" class="btn btn-primary" title="Actualizar Google Sheet. Esta operación puede tardar.">
-                Actualizar Google Sheet
-            </button>
+
+        {# Formulario de Filtro de Periodo y Botón de Actualización en la misma fila #}
+        <div class="col-md"> {# Columna flexible para el formulario y el botón #}
+            <form method="GET" id="periodFilterForm" class="form-inline float-md-right"> {# Usamos form-inline y float para alinear a la derecha y en línea #}
+                {% csrf_token %} {# Necesario si el form se enviara, aunque aquí lo maneja JS para el POST #}
+                <div class="form-group mr-2"> {# Margen derecho para separar del botón #}
+                    {# {{ form.period.label_tag }} #} {# Opcional: mostrar label #}
+                    {{ form.period }} {# Renderiza el widget del selector de periodo #}
+                </div>
+                <button id="updateSheetButton" type="button" class="btn btn-primary" title="Actualizar Google Sheet. Esta operación puede tardar.">
+                    Actualizar Google Sheet
+                </button>
+            </form>
         </div>
+
     </div>
 
     <div id="statusMessages" class="mb-3"></div> <!-- Para mensajes de éxito/error de JS -->
@@ -43,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const progressBar = document.getElementById('progressBar');
     const progressText = document.getElementById('progressText');
     const statusMessagesContainer = document.getElementById('statusMessages');
+    const periodSelect = document.querySelector('#periodFilterForm select[name="period"]'); // Selector para el dropdown del periodo
     let progressInterval;
     let currentTaskId;
 
@@ -135,18 +146,26 @@ document.addEventListener('DOMContentLoaded', function() {
             statusMessagesContainer.innerHTML = ''; 
             progressBarContainer.style.display = 'block';
             updateProgressUI(0, 0, 'pending', 'Iniciando actualización...', null);
-
-            pollProgress(currentTaskId);
             
             const csrftoken = getCookie('csrftoken'); 
+            const selectedPeriod = periodSelect ? periodSelect.value : ''; // Obtener el valor del periodo seleccionado
+
+            // Preparar datos para el POST. Usaremos FormData.
+            const formData = new FormData();
+            formData.append('period', selectedPeriod);
+            // No es necesario añadir csrftoken a FormData si se envía en headers, pero no hace daño.
+            // formData.append('csrfmiddlewaretoken', csrftoken);
+
+            pollProgress(currentTaskId); // Iniciar sondeo ANTES del fetch principal
 
             fetch("{% url 'reports:trigger_google_sheet_update' %}",  {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrftoken,
-                    'Content-Type': 'application/json', // Aunque no enviemos body, es buena práctica
+                    // 'Content-Type': 'application/json', // Quitar esto cuando se usa FormData
                     'X-Task-ID': currentTaskId
                 },                
+                body: formData // Enviar 'period' como parte del cuerpo del form-data
             })
             .then(response => response.json().then(data => ({ ok: response.ok, status: response.status, body: data })))
             .then(({ ok, status, body }) => {
@@ -178,6 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     if (typeof getCookie !== 'function') {
         console.error("La función getCookie no está definida. Asegúrate que está en base_site.html.");
+    }
+    if (!periodSelect) {
+        console.warn("El selector de periodo no se encontró en el DOM. Asegúrate que el ID y el nombre del select son correctos ('#periodFilterForm select[name=\"period\"]').");
     }
 });
 </script>
