@@ -9,7 +9,8 @@ PID_FILE="/volume1/web/GastoRYC_NET/logs/celery_server.pid"
 cd "$DJANGO_DIR" || exit 1
 
 # Ejecutar el servidor Django en segundo plano y guardar PID
-nohup python3.9 -m celery -A GARCA worker -l info --pool=solo  > "$LOG_FILE" 2>&1 &
+source venv/bin/activate  # Activar el entorno virtual si es necesario
+nohup celery -A GARCA worker -l info --pool=solo  > "$LOG_FILE" 2>&1 &
 
 # Guardar el PID del proceso
 echo $! > "$PID_FILE"
