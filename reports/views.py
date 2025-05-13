@@ -645,10 +645,10 @@ def trigger_google_sheet_update(request):
                 item['transaction_id'],
                 item['accountId'],
                 item['account'],
-                item['debit'],
-                item['credit'],
+                str(item['debit']).replace('.', ',') if item['debit'] is not None else '0,00',
+                str(item['credit']).replace('.', ',') if item['credit'] is not None else '0,00',
                 item['parent_id'],
-                'Sí' if item['closed'] else 'No', # Convertir booleano a texto
+                item['closed'], # Convertir booleano a texto
             ])
         # Actualizar progreso a "procesando" antes de la llamada larga
         cache.set(f'sheet_update_progress_{task_id}', {
