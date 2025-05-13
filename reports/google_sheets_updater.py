@@ -7,19 +7,12 @@ from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
-# --- CONFIGURACIÓN (Ejemplos - debes ajustarlos o cargarlos desde settings.py) ---
-# Deberías tener estas configuraciones en tu settings.py y cargarlas aquí
-# Ejemplo:
-# GOOGLE_SHEET_ID = getattr(settings, 'MY_APP_GOOGLE_SHEET_ID', None)
-# GOOGLE_SHEET_NAME = getattr(settings, 'MY_APP_GOOGLE_SHEET_NAME', 'Sheet1')
-# GOOGLE_SERVICE_ACCOUNT_FILE = getattr(settings, 'GOOGLE_SERVICE_ACCOUNT_FILE', None)
-# DATE_COLUMN_INDEX_FOR_FILTER = getattr(settings, 'LOOKER_DATA_DATE_COLUMN_INDEX', 1) # Índice de 'Entry Date'
-
-# Para este ejemplo, los defino aquí, pero es mejor en settings.py:
+# --- Configuración ---
+# Estas variables se cargan desde settings.py y son cruciales para la conexión con Google Sheets.
 GOOGLE_SHEET_ID = settings.GOOGLE_SHEET_ID # Reemplaza con tu ID de Spreadsheet
 GOOGLE_SHEET_NAME = settings.GOOGLE_SHEET_WORKSHEET_NAME # Reemplaza con el nombre de tu hoja
 GOOGLE_SERVICE_ACCOUNT_FILE = settings.GOOGLE_CREDENTIALS_FILE_PATH # Reemplaza
-DATE_COLUMN_INDEX_FOR_FILTER = 1 # Índice de 'Entry Date' (0-based)
+DATE_COLUMN_INDEX_FOR_FILTER = 1 # Índice (0-based) de la columna de fecha usada para filtrar al borrar por periodo.
 
 # Definir la cabecera estándar para la hoja. Debe coincidir con los datos que se envían desde la vista.
 SHEET_HEADERS = [
@@ -32,7 +25,6 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 def get_google_sheets_service():
     """Autentica y construye el servicio de Google Sheets."""
-    # Esto es un ejemplo, ajusta a tu método de autenticación
     if not GOOGLE_SERVICE_ACCOUNT_FILE:
         raise ValueError("La ruta al archivo de cuenta de servicio de Google no está configurada.")
     creds = Credentials.from_service_account_file(GOOGLE_SERVICE_ACCOUNT_FILE, scopes=SCOPES)
@@ -80,9 +72,7 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
             }, timeout=3600)
 
             numeric_sheet_id = get_sheet_id_by_name(sheets_service, spreadsheet_id, sheet_name)
-            header_rows = 1 # Asumimos que la primera fila es cabecera y no se borra selectivamente
-            
-            # Leer la columna de fechas para identificar filas a eliminar
+            header_rows = 1 # Asumimos que la primera fila es cabecera y no se borra al filtrar por periodo.
             # Ajusta el rango si tus datos son más anchos o si la columna de fecha no es la B (índice 1)
             # Aquí leemos solo la columna de fecha para eficiencia, asumiendo que es la columna B (DATE_COLUMN_INDEX_FOR_FILTER + 1 en A1 notation)
             date_column_letter = chr(ord('A') + DATE_COLUMN_INDEX_FOR_FILTER)
@@ -91,8 +81,8 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
             result = sheets_service.spreadsheets().values().get(
                 spreadsheetId=spreadsheet_id,
                 range=range_to_read_dates,
-                valueRenderOption='UNFORMATTED_VALUE', # Para obtener el valor subyacente (ej. número de serie para fechas)
-                dateTimeRenderOption='SERIAL_NUMBER'  # Asegura que las fechas se devuelvan como números de serie
+                valueRenderOption='UNFORMATTED_VALUE', # Obtiene el valor subyacente (ej. número de serie para fechas).
+                dateTimeRenderOption='SERIAL_NUMBER'  # Asegura que las fechas se devuelvan como números de serie.
             ).execute()
             sheet_date_values = result.get('values', [])
 
@@ -100,18 +90,17 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
             if sheet_date_values:
                 for i, row_cells in enumerate(sheet_date_values):
                     if not row_cells: continue # Fila vacía en la columna de fecha
-
-                    date_val = row_cells[0] # Podría ser un número (serial) o un string
+                    date_val = row_cells[0] # Puede ser un número de serie o un string.
                     current_row_index_in_sheet = i + header_rows + 1 # Índice real en la hoja (base 1)
                     try:
                         if isinstance(date_val, (int, float)):
                             # Convertir número de serie de Excel/Google Sheets a fecha de Python.
                             # Google Sheets (como Excel) usa el epoch de 1899-12-30 para los números de serie.
-                            # El día 1 es 1899-12-31.
+                            # El día 1 corresponde a 1899-12-31.
                             excel_epoch = datetime(1899, 12, 30)
                             row_date = (excel_epoch + timedelta(days=date_val)).date()
                         elif isinstance(date_val, str):
-                            # Fallback: intentar parsear como string si no es número.
+                            # Fallback: intentar parsear como string si no es un número de serie.
                             # Esto podría ser necesario si la celda no fue interpretada como fecha por Sheets
                             # y se almacenó como un string literal, o si valueRenderOption no devolvió un número.
                             row_date = datetime.strptime(date_val, '%Y-%m-%d').date()
@@ -125,7 +114,7 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
                                     'range': {
                                         'sheetId': numeric_sheet_id,
                                         'dimension': 'ROWS',
-                                        'startIndex': current_row_index_in_sheet - 1, # API es base 0
+                                        'startIndex': current_row_index_in_sheet - 1, # API usa índices base 0.
                                         'endIndex': current_row_index_in_sheet
                                     }
                                 }
@@ -135,7 +124,7 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
                         continue
             
             if requests_for_delete:
-                # Google Sheets API procesa mejor las eliminaciones de abajo hacia arriba
+                # La API de Google Sheets procesa las eliminaciones de forma más eficiente de abajo hacia arriba.
                 requests_for_delete.sort(key=lambda r: r['deleteDimension']['range']['startIndex'], reverse=True)
                 
                 logger.info(f"Task {task_id}: Se eliminarán {len(requests_for_delete)} filas del periodo especificado.")
@@ -145,15 +134,15 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
             else:
                 logger.info(f"Task {task_id}: No se encontraron filas para eliminar en el periodo especificado.")
         
-        else: # Sin rango de fechas, borrar toda la hoja (excepto cabeceras si se desea)
+        else: # Si no hay rango de fechas, se borra toda la hoja (A1:Z).
             logger.info(f"Task {task_id}: Borrando todos los datos (A1:Z) en Google Sheet '{sheet_name}'.")
             cache.set(f'sheet_update_progress_{task_id}', {
                 'processed': 0, 'total': total_count_for_cache, 'status': 'processing',
-                'stage': 'clearing_sheet', 'message': 'Limpiando hoja (excepto cabeceras)...'
+                'stage': 'clearing_sheet', 'message': 'Limpiando hoja completa...'
             }, timeout=3600)
             
             # Borra todo el contenido de la hoja, incluyendo cabeceras previas
-            clear_range = f'{sheet_name}!A1:Z' # Ajusta Z a tu última columna o más si es necesario
+            clear_range = f'{sheet_name}!A1:Z' # Ajustar 'Z' si se necesitan más columnas.
             sheets_service.spreadsheets().values().clear(
                 spreadsheetId=spreadsheet_id, range=clear_range, body={}
             ).execute()
@@ -174,7 +163,7 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
             }, timeout=3600)
             return {'status': 'completed', 'message': final_message, 'processed': 0, 'total': 0}
 
-        if not (start_date and end_date): # Se limpió desde A2 o es la primera vez
+        if not (start_date and end_date): # Si se limpió toda la hoja (sin filtro de periodo).
             # Escribir cabeceras en la primera fila
             sheets_service.spreadsheets().values().update(
                 spreadsheetId=spreadsheet_id,
@@ -195,7 +184,7 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
             ).execute()
             logger.info(f"Task {task_id}: {len(data_to_upload)} filas de datos escritas (update) desde A2 en '{sheet_name}'.")
 
-        else: # Hay start_date y end_date, se borró selectivamente, ahora AÑADIR (append) los datos
+        else: # Si hay start_date y end_date, se borró selectivamente, ahora se AÑADEN (append) los datos.
             # data_to_upload ya son solo las filas de datos para el periodo
             append_body = {'values': data_to_upload} 
             sheets_service.spreadsheets().values().append(
@@ -219,7 +208,6 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
     except Exception as e:
         logger.error(f"Task {task_id}: Error al actualizar Google Sheet: {e}", exc_info=True)
         error_message = f'Error al actualizar Google Sheet: {str(e)}'
-        # Mantener el progreso que se tenía si es posible
         current_progress = cache.get(f'sheet_update_progress_{task_id}', {})
         cache.set(f'sheet_update_progress_{task_id}', {
             'processed': current_progress.get('processed', 0),
@@ -227,5 +215,4 @@ def update_google_sheet_with_data(data_to_upload, task_id, start_date=None, end_
             'status': 'error', 'stage': current_progress.get('stage', 'error'),
             'message': error_message
         }, timeout=3600)
-        # Re-lanzar para que la tarea Celery (si la hay) o la vista lo maneje
         raise ValueError(error_message) from e
